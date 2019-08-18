@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{74dfb46b-4864-4c14-b39c-5f58c2d4216c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{271588be-8520-4a98-8707-1e9d1a322f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\D3D9">
+      <UniqueIdentifier>{329b68c6-8e99-4995-9b9f-ad1d5eea1e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\DirectInput">
+      <UniqueIdentifier>{aff7e019-2ea6-407e-ab32-780ecc59baa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sound">
+      <UniqueIdentifier>{df78c118-e1dc-418b-97ce-679835bca597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture">
+      <UniqueIdentifier>{dc97637f-ca51-46b7-b960-b8c568504312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\UV">
+      <UniqueIdentifier>{83b756d0-9178-4a01-9815-d132f00738e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Window">
+      <UniqueIdentifier>{14261c87-b50c-4611-9b1e-3ce13a6c5d6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugMode">
+      <UniqueIdentifier>{a9e393dc-062e-4c39-b1ff-df6565f33dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SetRenderStateFile">
+      <UniqueIdentifier>{2fe48fbd-062d-4a0f-b2ba-077e94100d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoadResource">
+      <UniqueIdentifier>{073168f1-bd0a-4df5-94df-a408a56e6298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\DirectInput\KeyBoard">
+      <UniqueIdentifier>{27bc3215-2921-46a2-810b-3023840ee6ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\DirectInput\JoyStick">
+      <UniqueIdentifier>{c020e69e-67fb-4523-8887-ed098158bc62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\FPS">
+      <UniqueIdentifier>{5f960c64-2332-4d90-8810-b6106d5726a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\D3DFont">
+      <UniqueIdentifier>{6f068fc9-3e07-4730-a44a-d5cca174eabf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Camera3D">
+      <UniqueIdentifier>{a7afea72-7448-497a-984a-5df42746ab5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Light">
+      <UniqueIdentifier>{c4aa8eab-250b-4499-8b15-bc255440572c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\D3DDefaultMesh">
+      <UniqueIdentifier>{86633086-0731-4da0-9600-03a127ce4881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\XFile">
+      <UniqueIdentifier>{cf58c9c6-6634-4546-9925-3c7441576c91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureManager">
+      <UniqueIdentifier>{c91ba9cc-09c1-4c0a-a4b7-1d0893aa60b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\DrawPolygon2D">
+      <UniqueIdentifier>{a369b4db-5f1e-4a50-99e2-25456d2bf660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureFormat3D">
+      <UniqueIdentifier>{7de90416-0e19-4a06-9d7c-f8e681f9ec68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\DrawPolygon3D">
+      <UniqueIdentifier>{aca2e92b-b3a5-441f-ad96-5642e2e39982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureFormat2D">
+      <UniqueIdentifier>{ab040a18-4bb4-44f2-82b8-3414d6835c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureData3D">
+      <UniqueIdentifier>{ca45792a-9568-4e06-bcb7-96011820426b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureData2D">
+      <UniqueIdentifier>{85fa624c-2030-4413-8fe4-62cb469cfed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureDataBase">
+      <UniqueIdentifier>{448bb248-fed8-44ac-8b80-99d90c850055}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\DirectInput\DirectInput.cpp">
+      <Filter>Lib\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Sound\Sound.cpp">
+      <Filter>Lib\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\UV\UV.cpp">
+      <Filter>Lib\UV</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Window\Window.cpp">
+      <Filter>Lib\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMode\DebugMode.cpp">
+      <Filter>DebugMode</Filter>
+    </ClCompile>
+    <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp">
+      <Filter>SetRenderStateFile</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadResource\LoadResource.cpp">
+      <Filter>LoadResource</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\DirectInput\KeyBoard\KeyBoard.cpp">
+      <Filter>Lib\DirectInput\KeyBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\DirectInput\JoyStick\JoyStick.cpp">
+      <Filter>Lib\DirectInput\JoyStick</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\FPS\FPS.cpp">
+      <Filter>Lib\FPS</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
+      <Filter>Lib\D3DFont</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\D3D9\D3D9.cpp">
+      <Filter>Lib\D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Camera3D\Camera3D.cpp">
+      <Filter>Lib\Camera3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Light\Light.cpp">
+      <Filter>Lib\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\D3DDefaultMesh\D3DDefaultMesh.cpp">
+      <Filter>Lib\D3DDefaultMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\XFile\XFile.cpp">
+      <Filter>Lib\XFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\TextureManager.cpp">
+      <Filter>Lib\Texture\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\DrawPolygon2D.cpp">
+      <Filter>Lib\Texture\DrawPolygon2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\TextureFormat2D.cpp">
+      <Filter>Lib\Texture\TextureFormat2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\DrawPolygon3D.cpp">
+      <Filter>Lib\Texture\DrawPolygon3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\TextureFormat3D.cpp">
+      <Filter>Lib\Texture\TextureFormat3D</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Lib\DirectInput\DirectInput.h">
+      <Filter>Lib\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Sound\Sound.h">
+      <Filter>Lib\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\UV\UV.h">
+      <Filter>Lib\UV</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Window\Window.h">
+      <Filter>Lib\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMode\DebugMode.h">
+      <Filter>DebugMode</Filter>
+    </ClInclude>
+    <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h">
+      <Filter>SetRenderStateFile</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadResource\LoadResource.h">
+      <Filter>LoadResource</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\DirectInput\KeyBoard\KeyBoard.h">
+      <Filter>Lib\DirectInput\KeyBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\DirectInput\JoyStick\JoyStick.h">
+      <Filter>Lib\DirectInput\JoyStick</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\FPS\FPS.h">
+      <Filter>Lib\FPS</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\D3DFont\D3DFont.h">
+      <Filter>Lib\D3DFont</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\D3D9\D3D9.h">
+      <Filter>Lib\D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Camera3D\Camera3D.h">
+      <Filter>Lib\Camera3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Light\Light.h">
+      <Filter>Lib\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\D3DDefaultMesh\D3DDefaultMesh.h">
+      <Filter>Lib\D3DDefaultMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\XFile\XFile.h">
+      <Filter>Lib\XFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureManager.h">
+      <Filter>Lib\Texture\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureDataBase.h">
+      <Filter>Lib\Texture\TextureDataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\DrawPolygon2D.h">
+      <Filter>Lib\Texture\DrawPolygon2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureFormat2D.h">
+      <Filter>Lib\Texture\TextureFormat2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\DrawPolygon3D.h">
+      <Filter>Lib\Texture\DrawPolygon3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureFormat3D.h">
+      <Filter>Lib\Texture\TextureFormat3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData3D.h">
+      <Filter>Lib\Texture\TextureData3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData2D.h">
+      <Filter>Lib\Texture\TextureData2D</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
