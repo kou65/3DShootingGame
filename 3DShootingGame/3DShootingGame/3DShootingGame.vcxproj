@@ -147,10 +147,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DebugMode\DebugMode.cpp" />
-    <ClCompile Include="FBX.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="Lib\Camera3D\Camera3D.cpp" />
     <ClCompile Include="Lib\D3D9\D3D9.cpp" />
     <ClCompile Include="Lib\D3DDefaultMesh\D3DDefaultMesh.cpp" />
@@ -163,6 +159,7 @@
     <ClCompile Include="Lib\DirectInput\DirectInput.cpp" />
     <ClCompile Include="Lib\DirectInput\JoyStick\JoyStick.cpp" />
     <ClCompile Include="Lib\DirectInput\KeyBoard\KeyBoard.cpp" />
+    <ClCompile Include="Lib\FBX\FBX.cpp" />
     <ClCompile Include="Lib\FPS\FPS.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -187,14 +184,14 @@
     <ClCompile Include="Lib\XFile\XFile.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
+    <ClCompile Include="OBJFile.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMode\DebugMode.h" />
-    <ClInclude Include="FBX.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Lib\Camera3D\Camera3D.h" />
     <ClInclude Include="Lib\D3D9\D3D9.h" />
     <ClInclude Include="Lib\D3DDefaultMesh\D3DDefaultMesh.h" />
@@ -207,6 +204,7 @@
     <ClInclude Include="Lib\DirectInput\DirectInput.h" />
     <ClInclude Include="Lib\DirectInput\JoyStick\JoyStick.h" />
     <ClInclude Include="Lib\DirectInput\KeyBoard\KeyBoard.h" />
+    <ClInclude Include="Lib\FBX\FBX.h" />
     <ClInclude Include="Lib\FPS\FPS.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -232,6 +230,10 @@
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="Lib\XFile\XFile.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
+    <ClInclude Include="OBJFile.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

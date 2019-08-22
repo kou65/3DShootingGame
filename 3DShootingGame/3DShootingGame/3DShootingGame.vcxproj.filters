@@ -94,6 +94,12 @@
     <Filter Include="Lib\HierarchyXFile">
       <UniqueIdentifier>{eea833d8-27a4-4114-be94-67354f495b33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\OBJFile">
+      <UniqueIdentifier>{b7acf513-46d9-4210-968c-68fcacca6f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\FBXFile">
+      <UniqueIdentifier>{0a92e014-0de2-4d74-8a08-f629c17d8489}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Main.cpp">
@@ -165,8 +171,11 @@
     <ClCompile Include="Lib\HierarchyXFile\HierarchyXFile.cpp">
       <Filter>Lib\HierarchyXFile</Filter>
     </ClCompile>
-    <ClCompile Include="FBX.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Lib\FBX\FBX.cpp">
+      <Filter>Lib\FBXFile</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJFile.cpp">
+      <Filter>Lib\OBJFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,8 +251,11 @@
     <ClInclude Include="Lib\HierarchyXFile\HierarchyXFile.h">
       <Filter>Lib\HierarchyXFile</Filter>
     </ClInclude>
-    <ClInclude Include="FBX.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Lib\FBX\FBX.h">
+      <Filter>Lib\FBXFile</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJFile.h">
+      <Filter>Lib\OBJFile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
