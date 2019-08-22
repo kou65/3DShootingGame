@@ -1,5 +1,5 @@
 ﻿#include"D3DDefaultMesh.h"
-
+#include"../Light/Light.h"
 
 
 
@@ -13,6 +13,10 @@ D3DDefaultMesh::D3DDefaultMesh() {
 
 
 void D3DDefaultMesh::AllDraw() {
+
+	Light light;
+
+	light.NormalLightOn();
 
 	Draw(m_p_teapot, D3DXVECTOR3(-10.f, 0.f, 0.f));
 }

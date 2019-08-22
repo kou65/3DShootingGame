@@ -18,7 +18,7 @@ void TextureManager::Load2D(
 ) {
 
 	// テクスチャデータを生成
-	//m_texture_data2D_list[texture_rename];
+	m_texture_data2D_list[texture_rename] = new TextureData2D;
 
 	// 画像サイズを保存するパラメーター
 	D3DXIMAGE_INFO info;
@@ -36,15 +36,15 @@ void TextureManager::Load2D(
 
 
 	// 最初はサイズ指定をしなければいけない。
-	m_texture_data2D_list[texture_rename].width_size
+	m_texture_data2D_list[texture_rename]->width_size
 		= (float)info.Width;
-	m_texture_data2D_list[texture_rename].height_size
+	m_texture_data2D_list[texture_rename]->height_size
 		= (float)info.Height;
 
 	// UV設定
-	m_texture_data2D_list[texture_rename].uv.x
+	m_texture_data2D_list[texture_rename]->uv.x
 		= tu;
-	m_texture_data2D_list[texture_rename].uv.y
+	m_texture_data2D_list[texture_rename]->uv.y
 		= tv;
 
 
@@ -75,7 +75,7 @@ void TextureManager::Load2D(
 		NULL,
 		NULL,
 		// テクスチャバッファ
-		&m_texture_data2D_list[texture_rename].p_texture_buffer);
+		&m_texture_data2D_list[texture_rename]->p_texture_buffer);
 
 	// 読み込みの失敗
 	if (FAILED(result)) {
@@ -83,22 +83,29 @@ void TextureManager::Load2D(
 	}
 }
 
+
 void TextureManager::Load3D(
 	const char*file_name,
-	const char*texture_name
+	const char*texture_name,
+	const int &texture_num
 ) {
+
 	HRESULT result;
+
+	// テクスチャ生成
+	m_texture_data3D_list[texture_name] = new TextureData3D;
 
 	result = D3DXCreateTextureFromFile(
 		D3D9::GetLpDirect3DDevice9(),
 		file_name,
-		&m_texture_data3D_list[texture_name].p_texture_buffer
+		&m_texture_data3D_list[texture_name]->texture_list[texture_num]
 	);
 
 	// 読み込み失敗
 	if (FAILED(result)) {
 		return;
 	}
+
 }
 
 
@@ -125,12 +132,12 @@ bool TextureManager::Find3DTexture(std::string name) {
 
 
 TextureData2D &TextureManager::GetTextureData2D(std::string name) {
-	return m_texture_data2D_list[name.c_str()];
+	return *m_texture_data2D_list[name.c_str()];
 }
 
 
 TextureData3D &TextureManager::GetTextureData3D(std::string name) {
-	return m_texture_data3D_list[name.c_str()];
+	return *m_texture_data3D_list[name.c_str()];
 }
 
 
@@ -140,24 +147,22 @@ void TextureManager::Release() {
 	for (auto texture : m_texture_data2D_list) {
 
 		// テクスチャが存在しているなら
-		if (texture.second.p_texture_buffer) {
+		if (texture.second->p_texture_buffer) {
 
 			// 解放
-			texture.second.p_texture_buffer->Release();
+			texture.second->p_texture_buffer->Release();
 		}
 
 		// 要素のメモリ削除
-		//delete[] & texture;
+		delete[] & texture;
 	}
 
 	// 3Dテクスチャの解放
 	for (auto texture : m_texture_data3D_list) {
 
-		// テクスチャが存在しているなら
-		if (texture.second.p_texture_buffer) {
+		for (auto t : texture.second->texture_list) {
 
-			// 解放
-			texture.second.p_texture_buffer->Release();
+			delete[] t;
 		}
 	}
 }

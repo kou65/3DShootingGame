@@ -17,8 +17,10 @@ public:
 	Camera3D(CameraMode camera_mode);
 
 	void Update();
-
+	
 	void SetPos(const D3DXVECTOR3 &pos);
+
+	D3DXVECTOR3 GetPos();
 
 	void AddPos(const D3DXVECTOR3&pos);
 

@@ -6,6 +6,7 @@
 #include"../Lib/Texture/DrawPolygon3D.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/XFile/XFile.h"
+#include"../FBX.h"
 
 
 
@@ -50,6 +51,8 @@ void DebugMode::Update() {
 		// 終了
 		return;
 	}
+
+	FBX::Scene();
 
 	CameraRotation();
 
@@ -99,10 +102,11 @@ void DebugMode::CameraMove() {
 	}
 }
 
+
 void DebugMode::CameraRotation() {
 
 	if (KeyBoard::IsKeyPushing(DIK_D)) {
-		camera_3d->AddRotation(D3DXVECTOR3(1.f,0.f, 0.f));
+		camera_3d->AddRotation(D3DXVECTOR3(1.f,0.f,0.f));
 	}
 	if (KeyBoard::IsKeyPushing(DIK_A)) {
 		camera_3d->AddRotation(D3DXVECTOR3(-1.f,0.f, 0.f));
@@ -128,8 +132,13 @@ void DebugMode::Draw() {
 	// Xファイルの描画
 	XFile::GetInstance()->Draw(
 		"Sample01.x",
-		D3DXVECTOR3(-20.f,0.f,0.f)
+		camera_3d->GetPos()
 		);
+
+	XFile::GetInstance()->Draw(
+		"Sample01.x",
+		D3DXVECTOR3(-30.f, 0.f, 0.f)
+	);
 
 		TextureFormat3D td(0.f,0.f,0.f,"ground");
 		td.scale_width = 1000.f;

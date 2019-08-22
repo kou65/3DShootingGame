@@ -1,5 +1,5 @@
 ﻿#include"./Window.h"
-
+#include<string>
 
 
 namespace Window {
@@ -207,11 +207,13 @@ namespace Window {
 			SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER);
 	}
 
+
 	void SetReSize(const UINT&width, const UINT&height) {
 
 		// ウィンドウサイズ変更
 		SetWindowPos(window_handle, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
 	}
+
 
 	void FullScreenWindowStyleChange() {
 
@@ -220,6 +222,13 @@ namespace Window {
 		// ウィンドウ全体を再描画
 		ShowWindow(window_handle, SW_SHOW);
 	}
+
+
+	void TextMessageBox(const std::string&string) {
+
+		MessageBoxA(NULL, string.c_str(), NULL, NULL);
+	}
+
 
 	HWND GetWindowHandle() {
 		return window_handle;

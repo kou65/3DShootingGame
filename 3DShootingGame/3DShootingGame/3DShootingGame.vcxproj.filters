@@ -91,8 +91,8 @@
     <Filter Include="Lib\Texture\TextureData2D">
       <UniqueIdentifier>{85fa624c-2030-4413-8fe4-62cb469cfed3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Texture\TextureDataBase">
-      <UniqueIdentifier>{448bb248-fed8-44ac-8b80-99d90c850055}</UniqueIdentifier>
+    <Filter Include="Lib\HierarchyXFile">
+      <UniqueIdentifier>{eea833d8-27a4-4114-be94-67354f495b33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +162,12 @@
     <ClCompile Include="Lib\Texture\TextureFormat3D.cpp">
       <Filter>Lib\Texture\TextureFormat3D</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\HierarchyXFile\HierarchyXFile.cpp">
+      <Filter>Lib\HierarchyXFile</Filter>
+    </ClCompile>
+    <ClCompile Include="FBX.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -215,9 +221,6 @@
     <ClInclude Include="Lib\Texture\TextureManager.h">
       <Filter>Lib\Texture\TextureManager</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureDataBase.h">
-      <Filter>Lib\Texture\TextureDataBase</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Texture\DrawPolygon2D.h">
       <Filter>Lib\Texture\DrawPolygon2D</Filter>
     </ClInclude>
@@ -235,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="Lib\Texture\TextureData2D.h">
       <Filter>Lib\Texture\TextureData2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\HierarchyXFile\HierarchyXFile.h">
+      <Filter>Lib\HierarchyXFile</Filter>
+    </ClInclude>
+    <ClInclude Include="FBX.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

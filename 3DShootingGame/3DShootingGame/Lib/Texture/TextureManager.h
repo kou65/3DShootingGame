@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include"TextureDataBase.h"
 #include"TextureData2D.h"
 #include"TextureData3D.h"
 #include<string>
@@ -32,7 +31,8 @@ public:
 
 	void Load3D(
 		const char*file_name,
-		const char*texture_name
+		const char*texture_name,
+		const int &texture_num
 	);
 
 
@@ -40,13 +40,16 @@ public:
 
 	bool Find3DTexture(std::string name);
 
-	void Release();
-
 	// 2D用のテクスチャデータを返す
 	TextureData2D &GetTextureData2D(std::string name);
 
 	// 3D用のテクスチャデータを返す
-	TextureData3D &GetTextureData3D(std::string name);
+	TextureData3D &GetTextureData3D(
+		std::string name);
+
+	// 解放
+	void Release();
+
 
 private:
 
@@ -58,7 +61,7 @@ private:
 		// キー
 		std::string,
 		// 入れ物
-		TextureData2D
+		TextureData2D*
 	> m_texture_data2D_list;
 
 	// 3Dのテクスチャリスト
@@ -66,7 +69,7 @@ private:
 		// キー
 		std::string,
 		// 入れ物
-		TextureData3D
+		TextureData3D*
 	> m_texture_data3D_list;
 
 };

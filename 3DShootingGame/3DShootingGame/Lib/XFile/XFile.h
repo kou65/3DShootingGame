@@ -2,6 +2,7 @@
 #include"../D3D9/D3D9.h"
 #include<string>
 #include<vector>
+#include<unordered_map>
 
 
 
@@ -17,22 +18,29 @@ public:
 public:
 
 	// 読み込み
-	bool Load(std::string x_file_name,std::string mesh_name);
+	bool Load(
+		// Xファイル名
+		const std::string &x_file_name,
+		// テクスチャファイルの階層
+		const std::string &texture_file_hierarchy,
+		// メッシュ名
+		const std::string &rename
+	);
 
 	// 描画
 	void Draw(std::string mesh_name,const D3DXVECTOR3 &pos);
 
+	// 解放処理
+	void Release();
+
 private:
 
 	// マテリアル数
-	DWORD m_material_num;
+	std::unordered_map<std::string, DWORD>m_material_num_list;
 
 	// マテリアル情報
-	D3DMATERIAL9*m_p_material_info_list;
+	std::unordered_map<std::string, D3DMATERIAL9*>m_material_list;
 
-	// テクスチャリスト
-	LPDIRECT3DTEXTURE9 *m_p_texture_list;
-	
 	// メッシュ
-	LPD3DXMESH m_p_mesh;
+	std::unordered_map<std::string,LPD3DXMESH>m_mesh_list;
 };

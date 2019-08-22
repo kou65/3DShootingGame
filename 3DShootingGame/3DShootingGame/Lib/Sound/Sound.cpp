@@ -3,6 +3,7 @@
 
 
 namespace Sound {
+
 	// サウンドデバイス
 	IDirectSound8 *p_direct_sound8 = NULL;
 

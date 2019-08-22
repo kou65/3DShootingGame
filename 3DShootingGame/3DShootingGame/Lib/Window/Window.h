@@ -50,6 +50,10 @@ namespace Window {
 	*/
 	void SetReSize(const UINT&width_size, const UINT&height_size);
 
+	/**
+	* @brief MessageBoxを使う
+	*/
+	void TextMessageBox(const std::string&string);
 
 	/**
 	* @brief ウィンドウを中央に移動させる

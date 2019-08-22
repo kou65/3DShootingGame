@@ -27,7 +27,7 @@ void LoadTexture() {
 	TextureManager::GetInstance()->Load2D("Resource/Texture/Stage/Ground.jpg","ground");
 
 	// Xファイル読み込み
-	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x","Sample01.x");
+	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x","Resource/Texture/Enemy/","Sample01.x");
 }
 
 void LoadSound() {

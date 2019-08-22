@@ -473,10 +473,17 @@ void Camera3D::AddLookAtPoint(const D3DXVECTOR3&point) {
 	m_look_at_point = point;
 }
 
+
 void Camera3D::AddRotation(const D3DXVECTOR3&rotation) {
 	m_rotation += rotation;
 }
 
+
 void Camera3D::AddMove(const D3DXVECTOR3&move) {
 	m_move += move;
+}
+
+
+D3DXVECTOR3 Camera3D::GetPos() {
+	return m_pos;
 }

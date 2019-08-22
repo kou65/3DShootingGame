@@ -6,10 +6,19 @@
 
 
 
-bool XFile::Load(std::string x_file_name,std::string mesh_name) {
+bool XFile::Load(
+	const std::string &x_file_name,
+	const std::string &file_hierarchy,
+	const std::string &mesh_name) {
 
 	// マテリアル情報
 	LPD3DXBUFFER material_info;
+
+	// マテリアル数
+	DWORD material_num;
+
+	// メッシュ
+	LPD3DXMESH mesh;
 
 	// メッシュ読み込み
 	if (E_FAIL == D3DXLoadMeshFromX(
@@ -26,9 +35,9 @@ bool XFile::Load(std::string x_file_name,std::string mesh_name) {
 		// 基本未使用
 		NULL,
 		// XFileに使用されているマテリアルの数が返ってくる
-		&m_material_num,
+		&material_num,
 		// メッシュ情報を指すポインタのアドレス
-		&m_p_mesh
+		&mesh
 	)) {
 		// ファイル生成失敗
 		return false;
@@ -40,21 +49,30 @@ bool XFile::Load(std::string x_file_name,std::string mesh_name) {
 	情報をメンバ変数にコピーする
 	 */
 
+	// マテリアルリスト追加
+	m_material_num_list[mesh_name] = material_num;
+
 	// サイズ生成
-	m_p_material_info_list = new D3DMATERIAL9[m_material_num];
+	m_material_list[mesh_name] = new D3DMATERIAL9[material_num];
+
+	// メッシュ追加
+	m_mesh_list[mesh_name] = mesh;
+
+	// サイズ生成
+	//m_p_material_info_list = new D3DMATERIAL9[material_num];
 
 	// メッシュに使用されているテクスチャ用の配列を用意する
-	m_p_texture_list = new LPDIRECT3DTEXTURE9[m_material_num];
+	//m_p_texture_list = new LPDIRECT3DTEXTURE9[material_num];
 
 	D3DXMATERIAL *p_material_list = 
 		(D3DXMATERIAL*)material_info->GetBufferPointer();
 
 	// マテリアルはマテリアル情報とマテリアルの数に代入されている
-	for (DWORD i = 0; i < m_material_num; i++) {
+	for (DWORD i = 0; i < material_num; i++) {
 
 		// マテリアル取得
-		m_p_material_info_list[i] = p_material_list[i].MatD3D;
-		m_p_texture_list[i] = NULL;
+		m_material_list[mesh_name.c_str()][i] = p_material_list[i].MatD3D;
+		
 
 		// マテリアルで設定されているテクスチャ読み込み
 		// テクスチャ情報があるなら
@@ -73,22 +91,26 @@ bool XFile::Load(std::string x_file_name,std::string mesh_name) {
 				mesh_name.c_str()) == false
 				) {
 
+				// 文字列結合
+				file_name = file_hierarchy + file_name;
+
 				// テクスチャの読み込み
 				texture_manager.Load3D(
 					file_name.c_str(),
-					mesh_name.c_str()
+					mesh_name.c_str(),
+					i
 				);
-
-				m_p_texture_list[i] = 
-				texture_manager.GetInstance()->
-					GetTextureData3D(mesh_name);
 
 			}
 		}
 
 		// コピーが終わったのでバッファを解放
 		material_info->Release();
+
 	}
+
+	return true;
+
 }
 
 
@@ -98,6 +120,7 @@ void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 
 	Light light;
 
+	// ゲームのライティング
 	light.NormalLightOn();
 
 	D3DXMATRIX matrix_total;
@@ -111,17 +134,19 @@ void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 		pos.z
 	);
 
+	// 行列合成
 	matrix_total = matrix_trans;
 
-	for (DWORD i = 0; i < m_material_num; i++) {
+	// 一つ一つのメッシュを描画
+	for (DWORD i = 0; i < m_material_num_list[mesh_name]; i++) {
 
 		// マテリアルの反映
-		device->SetMaterial(&m_p_material_info_list[i]);
+		device->SetMaterial(&m_material_list[mesh_name][i]);
 		
 		// マテリアルで使用しているテクスチャをセット
 		device->SetTexture(
 			0,
-			m_p_texture_list[i]
+			TextureManager::GetInstance()->GetTextureData3D(mesh_name).texture_list[i]
 		);
 
 		// ワールド座標を軸に変換
@@ -131,7 +156,24 @@ void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 		);
 
 		// サブセットとは分割された一つ一つのメッシュ
-		m_p_mesh->DrawSubset(i);
+		m_mesh_list[mesh_name]->DrawSubset(i);
+	}
+}
 
+
+void XFile::Release() {
+	
+	// メッシュデータ解放
+	for (auto mesh : m_mesh_list) {
+		// 解放
+		mesh.second->Release();
+		// メモリ削除
+		delete[] &mesh;
+	}
+
+	// マテリアル解放
+	for (auto material : m_material_list) {
+		
+		delete[] material.second;
 	}
 }
