@@ -177,6 +177,9 @@
     <ClCompile Include="Lib\FBX\FBX.cpp">
       <Filter>Lib\FBXFile</Filter>
     </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="Lib\FBX\FBX.h">
       <Filter>Lib\FBXFile</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
