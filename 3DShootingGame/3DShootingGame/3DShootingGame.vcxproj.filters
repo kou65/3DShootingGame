@@ -171,11 +171,11 @@
     <ClCompile Include="Lib\HierarchyXFile\HierarchyXFile.cpp">
       <Filter>Lib\HierarchyXFile</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\FBX\FBX.cpp">
-      <Filter>Lib\FBXFile</Filter>
-    </ClCompile>
     <ClCompile Include="OBJFile.cpp">
       <Filter>Lib\OBJFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\FBX\FBX.cpp">
+      <Filter>Lib\FBXFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,11 +251,11 @@
     <ClInclude Include="Lib\HierarchyXFile\HierarchyXFile.h">
       <Filter>Lib\HierarchyXFile</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\FBX\FBX.h">
-      <Filter>Lib\FBXFile</Filter>
-    </ClInclude>
     <ClInclude Include="OBJFile.h">
       <Filter>Lib\OBJFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\FBX\FBX.h">
+      <Filter>Lib\FBXFile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
