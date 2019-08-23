@@ -1,6 +1,6 @@
 ﻿#include"Camera3D.h"
-#include"../DirectInput/KeyBoard/KeyBoard.h"
-#include"../D3DFont/D3DFont.h"
+#include"../../DirectInput/DirectInput.h"
+#include"../../D3DFont/D3DFont.h"
 
 
 

@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
-#include"../Lib/Texture/DrawPolygon2D.h"
+#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
 #include"../Lib/Sound/Sound.h"
 #include<string>
-#include"../Lib/Camera3D/Camera3D.h"
-#include"../Lib/D3DDefaultMesh/D3DDefaultMesh.h"
+#include"../Lib/3D/Camera3D/Camera3D.h"
+#include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
 #include"../Lib/FPS/FPS.h"
-#include"../Lib/Light/Light.h"
+#include"../Lib/3D/Light/Light.h"
 
 
 

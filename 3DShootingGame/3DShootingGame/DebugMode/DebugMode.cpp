@@ -1,12 +1,12 @@
 ﻿#include"DebugMode.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
-#include"../Lib/Texture/DrawPolygon2D.h"
-#include"../Lib/Texture/TextureFormat2D.h"
-#include"../Lib/Texture/TextureFormat3D.h"
-#include"../Lib/Texture/DrawPolygon3D.h"
+#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
+#include"../Lib/Texture/TextureFormat2D/TextureFormat2D.h"
+#include"../Lib/Texture/TextureFormat3D/TextureFormat3D.h"
+#include"../Lib/Texture/DrawPolygon3D/DrawPolygon3D.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
-#include"../Lib/XFile/XFile.h"
-#include"../Lib/FBX/FBX.h"
+#include"../Lib/3D/XFile/XFile.h"
+#include"../Lib/3D/FBX/FBX.h"
 
 
 

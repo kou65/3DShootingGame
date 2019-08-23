@@ -91,14 +91,8 @@
     <Filter Include="Lib\Texture\TextureData2D">
       <UniqueIdentifier>{85fa624c-2030-4413-8fe4-62cb469cfed3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\HierarchyXFile">
-      <UniqueIdentifier>{eea833d8-27a4-4114-be94-67354f495b33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\OBJFile">
       <UniqueIdentifier>{b7acf513-46d9-4210-968c-68fcacca6f45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\FBXFile">
-      <UniqueIdentifier>{0a92e014-0de2-4d74-8a08-f629c17d8489}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,44 +135,35 @@
     <ClCompile Include="Lib\D3D9\D3D9.cpp">
       <Filter>Lib\D3D9</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Camera3D\Camera3D.cpp">
-      <Filter>Lib\Camera3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Light\Light.cpp">
-      <Filter>Lib\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\D3DDefaultMesh\D3DDefaultMesh.cpp">
-      <Filter>Lib\D3DDefaultMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\XFile\XFile.cpp">
+    <ClCompile Include="Lib\3D\XFile\XFile.cpp">
       <Filter>Lib\XFile</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Texture\TextureManager.cpp">
-      <Filter>Lib\Texture\TextureManager</Filter>
+    <ClCompile Include="Lib\3D\Camera3D\Camera3D.cpp">
+      <Filter>Lib\Camera3D</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Texture\DrawPolygon2D.cpp">
-      <Filter>Lib\Texture\DrawPolygon2D</Filter>
+    <ClCompile Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.cpp">
+      <Filter>Lib\D3DDefaultMesh</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Texture\TextureFormat2D.cpp">
-      <Filter>Lib\Texture\TextureFormat2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Texture\DrawPolygon3D.cpp">
-      <Filter>Lib\Texture\DrawPolygon3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Texture\TextureFormat3D.cpp">
-      <Filter>Lib\Texture\TextureFormat3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\HierarchyXFile\HierarchyXFile.cpp">
-      <Filter>Lib\HierarchyXFile</Filter>
-    </ClCompile>
-    <ClCompile Include="OBJFile.cpp">
+    <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp">
       <Filter>Lib\OBJFile</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\FBX\FBX.cpp">
-      <Filter>Lib\FBXFile</Filter>
+    <ClCompile Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.cpp">
+      <Filter>Lib\Texture\DrawPolygon2D</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Lib</Filter>
+    <ClCompile Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.cpp">
+      <Filter>Lib\Texture\DrawPolygon3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\Textureformat2D\TextureFormat2D.cpp">
+      <Filter>Lib\Texture\TextureFormat2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\TextureFormat3D\TextureFormat3D.cpp">
+      <Filter>Lib\Texture\TextureFormat3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp">
+      <Filter>Lib\Texture\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\Light\Light.cpp">
+      <Filter>Lib\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,50 +203,41 @@
     <ClInclude Include="Lib\D3D9\D3D9.h">
       <Filter>Lib\D3D9</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Camera3D\Camera3D.h">
-      <Filter>Lib\Camera3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Light\Light.h">
-      <Filter>Lib\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\D3DDefaultMesh\D3DDefaultMesh.h">
-      <Filter>Lib\D3DDefaultMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\XFile\XFile.h">
+    <ClInclude Include="Lib\3D\XFile\XFile.h">
       <Filter>Lib\XFile</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureManager.h">
-      <Filter>Lib\Texture\TextureManager</Filter>
+    <ClInclude Include="Lib\3D\Camera3D\Camera3D.h">
+      <Filter>Lib\Camera3D</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\DrawPolygon2D.h">
-      <Filter>Lib\Texture\DrawPolygon2D</Filter>
+    <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h">
+      <Filter>Lib\D3DDefaultMesh</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureFormat2D.h">
-      <Filter>Lib\Texture\TextureFormat2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\DrawPolygon3D.h">
-      <Filter>Lib\Texture\DrawPolygon3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureFormat3D.h">
-      <Filter>Lib\Texture\TextureFormat3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureData3D.h">
-      <Filter>Lib\Texture\TextureData3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureData2D.h">
-      <Filter>Lib\Texture\TextureData2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\HierarchyXFile\HierarchyXFile.h">
-      <Filter>Lib\HierarchyXFile</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJFile.h">
+    <ClInclude Include="Lib\3D\OBJ\OBJFile.h">
       <Filter>Lib\OBJFile</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\FBX\FBX.h">
-      <Filter>Lib\FBXFile</Filter>
+    <ClInclude Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.h">
+      <Filter>Lib\Texture\DrawPolygon2D</Filter>
     </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Lib</Filter>
+    <ClInclude Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.h">
+      <Filter>Lib\Texture\DrawPolygon3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h">
+      <Filter>Lib\Texture\TextureData2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h">
+      <Filter>Lib\Texture\TextureData3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\Textureformat2D\TextureFormat2D.h">
+      <Filter>Lib\Texture\TextureFormat2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureFormat3D\TextureFormat3D.h">
+      <Filter>Lib\Texture\TextureFormat3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h">
+      <Filter>Lib\Texture\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Light\Light.h">
+      <Filter>Lib\Light</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include<string>
-#include"DrawPolygon3D.h"
+#include"../DrawPolygon3D/DrawPolygon3D.h"
 
 
 

@@ -1,12 +1,12 @@
 ﻿#include"DrawPolygon3D.h"
-#include"../D3D9/D3D9.h"
-#include"../UV/UV.h"
-#include"TextureFormat3D.h"
-#include"../../SetRenderStateFile/SetRenderStateFile.h"
+#include"../../D3D9/D3D9.h"
+#include"../../UV/UV.h"
+#include"../TextureFormat3D/TextureFormat3D.h"
+#include"../../../SetRenderStateFile/SetRenderStateFile.h"
 
 
 
-// 回転順序は固定
+// MEMO 回転順序は固定
 
 
 struct CustomVertex3D {
