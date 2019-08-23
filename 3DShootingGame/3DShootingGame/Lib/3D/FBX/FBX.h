@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include<fbxsdk.h>
+//#include<fbxsdk.h>
 #include<string>
 
-#pragma comment(lib,"libfbxsdk.lib")
-#pragma comment(lib,"libfbxsdk-md.lib")
+//#pragma comment(lib,"libfbxsdk.lib")
+//#pragma comment(lib,"libfbxsdk-md.lib")
 
-
+/*
 class FBX {
 public:
 
@@ -47,4 +47,4 @@ private:
 	// シーンの作成
 	FbxScene * m_fbx_scene;
 
-};
+};*/

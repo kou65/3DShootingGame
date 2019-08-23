@@ -1,8 +1,8 @@
-﻿#include"DrawPolygon3D.h"
-#include"../../D3D9/D3D9.h"
-#include"../../UV/UV.h"
-#include"../TextureFormat3D/TextureFormat3D.h"
-#include"../../../SetRenderStateFile/SetRenderStateFile.h"
+﻿#include"../Sprite3D/Sprite3D.h"
+#include"../../../Graphics/Graphics.h"
+#include"../../../UV/UV.h"
+#include"../../Sprite3D/Sprite3DData/Sprite3DData.h"
+#include"../../../../SetRenderStateFile/SetRenderStateFile.h"
 
 
 
@@ -26,21 +26,21 @@ struct CustomVertex3D {
 #define FVF_3D (D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
-void DrawPolygon3D::BoardDraw(
-	TextureFormat3D texture_format_3d
+void Sprite3D::BoardDraw(
+	Sprite3DData texture_format_3d
 ) {
 
 	// ライトオフ
 	SetRenderStateFile::LightMode(FALSE);
-	D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, NULL);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, NULL);
 
 	// trueなら背面カリングモード無し
-	D3D9::GetLpDirect3DDevice9()->SetRenderState(
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
 		D3DRS_CULLMODE, texture_format_3d.is_back_cull_mode ?
 		D3DCULL_CCW : D3DCULL_NONE
 	);
 
-	D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 
 	// 0.5fで中心にする。
@@ -118,26 +118,26 @@ void DrawPolygon3D::BoardDraw(
 
 
 	// ワールド座標変換
-	D3D9::GetLpDirect3DDevice9()->SetTransform(D3DTS_WORLD,&matrix_world);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(D3DTS_WORLD,&matrix_world);
 
 	// どのように描画するか
-	D3D9::GetLpDirect3DDevice9()->SetFVF(FVF_3D);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_3D);
 
 	// テクスチャ描画しない
 	if (texture_format_3d.texture_name != NULL) {
 
 		// テクスチャをセット
-		D3D9::GetLpDirect3DDevice9()->SetTexture(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
 			0,
 			TextureManager::GetInstance()->GetTextureData2D(
 			texture_format_3d.texture_name).p_texture_buffer);
 	}
 	else {
-		D3D9::GetLpDirect3DDevice9()->SetTexture(0, NULL);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
 	}
 	
 	// プリミティブを形成(プリミティブの数は極力減らした方がいい)
-	D3D9::GetLpDirect3DDevice9()->
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->
 		DrawPrimitiveUP(
 			D3DPT_TRIANGLELIST,
 			2,
@@ -146,12 +146,12 @@ void DrawPolygon3D::BoardDraw(
 		);
 
 	// テクスチャ設定リセット
-	D3D9::GetLpDirect3DDevice9()->SetTexture(0, NULL);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
 }
 
 
 
-D3DXMATRIX DrawPolygon3D::CalcMatrixTransform(
+D3DXMATRIX Sprite3D::CalcMatrixTransform(
 	D3DXVECTOR3 pos,
 	D3DXVECTOR3 scale,
 	PolygonDirection dir) {
@@ -198,7 +198,7 @@ D3DXMATRIX DrawPolygon3D::CalcMatrixTransform(
 }
 
 
-D3DXMATRIX DrawPolygon3D::CalcMatrixRotation(
+D3DXMATRIX Sprite3D::CalcMatrixRotation(
 	PolygonDirection dir
 ) {
 

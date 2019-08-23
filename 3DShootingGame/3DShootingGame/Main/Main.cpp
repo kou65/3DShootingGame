@@ -6,6 +6,7 @@
 #include"../Lib/D3DFont/D3DFont.h"
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
+#include"../Lib/Lib/Lib.h"
 
 
 
@@ -13,24 +14,13 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 
-	// 初期化
-	if (Window::Init() == false) {
-		return -1;
+	// ライブラリの初期化
+	if (Lib::Init() == false) {
+		return false;
 	}
-	if (D3D9::Init() == false) {
-		return -1;
-	}
-
-	DirectInput::Init();
-
-	Sound::Init();
-
-	D3DFont::Init();
-
-	JoyStick::Init();
 
 	// 背景を青にする
-	D3D9::SetClearBackGroundColor(0x0000ff);
+	Graphics::GetInstance()->SetClearBackGroundColor(0x0000ff);
 
 	// リソース読み込み
 	Resource::LoadResource();
@@ -49,7 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		DebugMode::GetInstance().Update();
 
 		// 描画開始
-		if (D3D9::DrawStart() == true) {
+		if (Graphics::GetInstance()->DrawStart() == true) {
 
 			// デバッグの描画
 			DebugMode::GetInstance().Draw();
@@ -57,14 +47,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		}
 
 		// 描画終了
-		D3D9::DrawEnd();
+		Graphics::GetInstance()->DrawEnd();
 	}
 
-	// 解放処理
-	DebugMode::GetInstance().Release();
-	Sound::Release();
-	DirectInput::Release();
-	D3D9::Release();
+	Lib::Release();
 
 	return 0;
 }

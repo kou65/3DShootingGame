@@ -1,9 +1,9 @@
-﻿#include"TextureFormat2D.h"
+﻿#include"../Sprite2DData/Sprite2DData.h"
 
 
 
 
-TextureFormat2D::TextureFormat2D(
+Sprite2DData::Sprite2DData(
 	float x,
 	float y,
 	const char* texture_name,
@@ -18,7 +18,7 @@ TextureFormat2D::TextureFormat2D(
 	int graph_num,
 	float tu,
 	float tv,
-	DrawPolygon2D::SamplerStateType state_type 
+	Graphics::SamplerStateType state_type
 ) {
 
 	// それぞれのプロパティに代入

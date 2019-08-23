@@ -1,7 +1,7 @@
 ﻿#include"../../UV/UV.h"
-#include"../TextureManager/TextureManager.h"
-#include"../TextureFormat2D/TextureFormat2D.h"
-#include"DrawPolygon2D.h"
+#include"../../Texture/TextureManager/TextureManager.h"
+#include"../Sprite2DData/Sprite2DData.h"
+#include"../Sprite2D/Sprite2D.h"
 
 
 
@@ -21,7 +21,7 @@ struct CustomVertex2D
 
 
 
-void DrawPolygon2D::BoardDraw(TextureFormat2D texture_format) {
+void Sprite2D::BoardDraw(Sprite2DData texture_format) {
 	
 	// テクスチャが存在しているかどうか
 	if (TextureManager::GetInstance()->Find2DTexture(
@@ -54,10 +54,10 @@ void DrawPolygon2D::BoardDraw(TextureFormat2D texture_format) {
 	// uvカットがオンならば
 	if (texture_format.tu_cut_num > 0 || texture_format.tv_cut_num > 0) {
 
-		if (texture_format.type == CLAMP) {
+		if (texture_format.type == Graphics::CLAMP) {
 			uv.AnimationToTheRightDivGraph(texture_format.graph_num);
 		}
-		else if (texture_format.type == MIRROR) {
+		else if (texture_format.type == Graphics::MIRROR) {
 			uv.AnimationToTheLeftDivGraph(texture_format.graph_num);
 		}
 	}
@@ -108,41 +108,41 @@ void DrawPolygon2D::BoardDraw(TextureFormat2D texture_format) {
 
 
 	// VERTEX3Dの構造情報をDirectXへ通知。
-	D3D9::GetLpDirect3DDevice9()->SetFVF(FVF_2D);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_2D);
 
 	// デバイスにそのまま渡すことができる。
-	D3D9::GetLpDirect3DDevice9()->SetTexture(
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
 		0,
 		TextureManager::GetInstance()->GetTextureData2D(
 			texture_format.texture_name));
 
 	// 図形を元にポリゴン作成
-	D3D9::GetLpDirect3DDevice9()->DrawPrimitiveUP(
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN,
 		2,
-		custom_vertex,// cv カスタムバーテックスのポインタ
+		custom_vertex,
 		sizeof(CustomVertex2D)
 	);
 
 	// テクスチャ設定リセット
-	D3D9::GetLpDirect3DDevice9()->SetTexture(0, NULL);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
 
 }
 
 
-bool DrawPolygon2D::SetSamplerStateSelect(SamplerStateType type) {
+bool Sprite2D::SetSamplerStateSelect(Graphics::SamplerStateType type) {
 
 	switch (type) {
 
-	case CLAMP:
+	case Graphics::CLAMP:
 
-		D3D9::SamplerStateClamp();
+		Graphics::GetInstance()->SamplerStateClamp();
 
 		return false;
 
-	case MIRROR:
+	case Graphics::MIRROR:
 
-		D3D9::SamplerStateUMirror();
+		Graphics::GetInstance()->SamplerStateUMirror();
 
 		return true;
 	}
@@ -151,7 +151,7 @@ bool DrawPolygon2D::SetSamplerStateSelect(SamplerStateType type) {
 }
 
 
-D3DXMATRIX DrawPolygon2D::CalcMatrixTransform(
+D3DXMATRIX Sprite2D::CalcMatrixTransform(
 	const float &x,
 	const float &y,
 	const float &width_scale,

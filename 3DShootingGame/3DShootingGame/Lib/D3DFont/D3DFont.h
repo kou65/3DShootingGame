@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include<d3dx9.h>
-#include"../D3D9/D3D9.h"
+#include"../Graphics/Graphics.h"
 
 #pragma comment(lib,"d3dx9.lib")
 
@@ -29,10 +29,4 @@ namespace D3DFont {
 		const float &pos_y,
 		int format_size,
 		const char*format, ...);
-
-	// 描画開始
-	void Begin();
-
-	// 描画終了
-	void End();
 }

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
-#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
 #include"../Lib/Sound/Sound.h"
 #include<string>
 #include"../Lib/3D/Camera3D/Camera3D.h"
@@ -13,7 +13,6 @@
 // シングルトンデバッグモード
 class DebugMode{
 public:
-
 
 	bool IsEnd();
 
@@ -38,7 +37,7 @@ private:
 
 private:
 
-	Light light;
+	Light *light;
 
 	Camera3D *camera_3d;
 

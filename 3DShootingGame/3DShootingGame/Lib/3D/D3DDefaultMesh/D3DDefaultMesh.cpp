@@ -14,7 +14,7 @@ D3DDefaultMesh::D3DDefaultMesh() {
 
 void D3DDefaultMesh::AllDraw() {
 
-	Light light;
+	Light light(Graphics::GetInstance());
 
 	light.NormalLightOn();
 
@@ -47,13 +47,13 @@ void D3DDefaultMesh::Draw(const LPD3DXMESH &p_mesh,const D3DXVECTOR3 &pos) {
 		pos.z
 	);
 	
-	D3D9::GetLpDirect3DDevice9()->SetTransform(
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
 		D3DTS_WORLD,
 		&matrix_world
 		);
 
 	// マテリアルをセット
-	D3D9::GetLpDirect3DDevice9()->SetMaterial(&material);
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetMaterial(&material);
 
 	p_mesh->DrawSubset(0);
 }
@@ -62,7 +62,7 @@ void D3DDefaultMesh::Draw(const LPD3DXMESH &p_mesh,const D3DXVECTOR3 &pos) {
 void D3DDefaultMesh::CreateTeapot() {
 
 	D3DXCreateTeapot(
-		D3D9::GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetLpDirect3DDevice9(),
 		&m_p_teapot,
 		NULL
 	);
@@ -71,7 +71,7 @@ void D3DDefaultMesh::CreateTeapot() {
 
 void D3DDefaultMesh::CreateTorus() {
 	D3DXCreateTorus(
-		D3D9::GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetLpDirect3DDevice9(),
 		0.3f,
 		0.8f,
 		32,
@@ -84,7 +84,7 @@ void D3DDefaultMesh::CreateTorus() {
 
 void D3DDefaultMesh::CreateCone() {
 	D3DXCreateCylinder(
-		D3D9::GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetLpDirect3DDevice9(),
 		0.7f,
 		0.0f,
 		1.5f,

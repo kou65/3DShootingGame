@@ -70,20 +70,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\lib\vs2017\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\lib\vs2017\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\lib\vs2017\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files\Autodesk\FBX\FBX SDK\2019.5\lib\vs2017\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -119,7 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -136,7 +136,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -151,8 +151,9 @@
     <ClCompile Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.cpp" />
     <ClCompile Include="Lib\3D\Light\Light.cpp" />
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp" />
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.cpp" />
     <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
-    <ClCompile Include="Lib\D3D9\D3D9.cpp" />
     <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -168,11 +169,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Lib\Graphics\Graphics.cpp" />
+    <ClCompile Include="Lib\Lib\Lib.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
-    <ClCompile Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.cpp" />
-    <ClCompile Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.cpp" />
-    <ClCompile Include="Lib\Texture\Textureformat2D\TextureFormat2D.cpp" />
-    <ClCompile Include="Lib\Texture\TextureFormat3D\TextureFormat3D.cpp" />
+    <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp" />
+    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2D.cpp" />
     <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp" />
     <ClCompile Include="Lib\UV\UV.cpp" />
     <ClCompile Include="Lib\Window\Window.cpp" />
@@ -186,8 +187,9 @@
     <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h" />
     <ClInclude Include="Lib\3D\Light\Light.h" />
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h" />
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.h" />
     <ClInclude Include="Lib\3D\XFile\XFile.h" />
-    <ClInclude Include="Lib\D3D9\D3D9.h" />
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -203,13 +205,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Lib\Graphics\Graphics.h" />
+    <ClInclude Include="Lib\Lib\Lib.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
-    <ClInclude Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.h" />
-    <ClInclude Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.h" />
+    <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h" />
+    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2D.h" />
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
-    <ClInclude Include="Lib\Texture\Textureformat2D\TextureFormat2D.h" />
-    <ClInclude Include="Lib\Texture\TextureFormat3D\TextureFormat3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
     <ClInclude Include="Lib\UV\UV.h" />
     <ClInclude Include="Lib\Window\Window.h" />

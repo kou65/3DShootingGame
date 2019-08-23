@@ -1,9 +1,9 @@
 ﻿#include"DebugMode.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
-#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
-#include"../Lib/Texture/TextureFormat2D/TextureFormat2D.h"
-#include"../Lib/Texture/TextureFormat3D/TextureFormat3D.h"
-#include"../Lib/Texture/DrawPolygon3D/DrawPolygon3D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
+#include"../Lib/Sprite2D/Sprite2DData/Sprite2DData.h"
+#include"../Lib/3D/Sprite3D/Sprite3DData/Sprite3DData.h"
+#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3D.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/FBX/FBX.h"
@@ -13,9 +13,11 @@
 
 DebugMode::DebugMode() {
 
+	light = new Light(Graphics::GetInstance());
+
 	camera_3d = new Camera3D(Camera3D::TPS);
 	m_is_program_stop = false;
-	light.On();
+	light->On();
 }
 
 
@@ -139,13 +141,13 @@ void DebugMode::Draw() {
 		D3DXVECTOR3(-30.f, 0.f, 0.f)
 	);
 
-		TextureFormat3D td(0.f,0.f,0.f,"ground");
+		Sprite3DData td(0.f,0.f,0.f,"ground");
 		td.scale_width = 1000.f;
 		td.scale_height = 1000.f;
 		td.polygon_dir = FLOOR;
 		td.pos.y = -5.f;
 
-		DrawPolygon3D::GetInstance()->BoardDraw(
+		Sprite3D::GetInstance()->BoardDraw(
 			td
 		);
 

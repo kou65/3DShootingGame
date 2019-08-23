@@ -129,7 +129,7 @@ void Camera3D::FPSTransform() {
 	D3DXMatrixInverse(&matrix_view, NULL, &matrix_pos);
 
 	// ビュー座標変換
-	D3D9::GetLpDirect3DDevice9()->SetTransform(
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
 		D3DTS_VIEW,
 		&matrix_view);
 
@@ -274,7 +274,7 @@ void Camera3D::TPSTransform(
 		);
 
 		// ビュー座標変換
-		D3D9::GetLpDirect3DDevice9()->SetTransform(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
 			D3DTS_VIEW,
 			&matrix_view);
 	}
@@ -416,7 +416,7 @@ void Camera3D::TPSQuaternionTransform() {
 		D3DXMatrixInverse(&matrix_view, NULL, &matrix_view);
 
 		// ビュー座標変換
-		D3D9::GetLpDirect3DDevice9()->SetTransform(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
 			D3DTS_VIEW,
 			&matrix_view);
 	}
@@ -446,7 +446,7 @@ void Camera3D::ProjectionTransform() {
 		);
 
 		// プロジェクション座標変換
-		D3D9::GetLpDirect3DDevice9()->SetTransform(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
 			D3DTS_PROJECTION,
 			&matrix_proj
 		);

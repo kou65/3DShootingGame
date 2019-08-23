@@ -1,5 +1,5 @@
 ﻿#include"TextureManager.h"
-#include"../../D3D9/D3D9.h"
+#include"../../Graphics/Graphics.h"
 
 
 
@@ -51,7 +51,7 @@ void TextureManager::Load2D(
 	// EXバージョンの読み込み
 	result = D3DXCreateTextureFromFileEx(
 		// window_device
-		D3D9::GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetLpDirect3DDevice9(),
 		// ファイル名
 		file_name,
 		// 読み込むファイル幅
@@ -95,8 +95,11 @@ void TextureManager::Load3D(
 	// テクスチャ生成
 	m_texture_data3D_list[texture_name] = new TextureData3D;
 
+	// 要素追加
+	m_texture_data3D_list[texture_name]->texture_list.emplace_back();
+
 	result = D3DXCreateTextureFromFile(
-		D3D9::GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetLpDirect3DDevice9(),
 		file_name,
 		&m_texture_data3D_list[texture_name]->texture_list[texture_num]
 	);

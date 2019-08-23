@@ -15,16 +15,16 @@ void Light::On() {
 	m_light.Ambient.b = 0.5f;
 	m_light.Range = 1000;
 
-	D3D9::GetLpDirect3DDevice9()->SetLight(0, &m_light);
+	graphics->GetLpDirect3DDevice9()->SetLight(0, &m_light);
 	// ライトオン
-	D3D9::GetLpDirect3DDevice9()->LightEnable(0, true);
-	D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, TRUE);
-	D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_AMBIENT, 0x00808080);   // アンビエントライト
+	graphics->GetLpDirect3DDevice9()->LightEnable(0, true);
+	graphics->GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, TRUE);
+	graphics->GetLpDirect3DDevice9()->SetRenderState(D3DRS_AMBIENT, 0x00808080);   // アンビエントライト
 }
 
 void Light::NormalLightOn() {
 
-	LPDIRECT3DDEVICE9 device = D3D9::GetLpDirect3DDevice9();
+	LPDIRECT3DDEVICE9 device = graphics->GetLpDirect3DDevice9();
 
 	// 発電所を回す
 	device->SetRenderState(D3DRS_LIGHTING,TRUE);

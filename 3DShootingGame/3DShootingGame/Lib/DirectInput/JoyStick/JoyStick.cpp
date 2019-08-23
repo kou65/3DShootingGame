@@ -31,7 +31,7 @@ namespace JoyStick {
 	bool EnumDeviceUpdate();
 
 
-	void Init() {
+	bool Init() {
 
 		p_joy_stick_device = NULL;
 
@@ -40,6 +40,7 @@ namespace JoyStick {
 			ZeroMemory(&joy[i], sizeof(joy[i]));
 		}
 
+		return true;
 	}
 
 

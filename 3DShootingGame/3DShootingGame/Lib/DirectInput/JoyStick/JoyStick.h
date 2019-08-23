@@ -9,7 +9,7 @@
 
 namespace JoyStick {
 
-	void Init();
+	bool Init();
 
 	void Update();
 

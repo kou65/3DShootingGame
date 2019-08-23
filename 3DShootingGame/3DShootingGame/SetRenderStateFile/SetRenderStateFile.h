@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../Lib/D3D9/D3D9.h"
+#include"../Lib/Graphics/Graphics.h"
 
 
 namespace SetRenderStateFile {
