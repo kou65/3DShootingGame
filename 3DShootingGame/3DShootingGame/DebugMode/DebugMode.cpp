@@ -6,7 +6,8 @@
 #include"../Lib/Texture/DrawPolygon3D.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/XFile/XFile.h"
-#include"../FBX.h"
+#include"../Lib/FBX/FBX.h"
+
 
 
 
@@ -51,8 +52,6 @@ void DebugMode::Update() {
 		// 終了
 		return;
 	}
-
-	FBX::Scene();
 
 	CameraRotation();
 
