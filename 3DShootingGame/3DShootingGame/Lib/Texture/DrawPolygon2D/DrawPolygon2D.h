@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../D3D9/D3D9.h"
+#include"../../D3D9/D3D9.h"
 
 
 // 前方宣言

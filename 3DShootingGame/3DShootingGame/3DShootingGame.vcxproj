@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BBE490A6-E847-4128-B380-61F3CFF635AC}</ProjectGuid>
     <RootNamespace>My3DShootingGame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,9 +147,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DebugMode\DebugMode.cpp" />
-    <ClCompile Include="Lib\Camera3D\Camera3D.cpp" />
+    <ClCompile Include="Lib\3D\Camera3D\Camera3D.cpp" />
+    <ClCompile Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.cpp" />
+    <ClCompile Include="Lib\3D\Light\Light.cpp" />
+    <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
+    <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
     <ClCompile Include="Lib\D3D9\D3D9.cpp" />
-    <ClCompile Include="Lib\D3DDefaultMesh\D3DDefaultMesh.cpp" />
     <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -159,42 +162,32 @@
     <ClCompile Include="Lib\DirectInput\DirectInput.cpp" />
     <ClCompile Include="Lib\DirectInput\JoyStick\JoyStick.cpp" />
     <ClCompile Include="Lib\DirectInput\KeyBoard\KeyBoard.cpp" />
-    <ClCompile Include="Lib\FBX\FBX.cpp" />
     <ClCompile Include="Lib\FPS\FPS.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Lib\HierarchyXFile\HierarchyXFile.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Lib\Light\Light.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
-    <ClCompile Include="Lib\Texture\DrawPolygon2D.cpp" />
-    <ClCompile Include="Lib\Texture\DrawPolygon3D.cpp" />
-    <ClCompile Include="Lib\Texture\TextureFormat2D.cpp" />
-    <ClCompile Include="Lib\Texture\TextureFormat3D.cpp" />
-    <ClCompile Include="Lib\Texture\TextureManager.cpp" />
+    <ClCompile Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.cpp" />
+    <ClCompile Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.cpp" />
+    <ClCompile Include="Lib\Texture\Textureformat2D\TextureFormat2D.cpp" />
+    <ClCompile Include="Lib\Texture\TextureFormat3D\TextureFormat3D.cpp" />
+    <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp" />
     <ClCompile Include="Lib\UV\UV.cpp" />
     <ClCompile Include="Lib\Window\Window.cpp" />
-    <ClCompile Include="Lib\XFile\XFile.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
-    <ClCompile Include="OBJFile.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMode\DebugMode.h" />
-    <ClInclude Include="Lib\Camera3D\Camera3D.h" />
+    <ClInclude Include="Lib\3D\Camera3D\Camera3D.h" />
+    <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h" />
+    <ClInclude Include="Lib\3D\Light\Light.h" />
+    <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
+    <ClInclude Include="Lib\3D\XFile\XFile.h" />
     <ClInclude Include="Lib\D3D9\D3D9.h" />
-    <ClInclude Include="Lib\D3DDefaultMesh\D3DDefaultMesh.h" />
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -204,36 +197,23 @@
     <ClInclude Include="Lib\DirectInput\DirectInput.h" />
     <ClInclude Include="Lib\DirectInput\JoyStick\JoyStick.h" />
     <ClInclude Include="Lib\DirectInput\KeyBoard\KeyBoard.h" />
-    <ClInclude Include="Lib\FBX\FBX.h" />
     <ClInclude Include="Lib\FPS\FPS.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Lib\HierarchyXFile\HierarchyXFile.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Lib\Light\Light.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
-    <ClInclude Include="Lib\Texture\DrawPolygon2D.h" />
-    <ClInclude Include="Lib\Texture\DrawPolygon3D.h" />
-    <ClInclude Include="Lib\Texture\TextureData2D.h" />
-    <ClInclude Include="Lib\Texture\TextureData3D.h" />
-    <ClInclude Include="Lib\Texture\TextureFormat2D.h" />
-    <ClInclude Include="Lib\Texture\TextureFormat3D.h" />
-    <ClInclude Include="Lib\Texture\TextureManager.h" />
+    <ClInclude Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.h" />
+    <ClInclude Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.h" />
+    <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
+    <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
+    <ClInclude Include="Lib\Texture\Textureformat2D\TextureFormat2D.h" />
+    <ClInclude Include="Lib\Texture\TextureFormat3D\TextureFormat3D.h" />
+    <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
     <ClInclude Include="Lib\UV\UV.h" />
     <ClInclude Include="Lib\Window\Window.h" />
-    <ClInclude Include="Lib\XFile\XFile.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
-    <ClInclude Include="OBJFile.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

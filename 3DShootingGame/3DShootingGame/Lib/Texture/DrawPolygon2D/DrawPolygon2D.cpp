@@ -1,6 +1,6 @@
-﻿#include"../UV/UV.h"
-#include"TextureManager.h"
-#include"TextureFormat2D.h"
+﻿#include"../../UV/UV.h"
+#include"../TextureManager/TextureManager.h"
+#include"../TextureFormat2D/TextureFormat2D.h"
 #include"DrawPolygon2D.h"
 
 

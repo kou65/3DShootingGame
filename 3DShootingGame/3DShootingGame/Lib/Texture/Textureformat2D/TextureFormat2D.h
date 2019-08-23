@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"DrawPolygon2D.h"
+#include"../DrawPolygon2D/DrawPolygon2D.h"
 #include<Windows.h>
 #include<string>
 

@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include"TextureData2D.h"
-#include"TextureData3D.h"
+#include"../TextureData2D/TextureData2D.h"
+#include"../TextureData3D/TextureData3D.h"
 #include<string>
 #include<unordered_map>
 #include<memory>

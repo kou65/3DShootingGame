@@ -1,5 +1,5 @@
 ﻿#include"FBX.h"
-#include"Lib\Window\Window.h"
+#include"../Window/Window.h"
 
 
 
@@ -38,18 +38,22 @@ bool FBX::FileOpen(std::string fbx_file_path) {
 	if (!m_importer->Initialize(fbx_file_path.c_str())) {
 
 		Window::TextMessageBox("FBXimporter初期化失敗");
+		return false;
 	}
 
 	// ファイルからシーンを読み込む
 	if (!m_importer->Import(m_fbx_scene)) {
 
 		Window::TextMessageBox("シーン読み込みに失敗");
+		return false;
 	}
 
 	// インポータの明示的な破棄
 	//m_importer->Destroy();
 
 	// ここに処理を書いていく
+
+	return true;
 
 }
 

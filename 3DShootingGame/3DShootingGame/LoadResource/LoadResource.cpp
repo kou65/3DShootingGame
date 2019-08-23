@@ -1,7 +1,7 @@
 ﻿#include "LoadResource.h"
 #include "../Lib/Sound/Sound.h"
-#include"../Lib/Texture/TextureManager.h"
-#include"../Lib/XFile/XFile.h"
+#include"../Lib/Texture/TextureManager/TextureManager.h"
+#include"../Lib/3D/XFile/XFile.h"
 
 
 

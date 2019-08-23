@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"TextureManager.h"
+#include"../TextureManager/TextureManager.h"
 
 
 

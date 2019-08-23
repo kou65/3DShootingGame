@@ -1,6 +1,5 @@
 ﻿#include"XFile.h"
-#include"../Texture/TextureManager.h"
-#include"../Texture/Texture.h"
+#include"../../Texture/TextureManager/TextureManager.h"
 #include"../Light/Light.h"
 
 
