@@ -149,6 +149,7 @@
     <ClCompile Include="DebugMode\DebugMode.cpp" />
     <ClCompile Include="Lib\3D\Camera3D\Camera3D.cpp" />
     <ClCompile Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.cpp" />
+    <ClCompile Include="Lib\3D\IndexBuffer\IndexBuffer.cpp" />
     <ClCompile Include="Lib\3D\Light\Light.cpp" />
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
     <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="DebugMode\DebugMode.h" />
     <ClInclude Include="Lib\3D\Camera3D\Camera3D.h" />
     <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h" />
+    <ClInclude Include="Lib\3D\IndexBuffer\IndexBuffer.h" />
     <ClInclude Include="Lib\3D\Light\Light.h" />
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h" />

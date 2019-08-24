@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include"Lib/D3D9/D3D9.h"
+#include"../../Graphics/Graphics.h"
 #include<vector>
+
 
 
 struct CustomVertex {
@@ -14,12 +15,16 @@ struct CustomVertex {
 
 
 class IndexBuffer {
+
+	IndexBuffer(Graphics * graphics) {
+		this->graphics = graphics;
+	}
 	
 
 	bool Create(DWORD polygon_num) {
 
 		// インデックスバッファ作成
-		D3D9::GetLpDirect3DDevice9()->CreateIndexBuffer(
+		graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
 			// インデックスバッファのサイズをバイト単位で指定
 			polygon_num * 3,
 			// 頂点バッファをどのように使用するか
@@ -66,7 +71,7 @@ class IndexBuffer {
 	void Draw() {
 
 		// ストリームをセット
-		D3D9::GetLpDirect3DDevice9()->SetStreamSource(
+		graphics->GetLpDirect3DDevice9()->SetStreamSource(
 			0,
 			p_vertex_buffer9,
 			D3DDEVCAPS2_DMAPNPATCH,
@@ -74,17 +79,17 @@ class IndexBuffer {
 		);
 
 		// どの情報を伝えるか
-		D3D9::GetLpDirect3DDevice9()->SetFVF(D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_XYZ);
+		graphics->GetLpDirect3DDevice9()->SetFVF(D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_XYZ);
 
 		// インデックス番号をデバイスに設定する
-		D3D9::GetLpDirect3DDevice9()->SetIndices(
+		graphics->GetLpDirect3DDevice9()->SetIndices(
 			p_index_buffer9
 		);
 
 		// 仮
 		int vertex_num = 1;
 
-		D3D9::GetLpDirect3DDevice9()->DrawIndexedPrimitive(
+		graphics->GetLpDirect3DDevice9()->DrawIndexedPrimitive(
 			// 頂点のつなぎ方
 			D3DPT_TRIANGLELIST,
 			// 頂点インデックスの一番最初までのオフセット値を指定
@@ -110,4 +115,6 @@ private:
 	// バーテックスバッファ
 	IDirect3DVertexBuffer9 * p_vertex_buffer9;
 
+	// DirectGraphics
+	Graphics * graphics;
 };
