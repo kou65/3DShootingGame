@@ -11,7 +11,12 @@
 
 
 
+
 DebugMode::DebugMode() {
+
+	index_buffer = new IndexBuffer(Graphics::GetInstance());
+
+	index_buffer->Create(16);
 
 	light = new Light(Graphics::GetInstance());
 
@@ -123,6 +128,8 @@ void DebugMode::CameraRotation() {
 
 void DebugMode::Draw() {
 
+
+
 	camera_3d->TransformDraw();
 
 	// ライトモードをファルスにする
@@ -146,11 +153,15 @@ void DebugMode::Draw() {
 		td.scale_height = 1000.f;
 		td.polygon_dir = FLOOR;
 		td.pos.y = -5.f;
+		td.ofset.x = 0.0f;
+		td.ofset.y = 1.0f;
 
 		Sprite3D::GetInstance()->BoardDraw(
 			td
 		);
 
+
+		index_buffer->Draw();
 }
 
 

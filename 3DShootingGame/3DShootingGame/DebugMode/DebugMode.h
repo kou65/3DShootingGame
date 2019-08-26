@@ -7,6 +7,9 @@
 #include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/3D/Light/Light.h"
+#include"../Lib/3D/IndexBuffer/IndexBuffer.h"
+#include"../VertexBuffer.h"
+#include"../Lib/3D/IndexBuffer/IndexBuffer.h"
 
 
 
@@ -44,6 +47,8 @@ private:
 	D3DDefaultMesh d3d_mesh;
 
 	FPS fps;
+
+	IndexBuffer *index_buffer;
 
 	bool m_is_program_stop;
 };

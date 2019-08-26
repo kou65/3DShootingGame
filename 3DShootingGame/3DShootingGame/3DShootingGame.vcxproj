@@ -181,6 +181,10 @@
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
     <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
+    <ClCompile Include="VertexBuffer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugMode\DebugMode.h" />
@@ -219,6 +223,10 @@
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
     <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
+    <ClInclude Include="VertexBuffer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

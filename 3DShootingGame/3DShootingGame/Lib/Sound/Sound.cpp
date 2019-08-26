@@ -286,7 +286,6 @@ namespace Sound {
 			return false;
 		}
 
-
 		// 各フォーマット
 		MMRESULT mmRes;
 		MMCKINFO riff_chunk;

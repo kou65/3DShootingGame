@@ -22,6 +22,16 @@ public:
 
 private:
 
+	// 板形状
+	void ShapeBoard(
+		CustomVertex3D * custom_vertex3D,
+		int vertex_num,
+		float right,
+		float left,
+		float top,
+		float bottom
+	);
+
 	// 行列演算
 	D3DXMATRIX CalcMatrixTransform(
 		D3DXVECTOR3 pos,
@@ -33,4 +43,8 @@ private:
 	D3DXMATRIX CalcMatrixRotation(
 		PolygonDirection dir
 	);
+
+private:
+
+
 };

@@ -188,9 +188,9 @@ private:
 	void PresentParametersConfig(
 		D3DPRESENT_PARAMETERS & d3d_pp,
 		HWND window_handle,
-		float widht_size,
-		float height_size,
-		float back_buffer_count,
+		UINT widht_size,
+		UINT height_size,
+		UINT back_buffer_count,
 		bool windowed
 	);
 

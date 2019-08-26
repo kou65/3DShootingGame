@@ -27,7 +27,7 @@ struct CustomVertex3D {
 
 
 void Sprite3D::BoardDraw(
-	Sprite3DData texture_format_3d
+	Sprite3DData sprite_data
 ) {
 
 	// ライトオフ
@@ -36,7 +36,7 @@ void Sprite3D::BoardDraw(
 
 	// trueなら背面カリングモード無し
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
-		D3DRS_CULLMODE, texture_format_3d.is_back_cull_mode ?
+		D3DRS_CULLMODE, sprite_data.is_back_cull_mode ?
 		D3DCULL_CCW : D3DCULL_NONE
 	);
 
@@ -44,19 +44,18 @@ void Sprite3D::BoardDraw(
 
 
 	// 0.5fで中心にする。
-	float x1 = 1.f - texture_format_3d.ofset.x;
-	float x2 = texture_format_3d.ofset.x;
-	float y1 = 1.f - texture_format_3d.ofset.y;
-	float y2 = texture_format_3d.ofset.y;
-
+	float x1 = sprite_data.ofset.x - 1.f;
+	float x2 = sprite_data.ofset.x;
+	float y1 = sprite_data.ofset.y - 1.f;
+	float y2 = sprite_data.ofset.y;
 
 	// UV切り取り
 	UV uv(
-		texture_format_3d.tu_cut_num,
-		texture_format_3d.tv_cut_num);
+		sprite_data.tu_cut_num,
+		sprite_data.tv_cut_num);
 
-	if (texture_format_3d.is_graph_uv_cut == true) {
-		uv.AnimationToTheRightDivGraph(texture_format_3d.graph_num);
+	if (sprite_data.is_graph_uv_cut == true) {
+		uv.AnimationToTheRightDivGraph(sprite_data.graph_num);
 	}
 
 
@@ -110,10 +109,10 @@ void Sprite3D::BoardDraw(
 
 	// 行列計算
 	matrix_world = CalcMatrixTransform(
-		texture_format_3d.pos,
-		D3DXVECTOR3(texture_format_3d.scale_width,
-		texture_format_3d.scale_height,1.f),
-		texture_format_3d.polygon_dir
+		sprite_data.pos,
+		D3DXVECTOR3(sprite_data.scale_width,
+		sprite_data.scale_height,1.f),
+		sprite_data.polygon_dir
 	);
 
 
@@ -124,13 +123,13 @@ void Sprite3D::BoardDraw(
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_3D);
 
 	// テクスチャ描画しない
-	if (texture_format_3d.texture_name != NULL) {
+	if (sprite_data.texture_name != NULL) {
 
 		// テクスチャをセット
 		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
 			0,
 			TextureManager::GetInstance()->GetTextureData2D(
-			texture_format_3d.texture_name).p_texture_buffer);
+			sprite_data.texture_name).p_texture_buffer);
 	}
 	else {
 		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
@@ -147,8 +146,90 @@ void Sprite3D::BoardDraw(
 
 	// テクスチャ設定リセット
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
+
+	D3DXMATRIX init_matrix;
+
+	D3DXMatrixIdentity(&init_matrix);
+	
+	// ワールド座標初期化
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(D3DTS_WORLD,&init_matrix);
 }
 
+
+void Sprite3D::ShapeBoard(
+	CustomVertex3D * custom_vertex3D,
+	int vertex_num,
+	float right,
+	float left,
+	float top,
+	float bottom,
+	DWORD color
+) {
+
+	custom_vertex3D[0].vertex.x = left;
+	custom_vertex3D[0].vertex.y = top;
+	custom_vertex3D[0].color = color;
+	custom_vertex3D[0].uv.x = -1.f;
+	custom_vertex3D[0].uv.y = -1.f;
+
+	custom_vertex3D[1].vertex.x = right;
+	custom_vertex3D[1].vertex.y = top;
+	custom_vertex3D[1].color = color;
+	custom_vertex3D[1].uv.x = 0.f;
+	custom_vertex3D[1].uv.y = -1.f;
+
+	custom_vertex3D[2].vertex.x = left;
+	custom_vertex3D[2].vertex.y = bottom;
+	custom_vertex3D[2].color = color;
+	custom_vertex3D[2].uv.x = -1.f;
+	custom_vertex3D[2].uv.y = 0.f;
+
+	// トライアングルリスト
+	CustomVertex3D custom_vertex[6] = 
+	{
+
+		// 一つ目のポリゴン
+		{ { left,top,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ -1.f,-1.f },
+		},
+
+	{
+		{ right,top,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ 0.f,-1.f }
+	},
+
+	{
+		{ x1,y2,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ -1.f,0.f }
+	},
+
+
+		// 二つ目のポリゴン
+	{
+		{ x1,y2,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ -1.f,0.f }
+	},
+
+
+
+	{ { x2,y1,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ 0.f,-1.f }
+	},
+
+	{
+		{ x2,y2,0.f },
+		D3DXCOLOR(255,255,255,1),
+	{ 0.f,0.f }
+	},
+
+	};
+
+}
 
 
 D3DXMATRIX Sprite3D::CalcMatrixTransform(
