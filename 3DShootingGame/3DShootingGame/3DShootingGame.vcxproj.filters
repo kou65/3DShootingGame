@@ -100,6 +100,12 @@
     <Filter Include="Lib\Lib">
       <UniqueIdentifier>{51017bc5-9b93-4e87-9d57-89a3c4c641f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\VertexBuffer">
+      <UniqueIdentifier>{0041be8d-7c3f-4517-b990-c199d2c08d01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Object3DCustomVertex">
+      <UniqueIdentifier>{3a7ce534-60f8-46f9-89ba-b03910fc19a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Main.cpp">
@@ -177,8 +183,8 @@
     <ClCompile Include="Lib\3D\IndexBuffer\IndexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Lib</Filter>
+    <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp">
+      <Filter>Lib\VertexBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,8 +266,11 @@
     <ClInclude Include="Lib\3D\IndexBuffer\IndexBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Lib</Filter>
+    <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h">
+      <Filter>Lib\VertexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Object3DCustomVertex\Object3DCustomVertex.h">
+      <Filter>Lib\Object3DCustomVertex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

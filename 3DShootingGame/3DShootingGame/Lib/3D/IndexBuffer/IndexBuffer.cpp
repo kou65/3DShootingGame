@@ -1,22 +1,22 @@
 ﻿#include"IndexBuffer.h"
-#include"../../../VertexBuffer.h"
+#include"../VertexBuffer/VertexBuffer.h"
 
 
+
+IndexBuffer::IndexBuffer(Graphics * graphics) {
+	this->graphics = graphics;
+
+	m_p_vertex_buffer = new VertexBuffer(VertexBuffer::BOX);
+}
 
 
 bool IndexBuffer::Create(DWORD polygon_num) {
 
-	
-	// 頂点バッファ作成
-	vertex_buffer.Create(0, 0, 0, 0);
-
-
-	WORD * i;
 
 	// インデックスバッファ作成
 	graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
-		polygon_num * sizeof(WORD) * 4,
+		polygon_num * sizeof(WORD) * TOTAL_VERTEX_TYPE,
 		// 頂点バッファをどのように使用するか
 		D3DUSAGE_WRITEONLY,//D3DUSAGE_DYNAMIC,
 		// 一つのインデックスバッファのサイズをフラグで表す
@@ -24,23 +24,26 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 		// 頂点インデックスをどのメモリに置くか指定
 		D3DPOOL_MANAGED,
 		// IDirect3DIndexBuffer9インターフェースが返る
-		&p_index_buffer9,
+		&m_p_index_buffer9,
 		// 現在使用されていないので基本NULL
 		NULL
 	);
 
 	// nullチェック
-	if (p_index_buffer9 == nullptr) {
+	if (m_p_index_buffer9 == nullptr) {
 		return false;
 	}
 
-	if (FAILED(p_index_buffer9->Lock(
+
+	WORD * buffer;
+
+	if (FAILED(m_p_index_buffer9->Lock(
 		// ロックしたい位置をバイト単位で指定する
 		0,
 		// ロックするサイズをバイト単位で指定する
 		0,
 		// 指定した頂点インデックスバッファへのポインタが返る
-		(void**)&i,
+		(void**)&buffer,
 		// ロック目的をフラグで示す(大抵は節約なくロックする)
 		D3DLOCK_DISCARD
 	)
@@ -54,24 +57,24 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 
 	// 表面
 	{
-		i[0] = 0;
-		i[1] = 2;
-		i[2] = 1;
+		buffer[0] = 0;
+		buffer[1] = 2;
+		buffer[2] = 1;
 
-		i[3] = 2;
-		i[4] = 3;
-		i[5] = 1;
+		buffer[3] = 2;
+		buffer[4] = 3;
+		buffer[5] = 1;
 	}
 
 	// 裏面
 	{
-		i[6] = 4;
-		i[7] = 6;
-		i[8] = 5;
+		buffer[6] = 5;
+		buffer[7] = 6;
+		buffer[8] = 4;
 
-		i[9] = 6;
-		i[10] = 7;
-		i[11] = 5;
+		buffer[9] = 5;
+		buffer[10] = 7;
+		buffer[11] = 6;
 	}
 
 	// nullチェック
@@ -80,7 +83,7 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 	}
 
 	// アンロック
-	p_index_buffer9->Unlock();
+	m_p_index_buffer9->Unlock();
 
 	return true;
 }
@@ -99,15 +102,15 @@ void IndexBuffer::Draw() {
 	// ストリームをセット
 	graphics->GetLpDirect3DDevice9()->SetStreamSource(
 		0,
-		vertex_buffer,
+		*m_p_vertex_buffer,
 		0,
-		sizeof(CustomVertex)
+		sizeof(Object3DCustomVertex)
 	);
 
 
 	// インデックス番号をデバイスに設定する
 	graphics->GetLpDirect3DDevice9()->SetIndices(
-		p_index_buffer9
+		m_p_index_buffer9
 	);
 
 	// どの情報を伝えるか

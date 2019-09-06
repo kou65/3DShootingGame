@@ -98,8 +98,15 @@ namespace SetRenderStateFile {
 		BOOL is_enable
 	) {
 		// カリングモード無し
-		if (is_enable == false) {
-			Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		if (is_enable == FALSE) {
+			Graphics::GetInstance()->
+				GetLpDirect3DDevice9()->
+				SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		}
+		else if (is_enable == TRUE) {
+			Graphics::GetInstance()->
+				GetLpDirect3DDevice9()->
+				SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
 	}
 }

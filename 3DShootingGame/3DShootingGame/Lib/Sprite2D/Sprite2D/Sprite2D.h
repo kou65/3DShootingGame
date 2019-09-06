@@ -6,11 +6,6 @@
 class Sprite2D {
 public:
 
-	static Sprite2D *GetInstance() {
-		static Sprite2D draw_polygon_2d;
-		return &draw_polygon_2d;
-	}
-
 	// 板で描画する
 	void BoardDraw(Sprite2DData texture_format_2d);
 

@@ -4,15 +4,27 @@
 
 
 
+// MEMO 回転順序は固定
+
+
+struct CustomVertex3D {
+
+	// 頂点情報
+	D3DXVECTOR3 vertex;
+
+	// 頂点カラー
+	DWORD color;
+
+	// テクスチャ座標
+	D3DXVECTOR2 uv;
+};
+
+
+// テンプレートFVF3D
+#define FVF_3D (D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
+
+
 class Sprite3D {
-public:
-
-	// アクセス権
-	static Sprite3D *GetInstance(){
-		static Sprite3D draw_polygon3d;
-		return &draw_polygon3d;
-	}
-
 public:
 
 	// 板形状で描画
@@ -29,7 +41,8 @@ private:
 		float right,
 		float left,
 		float top,
-		float bottom
+		float bottom,
+		DWORD color
 	);
 
 	// 行列演算

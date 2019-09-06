@@ -11,7 +11,6 @@
 
 
 
-
 DebugMode::DebugMode() {
 
 	index_buffer = new IndexBuffer(Graphics::GetInstance());
@@ -23,6 +22,9 @@ DebugMode::DebugMode() {
 	camera_3d = new Camera3D(Camera3D::TPS);
 	m_is_program_stop = false;
 	light->On();
+
+	// オブジェクト読み込み
+	objfile.Load("Resource/3DModel/Lowpoly_Notebook_2.obj");
 }
 
 
@@ -129,7 +131,6 @@ void DebugMode::CameraRotation() {
 void DebugMode::Draw() {
 
 
-
 	camera_3d->TransformDraw();
 
 	// ライトモードをファルスにする
@@ -156,12 +157,19 @@ void DebugMode::Draw() {
 		td.ofset.x = 0.0f;
 		td.ofset.y = 1.0f;
 
-		Sprite3D::GetInstance()->BoardDraw(
+		Sprite3D sprite_3d;
+
+		sprite_3d.BoardDraw(
 			td
 		);
 
+		//index_buffer->Draw();
 
-		index_buffer->Draw();
+		//Graphics::GetInstance()->
+		//	GetLpDirect3DDevice9()->
+		//	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+		objfile.Draw(0);
 }
 
 

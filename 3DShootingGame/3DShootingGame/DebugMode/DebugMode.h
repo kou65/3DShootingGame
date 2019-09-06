@@ -2,15 +2,15 @@
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
 #include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
 #include"../Lib/Sound/Sound.h"
-#include<string>
 #include"../Lib/3D/Camera3D/Camera3D.h"
 #include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/3D/Light/Light.h"
 #include"../Lib/3D/IndexBuffer/IndexBuffer.h"
-#include"../VertexBuffer.h"
-#include"../Lib/3D/IndexBuffer/IndexBuffer.h"
+#include"../Lib/3D/VertexBuffer/VertexBuffer.h"
+#include"../Lib/3D/OBJ/OBJFile.h"
 
+#include<string>
 
 
 // シングルトンデバッグモード
@@ -47,6 +47,8 @@ private:
 	D3DDefaultMesh d3d_mesh;
 
 	FPS fps;
+
+	ObjFile objfile;
 
 	IndexBuffer *index_buffer;
 

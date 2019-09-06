@@ -3,27 +3,95 @@
 
 
 
-VertexBuffer::VertexBuffer() {
+VertexBuffer::VertexBuffer(int vertex_num) {
+
+	// グラフィック代入
 	this->graphics = Graphics::GetInstance();
+
+	// 頂点バッファ生成
+	Create(vertex_num,NONE);
 }
 
 
-void VertexBuffer::Create(int vertex_num, int pos_x, int pos_y, int pos_z) {
+VertexBuffer::VertexBuffer(Shape shape) {
 
+	// グラフィック代入
+	this->graphics = Graphics::GetInstance();
+
+	// 正方形頂点バッファ作成
+	Create(8, shape);
+}
+
+
+void VertexBuffer::Create(int vertex_num,Shape shape) {
 	
+	// 頂点バッファ作成
 	graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
-		sizeof(CustomVertex) * 8,
+		// 頂点バッファサイズ(CustomVertex * 頂点数)
+		sizeof(Object3DCustomVertex) * vertex_num,
+		// リソースの使用法
 		D3DUSAGE_WRITEONLY,
+		// 柔軟な頂点フォーマットの型を指定する
 		D3DFMT_INDEX16,
+		// 頂点バッファをどの種類のメモリに置くか
 		D3DPOOL_MANAGED,
+		// 頂点バッファ
 		&m_p_vertex_buffer9,
+		// phandleは現在使用されていない
 		NULL
 	);
 
 	// 頂点数分用意する
-	CustomVertex * v;
+	Object3DCustomVertex * v;
 
 	m_p_vertex_buffer9->Lock(0, 0, (void**)&v, 0);
+
+	// 形状ごとに頂点を作成する
+	if (shape == BOX) {
+
+		Cube(v);
+	}
+	// 独自の頂点情報を作成する 
+	else {
+
+		
+	}
+
+	m_p_vertex_buffer9->Unlock();
+}
+
+
+
+void VertexBuffer::Draw() {
+
+	if (m_p_vertex_buffer9 == nullptr) {
+		return;
+	}
+	
+	// テクスチャセット
+	//graphics->GetLpDirect3DDevice9()->SetTexture()
+
+
+	// 頂点処理の流れに頂点バッファを実際にセットできる
+	graphics->GetLpDirect3DDevice9()->SetStreamSource(
+		0,
+		m_p_vertex_buffer9,
+		0,
+		sizeof(Object3DCustomVertex)
+	);
+
+	graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
+
+	graphics->GetLpDirect3DDevice9()->DrawPrimitive(
+		D3DPT_TRIANGLESTRIP,
+		0,
+		2
+	);
+}
+
+
+void VertexBuffer::Cube(Object3DCustomVertex v[8]) {
+
 
 	// 正方形
 
@@ -56,42 +124,7 @@ void VertexBuffer::Create(int vertex_num, int pos_x, int pos_y, int pos_z) {
 		// 右下
 		v[7].vertex = D3DXVECTOR3(1, -1, 1);
 	}
-
-	m_p_vertex_buffer9->Unlock();
 }
-
-
-
-bool VertexBuffer::Draw() {
-
-	if (m_p_vertex_buffer9 == NULL) {
-		return false;
-	}
-	
-	// テクスチャセット
-	//graphics->GetLpDirect3DDevice9()->SetTexture()
-
-
-	// 頂点処理の流れに頂点バッファを実際にセットできる
-	graphics->GetLpDirect3DDevice9()->SetStreamSource(
-		0,
-		m_p_vertex_buffer9,
-		0,
-		sizeof(CustomVertex)
-	);
-
-	graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
-
-	graphics->GetLpDirect3DDevice9()->DrawPrimitive(
-		D3DPT_TRIANGLESTRIP,
-		0,
-		2
-	);
-
-	return true;
-}
-
-
 
 /*
 bool VertexBuffer::Load() {

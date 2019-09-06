@@ -6,25 +6,6 @@
 
 
 
-// MEMO 回転順序は固定
-
-
-struct CustomVertex3D {
-
-	// 頂点情報
-	D3DXVECTOR3 vertex;
-
-	// 頂点カラー
-	DWORD color;
-
-	// テクスチャ座標
-	D3DXVECTOR2 uv;
-};
-
-
-// テンプレートFVF3D
-#define FVF_3D (D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
-
 
 void Sprite3D::BoardDraw(
 	Sprite3DData sprite_data
@@ -35,10 +16,10 @@ void Sprite3D::BoardDraw(
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, NULL);
 
 	// trueなら背面カリングモード無し
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
-		D3DRS_CULLMODE, sprite_data.is_back_cull_mode ?
-		D3DCULL_CCW : D3DCULL_NONE
-	);
+	//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
+	//	D3DRS_CULLMODE, sprite_data.is_back_cull_mode ?
+	//	D3DCULL_CCW : D3DCULL_NONE
+	//);
 
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
@@ -166,68 +147,52 @@ void Sprite3D::ShapeBoard(
 	DWORD color
 ) {
 
-	custom_vertex3D[0].vertex.x = left;
-	custom_vertex3D[0].vertex.y = top;
-	custom_vertex3D[0].color = color;
-	custom_vertex3D[0].uv.x = -1.f;
-	custom_vertex3D[0].uv.y = -1.f;
-
-	custom_vertex3D[1].vertex.x = right;
-	custom_vertex3D[1].vertex.y = top;
-	custom_vertex3D[1].color = color;
-	custom_vertex3D[1].uv.x = 0.f;
-	custom_vertex3D[1].uv.y = -1.f;
-
-	custom_vertex3D[2].vertex.x = left;
-	custom_vertex3D[2].vertex.y = bottom;
-	custom_vertex3D[2].color = color;
-	custom_vertex3D[2].uv.x = -1.f;
-	custom_vertex3D[2].uv.y = 0.f;
-
-	// トライアングルリスト
-	CustomVertex3D custom_vertex[6] = 
+	// 1ポリゴン
 	{
+		custom_vertex3D[0].vertex.x = left;
+		custom_vertex3D[0].vertex.y = top;
+		custom_vertex3D[0].color = color;
+		custom_vertex3D[0].uv.x = -1.f;
+		custom_vertex3D[0].uv.y = -1.f;
 
-		// 一つ目のポリゴン
-		{ { left,top,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ -1.f,-1.f },
-		},
 
+		custom_vertex3D[1].vertex.x = right;
+		custom_vertex3D[1].vertex.y = top;
+		custom_vertex3D[1].color = color;
+		custom_vertex3D[1].uv.x = 0.f;
+		custom_vertex3D[1].uv.y = -1.f;
+
+
+		custom_vertex3D[2].vertex.x = left;
+		custom_vertex3D[2].vertex.y = bottom;
+		custom_vertex3D[2].color = color;
+		custom_vertex3D[2].uv.x = -1.f;
+		custom_vertex3D[2].uv.y = 0.f;
+	}
+
+	// 2ポリゴン
 	{
-		{ right,top,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ 0.f,-1.f }
-	},
-
-	{
-		{ x1,y2,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ -1.f,0.f }
-	},
+		custom_vertex3D[3].vertex.x = left;
+		custom_vertex3D[3].vertex.y = top;
+		custom_vertex3D[3].uv.x = -1.f;
+		custom_vertex3D[3].uv.x = 0.f;
+		custom_vertex3D[3].color = color;
 
 
-		// 二つ目のポリゴン
-	{
-		{ x1,y2,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ -1.f,0.f }
-	},
+		custom_vertex3D[4].vertex.x = right;
+		custom_vertex3D[4].vertex.y = top;
+		custom_vertex3D[4].uv.x = 0.f;
+		custom_vertex3D[4].uv.y = -1.f;
+		custom_vertex3D[4].color = color;
 
 
+		custom_vertex3D[5].vertex.x = right;
+		custom_vertex3D[5].vertex.y = bottom;
+		custom_vertex3D[5].uv.x = 0.f;
+		custom_vertex3D[5].uv.y = 0.f;
+		custom_vertex3D[5].color = color;
+	}
 
-	{ { x2,y1,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ 0.f,-1.f }
-	},
-
-	{
-		{ x2,y2,0.f },
-		D3DXCOLOR(255,255,255,1),
-	{ 0.f,0.f }
-	},
-
-	};
 
 }
 
