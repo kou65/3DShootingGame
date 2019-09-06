@@ -1,10 +1,15 @@
 ﻿#pragma once
-#include"../../D3D9/D3D9.h"
+#include"../../Graphics/Graphics.h"
 
 
 
 class Light {
 public:
+
+	Light(Graphics*graphics) {
+
+		this->graphics = graphics;
+	}
 
 	void NormalLightOn();
 
@@ -12,5 +17,9 @@ public:
 
 private:
 
+	// D3Dライト
 	D3DLIGHT9 m_light;
+
+	// DirectGraphics
+	Graphics *graphics;
 };

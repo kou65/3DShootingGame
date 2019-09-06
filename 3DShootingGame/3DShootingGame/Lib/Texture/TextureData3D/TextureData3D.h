@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../../D3D9/D3D9.h"
+#include"../../Graphics/Graphics.h"
 #include<vector>
 
 
@@ -9,6 +9,5 @@
 struct TextureData3D{
 
 	// テクスチャで使用するポインタ
-	//std::vector<LPDIRECT3DTEXTURE9>texture_list;
-	LPDIRECT3DTEXTURE9 texture_list[10];
+	std::vector<LPDIRECT3DTEXTURE9>texture_list;
 };

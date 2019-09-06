@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../DrawPolygon2D/DrawPolygon2D.h"
+#include"../../Graphics/Graphics.h"
 #include<Windows.h>
 #include<string>
 
@@ -8,11 +8,11 @@
 
 
 
-struct TextureFormat2D {
+struct Sprite2DData {
 
 
 	// コンストラクタ
-	TextureFormat2D(
+	Sprite2DData(
 		float x,
 		float y,
 		const char * texture_name,
@@ -27,7 +27,7 @@ struct TextureFormat2D {
 		int graph_num = 0,
 		float tu = 0.f,
 		float tv = 0.f,
-		DrawPolygon2D::SamplerStateType state_type = DrawPolygon2D::CLAMP
+		Graphics::SamplerStateType state_type = Graphics::CLAMP
 	);
 
 
@@ -74,5 +74,5 @@ struct TextureFormat2D {
 	float tv;
 
 	// サンプラーステートの状態
-	DrawPolygon2D::SamplerStateType type;
+	Graphics::SamplerStateType type;
 };

@@ -1,9 +1,9 @@
 ﻿#include"DebugMode.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
-#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
-#include"../Lib/Texture/TextureFormat2D/TextureFormat2D.h"
-#include"../Lib/Texture/TextureFormat3D/TextureFormat3D.h"
-#include"../Lib/Texture/DrawPolygon3D/DrawPolygon3D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
+#include"../Lib/Sprite2D/Sprite2DData/Sprite2DData.h"
+#include"../Lib/3D/Sprite3D/Sprite3DData/Sprite3DData.h"
+#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3D.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/FBX/FBX.h"
@@ -13,9 +13,18 @@
 
 DebugMode::DebugMode() {
 
+	index_buffer = new IndexBuffer(Graphics::GetInstance());
+
+	index_buffer->Create(16);
+
+	light = new Light(Graphics::GetInstance());
+
 	camera_3d = new Camera3D(Camera3D::TPS);
 	m_is_program_stop = false;
-	light.On();
+	light->On();
+
+	// オブジェクト読み込み
+	objfile.Load("Resource/3DModel/Lowpoly_Notebook_2.obj");
 }
 
 
@@ -121,6 +130,7 @@ void DebugMode::CameraRotation() {
 
 void DebugMode::Draw() {
 
+
 	camera_3d->TransformDraw();
 
 	// ライトモードをファルスにする
@@ -139,16 +149,27 @@ void DebugMode::Draw() {
 		D3DXVECTOR3(-30.f, 0.f, 0.f)
 	);
 
-		TextureFormat3D td(0.f,0.f,0.f,"ground");
+		Sprite3DData td(0.f,0.f,0.f,"ground");
 		td.scale_width = 1000.f;
 		td.scale_height = 1000.f;
 		td.polygon_dir = FLOOR;
 		td.pos.y = -5.f;
+		td.ofset.x = 0.0f;
+		td.ofset.y = 1.0f;
 
-		DrawPolygon3D::GetInstance()->BoardDraw(
+		Sprite3D sprite_3d;
+
+		sprite_3d.BoardDraw(
 			td
 		);
 
+		//index_buffer->Draw();
+
+		//Graphics::GetInstance()->
+		//	GetLpDirect3DDevice9()->
+		//	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+		objfile.Draw(0);
 }
 
 

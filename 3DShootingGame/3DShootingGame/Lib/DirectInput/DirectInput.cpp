@@ -1,7 +1,7 @@
 ﻿#include"DirectInput.h"
 #include"../Window/Window.h"
 #include"../DirectInput/KeyBoard/KeyBoard.h"
-
+#include"JoyStick/JoyStick.h"
 
 
 
@@ -32,7 +32,14 @@ namespace DirectInput {
 		}
 
 		// キーボードの初期化
-		KeyBoard::Init();
+		if (KeyBoard::Init() == false) {
+			return false;
+		}
+
+		// ジョイスティックの初期化
+		if (JoyStick::Init() == false) {
+			return false;
+		}
 
 		return true;
 	}

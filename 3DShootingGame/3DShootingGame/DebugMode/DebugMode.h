@@ -1,19 +1,21 @@
 ﻿#pragma once
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
-#include"../Lib/Texture/DrawPolygon2D/DrawPolygon2D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
 #include"../Lib/Sound/Sound.h"
-#include<string>
 #include"../Lib/3D/Camera3D/Camera3D.h"
 #include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/3D/Light/Light.h"
+#include"../Lib/3D/IndexBuffer/IndexBuffer.h"
+#include"../Lib/3D/VertexBuffer/VertexBuffer.h"
+#include"../Lib/3D/OBJ/OBJFile.h"
 
+#include<string>
 
 
 // シングルトンデバッグモード
 class DebugMode{
 public:
-
 
 	bool IsEnd();
 
@@ -38,13 +40,17 @@ private:
 
 private:
 
-	Light light;
+	Light *light;
 
 	Camera3D *camera_3d;
 
 	D3DDefaultMesh d3d_mesh;
 
 	FPS fps;
+
+	ObjFile objfile;
+
+	IndexBuffer *index_buffer;
 
 	bool m_is_program_stop;
 };

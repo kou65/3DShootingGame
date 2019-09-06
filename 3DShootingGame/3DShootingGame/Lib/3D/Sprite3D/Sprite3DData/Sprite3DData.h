@@ -1,17 +1,25 @@
 ﻿#pragma once
 #include<string>
-#include"../DrawPolygon3D/DrawPolygon3D.h"
-
+#include"../../../Graphics/Graphics.h"
 
 
 // テクスチャ3D書式
 
 
+// ポリゴンの向き
+enum PolygonDirection {
+	FRONT,
+	BACK,
+	RIGHT,
+	LEFT,
+	FLOOR
+};
 
-struct TextureFormat3D{
+
+struct Sprite3DData{
 
 
-	TextureFormat3D(
+	Sprite3DData(
 		float pos_x,
 		float pos_y,
 		float pos_z,

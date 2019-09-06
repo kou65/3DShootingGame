@@ -1,8 +1,8 @@
-﻿#include"TextureFormat3D.h"
+﻿#include"../Sprite3DData/Sprite3DData.h"
 
 
 
-TextureFormat3D::TextureFormat3D(
+Sprite3DData::Sprite3DData(
 	float pos_x,
 	float pos_y,
 	float pos_z,

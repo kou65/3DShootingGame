@@ -29,35 +29,35 @@ namespace SetRenderStateFile {
 	void ZBufferMode(BOOL is_enable) {
 
 		// Zバッファ
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZENABLE,is_enable);
-		//D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-		//D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZENABLE,is_enable);
+		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 	}
 
 
 	void AlphaEnable(BOOL is_enable) {
 
 		// アルファチャンネル
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_ALPHABLENDENABLE,is_enable);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ALPHABLENDENABLE,is_enable);
 		// // 通常透過処理
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-		//Graphics::GetLpDirect3DDevice9()->SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
 	}
 
 
 	void AlphaTest(BOOL is_enable,int value) {
 		// アルファテスト(3Dポリゴンの時使う)
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
 			D3DRS_ALPHATESTENABLE,
 			is_enable
 		);
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
 			D3DRS_ALPHAREF, 
 			value
 		);
 		// 比較方法
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
 			D3DRS_ALPHAFUNC,
 			D3DCMP_GREATER);
 	}
@@ -66,19 +66,19 @@ namespace SetRenderStateFile {
 	void AlphaBlend() {
 
 		// テクスチャαブレンド
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-		D3D9::GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	}
 
 
 	void ShadeMode() {
 
 		// シェードモード:グラデーション
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
 			D3DRS_SHADEMODE,D3DSHADE_GOURAUD);
 	}
 
@@ -87,9 +87,9 @@ namespace SetRenderStateFile {
 		BOOL is_enable
 	) {
 		// ライトをオンにするかどうか
-		D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING,is_enable);
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING,is_enable);
 		// スぺきゅら光オン
-		//D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
+		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 	}
 
 
@@ -98,8 +98,15 @@ namespace SetRenderStateFile {
 		BOOL is_enable
 	) {
 		// カリングモード無し
-		if (is_enable == false) {
-			D3D9::GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		if (is_enable == FALSE) {
+			Graphics::GetInstance()->
+				GetLpDirect3DDevice9()->
+				SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		}
+		else if (is_enable == TRUE) {
+			Graphics::GetInstance()->
+				GetLpDirect3DDevice9()->
+				SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
 	}
 }

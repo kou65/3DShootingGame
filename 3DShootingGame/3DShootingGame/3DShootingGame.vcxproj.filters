@@ -19,9 +19,6 @@
     <Filter Include="Lib">
       <UniqueIdentifier>{271588be-8520-4a98-8707-1e9d1a322f77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\D3D9">
-      <UniqueIdentifier>{329b68c6-8e99-4995-9b9f-ad1d5eea1e27}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\DirectInput">
       <UniqueIdentifier>{aff7e019-2ea6-407e-ab32-780ecc59baa2}</UniqueIdentifier>
     </Filter>
@@ -73,18 +70,6 @@
     <Filter Include="Lib\Texture\TextureManager">
       <UniqueIdentifier>{c91ba9cc-09c1-4c0a-a4b7-1d0893aa60b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Texture\DrawPolygon2D">
-      <UniqueIdentifier>{a369b4db-5f1e-4a50-99e2-25456d2bf660}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Texture\TextureFormat3D">
-      <UniqueIdentifier>{7de90416-0e19-4a06-9d7c-f8e681f9ec68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Texture\DrawPolygon3D">
-      <UniqueIdentifier>{aca2e92b-b3a5-441f-ad96-5642e2e39982}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Texture\TextureFormat2D">
-      <UniqueIdentifier>{ab040a18-4bb4-44f2-82b8-3414d6835c52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\Texture\TextureData3D">
       <UniqueIdentifier>{ca45792a-9568-4e06-bcb7-96011820426b}</UniqueIdentifier>
     </Filter>
@@ -93,6 +78,33 @@
     </Filter>
     <Filter Include="Lib\OBJFile">
       <UniqueIdentifier>{b7acf513-46d9-4210-968c-68fcacca6f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Graphics">
+      <UniqueIdentifier>{329b68c6-8e99-4995-9b9f-ad1d5eea1e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite">
+      <UniqueIdentifier>{77a5bd4c-f82e-41f6-858c-f8d34a72b618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite2D">
+      <UniqueIdentifier>{a369b4db-5f1e-4a50-99e2-25456d2bf660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite3D">
+      <UniqueIdentifier>{aca2e92b-b3a5-441f-ad96-5642e2e39982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite2DData">
+      <UniqueIdentifier>{ab040a18-4bb4-44f2-82b8-3414d6835c52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite3DData">
+      <UniqueIdentifier>{7de90416-0e19-4a06-9d7c-f8e681f9ec68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Lib">
+      <UniqueIdentifier>{51017bc5-9b93-4e87-9d57-89a3c4c641f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\VertexBuffer">
+      <UniqueIdentifier>{0041be8d-7c3f-4517-b990-c199d2c08d01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Object3DCustomVertex">
+      <UniqueIdentifier>{3a7ce534-60f8-46f9-89ba-b03910fc19a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +144,6 @@
     <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
       <Filter>Lib\D3DFont</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\D3D9\D3D9.cpp">
-      <Filter>Lib\D3D9</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\3D\XFile\XFile.cpp">
       <Filter>Lib\XFile</Filter>
     </ClCompile>
@@ -147,23 +156,35 @@
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp">
       <Filter>Lib\OBJFile</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.cpp">
-      <Filter>Lib\Texture\DrawPolygon2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.cpp">
-      <Filter>Lib\Texture\DrawPolygon3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Texture\Textureformat2D\TextureFormat2D.cpp">
-      <Filter>Lib\Texture\TextureFormat2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Texture\TextureFormat3D\TextureFormat3D.cpp">
-      <Filter>Lib\Texture\TextureFormat3D</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp">
       <Filter>Lib\Texture\TextureManager</Filter>
     </ClCompile>
     <ClCompile Include="Lib\3D\Light\Light.cpp">
       <Filter>Lib\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Graphics\Graphics.cpp">
+      <Filter>Lib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2D.cpp">
+      <Filter>Lib\Sprite\Sprite2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.cpp">
+      <Filter>Lib\Sprite\Sprite3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp">
+      <Filter>Lib\Sprite\Sprite2DData</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp">
+      <Filter>Lib\Sprite\Sprite3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Lib\Lib.cpp">
+      <Filter>Lib\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\IndexBuffer\IndexBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp">
+      <Filter>Lib\VertexBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,9 +221,6 @@
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
       <Filter>Lib\D3DFont</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\D3D9\D3D9.h">
-      <Filter>Lib\D3D9</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\3D\XFile\XFile.h">
       <Filter>Lib\XFile</Filter>
     </ClInclude>
@@ -215,29 +233,44 @@
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h">
       <Filter>Lib\OBJFile</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\DrawPolygon2D\DrawPolygon2D.h">
-      <Filter>Lib\Texture\DrawPolygon2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\DrawPolygon3D\DrawPolygon3D.h">
-      <Filter>Lib\Texture\DrawPolygon3D</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h">
       <Filter>Lib\Texture\TextureData2D</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h">
       <Filter>Lib\Texture\TextureData3D</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\Textureformat2D\TextureFormat2D.h">
-      <Filter>Lib\Texture\TextureFormat2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureFormat3D\TextureFormat3D.h">
-      <Filter>Lib\Texture\TextureFormat3D</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h">
       <Filter>Lib\Texture\TextureManager</Filter>
     </ClInclude>
     <ClInclude Include="Lib\3D\Light\Light.h">
       <Filter>Lib\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Graphics\Graphics.h">
+      <Filter>Lib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2D.h">
+      <Filter>Lib\Sprite\Sprite2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.h">
+      <Filter>Lib\Sprite\Sprite3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h">
+      <Filter>Lib\Sprite\Sprite2DData</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h">
+      <Filter>Lib\Sprite\Sprite3DData</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Lib\Lib.h">
+      <Filter>Lib\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\IndexBuffer\IndexBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h">
+      <Filter>Lib\VertexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Object3DCustomVertex\Object3DCustomVertex.h">
+      <Filter>Lib\Object3DCustomVertex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

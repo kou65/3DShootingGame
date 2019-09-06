@@ -4,7 +4,7 @@
 
 // ==================================
 /**
-* @file D3D9.h
+* @file Graphics.h
 * @brief DirectX9Graphicsファイル
 * @author maekawa
 * @2019/06/11
@@ -13,11 +13,30 @@
 
 
 
-namespace D3D9 {
+class Graphics {
+public:
+
+	enum SamplerStateType {
+
+		// つなぎ目なし
+		CLAMP,
+		// 反転
+		MIRROR,
+	};
+
+
+public:
+
+	static Graphics *GetInstance() {
+		static Graphics graphics;
+		return &graphics;
+	}
+
+public:
 
 
 	/**
-	* @brief D3D9の初期化
+	* @brief Graphicsの初期化
 	* @param[in] (width_size) 横のバックバッファサイズ
 	* @param[in] (height_size) 縦のバックバッファサイズ
 	* @param[in] (windowed) ウィンドウモード
@@ -155,4 +174,37 @@ namespace D3D9 {
 	*/
 	void SetClearBackGroundColor(D3DCOLOR color);
 
-}
+private:
+
+	/**
+	* @brief パーセントパラメータズ設定
+	* @param[out] パーセントパラメーターズ構造体 
+	* @param[in] ウィンドウハンドル
+	* @param[in] 横の解像度サイズ
+	* @param[in] 縦の解像度サイズ
+	* @param[in] バックバッファのカウント
+	* @param[in] ウィンドウモード
+	*/
+	void PresentParametersConfig(
+		D3DPRESENT_PARAMETERS & d3d_pp,
+		HWND window_handle,
+		UINT widht_size,
+		UINT height_size,
+		UINT back_buffer_count,
+		bool windowed
+	);
+
+private:
+
+	//! グラフィック関連のデバイスを管理
+	IDirect3DDevice9 *m_p_d3d_device9;     
+
+	//! 環境を設定するためのインターフェース
+	IDirect3D9 *m_p_direct3d9;	         
+
+	//! グラフィックス設定用
+	D3DPRESENT_PARAMETERS m_d3d_pp = {};   
+
+	//! 背景色
+	D3DCOLOR background_color;
+};
