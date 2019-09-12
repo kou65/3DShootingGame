@@ -25,20 +25,20 @@ struct Object3DCustomVertex {
 	Object3DCustomVertex() {
 
 		position.x = position.y = position.z = 0.f;
-		//normal.x = normal.y = normal.z = -1.f;
-		//uv.x = uv.y = 0.f;
+		normal.x = normal.y = normal.z = 0.f;
+		uv.x = uv.y = 0.f;
 		//color = 0xffffffff;
 	}
 
 	// 頂点
 	D3DXVECTOR3 position;
 
-
+	// ディフューズカラー
 	//DWORD color;
 
 	// テクスチャ座標
-	//D3DXVECTOR2 uv;
+	D3DXVECTOR2 uv;
 
 	// 法線
-	//D3DXVECTOR3 normal;
+	D3DXVECTOR3 normal;
 };

@@ -99,14 +99,14 @@ private:
 		std::vector<D3DXVECTOR3>&out_vertex_list,
 		std::vector<D3DXVECTOR3>&out_normal_list,
 		std::vector<D3DXVECTOR2>&out_uv_list,
-		std::vector<FacePolygon>&out_face_list
+		std::vector<std::vector<FacePolygon>>&out_face_list
 	);
 
 
 	// 面情報からカスタムバーテックス作成
 	void FaceInfoLoad(
 		FILE*p_file,
-		std::vector<FacePolygon>&face_list,
+		std::vector<std::vector<FacePolygon>>&face_list,
 		std::vector<ObjectSubset>&out_object_sub_set
 		);
 
@@ -160,14 +160,14 @@ private:
 		std::vector<D3DXVECTOR3>vertex_list,
 		std::vector<D3DXVECTOR3>normal_list,
 		std::vector<D3DXVECTOR2>uv_list,
-		std::vector<FacePolygon>face_list
+		std::vector<std::vector<FacePolygon>>face_list
 	);
 
 
 	// 面情報から頂点情報埋め込み
 	bool IndexBufferCreateFaceBase(
 		int face_num,
-		std::vector<FacePolygon>face_list
+		std::vector<std::vector<FacePolygon>>face_list
 		);
 
 

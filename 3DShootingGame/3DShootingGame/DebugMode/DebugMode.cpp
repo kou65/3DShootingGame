@@ -25,8 +25,8 @@ DebugMode::DebugMode() {
 
 	// オブジェクト読み込み
 	objfile.Load(
-		"Resource/3DModel/UH60/uh60",
-		"Resource/3DModel/UH60/",
+		"Resource/3DModel/Tree01/Tree",
+		"Resource/3DModel/Tree01/",
 		m_total_material_num
 	);
 }

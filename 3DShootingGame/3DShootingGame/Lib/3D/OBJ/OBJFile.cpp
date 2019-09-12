@@ -36,21 +36,21 @@ void ObjFile::DrawSubSet(int material_num) {
 		sizeof(Object3DCustomVertex)
 	);
 	
-	//std::string material_name = m_usemtl_name_list[material_num];
+	std::string material_name = m_usemtl_name_list[material_num];
 
 	// テクスチャが存在しているなら
-	//if (TextureManager::GetInstance()->Find3DTexture(m_material_data_list[material_name].texture_name) == true) {
-	//
-	//	// テクスチャ管理者からテクスチャ受け取り
-	//	TextureData3D texture_data = TextureManager::GetInstance()
-	//		->GetTextureData3D(m_material_data_list[material_name].texture_name);
-	//
-	//	// テクスチャセット
-	//	m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
-	//		0,
-	//		texture_data.texture_list[material_num]
-	//	);
-	//}
+	if (TextureManager::GetInstance()->Find2DTexture(m_material_data_list[material_name].texture_name) == true) {
+	
+		// テクスチャ管理者からテクスチャ受け取り
+		TextureData3D texture_data = TextureManager::GetInstance()
+			->GetTextureData3D(m_material_data_list[material_name].texture_name);
+	
+		// テクスチャセット
+		m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
+			0,
+			texture_data.texture_list[material_num]
+		);
+	}
 
 	// インデックス番号をデバイスに設定する
 	m_p_graphics->GetLpDirect3DDevice9()->SetIndices(
@@ -61,17 +61,20 @@ void ObjFile::DrawSubSet(int material_num) {
 	const int OFFSET_INDEX = 0;
 
 	// 描画に使用する最小のインデックス番号
-	const int MIN_INDEX = 0;//m_object_sub_set_list[material_num].face_start;
+	const int MIN_INDEX = 0;
 
 	// 描画を開始する頂点インデックスまでのオフセット値を指定
 	// 途中から描画したい場合に有効
-	const int START_INDEX = MIN_INDEX;
+	const int START_INDEX = 0;
+		//m_object_sub_set_list[material_num].face_start;
 
 	// 三角ポリゴン頂点数
-	const int VERTEX_NUM = m_total_face_num * 3;//m_object_sub_set_list[material_num].face_start * 3;
+	const int VERTEX_NUM = m_total_face_num * 3;
+	//m_object_sub_set_list[material_num].face_start * 3;
 
 	// START_INDEXを先頭として描画するポリゴンの数を指定する
-	const int PRIMITIVE_COUNT = m_total_face_num;//m_object_sub_set_list[material_num].draw_face_count;
+	const int PRIMITIVE_COUNT = m_total_face_num;
+		//m_object_sub_set_list[material_num].draw_face_count;
 
 	// どの情報を伝えるか
 	m_p_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
@@ -109,14 +112,13 @@ bool ObjFile::Load(
 	// テクスチャ座標バッファ
 	std::vector<D3DXVECTOR2>uv_list;
 
-	// 面情報バッファ[SubSetNumber][FacePolygon]
-	std::vector<FacePolygon>face_list;
+	// 面情報バッファ[usemtl][FacePolygon]
+	std::vector<std::vector<FacePolygon>>face_list;
 
 	// マテリアルデータバッファ
 	std::vector<MaterialData>material_data_list;
 
 
-	
 	// メイン読み込み
 	if (MeshLoad(
 		obj_file_path,
@@ -134,12 +136,16 @@ bool ObjFile::Load(
 	// 頂点数
 	int vertex_num = TOTAL_VERTEX_TYPE;
 
+	int face_num = 0;
+
 	// 面数
-	int face_num = (int)face_list.size();
+	for (int i = 0; i < face_list.size(); i++) {
+		face_num += (int)face_list[i].size();
+	}
 
 	// バーテックスバッファ生成
 	VertexBufferCreate(
-		vertex_num * face_num,
+		face_num,
 		vertex_list,
 		normal_list,
 		uv_list,
@@ -161,7 +167,7 @@ bool ObjFile::MeshLoad(
 	std::vector<D3DXVECTOR3>&out_vertex_list,
 	std::vector<D3DXVECTOR3>&out_normal_list,
 	std::vector<D3DXVECTOR2>&out_uv_list,
-	std::vector<FacePolygon>&out_face_list
+	std::vector<std::vector<FacePolygon>>&out_face_list
 	) {
 
 	// ファイルストリーム
@@ -179,7 +185,8 @@ bool ObjFile::MeshLoad(
 		return false;
 	}
 
-	const int BUFFER = 32;
+	// とりあえず256で
+	const int BUFFER = 256;
 
 	char front_str[BUFFER];
 
@@ -243,10 +250,15 @@ bool ObjFile::MeshLoad(
 				m_object_sub_set_list.back().material_index = out_total_material_num;
 
 				// 最初から加算していく
-				m_object_sub_set_list.back().draw_face_count = m_total_face_num;
+				m_object_sub_set_list.back().draw_face_count = 0;
 
 				// 最初の面を入れる
 				m_object_sub_set_list.back().face_start = m_total_face_num;
+			}
+
+			// 面配列を追加
+			{
+				out_face_list.emplace_back();
 			}
 		}
 		// 面情報なら
@@ -312,6 +324,14 @@ bool ObjFile::MaterialFileLoad(
 			// テクスチャ名代入
 			m_material_data_list[str].texture_name =
 				texture_file_path + str_list[1];
+
+			m_usemtl_name_list.push_back
+			(m_material_data_list[str].texture_name);
+
+			// テクスチャ読み込み
+			TextureManager::GetInstance()->Load2D(
+				m_material_data_list[str].texture_name.c_str(),
+				m_material_data_list[str].texture_name.c_str());
 		}
 	}
 
@@ -355,17 +375,17 @@ void ObjFile::VertexInfoLoad(
 	// 頂点なら
 	if (front_str[1] == '\0') {
 		// *-1.fで左手系に変換できる
-		out_vertex_list.emplace_back(vec3 * -1.f);
+		out_vertex_list.emplace_back(vec3);
 	}
 	// 法線なら
 	else if (front_str[1] == 'n') {
 
-		out_normal_list.emplace_back(vec3 * -1.f);
+		out_normal_list.emplace_back(vec3);
 	}
 	// テクスチャ座標なら
 	else if (front_str[1] == 't') {
 
-		out_uv_list.emplace_back(vec3 * -1.f);
+		out_uv_list.emplace_back(vec3);
 	}
 }
 
@@ -373,7 +393,7 @@ void ObjFile::VertexInfoLoad(
 
 void ObjFile::FaceInfoLoad(
 	FILE*p_file,
-	std::vector<FacePolygon>&out_face_list,
+	std::vector<std::vector<FacePolygon>>&out_face_list,
 	std::vector<ObjectSubset>&out_object_sub_set
 ) {
 
@@ -436,7 +456,7 @@ void ObjFile::FaceInfoLoad(
 	for (auto face : prov_face) {
 
 		// [マテリアル][面情報]という感じに入れる
-		out_face_list.emplace_back(face);
+		out_face_list.back().emplace_back(face);
 	}
 }
 
@@ -465,7 +485,7 @@ std::vector<FacePolygon> ObjFile::InsertFaceList(
 		i++) {
 
 		// 法線がない場合
-		if (face_info_str.size() == 2) {
+		if (face_info_str[1].size() == 2) {
 			subject_vertex = 1;
 		}
 
@@ -476,7 +496,7 @@ std::vector<FacePolygon> ObjFile::InsertFaceList(
 		for (int j = 0; j < TOTAL_FACE_INFO - subject_vertex; j++) {
 
 			// 頂点情報に変換する
-			Vector3ConversionByString(vertex_info[j], face_info_str[i][j]);
+			Vector3ConversionByString(vertex_info[j],face_info_str[i][j]);
 
 			// 面情報へ代入
 			switch (j) {
@@ -609,13 +629,13 @@ void ObjFile::VertexBufferCreate(
 	std::vector<D3DXVECTOR3>vertex_list,
 	std::vector<D3DXVECTOR3>normal_list,
 	std::vector<D3DXVECTOR2>uv_list,
-	std::vector<FacePolygon>face_list
+	std::vector<std::vector<FacePolygon>>face_list
 ) {
 
 	// 頂点バッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		(sizeof(Object3DCustomVertex) * vertex_num) * 10,
+		(sizeof(Object3DCustomVertex) * vertex_num),
 		// リソースの使用法
 		0,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -632,7 +652,12 @@ void ObjFile::VertexBufferCreate(
 	Object3DCustomVertex *custom_vertex_list;
 
 	// ロック
-	m_p_vertex_buffer->Lock(0, 0, (void**)&custom_vertex_list, 0);
+	m_p_vertex_buffer->Lock(
+		0,
+		0,
+		(void**)&custom_vertex_list,
+		D3DLOCK_DISCARD
+	);
 
 	// ここで頂点情報を代入させる
 
@@ -643,16 +668,35 @@ void ObjFile::VertexBufferCreate(
 	// 頂点分回す
 	for (int i = 0; i < face_list.size(); i++) {
 
-		int pos_num = face_list[i].pos_num;
+		for (int j = 0; j < face_list[i].size(); j++) {
 
-		// 頂点
-		custom_vertex_list[i].position = vertex_list[pos_num - OFFSET];
-		count++;
+			// 面情報受け取り
+			int pos_num = face_list[i][j].pos_num - OFFSET;
+
+			// 面情報に適した頂点情報受け取り
+			custom_vertex_list[count].position = vertex_list[pos_num];
+
+			count++;
+		}
 	}
 
 	count = 0;
 
 	// UV分回す
+	for (int i = 0; i < face_list.size(); i++) {
+
+		for (int j = 0; j < face_list[i].size(); j++) {
+
+			// 面情報受け取り
+			int uv_num = face_list[i][j].uv_num - OFFSET;
+
+			// 面情報に適した頂点情報受け取り
+			custom_vertex_list[count].uv = uv_list[uv_num];
+
+			count++;
+		}
+	}
+
 	//for (auto uv : uv_list) {
 	//
 	//	// テクスチャ座標
@@ -663,11 +707,16 @@ void ObjFile::VertexBufferCreate(
 	count = 0;
 
 	// 法線分回す
-	//for(auto normal : normal_list){
+	//for (int i = 0; i < face_list.size();i++) {
+	//	for (int j = 0; j < face_list[i].size(); j++) {
 	//
-	//	// 法線
-	//	custom_vertex_list[count].normal = normal;
-	//	count++;
+	//		// 法線数
+	//		int normal_num = face_list[i][j].normal_num;
+	//
+	//		// 法線
+	//		custom_vertex_list[i].normal =
+	//			normal_list[normal_num - OFFSET];
+	//	}
 	//}
 
 	// アンロック
@@ -678,13 +727,13 @@ void ObjFile::VertexBufferCreate(
 // 面情報から頂点情報埋め込み
 bool ObjFile::IndexBufferCreateFaceBase(
 	int face_num,
-	std::vector<FacePolygon>face_list
+	std::vector<std::vector<FacePolygon>>face_list
 ) {
 
 	// インデックスバッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
-		(face_num * sizeof(WORD) * TOTAL_FACE_INFO) * 10,
+		((face_num * sizeof(unsigned short)) * TOTAL_FACE_INFO),
 		// 頂点バッファをどのように使用するか
 		0,
 		// 一つのインデックスバッファのサイズをフラグで表す
@@ -702,7 +751,7 @@ bool ObjFile::IndexBufferCreateFaceBase(
 		return false;
 	}
 
-	// 頂点
+	// 頂点(このサイズが適応する)
 	unsigned short * index_vertex;
 
 	if (FAILED(m_p_index_buffer->Lock(
@@ -722,17 +771,21 @@ bool ObjFile::IndexBufferCreateFaceBase(
 
 	const int OFFSET = 1;
 
+	int count = 0;
+
 	// とりあえず頂点インデックスをセット
 	{
-
 		// 面数
-		for (int i = 0; i < face_num; i++) {
+		for (int i = 0; i < face_list.size(); i++) {
 
-			// 面情報から埋め込み
-			index_vertex[i] = i;
-			//face_list[i].pos_num - OFFSET;
+			for (int j = 0; j < face_list[i].size(); j++) {
+				count++;
+				// 面情報から埋め込み
+				index_vertex[count] = count;
+				//face_list[i].pos_num - OFFSET;
+				
+			}
 		}
-		
 	}
 	// nullチェック
 	if (index_vertex == nullptr) {
