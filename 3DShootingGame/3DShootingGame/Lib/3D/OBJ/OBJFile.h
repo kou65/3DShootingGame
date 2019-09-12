@@ -4,29 +4,25 @@
 #include"../../Graphics/Graphics.h"
 #include<vector>
 #include"../Object3DCustomVertex/Object3DCustomVertex.h"
+#include<unordered_map>
 
 
 // HACK リファクタリング対象(複数のstructなど)
 
-
-// 1面ポリゴン数
-enum Polygon {
-	POLYGON3,
-	POLYGON4,
-};
 
 
 // Drawサブセット用
 struct ObjectSubset {
 	unsigned int material_index;
 	unsigned int face_start;
-	unsigned int face_count;
+	unsigned int draw_face_count;
 };
 
 
 // 面ポリゴン情報
 struct FacePolygon {
-	int vertex_num;
+
+	int pos_num;
 	int uv_num;
 	int normal_num;
 };
@@ -34,15 +30,29 @@ struct FacePolygon {
 
 // マテリアルのデータ
 struct MaterialData {
-	float ambient;
-	float diffuse;
-	float specular;
+
+	// マテリアル名
+	std::string material_name;
+	// テクスチャ名
 	std::string texture_name;
+
+	// カラー
+	//D3DXVECTOR3 ambient;
+	//D3DXVECTOR3 diffuse;
+	//D3DXVECTOR3 specular;
+
+	MaterialData() {
+		//ambient.x = ambient.y = ambient.z = 0.f;
+		//diffuse.x = diffuse.y = diffuse.z = 0.f;
+		//specular.x = specular.y = specular.z = 0.f;
+		material_name = "";
+		texture_name = "";
+	}
 };
 
 
 // メッシュ情報
-struct MeshInfo {
+struct ObjMeshInfo {
 	std::vector<std::vector<FacePolygon>>face_list;
 };
 
@@ -62,14 +72,17 @@ public:
 
 	ObjFile();
 
-	// 読み込み
-	bool Load(std::string file_name);
+	void Release() {};
 
-	// マテリアルファイル読み込み
-	bool MaterialLoad(std::string file_name);
+	// 読み込み
+	bool Load(
+		std::string obj_file_path,
+		std::string texture_file_path,
+		int &out_total_material_num
+	);
 
 	// 表示
-	void Draw(int material_num);
+	void DrawSubSet(int material_num);
 
 private:
 
@@ -78,12 +91,14 @@ private:
 		D3DXVECTOR3 &vec3);
 
 
-	// 頂点情報読み込み
-	bool VertexInfoLoad(
+	// メッシュ情報読み込み
+	bool MeshLoad(
 		std::string file_name,
+		std::string texture_file_path,
+		int &out_total_material_num,
 		std::vector<D3DXVECTOR3>&out_vertex_list,
 		std::vector<D3DXVECTOR3>&out_normal_list,
-		std::vector<D3DXVECTOR3>&out_uv_list,
+		std::vector<D3DXVECTOR2>&out_uv_list,
 		std::vector<FacePolygon>&out_face_list
 	);
 
@@ -91,8 +106,32 @@ private:
 	// 面情報からカスタムバーテックス作成
 	void FaceInfoLoad(
 		FILE*p_file,
-		std::vector<FacePolygon>&face_list
+		std::vector<FacePolygon>&face_list,
+		std::vector<ObjectSubset>&out_object_sub_set
 		);
+
+
+	// 頂点情報読み込み
+	void VertexInfoLoad(
+		FILE *p_file,
+		const char*front_str,
+		std::vector<D3DXVECTOR3>&out_vertex_list,
+		std::vector<D3DXVECTOR2>&out_uv_list,
+		std::vector<D3DXVECTOR3>&out_normal_list
+	);
+
+
+	// マテリアルファイル読み込み
+	bool MaterialFileLoad(
+		std::string mtl_file_name,
+		std::string texture_file_path
+	);
+
+
+	// usemtl読み込み
+	void UseMaterialInfoLoad(
+		FILE*p_file
+	);
 
 
 	// 面情報代入
@@ -120,7 +159,8 @@ private:
 		int vertex_num,
 		std::vector<D3DXVECTOR3>vertex_list,
 		std::vector<D3DXVECTOR3>normal_list,
-		std::vector<D3DXVECTOR3>uv_list
+		std::vector<D3DXVECTOR2>uv_list,
+		std::vector<FacePolygon>face_list
 	);
 
 
@@ -132,29 +172,23 @@ private:
 
 
 	// 4面を3面にする
-	std::vector<FacePolygon> Face4IsFace3Change(
+	std::vector<FacePolygon> Face4IsCutToFace3(
 		std::vector<FacePolygon>face_polygon_list
 	);
 
 private:
 
-	// 頂点数
-	int m_vertex_num;
+	// 総マテリアル数
+	int m_total_face_num;
 
-	// 面数
-	int m_face_num;
+	// Objの方のマテリアル名配列
+	std::vector<std::string>m_usemtl_name_list;
 
-	// マテリアル番号
-	int material_num;
+	// 描画を入れ替えるサブセット
+	std::vector<ObjectSubset>m_object_sub_set_list;
 
-	// マテリアル頂点総インデックス(インデックス数を保存)
-	std::vector<int>total_material_num;
-
-	// マテリアルファイル名
-	std::string mtl_file_name;
-
-	// テクスチャファイル名
-	std::string texture_file_name;
+	// マテリアルデータ配列(マテリアル名,マテリアルデータ)
+	std::unordered_map<std::string,MaterialData>m_material_data_list;
 
 	// バーテックスバッファ
 	IDirect3DVertexBuffer9 * m_p_vertex_buffer;

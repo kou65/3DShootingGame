@@ -53,4 +53,6 @@ private:
 	IndexBuffer *index_buffer;
 
 	bool m_is_program_stop;
+
+	int m_total_material_num;
 };

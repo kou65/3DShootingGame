@@ -98,31 +98,31 @@ void VertexBuffer::Cube(Object3DCustomVertex v[8]) {
 	// 手前
 	{
 		// 左上(原点)
-		v[0].vertex = D3DXVECTOR3(0, 0, 0);
+		v[0].position = D3DXVECTOR3(0, 0, 0);
 
 		// 左下
-		v[1].vertex = D3DXVECTOR3(0, -1, 0);
+		v[1].position = D3DXVECTOR3(0, -1, 0);
 
 		// 右上
-		v[2].vertex = D3DXVECTOR3(1, 0, 0);
+		v[2].position = D3DXVECTOR3(1, 0, 0);
 
 		// 右下
-		v[3].vertex = D3DXVECTOR3(1, -1, 0);
+		v[3].position = D3DXVECTOR3(1, -1, 0);
 	}
 
 	// 奥
 	{
 		// 左上
-		v[4].vertex = D3DXVECTOR3(0, 0, 1);
+		v[4].position = D3DXVECTOR3(0, 0, 1);
 
 		// 左下
-		v[5].vertex = D3DXVECTOR3(0, -1, 1);
+		v[5].position = D3DXVECTOR3(0, -1, 1);
 
 		// 右上
-		v[6].vertex = D3DXVECTOR3(1, 0, 1);
+		v[6].position = D3DXVECTOR3(1, 0, 1);
 
 		// 右下
-		v[7].vertex = D3DXVECTOR3(1, -1, 1);
+		v[7].position = D3DXVECTOR3(1, -1, 1);
 	}
 }
 

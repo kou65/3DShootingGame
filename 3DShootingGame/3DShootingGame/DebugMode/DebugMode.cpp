@@ -24,7 +24,11 @@ DebugMode::DebugMode() {
 	light->On();
 
 	// オブジェクト読み込み
-	objfile.Load("Resource/3DModel/Lowpoly_Notebook_2.obj");
+	objfile.Load(
+		"Resource/3DModel/UH60/uh60",
+		"Resource/3DModel/UH60/",
+		m_total_material_num
+	);
 }
 
 
@@ -136,7 +140,7 @@ void DebugMode::Draw() {
 	// ライトモードをファルスにする
 	SetRenderStateFile::LightMode(FALSE);
 
-	d3d_mesh.AllDraw();
+	//d3d_mesh.AllDraw();
 
 	// Xファイルの描画
 	XFile::GetInstance()->Draw(
@@ -144,10 +148,10 @@ void DebugMode::Draw() {
 		camera_3d->GetPos()
 		);
 
-	XFile::GetInstance()->Draw(
-		"Sample01.x",
-		D3DXVECTOR3(-30.f, 0.f, 0.f)
-	);
+	//XFile::GetInstance()->Draw(
+	//	"Sample01.x",
+	//	D3DXVECTOR3(-30.f, 0.f, 0.f)
+	//);
 
 		Sprite3DData td(0.f,0.f,0.f,"ground");
 		td.scale_width = 1000.f;
@@ -169,7 +173,11 @@ void DebugMode::Draw() {
 		//	GetLpDirect3DDevice9()->
 		//	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-		objfile.Draw(0);
+		//SetRenderStateFile::CullMode(FALSE);
+
+		//for (int i = 0; i < m_total_material_num; i++) {
+			objfile.DrawSubSet(0);
+		//}
 }
 
 
