@@ -42,13 +42,13 @@ void ObjFile::DrawSubSet(int material_num) {
 	if (TextureManager::GetInstance()->Find2DTexture(m_material_data_list[material_name].texture_name) == true) {
 	
 		// テクスチャ管理者からテクスチャ受け取り
-		TextureData3D texture_data = TextureManager::GetInstance()
-			->GetTextureData3D(m_material_data_list[material_name].texture_name);
+		TextureData2D texture_data = TextureManager::GetInstance()
+			->GetTextureData2D(m_material_data_list[material_name].texture_name);
 	
 		// テクスチャセット
 		m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
 			0,
-			texture_data.texture_list[material_num]
+			texture_data
 		);
 	}
 
@@ -298,7 +298,7 @@ bool ObjFile::MaterialFileLoad(
 
 	std::vector<std::string>str_list;
 
-	std::string str;
+	std::string texture_str;
 
 	std::ifstream ifs(mtl_file_name + ".mtl");
 
@@ -316,22 +316,27 @@ bool ObjFile::MaterialFileLoad(
 		if (strcmp(str_list[0].c_str(),"newmtl ") == 0) {
 
 			m_material_data_list[str_list[1].c_str()].material_name = str_list[1].c_str();
-			str = str_list[1].c_str();
+			texture_str = str_list[1].c_str();
 		}
 		// テクスチャ
 		else if (strcmp(str_list[0].c_str(),"map_Kd ") == 0) {
 
-			// テクスチャ名代入
-			m_material_data_list[str].texture_name =
-				texture_file_path + str_list[1];
 
-			m_usemtl_name_list.push_back
-			(m_material_data_list[str].texture_name);
+			// テクスチャ名がないなら
+			if (str_list[1].empty() == true) {
+				return false;
+			}
+
+			std::string texture_name = texture_file_path + str_list[1];
+
+			// テクスチャ名代入
+			m_material_data_list[texture_str].texture_name = 
+				texture_str;
 
 			// テクスチャ読み込み
 			TextureManager::GetInstance()->Load2D(
-				m_material_data_list[str].texture_name.c_str(),
-				m_material_data_list[str].texture_name.c_str());
+				texture_name.c_str(),
+				m_material_data_list[texture_str].texture_name.c_str());
 		}
 	}
 
@@ -374,18 +379,30 @@ void ObjFile::VertexInfoLoad(
 
 	// 頂点なら
 	if (front_str[1] == '\0') {
+
 		// *-1.fで左手系に変換できる
-		out_vertex_list.emplace_back(vec3);
+		vec3.x *= -1.f;
+
+		out_vertex_list.push_back(vec3);
 	}
 	// 法線なら
 	else if (front_str[1] == 'n') {
 
-		out_normal_list.emplace_back(vec3);
+		// 反転
+		vec3.x *= -1.f;
+
+		out_normal_list.push_back(vec3);
 	}
 	// テクスチャ座標なら
 	else if (front_str[1] == 't') {
 
-		out_uv_list.emplace_back(vec3);
+		// uvのみy軸で反転
+		vec3.y *= -1.f;
+
+		// vec3をvec2にする
+		D3DXVECTOR2 vec2(vec3.x,vec3.y);
+
+		out_uv_list.push_back(vec2);
 	}
 }
 
@@ -450,7 +467,9 @@ void ObjFile::FaceInfoLoad(
 
 		// 変換させる
 		prov_face = Face4IsCutToFace3(prov_face);
+
 	}
+
 
 	// 面情報代入
 	for (auto face : prov_face) {
@@ -673,6 +692,7 @@ void ObjFile::VertexBufferCreate(
 			// 面情報受け取り
 			int pos_num = face_list[i][j].pos_num - OFFSET;
 
+
 			// 面情報に適した頂点情報受け取り
 			custom_vertex_list[count].position = vertex_list[pos_num];
 
@@ -773,17 +793,37 @@ bool ObjFile::IndexBufferCreateFaceBase(
 
 	int count = 0;
 
+	std::vector<UINT>index_list;
+
 	// とりあえず頂点インデックスをセット
 	{
 		// 面数
 		for (int i = 0; i < face_list.size(); i++) {
 
 			for (int j = 0; j < face_list[i].size(); j++) {
-				count++;
-				// 面情報から埋め込み
+
+				// 反転用に追加
 				index_vertex[count] = count;
-				//face_list[i].pos_num - OFFSET;
+
+				// インデックス追加
+				index_list.push_back(count);
+
+				count++;
+
+				if (count % 3 == 0) {
 				
+					UINT temp = 0;
+
+					temp = index_list[0];
+					index_list[0] = index_list[2];
+					index_list[2] = temp;
+
+					for (int k = 0; k < 3; k++) {
+						index_vertex[count] = index_list[k];
+					}
+
+					index_list.clear();
+				}
 			}
 		}
 	}

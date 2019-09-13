@@ -181,6 +181,8 @@ private:
 	// 総マテリアル数
 	int m_total_face_num;
 
+	std::vector<UINT>m_index;
+
 	// Objの方のマテリアル名配列
 	std::vector<std::string>m_usemtl_name_list;
 
