@@ -25,7 +25,7 @@ struct Object3DCustomVertex {
 	Object3DCustomVertex() {
 
 		position.x = position.y = position.z = 0.f;
-		normal.x = normal.y = normal.z = 0.f;
+		//normal.x = normal.y = normal.z = 0.f;
 		uv.x = uv.y = 0.f;
 		//color = 0xffffffff;
 	}
@@ -40,5 +40,5 @@ struct Object3DCustomVertex {
 	D3DXVECTOR2 uv;
 
 	// 法線
-	D3DXVECTOR3 normal;
+	//D3DXVECTOR3 normal;
 };
