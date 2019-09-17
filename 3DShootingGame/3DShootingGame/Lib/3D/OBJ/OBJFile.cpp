@@ -70,11 +70,11 @@ void ObjFile::DrawSubSet(int material_num) {
 		//m_object_sub_set_list[material_num].face_start;
 
 	// 三角ポリゴン頂点数
-	int NUM_VERTEX = (m_total_face_num * 3);
+	int NUM_VERTEX = (m_total_face_num * 100);
 	//m_object_sub_set_list[material_num].face_start * 3;
 
 	// START_INDEXを先頭として描画するポリゴンの数を指定する
-	unsigned int PRIMITIVE_COUNT = (m_total_face_num * 2);
+	unsigned int PRIMITIVE_COUNT = (m_total_face_num * 100);
 		//m_object_sub_set_list[material_num].draw_face_count;
 
 	// どの情報を伝えるか
@@ -206,15 +206,7 @@ bool ObjFile::MeshLoad(
 		if (front_str[0] == '#') {
 			continue;
 		}
-		// マテリアルファイルを読み込む
-		else if (strcmp(front_str,"mtllib")==0) {
-
-			// mtlファイル読み込み
-			fscanf_s(p_file, "%s", front_str, BUFFER);
-
-			// ここでマテリアルファイル読み込み
-			MaterialFileLoad(file_path, texture_file_path);
-		}
+		
 		// 頂点関係なら
 		else if (front_str[0] == 'v') {
 
@@ -278,6 +270,15 @@ bool ObjFile::MeshLoad(
 
 			// 表示する面を加算
 			m_object_sub_set_list.back().draw_face_count++;
+		}
+		// マテリアルファイルを読み込む
+		else if (strcmp(front_str, "mtllib") == 0) {
+
+			// mtlファイル読み込み
+			fscanf_s(p_file, "%s", front_str, BUFFER);
+
+			// ここでマテリアルファイル読み込み
+			MaterialFileLoad(file_path, texture_file_path);
 		}
 	}
 
@@ -660,7 +661,7 @@ void ObjFile::VertexBufferCreate(
 	// 頂点バッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		(sizeof(Object3DCustomVertex) * vertex_num) * 2,
+		(sizeof(Object3DCustomVertex) * vertex_num) * 10,
 		// リソースの使用法
 		0,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -765,7 +766,7 @@ bool ObjFile::IndexBufferCreateFaceBase(
 	// インデックスバッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
-		(face_num * sizeof(unsigned short)) * 3,
+		(face_num * sizeof(unsigned short)) * 10,
 		// 頂点バッファをどのように使用するか
 		D3DUSAGE_WRITEONLY,
 		// 一つのインデックスバッファのサイズをフラグで表す
