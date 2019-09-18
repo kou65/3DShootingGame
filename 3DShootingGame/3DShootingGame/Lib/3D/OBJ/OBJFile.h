@@ -15,7 +15,7 @@
 struct ObjectSubset {
 	unsigned int material_index;
 	unsigned int face_start;
-	unsigned int draw_face_count;
+	unsigned int face_count;
 };
 
 
@@ -178,10 +178,11 @@ private:
 
 private:
 
-	// 総マテリアル数
-	int m_total_face_num;
+	// 総頂点数
+	int m_total_vertex_num;
 
-	std::vector<UINT>m_index;
+	// 総ポリゴン数
+	int m_total_face_num;
 
 	// Objの方のマテリアル名配列
 	std::vector<std::string>m_usemtl_name_list;

@@ -175,9 +175,9 @@ void DebugMode::Draw() {
 
 		//SetRenderStateFile::CullMode(FALSE);
 
-		//for (int i = 0; i < m_total_material_num; i++) {
-			objfile.DrawSubSet(0);
-		//}
+		for (int i = 0; i < m_total_material_num; i++) {
+			objfile.DrawSubSet(i);
+		}
 }
 
 

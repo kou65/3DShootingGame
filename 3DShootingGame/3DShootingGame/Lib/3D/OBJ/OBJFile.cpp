@@ -12,10 +12,12 @@
 ObjFile::ObjFile() {
 
 	m_p_graphics = Graphics::GetInstance();
+	m_total_vertex_num = 0;
+	m_total_face_num = 0;
 }
 
 
-void ObjFile::DrawSubSet(int material_num) {
+void ObjFile::DrawSubSet(int material_num){
 
 
 	// ワールド座標初期化
@@ -59,23 +61,19 @@ void ObjFile::DrawSubSet(int material_num) {
 
 	// インデックスをオフセットする
 	int BASE_VERTEX_INDEX = 0;
-		//m_object_sub_set_list[material_num].face_start;
 
 	// 描画に使用する最小のインデックス番号
 	int MIN_INDEX = 0;
 
 	// 描画を開始する頂点インデックスまでのオフセット値を指定
 	// 途中から描画したい場合に有効
-	int START_INDEX = 0;
-		//m_object_sub_set_list[material_num].face_start;
+	int START_INDEX = m_object_sub_set_list[material_num].face_start;
 
 	// 三角ポリゴン頂点数
-	int NUM_VERTEX = (m_total_face_num * 100);
-	//m_object_sub_set_list[material_num].face_start * 3;
+	int NUM_VERTEX = m_object_sub_set_list[material_num].face_start * 3;
 
 	// START_INDEXを先頭として描画するポリゴンの数を指定する
-	unsigned int PRIMITIVE_COUNT = (m_total_face_num * 100);
-		//m_object_sub_set_list[material_num].draw_face_count;
+	unsigned int PRIMITIVE_COUNT = m_object_sub_set_list[material_num].face_count;
 
 	// どの情報を伝えるか
 	m_p_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
@@ -146,7 +144,7 @@ bool ObjFile::Load(
 
 	// バーテックスバッファ生成
 	VertexBufferCreate(
-		m_total_face_num * 3,
+		m_total_vertex_num,
 		vertex_list,
 		normal_list,
 		uv_list,
@@ -245,12 +243,12 @@ bool ObjFile::MeshLoad(
 					out_total_material_num;
 
 				// 最初から加算していく
-				m_object_sub_set_list.back().draw_face_count =
+				m_object_sub_set_list.back().face_count =
 					0;
 
 				// 最初の面を入れる
 				m_object_sub_set_list.back().face_start =
-					m_total_face_num;
+					m_total_vertex_num;
 			}
 
 			// 面配列を追加
@@ -268,8 +266,6 @@ bool ObjFile::MeshLoad(
 				m_object_sub_set_list
 				);
 
-			// 表示する面を加算
-			m_object_sub_set_list.back().draw_face_count++;
 		}
 		// マテリアルファイルを読み込む
 		else if (strcmp(front_str, "mtllib") == 0) {
@@ -464,22 +460,27 @@ void ObjFile::FaceInfoLoad(
 	// 面情報を代入
 	prov_face = InsertFaceList(face_info_str);
 
-
-	// 合計面情報加算
+	// 総面数加算
 	m_total_face_num++;
 
 	// 頂点が4つあるなら
 	if (face_num >= 4) {
 
-		// 4面を切るのでもう一つポリゴン数を増やす
+		// 総面数加算
 		m_total_face_num++;
-
+		
 		// 変換させる
 		prov_face = Face4IsCutToFace3(prov_face);
 	}
 
 	// 面情報代入
-	for (auto face : prov_face) {
+	for (auto face : prov_face){
+
+		// 表示する面を加算
+		m_object_sub_set_list.back().face_count++;
+
+		// 総頂点数加算
+		m_total_vertex_num++;
 
 		// [マテリアル][面情報]という感じに入れる
 		out_face_list.back().emplace_back(face);
@@ -661,7 +662,7 @@ void ObjFile::VertexBufferCreate(
 	// 頂点バッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		(sizeof(Object3DCustomVertex) * vertex_num) * 10,
+		(sizeof(Object3DCustomVertex) * vertex_num),
 		// リソースの使用法
 		0,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -680,9 +681,9 @@ void ObjFile::VertexBufferCreate(
 	// ロック
 	m_p_vertex_buffer->Lock(
 		0,
-		0,
+		vertex_num * sizeof(Object3DCustomVertex),
 		(void**)&custom_vertex_list,
-		D3DLOCK_DISCARD
+		0
 	);
 
 	// ここで頂点情報を代入させる
@@ -766,11 +767,11 @@ bool ObjFile::IndexBufferCreateFaceBase(
 	// インデックスバッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
-		(face_num * sizeof(unsigned short)) * 10,
+		(face_num * sizeof(int)),
 		// 頂点バッファをどのように使用するか
 		D3DUSAGE_WRITEONLY,
 		// 一つのインデックスバッファのサイズをフラグで表す
-		D3DFMT_INDEX16,
+		D3DFMT_INDEX32,
 		// 頂点インデックスをどのメモリに置くか指定
 		D3DPOOL_MANAGED,
 		// IDirect3DIndexBuffer9インターフェースが返る
@@ -785,7 +786,7 @@ bool ObjFile::IndexBufferCreateFaceBase(
 	}
 
 	// 頂点(このサイズが適応する)
-	unsigned short * index_vertex;
+	int * index_vertex;
 
 	if (FAILED(m_p_index_buffer->Lock(
 		// ロックしたい位置をバイト単位で指定する
