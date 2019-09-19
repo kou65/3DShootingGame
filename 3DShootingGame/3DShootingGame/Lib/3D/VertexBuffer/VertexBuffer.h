@@ -40,7 +40,7 @@ private:
 	void Create(int vertex_num,Shape shape);
 
 	// 正方形形状に頂点作成する
-	void Cube(Object3DCustomVertex v[8]);
+	void Cube(MeshCustomVertex v[8]);
 
 private:
 

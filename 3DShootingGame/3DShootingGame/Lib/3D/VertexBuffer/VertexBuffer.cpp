@@ -28,7 +28,7 @@ void VertexBuffer::Create(int vertex_num,Shape shape) {
 	// 頂点バッファ作成
 	graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		sizeof(Object3DCustomVertex) * vertex_num,
+		sizeof(MeshCustomVertex) * vertex_num,
 		// リソースの使用法
 		D3DUSAGE_WRITEONLY,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -42,7 +42,7 @@ void VertexBuffer::Create(int vertex_num,Shape shape) {
 	);
 
 	// 頂点数分用意する
-	Object3DCustomVertex * v;
+	MeshCustomVertex * v;
 
 	m_p_vertex_buffer9->Lock(0, 0, (void**)&v, 0);
 
@@ -77,7 +77,7 @@ void VertexBuffer::Draw() {
 		0,
 		m_p_vertex_buffer9,
 		0,
-		sizeof(Object3DCustomVertex)
+		sizeof(MeshCustomVertex)
 	);
 
 	graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
@@ -90,7 +90,7 @@ void VertexBuffer::Draw() {
 }
 
 
-void VertexBuffer::Cube(Object3DCustomVertex v[8]) {
+void VertexBuffer::Cube(MeshCustomVertex v[8]) {
 
 
 	// 正方形

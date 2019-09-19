@@ -1,5 +1,4 @@
-﻿
-#include<string>
+﻿#include<string>
 #include<sstream>
 #include<fstream>
 #include<iostream>
@@ -35,7 +34,7 @@ void ObjFile::DrawSubSet(int material_num){
 		0,
 		m_p_vertex_buffer,
 		0,
-		sizeof(Object3DCustomVertex)
+		sizeof(MeshCustomVertex)
 	);
 	
 	std::string material_name = m_usemtl_name_list[material_num];
@@ -470,7 +469,7 @@ void ObjFile::FaceInfoLoad(
 		m_total_face_num++;
 		
 		// 変換させる
-		prov_face = Face4IsCutToFace3(prov_face);
+		prov_face = Face4CutToFace3(prov_face);
 	}
 
 	// 面情報代入
@@ -598,7 +597,7 @@ bool ObjFile::Vector3ConversionByString(
 ) {
 
 	if (string.empty() == true) {
-		Window::TextMessageBox("文字列分割に失敗しました");
+		//Window::TextMessageBox("文字列分割に失敗しました");
 		return false;
 	}
 
@@ -615,7 +614,7 @@ bool ObjFile::Vector3ConversionByString(
 }
 
 
-std::vector<FacePolygon> ObjFile::Face4IsCutToFace3(
+std::vector<FacePolygon> ObjFile::Face4CutToFace3(
 	std::vector<FacePolygon>vertex4_polygon_list
 ) {
 
@@ -662,7 +661,7 @@ void ObjFile::VertexBufferCreate(
 	// 頂点バッファ作成
 	m_p_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		(sizeof(Object3DCustomVertex) * vertex_num),
+		(sizeof(MeshCustomVertex) * vertex_num),
 		// リソースの使用法
 		0,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -676,12 +675,12 @@ void ObjFile::VertexBufferCreate(
 	);
 
 	// 頂点数分用意する
-	Object3DCustomVertex *custom_vertex_list;
+	MeshCustomVertex *custom_vertex_list;
 
 	// ロック
 	m_p_vertex_buffer->Lock(
 		0,
-		vertex_num * sizeof(Object3DCustomVertex),
+		vertex_num * sizeof(MeshCustomVertex),
 		(void**)&custom_vertex_list,
 		0
 	);
@@ -700,7 +699,6 @@ void ObjFile::VertexBufferCreate(
 			// 面情報受け取り
 			int pos_num = face_list[i][j].pos_num - 1;
 	
-			// 頂点情報がすでに漏れている可能性がある(for分があっていない)
 			// 面情報に適した頂点情報受け取り
 			custom_vertex_list[count].position =
 				vertex_list[pos_num];
@@ -708,11 +706,6 @@ void ObjFile::VertexBufferCreate(
 			count++;
 		}
 	}
-
-	//for (auto vertex : vertex_list) {
-	//	custom_vertex_list[count].position = vertex;
-	//	count++;
-	//}
 
 	count = 0;
 
@@ -731,27 +724,20 @@ void ObjFile::VertexBufferCreate(
 		}
 	}
 
-	//for (auto uv : uv_list) {
-	//
-	//	// テクスチャ座標
-	//	custom_vertex_list[count].uv = uv;
-	//	count++;
-	//}
-
 	count = 0;
 
 	// 法線分回す
-	//for (int i = 0; i < face_list.size();i++) {
-	//	for (int j = 0; j < face_list[i].size(); j++) {
-	//
-	//		// 法線数
-	//		int normal_num = face_list[i][j].normal_num;
-	//
-	//		// 法線
-	//		custom_vertex_list[i].normal =
-	//			normal_list[normal_num - OFFSET];
-	//	}
-	//}
+	for (int i = 0; i < face_list.size();i++) {
+		for (int j = 0; j < face_list[i].size(); j++) {
+	
+			// 法線数
+			int normal_num = face_list[i][j].normal_num;
+	
+			// 法線
+			custom_vertex_list[i].normal =
+				normal_list[normal_num - OFFSET];
+		}
+	}
 
 	// アンロック
 	m_p_vertex_buffer->Unlock();
@@ -836,12 +822,14 @@ bool ObjFile::IndexBufferCreateFaceBase(
 				
 				UINT temp = 0;
 
+				// 反転
 				temp = index_list[(count - 3)];
 				index_list[(count - 3)] = index_list[(count - 3) + 2];
 				index_list[(count - 3) + 2] = temp;
 
+				// 代入
 				for (int k = 0; k < 3; k++) {
-					index_vertex[(count - 3) + k] =
+					index_vertex[(count - 3) + k] = 
 					index_list[(index_list.size() - 3) + k];
 				}
 			}

@@ -37,14 +37,14 @@ struct MaterialData {
 	std::string texture_name;
 
 	// カラー
-	//D3DXVECTOR3 ambient;
-	//D3DXVECTOR3 diffuse;
-	//D3DXVECTOR3 specular;
+	D3DXVECTOR3 ambient;
+	D3DXVECTOR3 diffuse;
+	D3DXVECTOR3 specular;
 
 	MaterialData() {
-		//ambient.x = ambient.y = ambient.z = 0.f;
-		//diffuse.x = diffuse.y = diffuse.z = 0.f;
-		//specular.x = specular.y = specular.z = 0.f;
+		ambient.x = ambient.y = ambient.z = 0.f;
+		diffuse.x = diffuse.y = diffuse.z = 0.f;
+		specular.x = specular.y = specular.z = 0.f;
 		material_name = "";
 		texture_name = "";
 	}
@@ -172,7 +172,7 @@ private:
 
 
 	// 4面を3面にする
-	std::vector<FacePolygon> Face4IsCutToFace3(
+	std::vector<FacePolygon> Face4CutToFace3(
 		std::vector<FacePolygon>face_polygon_list
 	);
 

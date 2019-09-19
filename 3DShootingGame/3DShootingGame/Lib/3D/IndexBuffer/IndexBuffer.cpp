@@ -104,7 +104,7 @@ void IndexBuffer::Draw() {
 		0,
 		*m_p_vertex_buffer,
 		0,
-		sizeof(Object3DCustomVertex)
+		sizeof(MeshCustomVertex)
 	);
 
 
