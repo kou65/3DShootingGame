@@ -16,12 +16,21 @@ ObjFile::ObjFile() {
 }
 
 
-void ObjFile::DrawSubSet(int material_num){
+void ObjFile::DrawSubSet(
+	int material_num,
+	float pos_x,
+	float pos_y,
+	float pos_z
+	){
 
 
 	// ワールド座標初期化
 	D3DXMATRIX mat;
 	D3DXMatrixIdentity(&mat);
+
+	// 移動
+	D3DXMatrixTranslation(&mat, pos_x, pos_y, pos_z);
+
 	m_p_graphics->GetInstance()->GetLpDirect3DDevice9()
 		->SetTransform(D3DTS_WORLD, &mat);
 
@@ -522,6 +531,18 @@ bool ObjFile::MaterialFileLoad(
 			m_material_data_list[str_list[1].c_str()].texture_name
 				= str_list[1].c_str();
 			texture_str = str_list[1].c_str();
+
+			// 使わない色を初期化
+			D3DCOLORVALUE color = {
+				100.f,
+				100.f,
+				100.f,
+				1.0f
+			};
+			m_material_data_list[texture_str].
+				material_color.Emissive = color;
+			m_material_data_list[texture_str].
+				material_color.Power = 0.f;
 		}
 		// アンビエントカラー
 		else if (strcmp(str_list[0].c_str(), "Ka ") == 0) {
@@ -591,7 +612,7 @@ bool ObjFile::MaterialFileLoad(
 
 			// テクスチャ名代入
 			m_material_data_list[texture_str].texture_name =
-				texture_str;
+				 texture_str;
 
 			// テクスチャ読み込み
 			TextureManager::GetInstance()->Load2D(

@@ -74,7 +74,12 @@ public:
 	);
 
 	// 表示
-	void DrawSubSet(int material_num);
+	void DrawSubSet(
+		int material_num,
+		float pos_x = 0.f,
+		float pos_y = 0.f,
+		float pos_z = 0.f
+	);
 
 private:
 
