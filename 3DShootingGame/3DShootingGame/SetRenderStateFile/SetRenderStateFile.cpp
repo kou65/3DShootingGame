@@ -14,11 +14,12 @@ namespace SetRenderStateFile {
 		AlphaEnable(TRUE);
 
 		// ライトモード
-		LightMode(NULL);
+		LightMode(FALSE);
 
 		// αテスト
 		AlphaTest(TRUE);
 
+		// αブレンド
 		AlphaBlend();
 
 		// カリングを行わない

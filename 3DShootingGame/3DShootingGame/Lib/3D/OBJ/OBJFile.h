@@ -5,6 +5,7 @@
 #include<vector>
 #include"../Object3DCustomVertex/Object3DCustomVertex.h"
 #include<unordered_map>
+#include"../../../Utility.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -31,23 +32,17 @@ struct FacePolygon {
 // マテリアルのデータ
 struct MaterialData {
 
+	MaterialData() {
+		material_name = "";
+		texture_name = "";
+	}
+
 	// マテリアル名
 	std::string material_name;
 	// テクスチャ名
 	std::string texture_name;
-
 	// カラー
-	D3DXVECTOR3 ambient;
-	D3DXVECTOR3 diffuse;
-	D3DXVECTOR3 specular;
-
-	MaterialData() {
-		ambient.x = ambient.y = ambient.z = 0.f;
-		diffuse.x = diffuse.y = diffuse.z = 0.f;
-		specular.x = specular.y = specular.z = 0.f;
-		material_name = "";
-		texture_name = "";
-	}
+	D3DMATERIAL9 material_color;
 };
 
 
@@ -107,7 +102,10 @@ private:
 	void FaceInfoLoad(
 		FILE*p_file,
 		std::vector<std::vector<FacePolygon>>&face_list,
-		std::vector<ObjectSubset>&out_object_sub_set
+		std::vector<ObjectSubset>&out_object_sub_set,
+		std::vector<D3DXVECTOR3>pos,
+		std::vector<D3DXVECTOR2>uv,
+		std::vector<D3DXVECTOR3>normal
 		);
 
 
@@ -130,20 +128,21 @@ private:
 
 	// usemtl読み込み
 	void UseMaterialInfoLoad(
-		FILE*p_file
+		FILE*p_file,
+		int &out_total_material_num,
+		std::vector<std::vector<FacePolygon>>&out_face_list,
+		char *front_str,
+		int load_buffer
 	);
 
 
 	// 面情報代入
 	std::vector<FacePolygon> InsertFaceList(
-		std::vector<std::vector<std::string>>face_info_str
-	);
-
-
-	// 文字列分割
-	std::vector<std::string> SplitStr(
-		char cut_base_str,
-		const std::string &string
+		std::vector<std::vector<std::string>>face_info_str,
+		std::vector<MeshCustomVertex>out_custom_vertex_list,
+		std::vector<D3DXVECTOR3>pos_list,
+		std::vector<D3DXVECTOR2>uv_list,
+		std::vector<D3DXVECTOR3>normal_list
 	);
 
 
@@ -183,6 +182,8 @@ private:
 
 	// 総ポリゴン数
 	int m_total_face_num;
+
+	std::vector<UINT>m_indices;
 
 	// Objの方のマテリアル名配列
 	std::vector<std::string>m_usemtl_name_list;

@@ -117,11 +117,6 @@ void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 
 	LPDIRECT3DDEVICE9 device = Graphics::GetInstance()->GetLpDirect3DDevice9();
 
-	Light light(Graphics::GetInstance());
-
-	// ゲームのライティング
-	light.NormalLightOn();
-
 	D3DXMATRIX matrix_total;
 	D3DXMATRIX matrix_trans;
 

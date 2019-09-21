@@ -174,6 +174,18 @@ public:
 	*/
 	void SetClearBackGroundColor(D3DCOLOR color);
 
+
+	/**
+	* @brief バーテックスバッファ作成
+	* @param[in] int model_size
+	* @param[out] IDirect3DVertexBuffer9
+	* @return 生成できたらtrueできなかったらfalseを返す
+	*/
+	//bool CreateVertexBuffer(
+	//	int model_size,
+	//	IDirect3DVertexBuffer9 vertex_buffer);
+
+
 private:
 
 	/**

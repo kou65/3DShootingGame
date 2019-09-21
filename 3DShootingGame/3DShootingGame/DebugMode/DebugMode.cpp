@@ -174,6 +174,40 @@ void DebugMode::Draw() {
 		//	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 		//SetRenderStateFile::CullMode(FALSE);
+		SetRenderStateFile::LightMode(TRUE);
+
+
+		IDirect3DDevice9 *device = Graphics::GetInstance()->GetLpDirect3DDevice9();
+
+		//ライティングを無効にする。
+		D3DLIGHT9 Right;
+
+		ZeroMemory(&Right, sizeof(D3DLIGHT9));
+
+		float r = 9.f;
+		float g = 9.f;
+		float b = 9.f;
+
+		Right.Type = D3DLIGHT_DIRECTIONAL;
+		Right.Diffuse.r = r;
+		Right.Diffuse.g = g;
+		Right.Diffuse.b = b;
+		Right.Specular.r = r;
+		Right.Specular.g = g;
+		Right.Specular.b = b;
+		Right.Ambient.r = r / 2.0f;
+		Right.Ambient.g = g / 2.0f;
+		Right.Ambient.b = b / 2.0f;
+		// 方向
+		Right.Direction = D3DXVECTOR3(100.f, 100.f, 100.f);
+		D3DXVec3Normalize(
+			(D3DXVECTOR3*)& Right.Direction,
+			&D3DXVECTOR3(10.0f, -1.5f, 0.7f));
+		device->SetLight(0, &Right);
+		device->LightEnable(0, true);
+		device->SetRenderState(D3DRS_LIGHTING, true);
+		//device->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
+		device->SetRenderState(D3DRS_ZENABLE, true);
 
 		for (int i = 0; i < m_total_material_num; i++) {
 			objfile.DrawSubSet(i);

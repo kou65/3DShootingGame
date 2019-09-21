@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	Resource::LoadResource();
 
 	// DirectX描画状態の設定
-	//SetRenderStateFile::Init();
+	SetRenderStateFile::Init();
 
 	while (Window::ProcessMessage() == true) {
 

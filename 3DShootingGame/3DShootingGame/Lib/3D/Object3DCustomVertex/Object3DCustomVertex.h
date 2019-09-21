@@ -16,8 +16,14 @@ enum VertexType {
 	TOTAL_VERTEX_TYPE,
 };
 
-
-#define FVF_CUSTOM (D3DFVF_XYZ /*| D3DFVF_DIFFUSE | D3DFVF_SPECULAR */| D3DFVF_NORMAL | D3DFVF_TEX1)
+/**
+頂点データ
+位置
+法線
+頂点色(ディフューズ色)
+テクスチャ座標
+*/
+#define FVF_CUSTOM (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
 
 struct MeshCustomVertex {
@@ -27,7 +33,7 @@ struct MeshCustomVertex {
 		position.x = position.y = position.z = 0.f;
 		normal.x = normal.y = normal.z = 0.f;
 		uv.x = uv.y = 0.f;
-		//color = 0xffffffff;
+		color = 0xffffff;
 	}
 
 	// 頂点
@@ -35,11 +41,7 @@ struct MeshCustomVertex {
 	// 法線
 	D3DXVECTOR3 normal;
 	// ディフューズカラー
-	//DWORD color;
-
+	DWORD color;
 	// テクスチャ座標
 	D3DXVECTOR2 uv;
-	
-
-	
 };
