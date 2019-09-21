@@ -33,12 +33,9 @@ struct FacePolygon {
 struct MaterialData {
 
 	MaterialData() {
-		material_name = "";
 		texture_name = "";
 	}
 
-	// マテリアル名
-	std::string material_name;
 	// テクスチャ名
 	std::string texture_name;
 	// カラー
@@ -90,6 +87,7 @@ private:
 	bool MeshLoad(
 		std::string file_name,
 		std::string texture_file_path,
+		std::string&out_material_name,
 		int &out_total_material_num,
 		std::vector<D3DXVECTOR3>&out_vertex_list,
 		std::vector<D3DXVECTOR3>&out_normal_list,
@@ -101,11 +99,7 @@ private:
 	// 面情報からカスタムバーテックス作成
 	void FaceInfoLoad(
 		FILE*p_file,
-		std::vector<std::vector<FacePolygon>>&face_list,
-		std::vector<ObjectSubset>&out_object_sub_set,
-		std::vector<D3DXVECTOR3>pos,
-		std::vector<D3DXVECTOR2>uv,
-		std::vector<D3DXVECTOR3>normal
+		std::vector<std::vector<FacePolygon>>&face_list
 		);
 
 
@@ -138,11 +132,7 @@ private:
 
 	// 面情報代入
 	std::vector<FacePolygon> InsertFaceList(
-		std::vector<std::vector<std::string>>face_info_str,
-		std::vector<MeshCustomVertex>out_custom_vertex_list,
-		std::vector<D3DXVECTOR3>pos_list,
-		std::vector<D3DXVECTOR2>uv_list,
-		std::vector<D3DXVECTOR3>normal_list
+		std::vector<std::vector<std::string>>face_info_str
 	);
 
 
@@ -182,8 +172,6 @@ private:
 
 	// 総ポリゴン数
 	int m_total_face_num;
-
-	std::vector<UINT>m_indices;
 
 	// Objの方のマテリアル名配列
 	std::vector<std::string>m_usemtl_name_list;

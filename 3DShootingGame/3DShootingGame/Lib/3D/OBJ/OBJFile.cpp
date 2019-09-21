@@ -68,7 +68,7 @@ void ObjFile::DrawSubSet(int material_num){
 	int BASE_VERTEX_INDEX = 0;
 
 	// 描画に使用する最小のインデックス番号
-	int MIN_INDEX = 0;
+	int MIN_INDEX = m_object_sub_set_list[material_num].face_start;
 
 	// 描画を開始する頂点インデックスまでのオフセット値を指定
 	// 途中から描画したい場合に有効
@@ -112,6 +112,8 @@ bool ObjFile::Load(
 	std::string texture_file_path,
 	int &out_total_material_num) {
 
+	std::vector<std::string>split_file_name;
+	split_file_name = Utility::SplitStr('/',obj_file_path);
 
 	// 頂点読み込みバッファ
 	std::vector<D3DXVECTOR3>vertex_list;
@@ -128,11 +130,14 @@ bool ObjFile::Load(
 	// マテリアルデータバッファ
 	std::vector<MaterialData>material_data_list;
 
+	// マテリアル名
+	std::string material_name;
 
 	// メイン読み込み
 	if (MeshLoad(
 		obj_file_path,
 		texture_file_path,
+		material_name,
 		out_total_material_num,
 		vertex_list,
 		normal_list,
@@ -142,20 +147,29 @@ bool ObjFile::Load(
 		return false;
 	}
 
+	std::string file_path_material_name;
+
+	for (unsigned int i = 0; i < split_file_name.size() - 1; i++) {
+		 file_path_material_name += split_file_name[i];
+	}
+
+	// ファイルパス付のマテリアル名にする
+	file_path_material_name += material_name;
+
+	// マテリアル読み込み
+	MaterialFileLoad(file_path_material_name,texture_file_path);
 
 	// 頂点数
-	int vertex_num = TOTAL_VERTEX_TYPE;
-
-	int face_num = 0;
+	int vertex_num = 0;
 
 	// 面数
 	for (int i = 0; i < face_list.size(); i++) {
-		face_num += (int)face_list[i].size();
+		vertex_num += (int)face_list[i].size();
 	}
 
 	// バーテックスバッファ生成
 	VertexBufferCreate(
-		m_total_vertex_num,
+		vertex_num,
 		vertex_list,
 		normal_list,
 		uv_list,
@@ -164,7 +178,7 @@ bool ObjFile::Load(
 
 	// インデックスバッファ生成
 	IndexBufferCreateFaceBase(
-		face_num,
+		vertex_num * 2,
 		face_list);
 
 	return true;
@@ -175,6 +189,7 @@ bool ObjFile::Load(
 bool ObjFile::MeshLoad(
 	std::string file_path,
 	std::string texture_file_path,
+	std::string&out_material_name,
 	int &out_total_material_num,
 	std::vector<D3DXVECTOR3>&out_vertex_list,
 	std::vector<D3DXVECTOR3>&out_normal_list,
@@ -187,7 +202,7 @@ bool ObjFile::MeshLoad(
 
 	HRESULT result;
 
-	std::string obj_file_path = file_path + ".obj";
+	std::string obj_file_path = file_path;
 
 	// ファイルオープン
 	result = fopen_s(&p_file, obj_file_path.c_str(), "r");
@@ -230,6 +245,22 @@ bool ObjFile::MeshLoad(
 				out_normal_list
 			);
 		}
+		
+		// 面情報なら
+		else if (front_str[0] == 'f' && front_str[1] == '\0') {
+
+			// 面情報読み込み
+			FaceInfoLoad(
+				p_file,
+				out_face_list
+			);
+		}
+		// マテリアルファイル名読み込み
+		else if (strcmp(front_str,"mtllib") == 0) {
+		
+			fscanf_s(p_file, "%s",&front_str,BUFFER);
+			out_material_name = front_str;
+		}
 		// 使用するマテリアル情報なら要素加算
 		else if (strcmp(front_str, "usemtl") == 0) {
 
@@ -242,26 +273,7 @@ bool ObjFile::MeshLoad(
 				BUFFER
 			);
 		}
-		
-		// 面情報なら
-		else if (front_str[0] == 'f' && front_str[1] == '\0') {
 
-			// 面情報読み込み
-			FaceInfoLoad(
-				p_file,
-				out_face_list,
-				m_object_sub_set_list,
-				out_vertex_list,
-				out_uv_list,
-				out_normal_list
-				);
-
-		}
-		else if (strcmp(front_str,"mtllib") == 0) {
-		
-			// マテリアル読み込み
-			MaterialFileLoad(file_path, texture_file_path);
-		}
 		
 	}
 
@@ -331,11 +343,7 @@ void ObjFile::VertexInfoLoad(
 
 void ObjFile::FaceInfoLoad(
 	FILE*p_file,
-	std::vector<std::vector<FacePolygon>>&out_face_list,
-	std::vector<ObjectSubset>&out_object_sub_set,
-	std::vector<D3DXVECTOR3>pos,
-	std::vector<D3DXVECTOR2>uv,
-	std::vector<D3DXVECTOR3>normal
+	std::vector<std::vector<FacePolygon>>&out_face_list
 ) {
 
 	// とりあえず256 * 8バイト
@@ -417,11 +425,7 @@ void ObjFile::FaceInfoLoad(
 
 
 std::vector<FacePolygon> ObjFile::InsertFaceList(
-	std::vector<std::vector<std::string>>face_info_str,
-	std::vector<MeshCustomVertex>out_custom_vertex_list,
-	std::vector<D3DXVECTOR3>pos_list,
-	std::vector<D3DXVECTOR2>uv_list,
-	std::vector<D3DXVECTOR3>normal_list
+	std::vector<std::vector<std::string>>face_info_str
 ) {
 
 	// 読み取れない場合
@@ -459,8 +463,6 @@ std::vector<FacePolygon> ObjFile::InsertFaceList(
 
 			// 面情報へ代入
 			switch (j) {
-
-				if(vertex_info[])
 
 			case VERTEX:
 				prov_face[i].pos_num = vertex_info[j];
@@ -502,7 +504,7 @@ bool ObjFile::MaterialFileLoad(
 	// カラー情報を保存する
 	float color_info[COLOR_NUM] = {};
 
-	std::ifstream ifs(mtl_file_name + ".mtl");
+	std::ifstream ifs(mtl_file_name);
 
 	if (ifs.fail() == true) {
 		return false;
@@ -517,17 +519,17 @@ bool ObjFile::MaterialFileLoad(
 		// 新しいマテリアル
 		if (strcmp(str_list[0].c_str(), "newmtl ") == 0) {
 
-			m_material_data_list[str_list[1].c_str()].
-				material_name = str_list[1].c_str();
+			m_material_data_list[str_list[1].c_str()].texture_name
+				= str_list[1].c_str();
 			texture_str = str_list[1].c_str();
 		}
 		// アンビエントカラー
 		else if (strcmp(str_list[0].c_str(), "Ka ") == 0) {
 
 			D3DCOLORVALUE color = {
-				(float)strtol(str_list[1].c_str(),NULL,10),
-				(float)strtol(str_list[2].c_str(), NULL, 10),
-				(float)strtol(str_list[3].c_str(), NULL, 10),
+				(float)atof(str_list[1].c_str()),
+				(float)atof(str_list[2].c_str()),
+				(float)atof(str_list[3].c_str()),
 				1.0f
 			};
 
@@ -539,9 +541,9 @@ bool ObjFile::MaterialFileLoad(
 		else if (strcmp(str_list[0].c_str(), "Kd ") == 0) {
 
 			D3DCOLORVALUE color = {
-				(float)strtol(str_list[1].c_str(),NULL,10),
-				(float)strtol(str_list[2].c_str(), NULL, 10),
-				(float)strtol(str_list[3].c_str(), NULL, 10),
+				(float)atof(str_list[1].c_str()),
+				(float)atof(str_list[2].c_str()),
+				(float)atof(str_list[3].c_str()),
 				1.0f
 			};
 
@@ -553,9 +555,9 @@ bool ObjFile::MaterialFileLoad(
 		else if (strcmp(str_list[0].c_str(), "Ks ") == 0) {
 
 			D3DCOLORVALUE color = {
-				(float)strtol(str_list[1].c_str(),NULL,10),
-				(float)strtol(str_list[2].c_str(), NULL, 10),
-				(float)strtol(str_list[3].c_str(), NULL, 10),
+				(float)atof(str_list[1].c_str()),
+				(float)atof(str_list[2].c_str()),
+				(float)atof(str_list[3].c_str()),
 				1.0f
 			};
 
@@ -563,13 +565,26 @@ bool ObjFile::MaterialFileLoad(
 			m_material_data_list[texture_str].
 				material_color.Specular = color;
 		}
+		// α値なら
+		else if (strcmp(str_list[0].c_str(), "d ") == 0) {
 
-		// テクスチャ
+			// α値設定
+			//m_material_data_list[texture_str].
+			//	material_color.Ambient.r = (float)atof(str_list[1].c_str());
+
+			//m_material_data_list[texture_str].
+			//	material_color.Diffuse.r = (float)atof(str_list[1].c_str());
+
+			//m_material_data_list[texture_str].
+			//	material_color.Specular.r = (float)atof(str_list[1].c_str());
+
+		}
+		// テクスチャなら
 		else if (strcmp(str_list[0].c_str(), "map_Kd ") == 0) {
 
 			// テクスチャ名がないなら
 			if (str_list[1].empty() == true) {
-				return false;
+				continue;
 			}
 
 			std::string texture_name = texture_file_path + str_list[1];
