@@ -528,6 +528,7 @@ bool ObjFile::MaterialFileLoad(
 		// 新しいマテリアル
 		if (strcmp(str_list[0].c_str(), "newmtl ") == 0) {
 
+			// テクスチャ名受け取り
 			m_material_data_list[str_list[1].c_str()].texture_name
 				= str_list[1].c_str();
 			texture_str = str_list[1].c_str();
@@ -611,7 +612,7 @@ bool ObjFile::MaterialFileLoad(
 			std::string texture_name = texture_file_path + str_list[1];
 
 			// テクスチャ名代入
-			m_material_data_list[texture_str].texture_name =
+			m_material_data_list[texture_str].texture_name = 
 				 texture_str;
 
 			// テクスチャ読み込み
