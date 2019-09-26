@@ -24,11 +24,13 @@ DebugMode::DebugMode() {
 	light->On();
 
 	// オブジェクト読み込み
-	objfile.Load(
+	ObjFile::GetInstance()->Load(
 		"Resource/3DModel/The City/The City.obj",
-		"Resource/3DModel/The City",
+		"1",
+		"Resource/3DModel/The City/",
 		m_total_material_num
 	);
+
 }
 
 
@@ -210,8 +212,9 @@ void DebugMode::Draw() {
 		device->SetRenderState(D3DRS_ZENABLE, true);
 
 		for (int i = 0; i < m_total_material_num; i++) {
-			objfile.DrawSubSet(i,0.f,-100.f);
+			ObjFile::GetInstance()->DrawSubSet("1",i,0.f,0.f);
 		}
+
 }
 
 

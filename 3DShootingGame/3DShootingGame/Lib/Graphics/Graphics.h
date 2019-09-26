@@ -176,15 +176,48 @@ public:
 
 
 	/**
-	* @brief バーテックスバッファ作成
-	* @param[in] int model_size
+	* @brief バーテックスバッファ16bit作成
+	* @param[in] int index_size かならず16bit掛け算する(UWORD)
 	* @param[out] IDirect3DVertexBuffer9
 	* @return 生成できたらtrueできなかったらfalseを返す
 	*/
-	//bool CreateVertexBuffer(
-	//	int model_size,
-	//	IDirect3DVertexBuffer9 vertex_buffer);
+	bool CreateIndexBuffer16BitSize(
+		LPDIRECT3DINDEXBUFFER9 *p_index_buffer,
+		const int &index_size);
 
+	/**
+	* @brief バーテックスバッファ32bit作成
+	* @param[in] int index_size　必ず32bit掛け算する(int)
+	* @param[out] IDirect3DVertexBuffer9
+	* @return 生成できたらtrueできなかったらfalseを返す
+	*/
+	bool CreateIndexBuffer32BitSize(
+		LPDIRECT3DINDEXBUFFER9 *p_index_buffer,
+		const int &index_size
+	);
+
+	/**
+	* @brief インデックスバッファ16bitのロック
+	*/
+	unsigned short *LockIndexBuffer16BitSize(
+		LPDIRECT3DINDEXBUFFER9*p_index_buffer
+	);
+
+
+	/**
+	* @brief インデックスバッファ32bitのロック
+	*/
+	int *LockIndexBuffer32BitSize(
+		LPDIRECT3DINDEXBUFFER9*p_index_buffer
+	);
+
+
+	/**
+	* @brief インデックスバッファのアンロック
+	*/
+	bool UnlockIndexBuffer(
+		LPDIRECT3DINDEXBUFFER9*p_index_buffer
+	);
 
 private:
 

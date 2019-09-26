@@ -48,8 +48,6 @@ private:
 
 	FPS fps;
 
-	ObjFile objfile;
-
 	IndexBuffer *index_buffer;
 
 	bool m_is_program_stop;
