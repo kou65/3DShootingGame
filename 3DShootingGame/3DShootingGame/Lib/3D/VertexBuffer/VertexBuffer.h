@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../../Graphics/Graphics.h"
-#include"../Object3DCustomVertex/Object3DCustomVertex.h"
+#include"../Object3DCustomVertex/MeshCustomVertex.h"
 
 /* 頂点バッファを使うメリット
 

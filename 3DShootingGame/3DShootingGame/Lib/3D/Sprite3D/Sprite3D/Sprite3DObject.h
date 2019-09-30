@@ -24,7 +24,7 @@ struct CustomVertex3D {
 #define FVF_3D (D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
-class Sprite3D {
+class Sprite3DObject {
 public:
 
 	// 板形状で描画
@@ -56,8 +56,5 @@ private:
 	D3DXMATRIX CalcMatrixRotation(
 		PolygonDirection dir
 	);
-
-private:
-
 
 };

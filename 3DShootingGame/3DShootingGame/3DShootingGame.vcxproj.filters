@@ -70,12 +70,6 @@
     <Filter Include="Lib\Texture\TextureManager">
       <UniqueIdentifier>{c91ba9cc-09c1-4c0a-a4b7-1d0893aa60b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Texture\TextureData3D">
-      <UniqueIdentifier>{ca45792a-9568-4e06-bcb7-96011820426b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Texture\TextureData2D">
-      <UniqueIdentifier>{85fa624c-2030-4413-8fe4-62cb469cfed3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib\OBJFile">
       <UniqueIdentifier>{b7acf513-46d9-4210-968c-68fcacca6f45}</UniqueIdentifier>
     </Filter>
@@ -84,12 +78,6 @@
     </Filter>
     <Filter Include="Lib\Sprite">
       <UniqueIdentifier>{77a5bd4c-f82e-41f6-858c-f8d34a72b618}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Sprite\Sprite2D">
-      <UniqueIdentifier>{a369b4db-5f1e-4a50-99e2-25456d2bf660}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lib\Sprite\Sprite3D">
-      <UniqueIdentifier>{aca2e92b-b3a5-441f-ad96-5642e2e39982}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lib\Sprite\Sprite2DData">
       <UniqueIdentifier>{ab040a18-4bb4-44f2-82b8-3414d6835c52}</UniqueIdentifier>
@@ -103,8 +91,20 @@
     <Filter Include="Lib\VertexBuffer">
       <UniqueIdentifier>{0041be8d-7c3f-4517-b990-c199d2c08d01}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Object3DCustomVertex">
+    <Filter Include="Lib\MeshCustomVertex">
       <UniqueIdentifier>{3a7ce534-60f8-46f9-89ba-b03910fc19a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite2DObject">
+      <UniqueIdentifier>{a369b4db-5f1e-4a50-99e2-25456d2bf660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Sprite\Sprite3DObject">
+      <UniqueIdentifier>{aca2e92b-b3a5-441f-ad96-5642e2e39982}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\TextureData">
+      <UniqueIdentifier>{85fa624c-2030-4413-8fe4-62cb469cfed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Texture\XFileTextureData">
+      <UniqueIdentifier>{aeb34382-0d76-4c21-81a0-44c96dd5a818}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,12 +165,6 @@
     <ClCompile Include="Lib\Graphics\Graphics.cpp">
       <Filter>Lib\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2D.cpp">
-      <Filter>Lib\Sprite\Sprite2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.cpp">
-      <Filter>Lib\Sprite\Sprite3D</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp">
       <Filter>Lib\Sprite\Sprite2DData</Filter>
     </ClCompile>
@@ -189,10 +183,40 @@
     <ClCompile Include="Utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBufferManager.cpp">
+    <ClCompile Include="ObjectManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBufferManager.cpp">
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EndScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.cpp">
+      <Filter>Lib\Sprite\Sprite2DObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.cpp">
+      <Filter>Lib\Sprite\Sprite3DObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,12 +266,6 @@
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h">
       <Filter>Lib\OBJFile</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h">
-      <Filter>Lib\Texture\TextureData2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h">
-      <Filter>Lib\Texture\TextureData3D</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h">
       <Filter>Lib\Texture\TextureManager</Filter>
     </ClInclude>
@@ -256,12 +274,6 @@
     </ClInclude>
     <ClInclude Include="Lib\Graphics\Graphics.h">
       <Filter>Lib\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2D.h">
-      <Filter>Lib\Sprite\Sprite2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.h">
-      <Filter>Lib\Sprite\Sprite3D</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h">
       <Filter>Lib\Sprite\Sprite2DData</Filter>
@@ -278,22 +290,61 @@
     <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h">
       <Filter>Lib\VertexBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\Object3DCustomVertex\Object3DCustomVertex.h">
-      <Filter>Lib\Object3DCustomVertex</Filter>
-    </ClInclude>
     <ClInclude Include="Vec3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBufferManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBufferManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Object3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="EndScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Object3DCustomVertex\MeshCustomVertex.h">
+      <Filter>Lib\MeshCustomVertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.h">
+      <Filter>Lib\Sprite\Sprite2DObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.h">
+      <Filter>Lib\Sprite\Sprite3DObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h">
+      <Filter>Lib\Texture\TextureData</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h">
+      <Filter>Lib\Texture\XFileTextureData</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletFactory.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

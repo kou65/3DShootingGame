@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
-#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2DObject.h"
 #include"../Lib/Sound/Sound.h"
 #include"../Lib/3D/Camera3D/Camera3D.h"
 #include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
@@ -9,12 +9,12 @@
 #include"../Lib/3D/IndexBuffer/IndexBuffer.h"
 #include"../Lib/3D/VertexBuffer/VertexBuffer.h"
 #include"../Lib/3D/OBJ/OBJFile.h"
-
 #include<string>
 
 
+
 // シングルトンデバッグモード
-class DebugMode{
+class Debugger{
 public:
 
 	bool IsEnd();
@@ -26,11 +26,11 @@ public:
 	void Release();
 
 	// シングルトン設定
-	static DebugMode& GetInstance();
+	static Debugger& GetInstance();
 
 private:
 
-	DebugMode();
+	Debugger();
 
 	void CameraMove();
 

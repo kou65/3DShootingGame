@@ -18,6 +18,7 @@ Sprite2DData::Sprite2DData(
 	int graph_num,
 	float tu,
 	float tv,
+	DWORD color,
 	Graphics::SamplerStateType state_type
 ) {
 
@@ -36,6 +37,7 @@ Sprite2DData::Sprite2DData(
 	this->graph_num = graph_num;
 	this->tu = tu;
 	this->tv = tv;
+	this->color = color;
 	this->type = state_type;
 }
 

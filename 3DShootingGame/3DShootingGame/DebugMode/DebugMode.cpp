@@ -1,9 +1,9 @@
 ﻿#include"DebugMode.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
-#include"../Lib/Sprite2D/Sprite2D/Sprite2D.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2DObject.h"
 #include"../Lib/Sprite2D/Sprite2DData/Sprite2DData.h"
 #include"../Lib/3D/Sprite3D/Sprite3DData/Sprite3DData.h"
-#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3D.h"
+#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DObject.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/FBX/FBX.h"
@@ -11,7 +11,7 @@
 
 
 
-DebugMode::DebugMode() {
+Debugger::Debugger() {
 
 	index_buffer = new IndexBuffer(Graphics::GetInstance());
 
@@ -23,24 +23,16 @@ DebugMode::DebugMode() {
 	m_is_program_stop = false;
 	light->On();
 
-	// オブジェクト読み込み
-	ObjFile::GetInstance()->Load(
-		"Resource/3DModel/The City/The City.obj",
-		"1",
-		"Resource/3DModel/The City/",
-		m_total_material_num
-	);
-
 }
 
 
-DebugMode& DebugMode::GetInstance() {
-	static DebugMode instance;
+Debugger& Debugger::GetInstance() {
+	static Debugger instance;
 	return instance;
 }
 
 
-bool DebugMode::IsEnd() {
+bool Debugger::IsEnd() {
 
 	// デバッグ用強制終了
 	if (KeyBoard::IsKeyPush(DIK_ESCAPE)) {
@@ -50,7 +42,7 @@ bool DebugMode::IsEnd() {
 }
 
 
-bool DebugMode::IsStopUpdate() {
+bool Debugger::IsStopUpdate() {
 
 	// 更新をストップする
 	if (KeyBoard::IsKeyExit(DIK_S)) {
@@ -61,7 +53,7 @@ bool DebugMode::IsStopUpdate() {
 }
 
 
-void DebugMode::Update() {
+void Debugger::Update() {
 
 	if (IsStopUpdate() == true) {
 		// 終了
@@ -81,7 +73,7 @@ void DebugMode::Update() {
 }
 
 
-void DebugMode::CameraMove() {
+void Debugger::CameraMove() {
 
 	// キーボード操作
 	{
@@ -117,7 +109,7 @@ void DebugMode::CameraMove() {
 }
 
 
-void DebugMode::CameraRotation() {
+void Debugger::CameraRotation() {
 
 	if (KeyBoard::IsKeyPushing(DIK_D)) {
 		camera_3d->AddRotation(D3DXVECTOR3(1.f,0.f,0.f));
@@ -134,26 +126,21 @@ void DebugMode::CameraRotation() {
 }
 
 
-void DebugMode::Draw() {
+void Debugger::Draw() {
 
+
+	light->On();
 
 	camera_3d->TransformDraw();
 
 	// ライトモードをファルスにする
-	SetRenderStateFile::LightMode(FALSE);
-
-	//d3d_mesh.AllDraw();
+	//SetRenderStateFile::LightMode(FALSE);
 
 	// Xファイルの描画
 	XFile::GetInstance()->Draw(
 		"Sample01.x",
 		camera_3d->GetPos()
 		);
-
-	//XFile::GetInstance()->Draw(
-	//	"Sample01.x",
-	//	D3DXVECTOR3(-30.f, 0.f, 0.f)
-	//);
 
 		Sprite3DData td(0.f,0.f,0.f,"ground");
 		td.scale_width = 1000.f;
@@ -163,62 +150,21 @@ void DebugMode::Draw() {
 		td.ofset.x = 0.0f;
 		td.ofset.y = 1.0f;
 
-		Sprite3D sprite_3d;
+		Sprite3DObject sprite_3d;
 
 		sprite_3d.BoardDraw(
 			td
 		);
 
-		//index_buffer->Draw();
-
-		//Graphics::GetInstance()->
-		//	GetLpDirect3DDevice9()->
-		//	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
-		//SetRenderStateFile::CullMode(FALSE);
 		SetRenderStateFile::LightMode(TRUE);
-
-
-		IDirect3DDevice9 *device = Graphics::GetInstance()->GetLpDirect3DDevice9();
-
-		//ライティングを無効にする。
-		D3DLIGHT9 Right;
-
-		ZeroMemory(&Right, sizeof(D3DLIGHT9));
-
-		float r = 0.f;
-		float g = 0.f;
-		float b = 0.f;
-
-		Right.Type = D3DLIGHT_DIRECTIONAL;
-		Right.Diffuse.r = r;
-		Right.Diffuse.g = g;
-		Right.Diffuse.b = b;
-		Right.Specular.r = r;
-		Right.Specular.g = g;
-		Right.Specular.b = b;
-		Right.Ambient.r = r / 2.0f;
-		Right.Ambient.g = g / 2.0f;
-		Right.Ambient.b = b / 2.0f;
-		// 方向
-		Right.Direction = D3DXVECTOR3(100.f, 100.f, 100.f);
-		//D3DXVec3Normalize(
-		//	(D3DXVECTOR3*)& Right.Direction,
-		//	&D3DXVECTOR3(10.0f, -1.5f, 0.7f));
-		device->SetLight(0, &Right);
-		device->LightEnable(0, true);
-		device->SetRenderState(D3DRS_LIGHTING, true);
-		device->SetRenderState(D3DRS_AMBIENT, 0xfffffff);
-		device->SetRenderState(D3DRS_ZENABLE, true);
 
 		for (int i = 0; i < m_total_material_num; i++) {
 			ObjFile::GetInstance()->DrawSubSet("1",i,0.f,0.f);
 		}
-
 }
 
 
-void DebugMode::Release() {
+void Debugger::Release() {
 
 
 }

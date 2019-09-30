@@ -9,8 +9,6 @@
 
 class TextureManager{
 public:
-
-	~TextureManager();
 	
 	static TextureManager *GetInstance() {
 
@@ -18,6 +16,9 @@ public:
 		return &texture_manager;
 	}
 
+public:
+
+	~TextureManager();
 
 	void Load2D(
 		const char* file_name,
@@ -43,9 +44,8 @@ public:
 	// 2D用のテクスチャデータを返す
 	TextureData2D &GetTextureData2D(std::string name);
 
-	// 3D用のテクスチャデータを返す
-	TextureData3D &GetTextureData3D(
-		std::string name);
+	// XFile用のテクスチャデータを返す
+	TextureData3D &GetTextureData3D(std::string name);
 
 	// 解放
 	void Release();
@@ -64,12 +64,10 @@ private:
 		TextureData2D*
 	> m_texture_data2D_list;
 
-	// 3Dのテクスチャリスト
 	std::unordered_map<
 		// キー
 		std::string,
 		// 入れ物
 		TextureData3D*
-	> m_texture_data3D_list;
-
+	>m_texture_data3D_list;
 };

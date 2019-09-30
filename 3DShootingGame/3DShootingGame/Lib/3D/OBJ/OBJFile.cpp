@@ -16,129 +16,132 @@ ObjFile::ObjFile() {
 
 void ObjFile::DrawSubSet(
 	const std::string &register_name,
-	int material_num,
 	float pos_x,
 	float pos_y,
 	float pos_z
 	){
 
-	// キーが登録されていないなら描画しない
-	if (m_obj_file_data.count(register_name) == 0) {
-		return;
-	}
-	// 生成されていないなら描画しない
-	if (m_obj_file_data[register_name] == nullptr) {
-		return;
-	}
+	// マテリアル数分回す
+	for (unsigned int material_num = 0; material_num < m_obj_file_data[register_name]->material_num; material_num++) {
 
-	// 特定のオブジェクトファイルデータを受け取る
-	ObjFileData *p_obj_file_data = m_obj_file_data[register_name];
+		// キーが登録されていないなら描画しない
+		if (m_obj_file_data.count(register_name) == 0) {
+			return;
+		}
+		// 生成されていないなら描画しない
+		if (m_obj_file_data[register_name] == nullptr) {
+			return;
+		}
 
-	// ワールド座標初期化
-	D3DXMATRIX mat;
-	D3DXMatrixIdentity(&mat);
+		// 特定のオブジェクトファイルデータを受け取る
+		ObjFileData *p_obj_file_data = m_obj_file_data[register_name];
 
-	// 移動
-	D3DXMatrixTranslation(&mat, pos_x, pos_y, pos_z);
+		// ワールド座標初期化
+		D3DXMATRIX mat;
+		D3DXMatrixIdentity(&mat);
 
-	m_p_graphics->GetInstance()->GetLpDirect3DDevice9()
-		->SetTransform(D3DTS_WORLD, &mat);
+		// 移動
+		D3DXMatrixTranslation(&mat, pos_x, pos_y, pos_z);
 
-	if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
-		return;
-	}
+		m_p_graphics->GetInstance()->GetLpDirect3DDevice9()
+			->SetTransform(D3DTS_WORLD, &mat);
 
-	// ストリームをセット
-	m_p_graphics->GetLpDirect3DDevice9()->SetStreamSource(
-		0,
-		p_obj_file_data->m_p_vertex_buffer,
-		0,
-		sizeof(MeshCustomVertex)
-	);
-	
-	// マテリアル名
-	std::string material_name = p_obj_file_data->m_usemtl_name_list[material_num];
+		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
+			return;
+		}
 
-	// テクスチャが存在しているなら
-	if (TextureManager::GetInstance()->Find2DTexture(
-		p_obj_file_data->m_material_data_list[material_name].texture_name
-	) == true) {
-	
-		// テクスチャ管理者からテクスチャ受け取り
-		TextureData2D texture_data = TextureManager::GetInstance()
-			->GetTextureData2D(
-				p_obj_file_data->m_material_data_list[material_name].texture_name
+		// ストリームをセット
+		m_p_graphics->GetLpDirect3DDevice9()->SetStreamSource(
+			0,
+			p_obj_file_data->m_p_vertex_buffer,
+			0,
+			sizeof(MeshCustomVertex)
+		);
+
+		// マテリアル名
+		std::string material_name = p_obj_file_data->m_usemtl_name_list[material_num];
+
+		// テクスチャが存在しているなら
+		if (TextureManager::GetInstance()->Find2DTexture(
+			p_obj_file_data->m_material_data_list[material_name].texture_name
+		) == true) {
+
+			// テクスチャ管理者からテクスチャ受け取り
+			TextureData2D texture_data = TextureManager::GetInstance()
+				->GetTextureData2D(
+					p_obj_file_data->m_material_data_list[material_name].texture_name
+				);
+
+			// テクスチャセット
+			m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
+				0,
+				texture_data
 			);
-	
-		// テクスチャセット
+		}
+
+		// マテリアルをセット
+		m_p_graphics->GetLpDirect3DDevice9()->SetMaterial(
+			&p_obj_file_data->m_material_data_list[material_name].material_color
+		);
+
+		// インデックス番号をデバイスに設定する
+		m_p_graphics->GetLpDirect3DDevice9()->SetIndices(
+			p_obj_file_data->m_p_index_buffer
+		);
+
+		// インデックスをオフセットする
+		int BASE_VERTEX_INDEX = 0;
+
+		// 描画に使用する最小のインデックス番号
+		int MIN_INDEX = p_obj_file_data->
+			m_object_sub_set_list[material_num].face_start;
+
+		// 描画を開始する頂点インデックスまでのオフセット値を指定
+		// 途中から描画したい場合に有効
+		int START_INDEX = p_obj_file_data->
+			m_object_sub_set_list[material_num].face_start;
+
+		// 三角ポリゴン頂点数
+		int NUM_VERTEX = p_obj_file_data->
+			m_object_sub_set_list[material_num].face_count * 3;
+
+		// START_INDEXを先頭として描画するポリゴンの数を指定する
+		unsigned int PRIMITIVE_COUNT = p_obj_file_data->
+			m_object_sub_set_list[material_num].face_count;
+
+		// どの情報を伝えるか
+		m_p_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
+
+		// インデックス描画
+		m_p_graphics->GetLpDirect3DDevice9()->DrawIndexedPrimitive(
+			// 頂点のつなぎ方
+			D3DPT_TRIANGLELIST,
+			// 頂点インデックスの一番最初までのオフセット値を指定
+			BASE_VERTEX_INDEX,
+			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
+			MIN_INDEX,
+			// 上引数の最小以降の頂点数を指定
+			NUM_VERTEX,
+			// 描画を開始する頂点インデックスまでのオフセット値を指定
+			START_INDEX,
+			// 上引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
+			PRIMITIVE_COUNT
+		);
+
+		// セットテクスチャリセット
 		m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
 			0,
-			texture_data
+			NULL
 		);
+
 	}
-
-	// マテリアルをセット
-	m_p_graphics->GetLpDirect3DDevice9()->SetMaterial(
-		&p_obj_file_data->m_material_data_list[material_name].material_color
-	);
-
-	// インデックス番号をデバイスに設定する
-	m_p_graphics->GetLpDirect3DDevice9()->SetIndices(
-		p_obj_file_data->m_p_index_buffer
-	);
-
-	// インデックスをオフセットする
-	int BASE_VERTEX_INDEX = 0;
-
-	// 描画に使用する最小のインデックス番号
-	int MIN_INDEX = p_obj_file_data->
-		m_object_sub_set_list[material_num].face_start;
-
-	// 描画を開始する頂点インデックスまでのオフセット値を指定
-	// 途中から描画したい場合に有効
-	int START_INDEX = p_obj_file_data->
-		m_object_sub_set_list[material_num].face_start;
-
-	// 三角ポリゴン頂点数
-	int NUM_VERTEX = p_obj_file_data->
-		m_object_sub_set_list[material_num].face_count * 3;
-
-	// START_INDEXを先頭として描画するポリゴンの数を指定する
-	unsigned int PRIMITIVE_COUNT = p_obj_file_data->
-		m_object_sub_set_list[material_num].face_count;
-
-	// どの情報を伝えるか
-	m_p_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
-
-	// インデックス描画
-	m_p_graphics->GetLpDirect3DDevice9()->DrawIndexedPrimitive(
-		// 頂点のつなぎ方
-		D3DPT_TRIANGLELIST,
-		// 頂点インデックスの一番最初までのオフセット値を指定
-		BASE_VERTEX_INDEX,
-		// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
-		MIN_INDEX,
-		// 上引数の最小以降の頂点数を指定
-		NUM_VERTEX,
-		// 描画を開始する頂点インデックスまでのオフセット値を指定
-		START_INDEX,
-		// 上引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
-		PRIMITIVE_COUNT
-	);
-
-	// セットテクスチャリセット
-	m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
-		0,
-		NULL
-	);
 }
 
 
 bool ObjFile::Load(
 	const std::string &obj_file_path,
 	const std::string &register_name,
-	const std::string &texture_file_path,
-	int &out_total_material_num) {
+	const std::string &texture_file_path) {
 
 	std::vector<std::string>split_file_name;
 	split_file_name = Utility::SplitStr('/',obj_file_path);
@@ -155,6 +158,9 @@ bool ObjFile::Load(
 	// 面情報バッファ
 	std::vector<INT>indices;
 
+	// 総マテリアル数
+	int material_num = 0;
+
 	// オブジェクトファイルデータを生成
 	m_obj_file_data[register_name] = new ObjFileData;
 
@@ -164,7 +170,7 @@ bool ObjFile::Load(
 		register_name,
 		texture_file_path,
 		material_name,
-		out_total_material_num,
+		material_num,
 		indices,
 		mesh_vertex_list) == false) {
 		return false;
@@ -199,6 +205,9 @@ bool ObjFile::Load(
 		register_name,
 		indices
 		);
+
+	// 総マテリアル数保存
+	m_obj_file_data[register_name]->material_num = material_num;
 
 	return true;
 }
@@ -477,7 +486,7 @@ void ObjFile::InsertFaceList(
 		}
 
 		// 軸分回す
-		for (int j = 0; j < TOTAL_FACE_INFO - subject_vertex; j++) {
+		for (int j = 0; j < 3 - subject_vertex; j++) {
 
 			// 頂点情報に変換する
 			Vector3ConversionByString(vertex_info[j],face_info_str[i][j]);
@@ -592,22 +601,20 @@ bool ObjFile::MaterialFileLoad(
 		if (strcmp(str_list[0].c_str(),"newmtl ") == 0) {
 
 			// テクスチャ名受け取り
-			p_obj_file_data->
+			m_obj_file_data[register_name]->
 				m_material_data_list[str_list[1].c_str()].texture_name
 				= str_list[1].c_str();
 			texture_str = str_list[1].c_str();
 
 			// 使わない色を初期化
 			D3DCOLORVALUE color = {
-				100.f,
-				100.f,
-				100.f,
+				0.f,
+				0.f,
+				0.f,
 				1.0f
 			};
-			p_obj_file_data->m_material_data_list[texture_str].
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
 				material_color.Emissive = color;
-			p_obj_file_data->m_material_data_list[texture_str].
-				material_color.Power = 0.f;
 		}
 		// アンビエントカラー
 		else if (strcmp(str_list[0].c_str(), "Ka ") == 0) {
@@ -620,7 +627,7 @@ bool ObjFile::MaterialFileLoad(
 			};
 
 			// マテリアルに代入
-			p_obj_file_data->m_material_data_list[texture_str].
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
 				material_color.Ambient = color;
 		}
 		// ディフューズカラー
@@ -634,7 +641,7 @@ bool ObjFile::MaterialFileLoad(
 			};
 
 			// マテリアルに代入
-			p_obj_file_data->m_material_data_list[texture_str].
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
 				material_color.Diffuse = color;
 		}
 		// スペキュラーカラー
@@ -648,22 +655,28 @@ bool ObjFile::MaterialFileLoad(
 			};
 
 			// マテリアルに代入
-			p_obj_file_data->m_material_data_list[texture_str].
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
 				material_color.Specular = color;
 		}
 		// α値なら
 		else if (strcmp(str_list[0].c_str(), "d ") == 0) {
 
 			// α値設定
-			//m_material_data_list[texture_str].
-			//	material_color.Ambient.r = (float)atof(str_list[1].c_str());
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
+				material_color.Ambient.a = (float)atof(str_list[1].c_str());
 
-			//m_material_data_list[texture_str].
-			//	material_color.Diffuse.r = (float)atof(str_list[1].c_str());
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
+				material_color.Diffuse.a = (float)atof(str_list[1].c_str());
 
-			//m_material_data_list[texture_str].
-			//	material_color.Specular.r = (float)atof(str_list[1].c_str());
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
+				material_color.Specular.a = (float)atof(str_list[1].c_str());
 
+		}
+		// パワー
+		else if (strcmp(str_list[0].c_str(), "Ns ") == 0) {
+
+			m_obj_file_data[register_name]->m_material_data_list[texture_str].
+				material_color.Power = (float)atof(str_list[1].c_str());
 		}
 		// テクスチャなら
 		else if (strcmp(str_list[0].c_str(), "map_Kd ") == 0) {
@@ -745,7 +758,7 @@ bool ObjFile::Vector3ConversionByString(
 		return false;
 	}
 
-	// 数字がないなら
+	// スラッシュなら
 	if (string == "/") {
 		return false;
 	}
@@ -875,7 +888,6 @@ bool ObjFile::IndexBufferCreateFaceBase(
 			&p_obj_file_data->m_p_index_buffer
 		);
 
-
 		// nullチェック
 		if (index_buffer == nullptr) {
 			return false;
@@ -903,7 +915,6 @@ bool ObjFile::IndexBufferCreateFaceBase(
 			&p_obj_file_data->m_p_index_buffer
 		);
 
-
 		// nullチェック
 		if (index_buffer == nullptr) {
 			return false;
@@ -913,7 +924,6 @@ bool ObjFile::IndexBufferCreateFaceBase(
 		for (unsigned int i = 0; i < indices.size(); i++) {
 			index_buffer[i] = indices[i];
 		}
-
 	}
 
 	// nullチェック

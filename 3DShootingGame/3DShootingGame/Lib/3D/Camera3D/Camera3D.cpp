@@ -40,10 +40,12 @@ void Camera3D::D3DXVec3Init(D3DXVECTOR3&init_vec3) {
 void Camera3D::Update() {
 
 	if (m_camera_mode == FPS) {
+
 		FPSTransform();
 	}
 
 	else if (m_camera_mode == TPS) {
+
 		TPSTransform(
 			D3DXVECTOR3(0.f,0.f,0.f),
 			D3DXVECTOR3(0.f,0.f,-20.f)

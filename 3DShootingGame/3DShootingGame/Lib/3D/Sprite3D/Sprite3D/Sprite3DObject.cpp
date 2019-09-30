@@ -1,4 +1,4 @@
-﻿#include"../Sprite3D/Sprite3D.h"
+﻿#include"../Sprite3D/Sprite3DObject.h"
 #include"../../../Graphics/Graphics.h"
 #include"../../../UV/UV.h"
 #include"../../Sprite3D/Sprite3DData/Sprite3DData.h"
@@ -7,7 +7,7 @@
 
 
 
-void Sprite3D::BoardDraw(
+void Sprite3DObject::BoardDraw(
 	Sprite3DData sprite_data
 ) {
 
@@ -137,7 +137,7 @@ void Sprite3D::BoardDraw(
 }
 
 
-void Sprite3D::ShapeBoard(
+void Sprite3DObject::ShapeBoard(
 	CustomVertex3D * custom_vertex3D,
 	int vertex_num,
 	float right,
@@ -197,7 +197,7 @@ void Sprite3D::ShapeBoard(
 }
 
 
-D3DXMATRIX Sprite3D::CalcMatrixTransform(
+D3DXMATRIX Sprite3DObject::CalcMatrixTransform(
 	D3DXVECTOR3 pos,
 	D3DXVECTOR3 scale,
 	PolygonDirection dir) {
@@ -244,7 +244,7 @@ D3DXMATRIX Sprite3D::CalcMatrixTransform(
 }
 
 
-D3DXMATRIX Sprite3D::CalcMatrixRotation(
+D3DXMATRIX Sprite3DObject::CalcMatrixRotation(
 	PolygonDirection dir
 ) {
 

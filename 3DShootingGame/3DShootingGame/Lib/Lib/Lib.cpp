@@ -34,7 +34,7 @@ namespace Lib {
 	void Release() {
 
 		// 解放処理
-		DebugMode::GetInstance().Release();
+		Debugger::GetInstance().Release();
 		Sound::Release();
 		DirectInput::Release();
 		Graphics::GetInstance()->Release();

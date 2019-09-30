@@ -1,8 +1,11 @@
 ﻿#pragma once
+#include"Object.h"
 
 
 
-class Object3D {
+
+class Object3D : public Object{
 public:
+
 
 };

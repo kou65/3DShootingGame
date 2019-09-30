@@ -14,7 +14,7 @@ namespace SetRenderStateFile {
 		AlphaEnable(TRUE);
 
 		// ライトモード
-		LightMode(FALSE);
+		//LightMode(FALSE);
 
 		// αテスト
 		AlphaTest(TRUE);

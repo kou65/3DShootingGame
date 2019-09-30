@@ -146,8 +146,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="BulletFactory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="DebugMode\DebugMode.cpp" />
-    <ClCompile Include="IndexBufferManager.cpp">
+    <ClCompile Include="EndScene.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -157,7 +173,7 @@
     <ClCompile Include="Lib\3D\Light\Light.cpp" />
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
     <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp" />
-    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.cpp" />
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.cpp" />
     <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
     <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
@@ -179,25 +195,57 @@
     <ClCompile Include="Lib\Lib\Lib.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
     <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp" />
-    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2D.cpp" />
+    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.cpp" />
     <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp" />
     <ClCompile Include="Lib\UV\UV.cpp" />
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
-    <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
-    <ClCompile Include="Utility.cpp">
+    <ClCompile Include="ObjectManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="VertexBufferManager.cpp">
+    <ClCompile Include="Player.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
+    <ClCompile Include="TitleScene.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
       <SubType>
       </SubType>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="BulletFactory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="DebugMode\DebugMode.h" />
-    <ClInclude Include="IndexBufferManager.h">
+    <ClInclude Include="EndScene.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -205,10 +253,10 @@
     <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h" />
     <ClInclude Include="Lib\3D\IndexBuffer\IndexBuffer.h" />
     <ClInclude Include="Lib\3D\Light\Light.h" />
-    <ClInclude Include="Lib\3D\Object3DCustomVertex\Object3DCustomVertex.h" />
+    <ClInclude Include="Lib\3D\Object3DCustomVertex\MeshCustomVertex.h" />
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h" />
-    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3D.h" />
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.h" />
     <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Lib\3D\XFile\XFile.h" />
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
@@ -230,27 +278,47 @@
     <ClInclude Include="Lib\Lib\Lib.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
     <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h" />
-    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2D.h" />
+    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.h" />
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
     <ClInclude Include="Lib\UV\UV.h" />
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
+    <ClInclude Include="Object.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Object3D.h">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
+    <ClInclude Include="TitleScene.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Utility.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Vec3.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="VertexBufferManager.h">
       <SubType>
       </SubType>
     </ClInclude>

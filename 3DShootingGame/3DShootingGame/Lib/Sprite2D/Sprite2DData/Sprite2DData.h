@@ -27,6 +27,7 @@ struct Sprite2DData {
 		int graph_num = 0,
 		float tu = 0.f,
 		float tv = 0.f,
+		DWORD color = D3DCOLOR(0xffffff),
 		Graphics::SamplerStateType state_type = Graphics::CLAMP
 	);
 
@@ -72,6 +73,9 @@ struct Sprite2DData {
 
 	// テクスチャ座標のv軸をずらす
 	float tv;
+
+	// ディフューズカラー
+	DWORD color;
 
 	// サンプラーステートの状態
 	Graphics::SamplerStateType type;

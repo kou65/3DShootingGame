@@ -3,7 +3,7 @@
 #include<iostream>
 #include"../../Graphics/Graphics.h"
 #include<vector>
-#include"../Object3DCustomVertex/Object3DCustomVertex.h"
+#include"../Object3DCustomVertex/MeshCustomVertex.h"
 #include<map>
 #include"../../../Utility.h"
 
@@ -35,12 +35,15 @@ struct MaterialData {
 
 // オブジェファイルで保存するデータ
 struct ObjFileData {
+
+	// マテリアル数
+	unsigned int material_num;
 	// Objの方のマテリアル名配列
 	std::vector<std::string>m_usemtl_name_list;
 	// 描画を入れ替えるサブセット
 	std::vector<ObjectSubset>m_object_sub_set_list;
 	// マテリアルデータ配列(マテリアル名,マテリアルデータ)
-	std::unordered_map<std::string, MaterialData>m_material_data_list;
+	std::map<std::string, MaterialData>m_material_data_list;
 	// バーテックスバッファ
 	IDirect3DVertexBuffer9 * m_p_vertex_buffer;
 	// インデックスバッファ
@@ -59,16 +62,6 @@ public:
 
 public:
 
-	// 面情報の種類
-	enum FaceInfoType {
-		VERTEX,
-		UV,
-		NORMAL,
-		TOTAL_FACE_INFO
-	};
-
-public:
-
 	// 解放処理
 	void Release() {};
 
@@ -76,14 +69,12 @@ public:
 	bool Load(
 		const std::string &obj_file_path,
 		const std::string &registr_name,
-		const std::string &texture_file_path,
-		int &out_total_material_num
+		const std::string &texture_file_path
 	);
 
 	// 表示
 	void DrawSubSet(
 		const std::string &register_name,
-		int material_num,
 		float pos_x = 0.f,
 		float pos_y = 0.f,
 		float pos_z = 0.f

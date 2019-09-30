@@ -6,14 +6,24 @@
 class Light {
 public:
 
-	Light(Graphics*graphics) {
+	// ライト変更用コンストラクタ
+	Light(
+		Graphics*graphics,
+		const D3DLIGHT9 &set_light
+	);
 
-		this->graphics = graphics;
-	}
+	// デフォルトライト用コンストラクタ
+	Light(
+		Graphics*graphics
+	);
 
-	void NormalLightOn();
+	// ライトを光らせる
+	bool On();
 
-	void On();
+private:
+
+	// 標準ライト設定
+	void DefaultLightMode();
 
 private:
 

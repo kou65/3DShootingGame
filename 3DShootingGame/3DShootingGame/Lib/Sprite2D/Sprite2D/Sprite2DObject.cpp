@@ -1,7 +1,7 @@
 ﻿#include"../../UV/UV.h"
 #include"../../Texture/TextureManager/TextureManager.h"
 #include"../Sprite2DData/Sprite2DData.h"
-#include"../Sprite2D/Sprite2D.h"
+#include"../Sprite2D/Sprite2DObject.h"
 
 
 
@@ -15,13 +15,11 @@ struct CustomVertex2D
 };
 
 
-
 // テンプレートFVF2D
 #define FVF_2D (D3DFVF_XYZRHW | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
-
-void Sprite2D::BoardDraw(Sprite2DData texture_format) {
+void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	
 	// テクスチャが存在しているかどうか
 	if (TextureManager::GetInstance()->Find2DTexture(
@@ -130,7 +128,7 @@ void Sprite2D::BoardDraw(Sprite2DData texture_format) {
 }
 
 
-bool Sprite2D::SetSamplerStateSelect(Graphics::SamplerStateType type) {
+bool Sprite2DObject::SetSamplerStateSelect(Graphics::SamplerStateType type) {
 
 	switch (type) {
 
@@ -151,7 +149,7 @@ bool Sprite2D::SetSamplerStateSelect(Graphics::SamplerStateType type) {
 }
 
 
-D3DXMATRIX Sprite2D::CalcMatrixTransform(
+D3DXMATRIX Sprite2DObject::CalcMatrixTransform(
 	const float &x,
 	const float &y,
 	const float &width_scale,
