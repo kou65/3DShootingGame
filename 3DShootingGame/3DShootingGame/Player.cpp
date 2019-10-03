@@ -25,9 +25,9 @@ void Player::Draw() {
 
 	ObjFile::GetInstance()->DrawSubSet(
 		"note_book",
-		mp_camera_3d->GetPos().x,
-		mp_camera_3d->GetPos().y,
-		mp_camera_3d->GetPos().z
+		m_pos.x + mp_camera_3d->GetPos().x,
+		m_pos.y + mp_camera_3d->GetPos().y,
+		m_pos.z + mp_camera_3d->GetPos().z
 		);
 }
 

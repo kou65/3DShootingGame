@@ -8,12 +8,12 @@
 class Sprite2DObject {
 public:
 
+	Sprite2DObject() {};
+
 	// 板で描画する
 	void BoardDraw(Sprite2DData &texture_format_2d);
 
 private:
-
-	Sprite2DObject() {};
 
 	// UV状態
 	bool SetSamplerStateSelect(Graphics::SamplerStateType type);

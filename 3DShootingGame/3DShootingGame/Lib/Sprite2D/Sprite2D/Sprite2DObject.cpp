@@ -69,16 +69,16 @@ void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	CustomVertex2D custom_vertex[] =
 	{
 	// 左上
-	{ { x1,y1,0.f},1.0f,D3DCOLOR(0xffffff),
+	{ { x1,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
 	{ uv.GetUvUpLeftPos().x + u_range_num,uv.GetUvUpLeftPos().y } },
 	// 右上
-	{ { x2,y1,0.f},1.0f,D3DCOLOR(0xffffff),
+	{ { x2,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
 	{ uv.GetUvUpRightPos().x + texture_format.tu + u_range_num,uv.GetUvUpRightPos().y } },
 	// 右下
-	{ { x2,y2,0.f},1.0f,D3DCOLOR(0xffffff),
+	{ { x2,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
 	{ uv.GetUvDownRightPos().x + texture_format.tu + u_range_num,uv.GetUvDownRightPos().y + texture_format.tv } },
 	// 左下
-	{ { x1,y2,0.f},1.0f,D3DCOLOR(0xffffff),
+	{ { x1,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
 	{ uv.GetUvDownLeftPos().x + u_range_num,uv.GetUvDownLeftPos().y + texture_format.tv } },
 	};
 

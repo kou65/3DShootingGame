@@ -48,7 +48,7 @@ void Camera3D::Update() {
 
 		TPSTransform(
 			D3DXVECTOR3(0.f,0.f,0.f),
-			D3DXVECTOR3(0.f,0.f,-20.f)
+			D3DXVECTOR3(0.f,0.f,-50.f)
 		);
 	}
 
