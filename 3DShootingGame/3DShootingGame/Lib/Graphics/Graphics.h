@@ -27,6 +27,7 @@ public:
 
 public:
 
+	// シングルトン
 	static Graphics *GetInstance() {
 		static Graphics graphics;
 		return &graphics;

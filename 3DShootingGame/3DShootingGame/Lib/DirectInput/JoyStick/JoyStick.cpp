@@ -102,7 +102,7 @@ namespace JoyStick {
 
 
 	// 列挙の更新
-	bool EnumDeviceUpdate() {
+	bool EnumDeviceUpdate(){
 
 		HRESULT ret;
 
@@ -194,7 +194,6 @@ namespace JoyStick {
 	bool JoyStickDeviceSet() {
 
 		// デバイスの操作準備
-
 		HRESULT result;
 
 		// 入力データのフォーマット設定方法をDirectInputに指示

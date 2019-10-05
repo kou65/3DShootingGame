@@ -1,34 +1,55 @@
 ﻿#pragma once
 
-//#include<fbxsdk.h>
+#include<fbxsdk.h>
 #include<string>
+#include<vector>
+#include"../Object3DCustomVertex/MeshCustomVertex.h"
 
-//#pragma comment(lib,"libfbxsdk.lib")
-//#pragma comment(lib,"libfbxsdk-md.lib")
 
-/*
-class FBX {
+#pragma comment(lib,"libfbxsdk.lib")
+#pragma comment(lib,"libfbxsdk-md.lib")
+
+
+struct VertexData {
+
+	// ポリゴンの数
+	int polygon_count;
+
+	// 頂点の数
+	int vertex_count;
+
+	// インデックスバッファの数
+	int index_count;
+
+	// 頂点座標
+	FbxVector4*vector;
+};
+
+
+class Fbx {
 public:
 
-	static FBX GetInstance() {
-		static FBX fbx;
+	static FbxFile GetInstance() {
+		static FbxFile fbx;
 		return fbx;
 	}
 
 public:
 
-	FBX();
+	Fbx();
 
-	~FBX() {
+	~Fbx() {
 
 		// マネージャの破壊
-		m_manager->Destroy();
+		mp_manager->Destroy();
 	}
 
 	bool FileOpen(std::string fbx_file_path);
 
+private:
+
 	// ノード探査関数
-	void NordProbe(FbxNode *node);
+	void GetMesh(FbxNode *node);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
@@ -36,15 +57,23 @@ public:
 	// メッシュかどうか調べる
 	bool IsMeshSerch(FbxNode * fbx_node);
 
+	// 頂点の読み込み
+	void VertexLoad();
+
+	// FBX関連削除
+	void Release();
+
 private:
 
 	// SDK全体を管理して各種オブジェクトの生成を行う
-	FbxManager * m_manager;
+	FbxManager * mp_manager;
 
 	// FBXファイルを読み込んでその情報をプログラムから読み込める形に管理してくれるクラス
-	FbxImporter * m_importer;
+	FbxImporter * mp_importer;
 
 	// シーンの作成
-	FbxScene * m_fbx_scene;
+	FbxScene * mp_fbx_scene;
 
-};*/
+	// カスタムバーテックスの配列
+	std::vector<VertexData>m_vertex_data_list;
+};

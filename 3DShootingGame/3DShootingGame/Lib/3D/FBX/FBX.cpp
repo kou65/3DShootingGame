@@ -1,30 +1,31 @@
 ﻿#include"FBX.h"
-#include"../Window/Window.h"
+#include"../../Window/Window.h"
 
 
 
-FBX::FBX() {
+
+Fbx::Fbx() {
 
 	// fbxマネージャオブジェクトの生成
-	m_manager = FbxManager::Create();
+	mp_manager = FbxManager::Create();
 
 	// fbxインポータの作成
-	m_importer = FbxImporter::Create(m_manager, "");
+	mp_importer = FbxImporter::Create(mp_manager, "");
 
 	// fbxシーンの作成
-	m_fbx_scene = FbxScene::Create(m_manager, "");
+	mp_fbx_scene = FbxScene::Create(mp_manager, "");
 
 	// nullチェック
 	{
-		if (m_manager == NULL) {
+		if (mp_manager == NULL) {
 			Window::TextMessageBox("FBXManagerの生成に失敗しました");
 		}
 
-		if (m_importer == NULL) {
+		if (mp_importer == NULL) {
 			Window::TextMessageBox("FBXImporterの生成に失敗しました");
 		}
 
-		if (m_fbx_scene == NULL) {
+		if (mp_fbx_scene == NULL) {
 			Window::TextMessageBox("FBXSceneの作成に失敗しました");
 		}
 	}
@@ -32,24 +33,26 @@ FBX::FBX() {
 }
 
 
-bool FBX::FileOpen(std::string fbx_file_path) {
+bool Fbx::FileOpen(std::string fbx_file_path) {
 
 	// 初期化
-	if (!m_importer->Initialize(fbx_file_path.c_str())) {
+	if (!mp_importer->Initialize(fbx_file_path.c_str())) {
 
 		Window::TextMessageBox("FBXimporter初期化失敗");
 		return false;
 	}
 
 	// ファイルからシーンを読み込む
-	if (!m_importer->Import(m_fbx_scene)) {
+	if (!mp_importer->Import(mp_fbx_scene)) {
 
 		Window::TextMessageBox("シーン読み込みに失敗");
 		return false;
 	}
 
+	// インポータはファイルを開いてシーンクラスとの橋渡し
+	// をしてくれるだけなので、ここで破棄してもいい
 	// インポータの明示的な破棄
-	//m_importer->Destroy();
+	mp_importer->Destroy();
 
 	// ここに処理を書いていく
 
@@ -58,7 +61,7 @@ bool FBX::FileOpen(std::string fbx_file_path) {
 }
 
 
-void FBX::NordProbe(FbxNode *node) {
+void Fbx::GetMesh(FbxNode *node) {
 
 	// ノードがnullなら返す
 	if (node == nullptr) {
@@ -73,34 +76,56 @@ void FBX::NordProbe(FbxNode *node) {
 	// メッシュ取得
 	FbxMesh * mesh = node->GetMesh();
 
+	// 頂点データリスト追加
+	m_vertex_data_list.emplace_back();
+
+	// 現在の要素数追加
+	unsigned int current_num = m_vertex_data_list.size();
+
+	// 頂点データ
+	VertexData vertex_data = m_vertex_data_list[current_num];
+
+	// バーっテックス情報埋め込み
+	vertex_data.polygon_count = mesh->GetPolygonCount();
+	vertex_data.vertex_count = mesh->GetControlPointsCount();
+	vertex_data.index_count = mesh->GetPolygonVertexCount();
+	vertex_data.vector = mesh->GetControlPoints();
+
 	// メッシュがnullでないなら
 	if (mesh != nullptr) {
-	// ここに処理を書いていく
+	// メッシュが見つかったので必要な情報を取得させる
 
 	}
 
 	// 子ノードを再帰探査
 	for (int i = 0; node->GetChildCount() > i; i++) {
-		NordProbe(node->GetChild(i));
+		GetMesh(node->GetChild(i));
 	}
 }
 
 
-void FBX::RootNodeProbe() {
+void Fbx::RootNodeProbe() {
 
-	FbxNode * root_node = m_fbx_scene->GetRootNode();
+	// ルートノードを取得
+	FbxNode * root_node = mp_fbx_scene->GetRootNode();
 
-	if (root_node) {
+	if (root_node != NULL) {
 
+		// 子ノードの数だけ探査する
 		for (int i = 0; root_node->GetChildCount() > i; i++) {
 			
-			NordProbe(root_node->GetChild(i));
+			GetMesh(root_node->GetChild(i));
 		}
 	}
 }
 
 
-bool FBX::IsMeshSerch(FbxNode * node) {
+void Fbx::VertexLoad() {
+
+}
+
+
+bool Fbx::IsMeshSerch(FbxNode * node) {
 
 	// 探索ノード
 	if (node) {
@@ -126,3 +151,7 @@ bool FBX::IsMeshSerch(FbxNode * node) {
 }
 
 
+void Fbx::Release() {
+
+	mp_manager->Destroy();
+}
