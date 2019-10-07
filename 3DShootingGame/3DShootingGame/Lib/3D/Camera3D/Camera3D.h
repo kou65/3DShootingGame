@@ -14,7 +14,15 @@ public:
 
 public:
 
-	Camera3D(CameraMode camera_mode);
+	Camera3D(
+		CameraMode camera_mode,
+		float pos_x = 0.f,
+		float pos_y = 0.f,
+		float pos_z = 0.f,
+		float axis_pos_x = 0.f,
+		float axis_pos_y = 0.f,
+		float axis_pos_z = -50.f
+	);
 
 	void Update();
 	
@@ -70,6 +78,9 @@ private:
 
 	// 位置
 	D3DXVECTOR3 m_pos;
+
+	// 軸の位置
+	D3DXVECTOR3 m_axis_pos;
 
 	// 移動値
 	D3DXVECTOR3 m_move;

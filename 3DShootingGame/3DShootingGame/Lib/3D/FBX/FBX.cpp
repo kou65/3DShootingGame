@@ -1,6 +1,6 @@
 ﻿#include"FBX.h"
 #include"../../Window/Window.h"
-
+#include<fbxsdk.h>
 
 
 

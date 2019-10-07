@@ -158,9 +158,7 @@ void Debugger::Draw() {
 
 		SetRenderStateFile::LightMode(TRUE);
 
-		for (int i = 0; i < m_total_material_num; i++) {
-			ObjFile::GetInstance()->DrawSubSet("1",i,0.f,0.f);
-		}
+		ObjFile::GetInstance()->DrawSubSet("1", 0.f, 0.f, 0.f);
 }
 
 

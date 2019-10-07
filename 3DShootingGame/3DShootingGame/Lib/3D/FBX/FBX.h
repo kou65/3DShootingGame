@@ -43,7 +43,7 @@ public:
 		// マネージャの破壊
 		mp_manager->Destroy();
 	}
-
+	
 	bool FileOpen(std::string fbx_file_path);
 
 private:

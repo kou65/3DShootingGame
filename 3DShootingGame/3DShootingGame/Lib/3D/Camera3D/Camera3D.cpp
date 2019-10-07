@@ -4,10 +4,29 @@
 
 
 
-Camera3D::Camera3D(CameraMode camera_mode) {
+Camera3D::Camera3D(
+	CameraMode camera_mode,
+	float pos_x,
+	float pos_y,
+	float pos_z,
+	float axis_pos_x,
+	float axis_pos_y,
+	float axis_pos_z
+) {
 
 	// 位置の初期化
 	D3DXVec3Init(m_pos);
+
+	m_pos.x = pos_x;
+	m_pos.y = pos_y;
+	m_pos.z = pos_z;
+
+	// 軸位置の初期化
+	D3DXVec3Init(m_axis_pos);
+
+	m_axis_pos.x = axis_pos_x;
+	m_axis_pos.y = axis_pos_y;
+	m_axis_pos.z = axis_pos_z;
 
 	// 回転軸初期化
 	D3DXVec3Init(m_rotation);
@@ -39,17 +58,18 @@ void Camera3D::D3DXVec3Init(D3DXVECTOR3&init_vec3) {
 
 void Camera3D::Update() {
 
-	if (m_camera_mode == FPS) {
+	switch (m_camera_mode) {
 
+	case FPS:
 		FPSTransform();
-	}
+		break;
 
-	else if (m_camera_mode == TPS) {
-
+	case TPS:
 		TPSTransform(
-			D3DXVECTOR3(0.f,0.f,0.f),
-			D3DXVECTOR3(0.f,0.f,-50.f)
+			D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z),
+			D3DXVECTOR3(m_axis_pos.x, m_axis_pos.y, m_axis_pos.z)
 		);
+		break;
 	}
 
 	// プロジェクション座標変換
