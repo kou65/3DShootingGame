@@ -106,6 +106,9 @@
     <Filter Include="Lib\Texture\XFileTextureData">
       <UniqueIdentifier>{aeb34382-0d76-4c21-81a0-44c96dd5a818}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\Fbx">
+      <UniqueIdentifier>{8f161d2a-7efc-49d8-8f4c-fe4c48404397}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Main.cpp">
@@ -222,8 +225,8 @@
     <ClCompile Include="Filed.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\3D\Fbx\FBX.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Lib\3D\Fbx\FbxFile\Fbx.cpp">
+      <Filter>Lib\Fbx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -356,8 +359,8 @@
     <ClInclude Include="Filed.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\Fbx\FBX.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Lib\3D\Fbx\FbxFile\Fbx.h">
+      <Filter>Lib\Fbx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

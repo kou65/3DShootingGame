@@ -6,8 +6,7 @@
 #include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DObject.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
-#include"../Lib/3D/FBX/FBX.h"
-
+#include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 
 
 

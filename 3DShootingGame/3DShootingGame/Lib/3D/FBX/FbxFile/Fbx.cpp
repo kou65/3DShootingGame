@@ -1,6 +1,6 @@
 ﻿#include"FBX.h"
-#include"../../Window/Window.h"
-#include<fbxsdk.h>
+#include"../../../Window/Window.h"
+
 
 
 
@@ -55,13 +55,14 @@ bool Fbx::FileOpen(std::string fbx_file_path) {
 	mp_importer->Destroy();
 
 	// ここに処理を書いていく
+	RootNodeProbe();
 
 	return true;
 
 }
 
 
-void Fbx::GetMesh(FbxNode *node) {
+void Fbx::MeshSerch(FbxNode *node) {
 
 	// ノードがnullなら返す
 	if (node == nullptr) {
@@ -99,7 +100,7 @@ void Fbx::GetMesh(FbxNode *node) {
 
 	// 子ノードを再帰探査
 	for (int i = 0; node->GetChildCount() > i; i++) {
-		GetMesh(node->GetChild(i));
+		MeshSerch(node->GetChild(i));
 	}
 }
 
@@ -114,7 +115,7 @@ void Fbx::RootNodeProbe() {
 		// 子ノードの数だけ探査する
 		for (int i = 0; root_node->GetChildCount() > i; i++) {
 			
-			GetMesh(root_node->GetChild(i));
+			MeshSerch(root_node->GetChild(i));
 		}
 	}
 }
@@ -148,6 +149,15 @@ bool Fbx::IsMeshSerch(FbxNode * node) {
 
 	// メッシュには繋がっていない
 	return false;
+}
+
+
+void Fbx::Polygon3Convert() {
+
+	// 全てのメッシュを三角ポリゴンに変換する
+	FbxGeometryConverter geometry_converter(mp_manager);
+
+	geometry_converter.Triangulate(mp_fbx_scene, true);
 }
 
 

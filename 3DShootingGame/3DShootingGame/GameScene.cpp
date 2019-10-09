@@ -2,6 +2,7 @@
 #include"Filed.h"
 
 
+
 GameScene::GameScene() {
 
 	m_p_camera = new Camera3D(Camera3D::TPS);

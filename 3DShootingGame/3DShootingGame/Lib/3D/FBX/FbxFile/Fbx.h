@@ -1,9 +1,8 @@
 ﻿#pragma once
 
-#include<fbxsdk.h>
 #include<string>
 #include<vector>
-#include"../Object3DCustomVertex/MeshCustomVertex.h"
+#include<fbxsdk.h>
 
 
 #pragma comment(lib,"libfbxsdk.lib")
@@ -29,9 +28,9 @@ struct VertexData {
 class Fbx {
 public:
 
-	static FbxFile GetInstance() {
-		static FbxFile fbx;
-		return fbx;
+	static Fbx *GetInstance() {
+		static Fbx fbx;
+		return &fbx;
 	}
 
 public:
@@ -46,10 +45,15 @@ public:
 	
 	bool FileOpen(std::string fbx_file_path);
 
+	// FBX関連削除
+	void Release();
+
 private:
 
+	void Polygon3Convert();
+
 	// ノード探査関数
-	void GetMesh(FbxNode *node);
+	void MeshSerch(FbxNode *node);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
@@ -60,8 +64,6 @@ private:
 	// 頂点の読み込み
 	void VertexLoad();
 
-	// FBX関連削除
-	void Release();
 
 private:
 

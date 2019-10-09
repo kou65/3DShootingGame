@@ -9,6 +9,8 @@
 #include"../Lib/Lib/Lib.h"
 #include"../SceneManager.h"
 #include"../TitleScene.h"
+#include"../Lib/3D/Fbx/FbxFile/Fbx.h"
+
 
 
 
@@ -29,6 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// DirectX描画状態の設定
 	SetRenderStateFile::Init();
 
+	Fbx::GetInstance()->FileOpen();
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
@@ -45,6 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		//Debugger::GetInstance().Update();
 
 		game.Update(st);
+		
 
 		// 描画開始
 		if (Graphics::GetInstance()->DrawStart() == true) {
