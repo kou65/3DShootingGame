@@ -16,6 +16,7 @@ enum VertexType {
 	TOTAL_VERTEX_TYPE,
 };
 
+
 /**
 頂点データ
 位置

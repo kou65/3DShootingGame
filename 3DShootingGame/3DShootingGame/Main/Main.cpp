@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// DirectX描画状態の設定
 	SetRenderStateFile::Init();
 
-	Fbx::GetInstance()->FileOpen();
+	Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
@@ -56,6 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 			// デバッグの描画
 			//Debugger::GetInstance().Draw();
 			game.Draw();
+			Fbx::GetInstance()->Draw();
 		}
 
 		// 描画終了
