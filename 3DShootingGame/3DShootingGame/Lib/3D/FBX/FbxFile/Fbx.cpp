@@ -230,17 +230,18 @@ void Fbx::VertexLoad(
 
 	// 頂点の種類
 	enum VertexType {
-		X,           // x     = 0
-		Y,           // y     = 1
-		Z,           // z     = 2
-		VERTEX_TOTAL // TOTAL = 3
+		X,           // x     = 0 
+		Y,           // y     = 1 
+		Z,           // z     = 2 
+		VERTEX_TOTAL // TOTAL = 3 
 	};
 
-	// カスタムバーテックス
-	FbxCustomVertex custom_vertex;
 
 	// 頂点数分回す
 	for (int i = 0; i < vertex_data->vertex_count; i++) {
+
+		// カスタムバーテックス
+		FbxCustomVertex custom_vertex;
 
 		// i番目の頂点の座標
 
@@ -267,7 +268,6 @@ void Fbx::VertexLoad(
 	for (int i = 0; i < vertex_data->index_count; i++) {
 		m_indices.push_back(index[i]);
 	}
-
 }
 
 
@@ -337,7 +337,6 @@ bool Fbx::IndexBufferCreate(int total_face_num) {
 
 
 bool Fbx::VertexBufferCreate(int total_vertex_num) {
-
 	
 	// 頂点バッファ作成
 	mp_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(

@@ -141,7 +141,9 @@ void Debugger::Draw() {
 		camera_3d->GetPos()
 		);
 
-		Sprite3DData td(0.f,0.f,0.f,"ground");
+
+	{
+		Sprite3DData td(0.f, 0.f, 0.f, "ground");
 		td.scale_width = 1000.f;
 		td.scale_height = 1000.f;
 		td.polygon_dir = FLOOR;
@@ -154,6 +156,20 @@ void Debugger::Draw() {
 		sprite_3d.BoardDraw(
 			td
 		);
+
+		td.scale_width = 1000.f;
+		td.scale_height = 1000.f;
+		td.polygon_dir = FRONT;
+		td.pos.y = -5.f;
+		td.ofset.x = 0.0f;
+		td.ofset.y = 1.0f;
+		td.pos.z = 1000.f;
+
+		sprite_3d.BoardDraw(
+			td
+		);
+	}
+
 
 		SetRenderStateFile::LightMode(TRUE);
 

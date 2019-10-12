@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		}
 
 		// デバッグテスト
-		//Debugger::GetInstance().Update();
+		Debugger::GetInstance().Update();
 
 		game.Update(st);
 		
@@ -54,9 +54,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		if (Graphics::GetInstance()->DrawStart() == true) {
 
 			// デバッグの描画
-			//Debugger::GetInstance().Draw();
-			game.Draw();
-			Fbx::GetInstance()->Draw();
+			Debugger::GetInstance().Draw();
+			//game.Draw();
+			//Fbx::GetInstance()->Draw();
 		}
 
 		// 描画終了
