@@ -228,6 +228,7 @@ void Fbx::VertexLoad(
 	// 頂点座標配列
 	vertex_data->vector = mesh->GetControlPoints();
 
+
 	// 頂点の種類
 	enum VertexType {
 		X,           // x     = 0 
@@ -266,6 +267,14 @@ void Fbx::VertexLoad(
 
 	// 読み込み
 	for (int i = 0; i < vertex_data->index_count; i++) {
+
+		// i番目のポリゴンの頂点数
+		int vertex_num = mesh->GetPolygonSize(i);
+
+		if (vertex_num == 4) {
+
+		}
+
 		m_indices.push_back(index[i]);
 	}
 }

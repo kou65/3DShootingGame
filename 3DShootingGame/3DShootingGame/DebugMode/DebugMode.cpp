@@ -173,7 +173,7 @@ void Debugger::Draw() {
 
 		SetRenderStateFile::LightMode(TRUE);
 
-		ObjFile::GetInstance()->DrawSubSet("1", 0.f, 0.f, 0.f);
+		//ObjFile::GetInstance()->DrawSubSet("1", 0.f, 0.f, 0.f);
 }
 
 
