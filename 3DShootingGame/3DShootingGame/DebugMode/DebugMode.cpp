@@ -136,10 +136,10 @@ void Debugger::Draw() {
 	//SetRenderStateFile::LightMode(FALSE);
 
 	// Xファイルの描画
-	XFile::GetInstance()->Draw(
-		"Sample01.x",
-		camera_3d->GetPos()
-		);
+	//XFile::GetInstance()->Draw(
+	//	"Sample01.x",
+	//	camera_3d->GetPos()
+	//	);
 
 
 	{

@@ -16,13 +16,13 @@
 struct FbxCustomVertex {
 
 	FbxCustomVertex(){
-		vertex.x = vertex.y = vertex.z = 0.f;
-		normal = vertex;
+		vertex.x = vertex.y = vertex.z = vertex.w= 0.f;
+		normal.x = normal.y = normal.z = 0.f;
 		uv.x = uv.y = 0.f;
 	}
 
 	// 頂点データ
-	D3DXVECTOR3 vertex;
+	D3DXVECTOR4 vertex;
 
 	// 法線ベクトル
 	D3DXVECTOR3 normal;
@@ -35,25 +35,21 @@ struct FbxCustomVertex {
 struct VertexData {
 
 	VertexData() {
-		polygon_count = 0;
-		vertex_count = 0;
+		polygon_num = 0;
+		polygon_vertex_num = 0;
 		index_count = 0;
-		vector = NULL;
 		mp_vertex_buffer = NULL;
 		mp_index_buffer = NULL;
 	}
 
 	// ポリゴンの数
-	int polygon_count;
+	int polygon_num;
 
 	// 頂点の数
-	int vertex_count;
+	int polygon_vertex_num;
 
 	// インデックスバッファの数
 	int index_count;
-
-	// 頂点座標
-	FbxVector4*vector;
 
 	// バーテックスバッファカウント
 	int *mp_vertex_buffer;
@@ -93,13 +89,16 @@ public:
 private:
 
 	// ノード探査関数
-	void MeshSerch(FbxNode *node);
+	void NodeSerch(FbxNode *node);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
 
 	// メッシュかどうか調べる
 	bool IsMeshSerch(FbxNode * fbx_node);
+
+	// メッシュかどうか調べる2
+	bool IsMeshSerch2(FbxNode*fbx_node);
 
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
@@ -115,6 +114,9 @@ private:
 
 	// 頂点バッファ生成
 	bool VertexBufferCreate(int total_vertex);
+
+	// ポリゴン2分割
+	std::vector<INT> SplitPolygon2(const std::vector<INT>&indices4);
 
 private:
 

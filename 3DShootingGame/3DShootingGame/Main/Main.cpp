@@ -32,6 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	SetRenderStateFile::Init();
 
 	Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
