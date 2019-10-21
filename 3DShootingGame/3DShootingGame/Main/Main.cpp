@@ -31,8 +31,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// DirectX描画状態の設定
 	SetRenderStateFile::Init();
 
-	Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
+	//Fbx::GetInstance()->
+	//	Load("Resource/3DModel/Cube3Poly.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
@@ -54,10 +58,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		// 描画開始
 		if (Graphics::GetInstance()->DrawStart() == true) {
 
+			Fbx::GetInstance()->Draw();
 			// デバッグの描画
 			Debugger::GetInstance().Draw();
 			//game.Draw();
-			Fbx::GetInstance()->Draw();
+		
 		}
 
 		// 描画終了

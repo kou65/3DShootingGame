@@ -5,7 +5,7 @@
 
 GameScene::GameScene() {
 
-	m_p_camera = new Camera3D(Camera3D::TPS);
+	m_p_camera = new Camera3D(Camera3D::FPS);
 
 	BulletFactory * bullet_factory = new BulletFactory(&m_object_manager);
 

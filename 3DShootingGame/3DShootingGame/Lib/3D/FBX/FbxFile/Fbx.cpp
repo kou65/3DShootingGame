@@ -31,6 +31,10 @@ Fbx::Fbx() {
 
 void Fbx::Draw() {
 
+	// ライトをオンにするかどうか
+	Graphics::GetInstance()->GetLpDirect3DDevice9()->
+		SetRenderState(D3DRS_LIGHTING,FALSE);
+
 	{
 		// ワールド座標初期化
 		D3DXMATRIX mat;
@@ -81,7 +85,7 @@ void Fbx::Draw() {
 		mp_graphics->GetLpDirect3DDevice9()->
 			DrawIndexedPrimitive(
 			// 頂点のつなぎ方
-			D3DPT_TRIANGLESTRIP,
+			D3DPT_TRIANGLELIST,
 			// 頂点インデックスの一番最初までのオフセット値を指定
 			BASE_VERTEX_INDEX,
 			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
@@ -177,6 +181,8 @@ void Fbx::NodeSerch(FbxNode *p_node) {
 	// メッシュが存在したら処理にはいる
 	if (IsMeshSerch2(p_node) == true) {
 
+		// 頂点情報
+		std::vector<D3DXVECTOR4>vertex_list;
 
 		// メッシュ取得
 		FbxMesh * mesh = p_node->GetMesh();
@@ -198,8 +204,13 @@ void Fbx::NodeSerch(FbxNode *p_node) {
 			// メッシュが見つかったので必要な情報を取得させる
 
 			// 頂点情報読み込み
-			VertexLoad(
-				vertex_data,
+			VertexInfoLoad(
+				vertex_list,
+				mesh
+			);
+
+			// uv情報読み込み
+			UvInfoLoad(
 				mesh
 			);
 		}
@@ -216,23 +227,21 @@ void Fbx::NodeSerch(FbxNode *p_node) {
 }
 
 
-void Fbx::VertexLoad(
-	VertexData*p_vertex_data,
+void Fbx::VertexInfoLoad(
+	std::vector<D3DXVECTOR4>&vertex_list,
 	FbxMesh*p_mesh
 	) {
 
-
 	// 総ポリゴン数
-	p_vertex_data->polygon_num = p_mesh->GetPolygonCount();
+	int polygon_num = p_mesh->GetPolygonCount();
 
 	// 頂点数
-	p_vertex_data->polygon_vertex_num = p_mesh->GetControlPointsCount();
+	int polygon_vertex_num = p_mesh->GetControlPointsCount();
 
 	// インデックス数
-	p_vertex_data->index_count = p_mesh->GetPolygonVertexCount();
+	int index_count = p_mesh->GetPolygonVertexCount();
 
-
-	// インデックス
+	// 頂点インデックス配列
 	int * verticse = p_mesh->GetPolygonVertices();
 
 	// 面数
@@ -241,41 +250,36 @@ void Fbx::VertexLoad(
 	// 読み込み
 	for (int p = 0; p < polygon_count; p++) {
 
-		int index_num_in_polygon = p_mesh->GetPolygonSize(p);
+		// 仮のインデックスリスト
+		std::vector<INT>indices;
 		
-		for (int n = 0; n < index_num_in_polygon; n++) {
+		// i番目のポリゴンの頂点数
+		int vertex_num = p_mesh->GetPolygonSize(p);
 		
-			int index = p_mesh->GetPolygonVertex(p, n);
 		
-			m_indices.push_back(index);
+		for (int i = 0; i < vertex_num; i++) {
+		
+			// 頂点インデックス
+			int index_number = p_mesh->GetPolygonVertex(p, i);
+		
+			// 仮のインデックスバッファに代入
+			indices.push_back(index_number);
+		}
+		
+		// 頂点数が4つならポリゴンを半分に切る
+		if (vertex_num == 3) {
+			vertex_num = 3;
+		}
+		if (vertex_num == 4) {
+		
+			indices = SplitPolygon2(indices);
+		}
+		
+		// 総インデックス数を代入
+		for (unsigned int j = 0; j < indices.size(); j++) {
+			m_indices.push_back(indices[j]);
 		}
 
-		//// 仮のインデックスリスト
-		//std::vector<INT>indices;
-		//
-		//// i番目のポリゴンの頂点数
-		//int vertex_num = p_mesh->GetPolygonSize(p);
-		//
-		//
-		//for (int i = 0; i < vertex_num; i++) {
-		//
-		//	// 頂点インデックス
-		//	int index_number = p_mesh->GetPolygonVertex(p, i);
-		//
-		//	// 仮のインデックスバッファに代入
-		//	indices.push_back(index_number);
-		//}
-		//
-		//// 頂点数が4つならポリゴンを半分に切る
-		//if (vertex_num == 4) {
-		//
-		//	indices = SplitPolygon2(indices);
-		//}
-		//
-		//// 総インデックス数を代入
-		//for (unsigned int j = 0; j < indices.size(); j++) {
-		//	m_indices.push_back(indices[j]);
-		//}
 	}
 
 	// 頂点の種類
@@ -296,30 +300,104 @@ void Fbx::VertexLoad(
 	// 頂点数分回す
 	for (int i = 0; i < vertex_buffer_num; i++) {
 
-		// カスタムバーテックス
-		FbxCustomVertex custom_vertex;
+		D3DXVECTOR4 vertex;
 
 		// i番目の頂点の座標
 
 		// x座標
-		custom_vertex.vertex.x = 
+		vertex.x = 
 			(float)vertex_pos_buffer[i][X];
 
 		// y座標
-		custom_vertex.vertex.y = 
+		vertex.y = 
 			(float)vertex_pos_buffer[i][Y];
 
 		// z座標
-		custom_vertex.vertex.z = 
+		vertex.z = 
 			(float)vertex_pos_buffer[i][Z];
 
 		// w
-		custom_vertex.vertex.w = 
+		vertex.w = 
 			(float)vertex_pos_buffer[i][W];
+
+		vertex_list.emplace_back(vertex);
+
+		// カスタムバーテックス
+		FbxCustomVertex custom_vertex;
+
+		custom_vertex.vertex = vertex;
 
 		// カスタムバーテックスリスト
 		m_custom_vertex_list.emplace_back(custom_vertex);
 	}
+
+}
+
+
+void Fbx::UvInfoLoad(FbxMesh*p_mesh) {
+
+	// レイヤー数を取得
+	int layer_count = p_mesh->GetLayerCount();
+
+	for (int i = 0; i < layer_count; i++) {
+
+		// レイヤー取得
+		FbxLayer*p_layer = p_mesh->GetLayer(i);
+
+		// UVを格納しているFbxLayerElementUVオブジェクトを取得
+		FbxLayerElementUV * p_element = p_layer->GetUVs();
+
+		// uv存在をチェック
+		if (p_element == 0) {
+			continue;
+		}
+
+		// uv情報を取得
+		int uv_num = p_element->GetDirectArray().GetCount();
+		int index_num = p_element->GetIndexArray().GetCount();
+		int size = uv_num > index_num ? uv_num : index_num;
+		D3DXVECTOR2 * buffer = new D3DXVECTOR2[size];
+
+		// マッピングモード・リファレンスモード別にUV取得
+		FbxLayerElement::EMappingMode mapping_mode = 
+			p_element->GetMappingMode();
+		FbxLayerElement::EReferenceMode ref_mode = 
+			p_element->GetReferenceMode();
+
+		
+		if (mapping_mode == FbxLayerElement::eByPolygonVertex) {
+
+			if (ref_mode == FbxLayerElement::eDirect) {
+				// 直接取得
+				for (int i = 0; i < size; i++) {
+					buffer[i].x = 
+						(float)p_element->GetDirectArray().GetAt(i)[0];
+					buffer[i].y =
+						(float)p_element->GetDirectArray().GetAt(i)[1];
+				}
+			}
+			else {
+
+				if (ref_mode == FbxLayerElement::eIndexToDirect) {
+
+					// インデックスから取得
+					for (int i = 0; i < size; i++) {
+						int index = p_element->GetIndexArray().GetAt(i);
+						buffer[i].x = (float)p_element->GetDirectArray().GetAt(index)[0];
+						buffer[i].y = (float)p_element->GetDirectArray().GetAt(index)[1];
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void Fbx::CustomVertexCreate(
+	std::vector<D3DXVECTOR4>&vertex_list,
+	std::vector<D3DXVECTOR2>&uv_list,
+	std::vector<D3DXVECTOR3>&normal_list
+) {
 
 }
 
@@ -334,13 +412,13 @@ bool Fbx::IsMeshSerch(FbxNode * p_node) {
 
 		for (int i = 0; i < attr_count; i++) {
 
-			FbxNodeAttribute::EType type =
+			FbxNodeAttribute::EType type = 
 				p_node->GetNodeAttributeByIndex(i)->
 				GetAttributeType();
 
 
 			// ノードがメッシュにつながっているかチェック
-			if (type == FbxNodeAttribute::EType::eMesh) {
+			if (type == FbxNodeAttribute::EType::eMesh){
 				// メッシュに繋がっている
 				return true;
 			}
@@ -360,8 +438,10 @@ bool Fbx::IsMeshSerch2(FbxNode*p_node) {
 		return false;
 	}
 
+	// タイプを使う
 	FbxNodeAttribute::EType type = p_attrib->GetAttributeType();
 	
+	// メッシュ
 	if (type == FbxNodeAttribute::eMesh) {
 		return true;
 	}

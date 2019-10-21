@@ -10,7 +10,7 @@
 #pragma comment(lib,"libfbxsdk-md.lib")
 
 
-#define FVF_FBX (D3DFVF_XYZ)
+#define FVF_FBX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
 
 struct FbxCustomVertex {
@@ -104,10 +104,13 @@ private:
 	void Polygon3Convert();
 
 	// 頂点読み込み
-	void VertexLoad(
-		VertexData*vertex_data,
+	void VertexInfoLoad(
+		std::vector<D3DXVECTOR4>&vertex_list,
 		FbxMesh*mesh
 	);
+
+	// UV読み込み
+	void UvInfoLoad(FbxMesh*p_mesh);
 
 	// インデックスバッファ生成
 	bool IndexBufferCreate(int total_index);
