@@ -32,30 +32,27 @@ struct FbxCustomVertex {
 };
 
 
+struct MaterialInfo {
+	std::string texture_name;
+	D3DXMATERIAL material;
+};
+
+
 struct VertexData {
 
 	VertexData() {
 		polygon_num = 0;
-		polygon_vertex_num = 0;
-		index_count = 0;
-		mp_vertex_buffer = NULL;
-		mp_index_buffer = NULL;
+		start_index = 0;
 	}
 
 	// ポリゴンの数
 	int polygon_num;
 
-	// 頂点の数
-	int polygon_vertex_num;
-
 	// インデックスバッファの数
-	int index_count;
+	int start_index;
 
-	// バーテックスバッファカウント
-	int *mp_vertex_buffer;
-
-	// インデックスバッファカウント
-	int *mp_index_buffer;
+	// マテリアル配列
+	std::vector<MaterialInfo>material_list;
 };
 
 
@@ -89,28 +86,55 @@ public:
 private:
 
 	// ノード探査関数
-	void NodeSerch(FbxNode *node);
+	void NodeSerch(
+		std::vector<D3DXVECTOR4>&vertex_list,
+		std::vector<D3DXVECTOR2>&uv_list,
+		std::vector<std::unique_ptr<VertexData>>&mp_vertex_data_list,
+		FbxNode *node);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
 
-	// メッシュかどうか調べる
-	bool IsMeshSerch(FbxNode * fbx_node);
-
 	// メッシュかどうか調べる2
-	bool IsMeshSerch2(FbxNode*fbx_node);
+	bool IsMeshSerch(FbxNode*fbx_node);
 
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
 
+	// インデックス読み込み
+	void IndexInfoLoad(
+		std::vector<INT>&index_list,
+		std::vector<std::unique_ptr<VertexData>>&mp_vertex_data_list,
+		FbxMesh*p_mesh
+	);
+
 	// 頂点読み込み
 	void VertexInfoLoad(
 		std::vector<D3DXVECTOR4>&vertex_list,
-		FbxMesh*mesh
+		FbxMesh*p_mesh
 	);
 
 	// UV読み込み
-	void UvInfoLoad(FbxMesh*p_mesh);
+	void UvInfoLoad(
+		std::vector<D3DXVECTOR2>&uv_list,
+		std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+		FbxMesh*p_mesh);
+
+
+	// テクスチャ読み込み
+	void TextureLoad(
+		const char*file_name,
+		const char*texture_name
+	);
+
+
+	// カスタムバーテックス作成
+	void CustomVertexCreate(
+		std::vector<INT>&indeces,
+		std::vector<D3DXVECTOR4>&vertex_list,
+		std::vector<D3DXVECTOR2>&uv_list,
+		std::vector<D3DXVECTOR3>&normal_list
+	);
 
 	// インデックスバッファ生成
 	bool IndexBufferCreate(int total_index);
@@ -143,6 +167,9 @@ private:
 	
 	// カスタムバーテックスの配列
 	std::vector<std::unique_ptr<VertexData>>mp_vertex_data_list;
+
+	// マテリアル数
+	int m_material_num;
 
 	// グラフィックス
 	Graphics * mp_graphics;

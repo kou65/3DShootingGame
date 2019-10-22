@@ -1,6 +1,6 @@
 ﻿#include"FBX.h"
 #include"../../../Window/Window.h"
-
+#include"../../../Texture/TextureManager/TextureManager.h"
 
 
 
@@ -14,6 +14,9 @@ Fbx::Fbx() {
 
 	// fbxシーンの作成
 	mp_fbx_scene = FbxScene::Create(mp_manager, "");
+
+	// マテリアル数初期化
+	m_material_num = 0;
 
 	// nullチェック
 	{
@@ -35,6 +38,8 @@ void Fbx::Draw() {
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->
 		SetRenderState(D3DRS_LIGHTING,FALSE);
 
+	// マテリアル分描画する
+	for (int i = 0; i < m_material_num; i++)
 	{
 		// ワールド座標初期化
 		D3DXMATRIX mat;
@@ -63,6 +68,20 @@ void Fbx::Draw() {
 			mp_index_buffer
 		);
 
+		// 頂点情報受け取り
+		VertexData*vertex_data = mp_vertex_data_list[i].get();
+
+		// テクスチャ名受け取り
+		std::string texture_name = vertex_data->material_list.back().texture_name;
+
+		// テクスチャが0ではないなら
+		if (TextureManager::GetInstance()->Find2DTexture(texture_name) == true) {
+			mp_graphics->GetLpDirect3DDevice9()->SetTexture(
+				0,
+				TextureManager::GetInstance()->GetTextureData2D(texture_name)
+			);
+		}
+
 		// インデックスをオフセットする
 		int BASE_VERTEX_INDEX = 0;
 
@@ -70,33 +89,33 @@ void Fbx::Draw() {
 		int MIN_INDEX = 0;
 
 		// 途中から描画したい場合に有効
-		int START_INDEX = 0;
+		int START_INDEX = vertex_data->start_index;
 
 		// 三角ポリゴン頂点数
-		int NUM_VERTEX = (int)m_custom_vertex_list.size() * 3;
+		int NUM_VERTEX = (int)vertex_data->polygon_num * 3;
 
 		// START_INDEXを先頭として描画するポリゴンの数を指定する
-		unsigned int PRIMITIVE_COUNT = m_indices.size();
+		unsigned int PRIMITIVE_COUNT = vertex_data->polygon_num;
 
 		// どの情報を伝えるか
 		mp_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_FBX);
-		
+
 		// インデックス描画
 		mp_graphics->GetLpDirect3DDevice9()->
 			DrawIndexedPrimitive(
-			// 頂点のつなぎ方
-			D3DPT_TRIANGLELIST,
-			// 頂点インデックスの一番最初までのオフセット値を指定
-			BASE_VERTEX_INDEX,
-			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
-			MIN_INDEX,
-			// 上引数の最小以降の頂点数を指定
-			NUM_VERTEX,
-			// 描画を開始する頂点インデックスまでのオフセット値を指定
-			START_INDEX,
-			// 上引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
-			PRIMITIVE_COUNT
-		);
+				// 頂点のつなぎ方
+				D3DPT_TRIANGLELIST,
+				// 頂点インデックスの一番最初までのオフセット値を指定
+				BASE_VERTEX_INDEX,
+				// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
+				MIN_INDEX,
+				// 上引数の最小以降の頂点数を指定
+				NUM_VERTEX,
+				// 描画を開始する頂点インデックスまでのオフセット値を指定
+				START_INDEX,
+				// 上引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
+				PRIMITIVE_COUNT
+			);
 
 		// セットテクスチャリセット
 		mp_graphics->GetLpDirect3DDevice9()->SetTexture(
@@ -107,7 +126,9 @@ void Fbx::Draw() {
 }
 
 
-bool Fbx::Load(std::string fbx_file_path) {
+bool Fbx::Load(
+	const std::string &fbx_file_path
+	) {
 
 	// fbxインポータの作成
 	FbxImporter * p_importer = FbxImporter::Create(mp_manager, "");
@@ -152,6 +173,13 @@ bool Fbx::Load(std::string fbx_file_path) {
 
 void Fbx::RootNodeProbe() {
 
+	// 頂点情報
+	std::vector<D3DXVECTOR4>vertex_list;
+	// uv情報
+	std::vector<D3DXVECTOR2>uv_list;
+	// 法線情報
+	std::vector<D3DXVECTOR3>normal_list;
+
 	// ルートノードを取得
 	FbxNode * p_root_node = mp_fbx_scene->GetRootNode();
 
@@ -165,13 +193,32 @@ void Fbx::RootNodeProbe() {
 			// 子ノード取得
 			FbxNode * p_child_node= p_root_node->GetChild(i);
 
-			NodeSerch(p_child_node);
+			// ノード探査
+			NodeSerch(
+				vertex_list,
+				uv_list,
+				mp_vertex_data_list,
+				p_child_node
+			);
 		}
+
+		// カスタムバーテックス作成
+		CustomVertexCreate(
+			m_indices,
+			vertex_list,
+			uv_list,
+			normal_list
+		);
 	}
 }
 
 
-void Fbx::NodeSerch(FbxNode *p_node) {
+void Fbx::NodeSerch(
+	std::vector<D3DXVECTOR4>&vertex_list,
+	std::vector<D3DXVECTOR2>&uv_list,
+	std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+	FbxNode *p_node
+) {
 
 	// ノードがnullなら返す
 	if (p_node == nullptr) {
@@ -179,39 +226,41 @@ void Fbx::NodeSerch(FbxNode *p_node) {
 	}
 
 	// メッシュが存在したら処理にはいる
-	if (IsMeshSerch2(p_node) == true) {
-
-		// 頂点情報
-		std::vector<D3DXVECTOR4>vertex_list;
+	if (IsMeshSerch(p_node) == true) {
 
 		// メッシュ取得
-		FbxMesh * mesh = p_node->GetMesh();
+		FbxMesh * p_mesh = p_node->GetMesh();
 
 		// 頂点データ生成
-		mp_vertex_data_list.emplace_back(new VertexData);
+		p_vertex_data_list.emplace_back(new VertexData);
 
-		// 頂点データ受け取り
-		VertexData *vertex_data = mp_vertex_data_list.back().get();
-
-		// バーテックスデータ
-		if (vertex_data == nullptr) {
-			return;
-		}
+		// 最初に描画するインデックス数を入れる
+		p_vertex_data_list.back().get()->start_index =
+			(int)m_indices.size();
 
 		// メッシュがnullでないなら
-		if (mesh != NULL) {
+		if (p_mesh != NULL) {
 
 			// メッシュが見つかったので必要な情報を取得させる
 
 			// 頂点情報読み込み
 			VertexInfoLoad(
 				vertex_list,
-				mesh
+				p_mesh
 			);
 
 			// uv情報読み込み
 			UvInfoLoad(
-				mesh
+				uv_list,
+				mp_vertex_data_list,
+				p_mesh
+			);
+
+			// インデックス読み込み
+			IndexInfoLoad(
+				m_indices,
+				p_vertex_data_list,
+				p_mesh
 			);
 		}
 	}
@@ -221,9 +270,70 @@ void Fbx::NodeSerch(FbxNode *p_node) {
 
 	// 子ノードを再帰探査
 	for (int i = 0; i < count; i++) {
-		NodeSerch(p_node->GetChild(i));
+		NodeSerch(
+			vertex_list,
+			uv_list,
+			p_vertex_data_list,
+			p_node->GetChild(i)
+		);
 	}
+}
 
+
+void Fbx::IndexInfoLoad(
+	std::vector<INT>&index_list,
+	std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+	FbxMesh*p_mesh
+) {
+
+	// 面数
+	int polygon_count = p_mesh->GetPolygonCount();
+
+	// 読み込み
+	for (int p = 0; p < polygon_count; p++) {
+
+		// 仮のインデックスリスト
+		std::vector<INT>indices;
+
+		// i番目のポリゴンの頂点数
+		int vertex_num = p_mesh->GetPolygonSize(p);
+
+
+		for (int i = 0; i < vertex_num; i++) {
+
+			// 頂点インデックス
+			int index_number = p_mesh->GetPolygonVertex(p, i);
+
+			// 仮のインデックスバッファに代入
+			indices.push_back(index_number);
+		}
+
+		// 頂点情報読み込み
+		
+		// 頂点データ受け取り
+		VertexData *vertex_data = p_vertex_data_list.back().get();
+
+		// バーテックスデータ
+		if (vertex_data == nullptr) {
+			return;
+		}
+		
+		// ポリゴン数加算
+		vertex_data->polygon_num++;
+
+		// 頂点数が4つならポリゴンを半分に切る
+		if (vertex_num == 4) {
+
+			indices = SplitPolygon2(indices);
+			// ポリゴン数加算
+			vertex_data->polygon_num++;
+		}
+
+		// 総インデックス数を代入
+		for (unsigned int j = 0; j < indices.size(); j++){
+			m_indices.push_back(indices[j]);
+		}
+	}
 }
 
 
@@ -244,43 +354,6 @@ void Fbx::VertexInfoLoad(
 	// 頂点インデックス配列
 	int * verticse = p_mesh->GetPolygonVertices();
 
-	// 面数
-	int polygon_count = p_mesh->GetPolygonCount();
-
-	// 読み込み
-	for (int p = 0; p < polygon_count; p++) {
-
-		// 仮のインデックスリスト
-		std::vector<INT>indices;
-		
-		// i番目のポリゴンの頂点数
-		int vertex_num = p_mesh->GetPolygonSize(p);
-		
-		
-		for (int i = 0; i < vertex_num; i++) {
-		
-			// 頂点インデックス
-			int index_number = p_mesh->GetPolygonVertex(p, i);
-		
-			// 仮のインデックスバッファに代入
-			indices.push_back(index_number);
-		}
-		
-		// 頂点数が4つならポリゴンを半分に切る
-		if (vertex_num == 3) {
-			vertex_num = 3;
-		}
-		if (vertex_num == 4) {
-		
-			indices = SplitPolygon2(indices);
-		}
-		
-		// 総インデックス数を代入
-		for (unsigned int j = 0; j < indices.size(); j++) {
-			m_indices.push_back(indices[j]);
-		}
-
-	}
 
 	// 頂点の種類
 	enum VertexType {
@@ -320,21 +393,17 @@ void Fbx::VertexInfoLoad(
 		vertex.w = 
 			(float)vertex_pos_buffer[i][W];
 
+		// 頂点配列追加
 		vertex_list.emplace_back(vertex);
-
-		// カスタムバーテックス
-		FbxCustomVertex custom_vertex;
-
-		custom_vertex.vertex = vertex;
-
-		// カスタムバーテックスリスト
-		m_custom_vertex_list.emplace_back(custom_vertex);
 	}
 
 }
 
 
-void Fbx::UvInfoLoad(FbxMesh*p_mesh) {
+void Fbx::UvInfoLoad(
+	std::vector<D3DXVECTOR2>&uv_list,
+	std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+	FbxMesh*p_mesh) {
 
 	// レイヤー数を取得
 	int layer_count = p_mesh->GetLayerCount();
@@ -352,10 +421,22 @@ void Fbx::UvInfoLoad(FbxMesh*p_mesh) {
 			continue;
 		}
 
-		// uv情報を取得
+		// uv数を取得
 		int uv_num = p_element->GetDirectArray().GetCount();
+
+		// uvインデックス数を取得
 		int index_num = p_element->GetIndexArray().GetCount();
-		int size = uv_num > index_num ? uv_num : index_num;
+
+		int size = 0;
+
+		// サイズを比較
+		if (uv_num > index_num) {
+			size = uv_num;
+		}
+		else {
+			size = index_num;
+		}
+		
 		D3DXVECTOR2 * buffer = new D3DXVECTOR2[size];
 
 		// マッピングモード・リファレンスモード別にUV取得
@@ -363,74 +444,204 @@ void Fbx::UvInfoLoad(FbxMesh*p_mesh) {
 			p_element->GetMappingMode();
 		FbxLayerElement::EReferenceMode ref_mode = 
 			p_element->GetReferenceMode();
-
 		
+		D3DXVECTOR2 uv;
+
+		bool is_enter = false;
+
+		// マッピングモードの判別
 		if (mapping_mode == FbxLayerElement::eByPolygonVertex) {
 
+			// リファレンスモードの判別
 			if (ref_mode == FbxLayerElement::eDirect) {
+
 				// 直接取得
 				for (int i = 0; i < size; i++) {
-					buffer[i].x = 
+
+					uv.x =
 						(float)p_element->GetDirectArray().GetAt(i)[0];
-					buffer[i].y =
-						(float)p_element->GetDirectArray().GetAt(i)[1];
-				}
-			}
-			else {
+					uv.y =
+						1.f - (float)p_element->GetDirectArray().GetAt(i)[1];
 
-				if (ref_mode == FbxLayerElement::eIndexToDirect) {
+					uv_list.emplace_back(uv);
 
-					// インデックスから取得
-					for (int i = 0; i < size; i++) {
-						int index = p_element->GetIndexArray().GetAt(i);
-						buffer[i].x = (float)p_element->GetDirectArray().GetAt(index)[0];
-						buffer[i].y = (float)p_element->GetDirectArray().GetAt(index)[1];
-					}
+					// テクスチャ名受け取り
+					p_vertex_data_list.back().get()->
+						material_list.back().texture_name =
+						p_element->GetName();
 				}
+				// 入った
+				is_enter = true;
+
 			}
+			else if (ref_mode == FbxLayerElement::eIndexToDirect) {
+
+				// インデックスから取得
+				for (int i = 0; i < uv_num; i++) {
+
+					// インデックス取得
+					int index = p_element->GetIndexArray().GetAt(i);
+
+					uv.x = (float)p_element->GetDirectArray().GetAt(index)[0];
+					// blenderは左下からuv頂点がはじまる
+					uv.y = 1.f - (float)p_element->GetDirectArray().GetAt(index)[1];
+
+					uv_list.emplace_back(uv);
+				}
+
+				// 入った
+				is_enter = true;
+			}
+
 		}
 	}
 }
 
 
+void Fbx::MaterialLoad(
+	std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+	FbxNode*p_mesh
+) {
+
+	FbxNode*p_node = p_mesh;
+
+	if (p_node == 0) {
+		return;
+	}
+
+	// マテリアルの数
+	m_material_num = p_node->GetMaterialCount();
+
+	if (m_material_num == 0) {
+		return;
+	}
+
+	for (int i = 0; i < m_material_num; i++) {
+
+		// サーフェイス
+		FbxSurfaceMaterial*p_material = p_node->GetMaterial(i);
+
+		if (p_material != 0) {
+			// マテリアル解析
+			
+			// LambertかPhongか
+			if (p_material->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
+
+				// Lambertにダウンキャスト
+				FbxSurfaceLambert *lambert = (FbxSurfaceLambert*)p_material;
+				
+				// ランバートの読み込み
+			}
+			else if (p_material->GetClassId().Is(FbxSurfacePhong::ClassId)) {
+
+				// Phongにダウンキャスト
+				FbxSurfacePhong * phong = (FbxSurfacePhong*)p_material;
+			}
+		}
+	}
+
+	// テクスチャ読み込み
+	TextureManager::GetInstance()->Load2D(
+		file_name,
+		texture_name
+	);
+}
+
+
+void Fbx::SetLambertInfo(
+	FbxSurfaceLambert*lambert,
+	MaterialInfo*material_info
+	) {
+
+
+	if (lambert == nullptr) {
+		return;
+	}
+
+	D3DXMATERIAL *material = &material_info->material;
+
+	// アンビエント
+	material->MatD3D.Ambient.r = (float)lambert->Ambient.Get()[0];
+	material->MatD3D.Ambient.g = (float)lambert->Ambient.Get()[1];
+	material->MatD3D.Ambient.b = (float)lambert->Ambient.Get()[2];
+
+	// ディフューズ
+	material->MatD3D.Diffuse.r = (float)lambert->Diffuse.Get()[0];
+	material->MatD3D.Diffuse.g = (float)lambert->Diffuse.Get()[1];
+	material->MatD3D.Diffuse.b = (float)lambert->Diffuse.Get()[2];
+
+	// エミッシブ
+	material->MatD3D.Emissive.r = (float)lambert->Emissive.Get()[0];
+	material->MatD3D.Emissive.g = (float)lambert->Emissive.Get()[1];
+	material->MatD3D.Emissive.b = (float)lambert->Emissive.Get()[2];
+
+	// バンプ
+	//material->MatD3D.Power.x = (float)lambert->GetBump().Get()[0];
+	//material->MatD3D.Power.y = (float)lambert->GetBump().Get()[1];
+	//material->MatD3D..z = (float)lambert->GetBump().Get()[2];
+
+	// 透過度
+	float A = (float)lambert->TransparencyFactor.Get();
+
+}
+
+
+void Fbx::SetPhongInfo(
+	FbxSurfacePhong*p_phong,
+	MaterialInfo*p_material_info
+	) {
+
+	// スペキュラ
+	specular_.r = (float)phong->GetSpecularColor().Get()[0];
+	specular_.g = (float)phong->GetSpecularColor().Get()[1];
+	specular_.b = (float)phong->GetSpecularColor().Get()[2];
+
+	// 光沢
+	shininess_ = (float)phong->GetShininess().Get();
+
+	// 反射
+	reflectivity_ = (float)phong->GetReflectionFactor().Get();
+
+}
+
+
 void Fbx::CustomVertexCreate(
+	std::vector<INT>&indeces,
 	std::vector<D3DXVECTOR4>&vertex_list,
 	std::vector<D3DXVECTOR2>&uv_list,
 	std::vector<D3DXVECTOR3>&normal_list
 ) {
 
-}
+	FbxCustomVertex custom_vertex;
 
 
-bool Fbx::IsMeshSerch(FbxNode * p_node) {
+	// 現在の頂点分回す
+	for (unsigned int i = 0; i < indeces.size(); i++) {
 
-	
-	// 探索ノード
-	if (p_node) {
+		unsigned int id = indeces[i] - 1;
 
-		int attr_count = p_node->GetNodeAttributeCount();
-
-		for (int i = 0; i < attr_count; i++) {
-
-			FbxNodeAttribute::EType type = 
-				p_node->GetNodeAttributeByIndex(i)->
-				GetAttributeType();
-
-
-			// ノードがメッシュにつながっているかチェック
-			if (type == FbxNodeAttribute::EType::eMesh){
-				// メッシュに繋がっている
-				return true;
-			}
+		// 頂点データ代入
+		if (vertex_list.size() > i) {
+			custom_vertex.vertex = vertex_list[i];
 		}
-	}
+		
+		// uvデータ代入
+		if (uv_list.size() > i) {
+			custom_vertex.uv = uv_list[i];
+		}
 
-	// メッシュには繋がっていない
-	return false;
+		// 法線データ代入
+		if (normal_list.size() > id) {
+			custom_vertex.normal = normal_list[id];
+		}
+
+		// 本体に代入
+		m_custom_vertex_list.emplace_back(custom_vertex);
+	}
 }
 
 
-bool Fbx::IsMeshSerch2(FbxNode*p_node) {
+bool Fbx::IsMeshSerch(FbxNode*p_node) {
 
 	FbxNodeAttribute * p_attrib = p_node->GetNodeAttribute();
 

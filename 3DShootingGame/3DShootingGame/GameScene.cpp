@@ -7,7 +7,9 @@ GameScene::GameScene() {
 
 	m_p_camera = new Camera3D(Camera3D::FPS);
 
-	BulletFactory * bullet_factory = new BulletFactory(&m_object_manager);
+	BulletFactory * bullet_factory = new BulletFactory(
+		&m_object_manager
+	);
 
 	m_object_manager.Entry(new Player(
 		D3DXVECTOR3(0.f, 0.f, 100.f),
