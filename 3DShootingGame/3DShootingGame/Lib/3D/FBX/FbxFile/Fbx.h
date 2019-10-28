@@ -31,10 +31,9 @@ struct FbxCustomVertex {
 	D3DXVECTOR2 uv;
 };
 
-
 struct MaterialInfo {
-	std::string texture_name;
 	D3DXMATERIAL material;
+	std::vector<std::string>texture_name_list;
 };
 
 
@@ -52,11 +51,19 @@ struct VertexData {
 	int start_index;
 
 	// マテリアル配列
-	std::vector<MaterialInfo>material_list;
+	MaterialInfo material_info;
 };
 
 
 class Fbx {
+public:
+
+	enum NodeType {
+		NONE,
+		MESH,
+		TOTAL,
+	};
+
 public:
 
 	static Fbx *GetInstance() {
@@ -75,7 +82,7 @@ public:
 	}
 	
 	// 読み込み
-	bool Load(std::string fbx_file_path);
+	bool Load(const std::string &fbx_file_path);
 
 	// 描画
 	void Draw();
@@ -90,13 +97,14 @@ private:
 		std::vector<D3DXVECTOR4>&vertex_list,
 		std::vector<D3DXVECTOR2>&uv_list,
 		std::vector<std::unique_ptr<VertexData>>&mp_vertex_data_list,
-		FbxNode *node);
+		FbxNode *node
+	);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
 
 	// メッシュかどうか調べる2
-	bool IsMeshSerch(FbxNode*fbx_node);
+	NodeType IsNodeTypeSerch(FbxNode*fbx_node);
 
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
@@ -121,19 +129,35 @@ private:
 		FbxMesh*p_mesh);
 
 
-	// テクスチャ読み込み
-	void TextureLoad(
-		const char*file_name,
-		const char*texture_name
-	);
-
-
 	// カスタムバーテックス作成
 	void CustomVertexCreate(
 		std::vector<INT>&indeces,
 		std::vector<D3DXVECTOR4>&vertex_list,
 		std::vector<D3DXVECTOR2>&uv_list,
 		std::vector<D3DXVECTOR3>&normal_list
+	);
+
+	// マテリアル読み込み
+	void MaterialLoad(
+		std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+		FbxNode*p_mesh
+	);
+
+	// ランバートからマテリアル情報を取得
+	void SetLambertInfo(
+		FbxSurfaceLambert*lambert,
+		D3DXMATERIAL*material_info
+	);
+
+	// phongからマテリアル情報を取得する
+	void SetPhongInfo(
+		FbxSurfacePhong*p_phong,
+		D3DXMATERIAL*p_material_info
+	);
+
+	bool TextureInfoLoad(
+		FbxSurfaceMaterial*p_material,
+		MaterialInfo*p_material_info
 	);
 
 	// インデックスバッファ生成

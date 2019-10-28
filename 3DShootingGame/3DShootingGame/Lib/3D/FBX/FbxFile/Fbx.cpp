@@ -71,8 +71,13 @@ void Fbx::Draw() {
 		// 頂点情報受け取り
 		VertexData*vertex_data = mp_vertex_data_list[i].get();
 
+		std::string texture_name;
+
 		// テクスチャ名受け取り
-		std::string texture_name = vertex_data->material_list.back().texture_name;
+		if (vertex_data->material_info.texture_name_list.size() > 0) {
+			texture_name =
+				vertex_data->material_info.texture_name_list.back();
+		}
 
 		// テクスチャが0ではないなら
 		if (TextureManager::GetInstance()->Find2DTexture(texture_name) == true) {
@@ -226,7 +231,7 @@ void Fbx::NodeSerch(
 	}
 
 	// メッシュが存在したら処理にはいる
-	if (IsMeshSerch(p_node) == true) {
+	if (IsNodeTypeSerch(p_node) == MESH) {
 
 		// メッシュ取得
 		FbxMesh * p_mesh = p_node->GetMesh();
@@ -254,6 +259,11 @@ void Fbx::NodeSerch(
 				uv_list,
 				mp_vertex_data_list,
 				p_mesh
+			);
+
+			MaterialLoad(
+				p_vertex_data_list,
+				p_node
 			);
 
 			// インデックス読み込み
@@ -466,9 +476,9 @@ void Fbx::UvInfoLoad(
 					uv_list.emplace_back(uv);
 
 					// テクスチャ名受け取り
-					p_vertex_data_list.back().get()->
-						material_list.back().texture_name =
-						p_element->GetName();
+					//p_vertex_data_list.back().get()->
+					//	material_list.back().pTextureFilename =
+					//	p_element->GetName();
 				}
 				// 入った
 				is_enter = true;
@@ -504,6 +514,7 @@ void Fbx::MaterialLoad(
 ) {
 
 	FbxNode*p_node = p_mesh;
+	bool get_texture = false;
 
 	if (p_node == 0) {
 		return;
@@ -518,7 +529,7 @@ void Fbx::MaterialLoad(
 
 	for (int i = 0; i < m_material_num; i++) {
 
-		// サーフェイス
+		// サーフェイス受け取り
 		FbxSurfaceMaterial*p_material = p_node->GetMaterial(i);
 
 		if (p_material != 0) {
@@ -537,20 +548,43 @@ void Fbx::MaterialLoad(
 				// Phongにダウンキャスト
 				FbxSurfacePhong * phong = (FbxSurfacePhong*)p_material;
 			}
+
+			// テクスチャ読み込み
+			if (TextureInfoLoad(
+				p_material,
+				&p_vertex_data_list.back()->material_info
+			) == true) {
+				get_texture = true;
+			}
 		}
 	}
 
-	// テクスチャ読み込み
-	TextureManager::GetInstance()->Load2D(
-		file_name,
-		texture_name
-	);
+
+	// テクスチャ名受け取り
+	if (get_texture == true) {
+		std::string texture_name = p_vertex_data_list.
+			back()->
+			material_info.
+			texture_name_list.
+			back().
+			c_str();
+
+
+		// テクスチャ読み込み
+		if (texture_name.size() > 0) {
+			TextureManager::GetInstance()->Load2D(
+				texture_name.c_str(),
+				texture_name.c_str()
+			);
+		}
+	}
+	
 }
 
 
 void Fbx::SetLambertInfo(
 	FbxSurfaceLambert*lambert,
-	MaterialInfo*material_info
+	D3DXMATERIAL*material_info
 	) {
 
 
@@ -558,22 +592,22 @@ void Fbx::SetLambertInfo(
 		return;
 	}
 
-	D3DXMATERIAL *material = &material_info->material;
+	D3DXMATERIAL *p_material = material_info;
 
 	// アンビエント
-	material->MatD3D.Ambient.r = (float)lambert->Ambient.Get()[0];
-	material->MatD3D.Ambient.g = (float)lambert->Ambient.Get()[1];
-	material->MatD3D.Ambient.b = (float)lambert->Ambient.Get()[2];
+	p_material->MatD3D.Ambient.r = (float)lambert->Ambient.Get()[0];
+	p_material->MatD3D.Ambient.g = (float)lambert->Ambient.Get()[1];
+	p_material->MatD3D.Ambient.b = (float)lambert->Ambient.Get()[2];
 
 	// ディフューズ
-	material->MatD3D.Diffuse.r = (float)lambert->Diffuse.Get()[0];
-	material->MatD3D.Diffuse.g = (float)lambert->Diffuse.Get()[1];
-	material->MatD3D.Diffuse.b = (float)lambert->Diffuse.Get()[2];
+	p_material->MatD3D.Diffuse.r = (float)lambert->Diffuse.Get()[0];
+	p_material->MatD3D.Diffuse.g = (float)lambert->Diffuse.Get()[1];
+	p_material->MatD3D.Diffuse.b = (float)lambert->Diffuse.Get()[2];
 
 	// エミッシブ
-	material->MatD3D.Emissive.r = (float)lambert->Emissive.Get()[0];
-	material->MatD3D.Emissive.g = (float)lambert->Emissive.Get()[1];
-	material->MatD3D.Emissive.b = (float)lambert->Emissive.Get()[2];
+	p_material->MatD3D.Emissive.r = (float)lambert->Emissive.Get()[0];
+	p_material->MatD3D.Emissive.g = (float)lambert->Emissive.Get()[1];
+	p_material->MatD3D.Emissive.b = (float)lambert->Emissive.Get()[2];
 
 	// バンプ
 	//material->MatD3D.Power.x = (float)lambert->GetBump().Get()[0];
@@ -582,26 +616,100 @@ void Fbx::SetLambertInfo(
 
 	// 透過度
 	float A = (float)lambert->TransparencyFactor.Get();
-
 }
 
 
 void Fbx::SetPhongInfo(
 	FbxSurfacePhong*p_phong,
-	MaterialInfo*p_material_info
+	D3DXMATERIAL*p_material_info
 	) {
 
+	D3DXMATERIAL *p_material = p_material_info;
+
 	// スペキュラ
-	specular_.r = (float)phong->GetSpecularColor().Get()[0];
-	specular_.g = (float)phong->GetSpecularColor().Get()[1];
-	specular_.b = (float)phong->GetSpecularColor().Get()[2];
+	p_material->MatD3D.Specular.r = (float)p_phong->Specular.Get()[0];
+	p_material->MatD3D.Specular.g = (float)p_phong->Specular.Get()[1];
+	p_material->MatD3D.Specular.b = (float)p_phong->Specular.Get()[2];
 
 	// 光沢
-	shininess_ = (float)phong->GetShininess().Get();
+	p_material->MatD3D.Power = (float)p_phong->Shininess.Get();
 
 	// 反射
-	reflectivity_ = (float)phong->GetReflectionFactor().Get();
+	//reflectivity_ = (float)phong->GetReflectionFactor().Get();
 
+}
+
+
+bool Fbx::TextureInfoLoad(
+	FbxSurfaceMaterial*p_material,
+	MaterialInfo*p_material_info
+) {
+
+	// ディフューズプロパティを検索
+	FbxProperty fbx_property = 
+		p_material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+	// プロパティが持っているレイヤードテクスチャの枚数をチェック
+	int layer_num = 
+		fbx_property.GetSrcObjectCount<FbxLayeredTexture>();
+
+	// テクスチャ数を取得
+	int file_texture_count = 
+		fbx_property.GetSrcObjectCount<FbxFileTexture>();
+
+	if (0 < file_texture_count) {
+
+		// テクスチャの数だけ繰り返す
+		for (int i = 0; i < file_texture_count; i++) {
+
+			// レイヤードのテクスチャを受け取り
+			FbxLayeredTexture * layerd_texture =
+				fbx_property.GetSrcObject<FbxLayeredTexture>(i);
+
+			int texture_count =
+				layerd_texture->GetSrcObjectCount<FbxFileTexture>();
+
+			// レイヤーから順にテクスチャを取得
+			for (int k = 0; k < texture_count; k++) {
+				FbxFileTexture * p_texture = fbx_property.GetSrcObject<FbxFileTexture>(k);
+
+				if (p_texture) {
+
+					std::string texture_name = 
+						p_texture->GetRelativeFileName();
+				}
+			}
+		}
+	}
+	else {
+
+		// テクスチャ数を取得
+		int file_texture_count =
+			fbx_property.GetSrcObjectCount<FbxFileTexture>();
+
+		if (0 < file_texture_count) {
+			//--- テクスチャの数だけ繰り返す ---//
+
+			for (int j = 0; file_texture_count > j; j++) {
+				//--- テクスチャを取得 ---//
+				FbxFileTexture* texture =
+					fbx_property.GetSrcObject<FbxFileTexture>(j);
+
+				if (texture) {
+					//--- テクスチャ名を取得 ---//
+					//std::string textureName = texture->GetName();
+					std::string textureName = texture->GetRelativeFileName();
+
+					//--- UVSet名を取得 ---//
+					std::string UVSetName =
+						texture->UVSet.Get().Buffer();
+
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 
@@ -641,12 +749,12 @@ void Fbx::CustomVertexCreate(
 }
 
 
-bool Fbx::IsMeshSerch(FbxNode*p_node) {
+Fbx::NodeType Fbx::IsNodeTypeSerch(FbxNode*p_node) {
 
 	FbxNodeAttribute * p_attrib = p_node->GetNodeAttribute();
 
 	if (p_attrib == NULL) {
-		return false;
+		return NONE;
 	}
 
 	// タイプを使う
@@ -654,10 +762,10 @@ bool Fbx::IsMeshSerch(FbxNode*p_node) {
 	
 	// メッシュ
 	if (type == FbxNodeAttribute::eMesh) {
-		return true;
+		return MESH;
 	}
 
-	return false;
+	return NONE;
 }
 
 

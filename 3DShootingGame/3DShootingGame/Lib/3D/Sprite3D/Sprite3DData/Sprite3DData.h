@@ -45,7 +45,7 @@ struct Sprite3DData{
 	// テクスチャ登録時の名前
 	const char* texture_name;
 
-	// 横の拡縮 
+	// 横の拡縮
 	float scale_width;
 
 	// 縦の拡縮
