@@ -36,7 +36,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	//Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;

@@ -4,6 +4,7 @@
 #include<vector>
 #include<fbxsdk.h>
 #include<memory>
+#include"../../../../FbxModel.h"
 #include"../../../Graphics/Graphics.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
@@ -33,13 +34,13 @@ struct FbxCustomVertex {
 
 struct MaterialInfo {
 	D3DXMATERIAL material;
-	std::vector<std::string>texture_name_list;
+	std::string texture_name;
 };
 
 
-struct VertexData {
+struct MeshData {
 
-	VertexData() {
+	MeshData() {
 		polygon_num = 0;
 		start_index = 0;
 	}
@@ -49,6 +50,9 @@ struct VertexData {
 
 	// インデックスバッファの数
 	int start_index;
+
+	// インデックスバッファ
+	IDirect3DIndexBuffer9 * index_buffer;
 
 	// マテリアル配列
 	MaterialInfo material_info;
@@ -96,15 +100,15 @@ private:
 	void NodeSerch(
 		std::vector<D3DXVECTOR4>&vertex_list,
 		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<std::unique_ptr<VertexData>>&mp_vertex_data_list,
+		std::vector<std::unique_ptr<MeshData>>&mp_vertex_data_list,
 		FbxNode *node
 	);
 
 	// 根のノードを探査する
 	void RootNodeProbe();
 
-	// メッシュかどうか調べる2
-	NodeType IsNodeTypeSerch(FbxNode*fbx_node);
+	// ノードの種類を調べる
+	NodeType SerchNodeType(FbxNode*fbx_node);
 
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
@@ -112,7 +116,7 @@ private:
 	// インデックス読み込み
 	void IndexInfoLoad(
 		std::vector<INT>&index_list,
-		std::vector<std::unique_ptr<VertexData>>&mp_vertex_data_list,
+		std::vector<std::unique_ptr<MeshData>>&mp_vertex_data_list,
 		FbxMesh*p_mesh
 	);
 
@@ -125,7 +129,7 @@ private:
 	// UV読み込み
 	void UvInfoLoad(
 		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
+		std::vector<std::unique_ptr<MeshData>>&p_vertex_data_list,
 		FbxMesh*p_mesh);
 
 
@@ -139,8 +143,9 @@ private:
 
 	// マテリアル読み込み
 	void MaterialLoad(
-		std::vector<std::unique_ptr<VertexData>>&p_vertex_data_list,
-		FbxNode*p_mesh
+		std::vector<std::unique_ptr<MeshData>>&p_vertex_data_list,
+		FbxNode*p_node,
+		FbxMesh*p_mesh
 	);
 
 	// ランバートからマテリアル情報を取得
@@ -156,7 +161,7 @@ private:
 	);
 
 	bool TextureInfoLoad(
-		FbxSurfaceMaterial*p_material,
+		FbxMesh*p_mesh,
 		MaterialInfo*p_material_info
 	);
 
@@ -180,9 +185,6 @@ private:
 	// バーテックスバッファ
 	IDirect3DVertexBuffer9 * mp_vertex_buffer;
 
-	// インデックスバッファ
-	IDirect3DIndexBuffer9 * mp_index_buffer;
-
 	// 全てのインデックス
 	std::vector<INT>m_indices;
 
@@ -190,10 +192,16 @@ private:
 	std::vector<FbxCustomVertex>m_custom_vertex_list;
 	
 	// カスタムバーテックスの配列
-	std::vector<std::unique_ptr<VertexData>>mp_vertex_data_list;
+	std::vector<MeshData>m_mesh_data_list;
 
 	// マテリアル数
 	int m_material_num;
+
+	// テクスチャファイルパス
+	std::string m_texture_file_path;
+
+	// fbxファイル名
+	std::string m_fbx_file_name;
 
 	// グラフィックス
 	Graphics * mp_graphics;

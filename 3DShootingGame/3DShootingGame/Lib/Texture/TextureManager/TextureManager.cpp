@@ -17,9 +17,6 @@ void TextureManager::Load2D(
 	float tv
 ) {
 
-	// テクスチャデータを生成
-	m_texture_data2D_list[texture_rename] = new TextureData2D;
-
 	// 画像サイズを保存するパラメーター
 	D3DXIMAGE_INFO info;
 
@@ -34,6 +31,8 @@ void TextureManager::Load2D(
 		return;
 	}
 
+	// テクスチャデータを生成
+	m_texture_data2D_list[texture_rename] = new TextureData2D;
 
 	// 最初はサイズ指定をしなければいけない。
 	m_texture_data2D_list[texture_rename]->width_size
