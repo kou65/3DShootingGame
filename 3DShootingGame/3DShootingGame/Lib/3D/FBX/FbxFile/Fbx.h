@@ -3,7 +3,6 @@
 #include<string>
 #include<vector>
 #include<fbxsdk.h>
-#include<memory>
 #include"../../../../FbxModel.h"
 #include"../../../Graphics/Graphics.h"
 
@@ -17,13 +16,13 @@
 struct FbxCustomVertex {
 
 	FbxCustomVertex(){
-		vertex.x = vertex.y = vertex.z = vertex.w= 0.f;
+		vertex.x = vertex.y = vertex.z = 0.f;
 		normal.x = normal.y = normal.z = 0.f;
 		uv.x = uv.y = 0.f;
 	}
 
 	// 頂点データ
-	D3DXVECTOR4 vertex;
+	D3DXVECTOR3 vertex;
 
 	// 法線ベクトル
 	D3DXVECTOR3 normal;
@@ -32,15 +31,16 @@ struct FbxCustomVertex {
 	D3DXVECTOR2 uv;
 };
 
+
 struct MaterialInfo {
 	D3DXMATERIAL material;
 	std::string texture_name;
 };
 
 
-struct MeshData {
+struct FbxMeshData {
 
-	MeshData() {
+	FbxMeshData() {
 		polygon_num = 0;
 		start_index = 0;
 	}
@@ -53,6 +53,9 @@ struct MeshData {
 
 	// インデックスバッファ
 	IDirect3DIndexBuffer9 * index_buffer;
+
+	// バーテックスバッファ
+	IDirect3DVertexBuffer9 * vertex_buffer;
 
 	// マテリアル配列
 	MaterialInfo material_info;
@@ -98,9 +101,9 @@ private:
 
 	// ノード探査関数
 	void NodeSerch(
-		std::vector<D3DXVECTOR4>&vertex_list,
+		std::vector<D3DXVECTOR3>&vertex_list,
 		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<std::unique_ptr<MeshData>>&mp_vertex_data_list,
+		std::vector<FbxMeshData>&mp_vertex_data_list,
 		FbxNode *node
 	);
 
@@ -114,36 +117,37 @@ private:
 	void Polygon3Convert();
 
 	// インデックス読み込み
-	void IndexInfoLoad(
-		std::vector<INT>&index_list,
-		std::vector<std::unique_ptr<MeshData>>&mp_vertex_data_list,
+	void LoadIndeces(
+		int &index_num,
+		std::vector<FbxMeshData>&mp_vertex_data_list,
 		FbxMesh*p_mesh
 	);
 
 	// 頂点読み込み
-	void VertexInfoLoad(
-		std::vector<D3DXVECTOR4>&vertex_list,
-		FbxMesh*p_mesh
+	void LoadVertexInfo(
+		std::vector<D3DXVECTOR3>&vertex_list,
+		FbxMesh*p_mesh,
+		std::vector<FbxMeshData>&mesh_data_list
 	);
 
 	// UV読み込み
-	void UvInfoLoad(
+	void LoadUvInfo(
 		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<std::unique_ptr<MeshData>>&p_vertex_data_list,
+		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxMesh*p_mesh);
 
 
 	// カスタムバーテックス作成
 	void CustomVertexCreate(
-		std::vector<INT>&indeces,
-		std::vector<D3DXVECTOR4>&vertex_list,
+		int index_num,
+		std::vector<D3DXVECTOR3>&vertex_list,
 		std::vector<D3DXVECTOR2>&uv_list,
 		std::vector<D3DXVECTOR3>&normal_list
 	);
 
 	// マテリアル読み込み
-	void MaterialLoad(
-		std::vector<std::unique_ptr<MeshData>>&p_vertex_data_list,
+	void LoadMaterial(
+		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxNode*p_node,
 		FbxMesh*p_mesh
 	);
@@ -160,19 +164,28 @@ private:
 		D3DXMATERIAL*p_material_info
 	);
 
-	bool TextureInfoLoad(
+	bool LoadTextureInfo(
 		FbxMesh*p_mesh,
 		MaterialInfo*p_material_info
 	);
 
 	// インデックスバッファ生成
-	bool IndexBufferCreate(int total_index);
+	bool IndexBufferCreate(
+		int total_face_num,
+		std::vector<INT>indices,
+		LPDIRECT3DINDEXBUFFER9 * buffer
+	);
 
 	// 頂点バッファ生成
-	bool VertexBufferCreate(int total_vertex);
+	bool VertexBufferCreate(
+		int total_vertex,
+		LPDIRECT3DVERTEXBUFFER9 * p_vertex_buffer
+	);
 
 	// ポリゴン2分割
-	std::vector<INT> SplitPolygon2(const std::vector<INT>&indices4);
+	std::vector<INT> SplitPolygon2(
+		const std::vector<INT>&indices
+	);
 
 private:
 
@@ -183,16 +196,19 @@ private:
 	FbxScene * mp_fbx_scene;
 
 	// バーテックスバッファ
-	IDirect3DVertexBuffer9 * mp_vertex_buffer;
+	//IDirect3DVertexBuffer9 * mp_vertex_buffer;
 
 	// 全てのインデックス
 	std::vector<INT>m_indices;
+
+	// 現在のインデックス数
+	int m_current_index_num;
 
 	// 全ての頂点数
 	std::vector<FbxCustomVertex>m_custom_vertex_list;
 	
 	// カスタムバーテックスの配列
-	std::vector<MeshData>m_mesh_data_list;
+	std::vector<FbxMeshData>m_mesh_data_list;
 
 	// マテリアル数
 	int m_material_num;

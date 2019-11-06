@@ -23,5 +23,5 @@ public:
 
 private:
 
-	MeshData * m_p_mesh_data;
+	//MeshData * m_p_mesh_data;
 };
