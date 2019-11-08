@@ -211,7 +211,7 @@ void Fbx::RootNodeProbe() {
 		m_mesh_data_list.emplace_back();
 
 		// 最初に描画するインデックス数を入れる
-		m_mesh_data_list.back().start_index =
+		m_mesh_data_list.back().start_index = 
 			m_indices.size();
 
 		// 頂点情報読み込み
@@ -347,6 +347,7 @@ void Fbx::LoadIndeces(
 			// 仮のインデックスバッファに代入
 			indices.push_back(index_number);
 
+			// 全体のインデックスバッファに入れる
 			m_indices.push_back(index_number);
 		}
 
