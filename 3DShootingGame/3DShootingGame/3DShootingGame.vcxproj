@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -184,7 +184,12 @@
     </ClCompile>
     <ClCompile Include="Lib\3D\Camera3D\Camera3D.cpp" />
     <ClCompile Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.cpp" />
-    <ClCompile Include="Lib\3D\Fbx\FbxFile\Fbx.cpp" />
+    <ClCompile Include="Lib\3D\Fbx\FbxFile\Fbx.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Lib\3D\IndexBuffer\IndexBuffer.cpp" />
     <ClCompile Include="Lib\3D\Light\Light.cpp" />
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
@@ -261,10 +266,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="FbxModel.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Filed.h">
       <SubType>
       </SubType>
@@ -275,7 +276,12 @@
     </ClInclude>
     <ClInclude Include="Lib\3D\Camera3D\Camera3D.h" />
     <ClInclude Include="Lib\3D\D3DDefaultMesh\D3DDefaultMesh.h" />
-    <ClInclude Include="Lib\3D\Fbx\FbxFile\Fbx.h" />
+    <ClInclude Include="Lib\3D\Fbx\FbxFile\Fbx.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Lib\3D\IndexBuffer\IndexBuffer.h" />
     <ClInclude Include="Lib\3D\Light\Light.h" />
     <ClInclude Include="Lib\3D\Object3DCustomVertex\MeshCustomVertex.h" />

@@ -362,8 +362,5 @@
     <ClInclude Include="Lib\3D\Fbx\FbxFile\Fbx.h">
       <Filter>Lib\Fbx</Filter>
     </ClInclude>
-    <ClInclude Include="FbxModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

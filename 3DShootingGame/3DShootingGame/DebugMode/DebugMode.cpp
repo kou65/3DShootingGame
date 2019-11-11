@@ -19,6 +19,7 @@ Debugger::Debugger() {
 	light = new Light(Graphics::GetInstance());
 
 	camera_3d = new Camera3D(Camera3D::FPS);
+	camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 	m_is_program_stop = false;
 	light->On();
 

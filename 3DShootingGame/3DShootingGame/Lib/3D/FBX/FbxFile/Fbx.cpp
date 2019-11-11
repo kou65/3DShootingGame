@@ -264,6 +264,12 @@ void Fbx::RootNodeProbe() {
 		m_custom_vertex_list.clear();
 	}
 
+	// mpバーテックスバッファ生成
+	//VertexBufferCreate(
+	//	m_custom_vertex_list.size(),
+	//	&mp_vertex_buffer
+	//);
+
 }
 
 
@@ -380,10 +386,6 @@ void Fbx::LoadVertexInfo(
 		W,           // w     = 3
 		VERTEX_TOTAL // TOTAL = 4 
 	};
-
-
-	// 頂点座標配列
-	FbxVector4 * vertex_pos_buffer = p_mesh->GetControlPoints();
 
 
 	// 総ポリゴン数
