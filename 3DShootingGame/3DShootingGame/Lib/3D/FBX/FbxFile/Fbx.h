@@ -33,7 +33,7 @@ struct FbxCustomVertex {
 
 
 struct MaterialInfo {
-	D3DXMATERIAL material;
+	D3DMATERIAL9 material;
 	std::string texture_name;
 };
 
@@ -41,16 +41,16 @@ struct MaterialInfo {
 struct FbxMeshData {
 
 	FbxMeshData() {
-		polygon_num = 0;
-		start_index = 0;
+		//fvf = FVF_FBX;
+		//primType = D3DPT_TRIANGLELIST;
+		//primNum = 0;
+		//vertexNum = 0;
+		//vertexStride = 0;
+		//indexNum = 0;
+		//materialIndex = 0;
 	}
 
-	// ポリゴンの数
-	int polygon_num;
-
-	// インデックスバッファの数
-	int start_index;
-
+	
 	// インデックスバッファ
 	IDirect3DIndexBuffer9 * index_buffer;
 
@@ -59,6 +59,16 @@ struct FbxMeshData {
 
 	// マテリアル配列
 	MaterialInfo material_info;
+
+	UINT				fvf;			// フォーマット
+	D3DPRIMITIVETYPE	primType;		// プリミティブの描画方法
+	UINT				primNum;		// プリミティブ数
+	UINT				vertexNum;		// 頂点数
+	UINT				vertexStride;	// 1頂点辺りのサイズ
+	UINT				indexNum;		// インデックス数
+	UINT				materialIndex;	// マテリアル番号
+
+
 };
 
 
@@ -99,14 +109,6 @@ public:
 
 private:
 
-	// ノード探査関数
-	void NodeSerch(
-		std::vector<D3DXVECTOR3>&vertex_list,
-		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<FbxMeshData>&mp_vertex_data_list,
-		FbxNode *node
-	);
-
 	// 根のノードを探査する
 	void RootNodeProbe();
 
@@ -135,15 +137,6 @@ private:
 		std::vector<D3DXVECTOR2>&uv_list,
 		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxMesh*p_mesh);
-
-
-	// カスタムバーテックス作成
-	void CustomVertexCreate(
-		int index_num,
-		std::vector<D3DXVECTOR3>&vertex_list,
-		std::vector<D3DXVECTOR2>&uv_list,
-		std::vector<D3DXVECTOR3>&normal_list
-	);
 
 	// マテリアル読み込み
 	void LoadMaterial(
@@ -187,6 +180,8 @@ private:
 		const std::vector<INT>&indices
 	);
 
+	void SetRootPath(const char*p_file_name);
+
 private:
 
 	// SDK全体を管理して各種オブジェクトの生成を行う
@@ -195,29 +190,22 @@ private:
 	// シーンの作成
 	FbxScene * mp_fbx_scene;
 
-	// バーテックスバッファ
-	//IDirect3DVertexBuffer9 * mp_vertex_buffer;
-
-	// 全てのインデックス
-	std::vector<INT>m_indices;
-
-	// 現在のインデックス数
-	int m_current_index_num;
-
-	// 全ての頂点数
-	std::vector<FbxCustomVertex>m_custom_vertex_list;
-	
-	// カスタムバーテックスの配列
-	std::vector<FbxMeshData>m_mesh_data_list;
+	// メッシュの数
+	UINT m_mesh_num;
 
 	// マテリアル数
 	int m_material_num;
 
-	// テクスチャファイルパス
-	std::string m_texture_file_path;
+	// 現在のインデックス数
+	int m_current_index_num;
 
-	// fbxファイル名
-	std::string m_fbx_file_name;
+	// カスタムバーテックスの配列
+	std::vector<FbxMeshData>m_mesh_data_list;
+
+	// インデックス配列
+	std::vector<int>m_indeces;
+
+	char m_root_path[MAX_PATH];
 
 	// グラフィックス
 	Graphics * mp_graphics;

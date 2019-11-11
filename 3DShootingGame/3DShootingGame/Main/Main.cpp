@@ -37,8 +37,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/HandGun/Handgun_fbx_7.4_binary.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/HandGun/Handgun_fbx_7.4_binary.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
