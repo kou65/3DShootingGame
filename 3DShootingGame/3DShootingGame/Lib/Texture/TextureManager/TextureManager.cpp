@@ -143,7 +143,7 @@ TextureData3D &TextureManager::GetTextureData3D(std::string name) {
 }
 
 
-void TextureManager::Release() {
+void TextureManager::AllRelease() {
 
 	// 2Dテクスチャの解放
 	for (auto texture : m_texture_data2D_list) {
@@ -167,4 +167,32 @@ void TextureManager::Release() {
 			delete[] t;
 		}
 	}
+}
+
+
+void TextureManager::ReleaseTexture2D(std::string &texture_name) {
+
+	// 解放
+	m_texture_data2D_list[texture_name]->p_texture_buffer->Release();
+
+	// TextureDataのメモリ解放
+	delete m_texture_data2D_list[texture_name];
+
+	// 要素解放
+	m_texture_data2D_list.erase(texture_name);
+}
+
+
+void TextureManager::ReleaseTexture3D(std::string &texture_name) {
+
+	// 解放
+	for (auto &itr : m_texture_data3D_list[texture_name]->texture_list) {
+		itr->Release();
+	}
+
+	// TextureDataのメモリ解放
+	delete m_texture_data3D_list[texture_name];
+
+	// 要素解放
+	m_texture_data3D_list.erase(texture_name);
 }

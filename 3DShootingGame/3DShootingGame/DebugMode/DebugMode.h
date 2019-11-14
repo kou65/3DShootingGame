@@ -26,7 +26,7 @@ public:
 	void Release();
 
 	// シングルトン設定
-	static Debugger& GetInstance();
+	static Debugger&GetInstance();
 
 private:
 

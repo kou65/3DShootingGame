@@ -237,10 +237,9 @@ void Fbx::RootNodeProbe() {
 			p_mesh
 		);
 
-
+		// メッシュデータのインデックスを代入
 		m_mesh_data_list[i].materialIndex = i;
 	}
-
 }
 
 
@@ -287,18 +286,19 @@ void Fbx::LoadIndeces(
 		p_indeces[poly_idx * 3 + 1] = poly_idx * 3 + 1;
 		p_indeces[poly_idx * 3 + 2] = poly_idx * 3 + 0;
 
-		//for (int i = 0; i < 3; i++) {
-		//	m_indeces.emplace_back();
-		//}
-
-		//poly_idx * 3 + 2
-		//	poly_idx * 3 + 1
-		//	poly_idx * 3 + 0
-
 		// インディシーズ代入
-		//m_indeces.push_back(poly_idx * 3 + 0);
-		//m_indeces.push_back(poly_idx * 3 + 1);
-		//m_indeces.push_back(poly_idx * 3 + 2);
+		m_indeces.push_back(poly_idx * 3 + 0);
+		m_indeces.push_back(poly_idx * 3 + 1);
+		m_indeces.push_back(poly_idx * 3 + 2);
+
+		int size = (int)m_indeces.size() - 1;
+
+		// 反転
+		int temp = m_indeces[size - 2];
+
+		m_indeces[(size) - 2] = m_indeces[size - 0];
+		m_indeces[(size) - 1] = m_indeces[size - 1];
+		m_indeces[(size) - 0] = temp;
 
 	}
 
@@ -466,7 +466,7 @@ void Fbx::LoadMaterial(
 			}
 
 			// テクスチャ読み込み
-			LoadTextureInfo(
+			LoadTexture(
 				p_mesh,
 				&p_vertex_data_list.back().material_info);
 		}
@@ -533,7 +533,7 @@ void Fbx::SetPhongInfo(
 }
 
 
-bool Fbx::LoadTextureInfo(
+bool Fbx::LoadTexture(
 	FbxMesh*p_mesh,
 	MaterialInfo*p_material_info
 )
@@ -553,12 +553,12 @@ bool Fbx::LoadTextureInfo(
 	FbxSurfaceMaterial* p_material =
 		p_mesh->GetNode()->GetSrcObject<FbxSurfaceMaterial>(index);
 
-	if (p_material == nullptr) {
+	if (p_material == nullptr){
 		return false;
 	}
 
 	// ディフューズプロパティを検索
-	FbxProperty fbx_property =
+	FbxProperty fbx_property = 
 		p_material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 
 	// テクスチャ数を取得
@@ -590,7 +590,7 @@ bool Fbx::LoadTextureInfo(
 		}
 	}
 
-	if ((int)file_name.size() < 0) 
+	if ((int)file_name.size() <= 0)
 	{ 
 		return false; 
 	}
@@ -604,16 +604,21 @@ bool Fbx::LoadTextureInfo(
 	char* ext = (char*)strstr(p_file_name, ".psd");
 	if (ext)
 	{
-		strcpy_s(ext,10,".tga");
+		strcpy_s(ext,100,".tga");
 	}
+
+	// ファイルパス分割
+	std::vector<std::string>string_list;
+	string_list = Utility::SplitStr('\\', p_file_name);
 
 	// パスを整える
 	char path[MAX_PATH];
 	strcpy_s(path,MAX_PATH,m_root_path);
 	strcat_s(path, "/texture/");
-	strcat_s(path, p_file_name);
+	strcat_s(path, string_list.back().c_str());
+
 	// 追加
-	strcat_s(path, file_name.c_str());
+	//strcat_s(path, file_name.c_str());
 
 	// テクスチャ読み込み
 	TextureManager::GetInstance()->
@@ -777,8 +782,18 @@ void Fbx::SetRootPath(const char*p_file_name) {
 	int i;
 	for (i = strlen(m_root_path); 0 < i; i--)
 	{
-		if (m_root_path[i] == '/') break;
+		if (m_root_path[i] == '/') {
+			break; 
+		}
 	}
+
+	std::vector<std::string>fbx_file_name;
+
+	fbx_file_name = Utility::SplitStr('/', p_file_name);
+
+	// fbxのファイル名を受け取り
+	m_fbx_file_name = fbx_file_name.back();
+
 	m_root_path[i] = '\0';
 }
 

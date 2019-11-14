@@ -157,7 +157,7 @@ private:
 		D3DXMATERIAL*p_material_info
 	);
 
-	bool LoadTextureInfo(
+	bool LoadTexture(
 		FbxMesh*p_mesh,
 		MaterialInfo*p_material_info
 	);
@@ -205,7 +205,11 @@ private:
 	// インデックス配列
 	std::vector<int>m_indeces;
 
+	// ルート
 	char m_root_path[MAX_PATH];
+
+	// fbx名
+	std::string m_fbx_file_name;
 
 	// グラフィックス
 	Graphics * mp_graphics;

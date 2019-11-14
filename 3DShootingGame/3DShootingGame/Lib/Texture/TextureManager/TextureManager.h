@@ -47,8 +47,14 @@ public:
 	// XFile用のテクスチャデータを返す
 	TextureData3D &GetTextureData3D(std::string name);
 
+	// テクスチャ2Dを解放
+	void ReleaseTexture2D(std::string &texture_name);
+
+	// テクスチャ3Dを解放
+	void ReleaseTexture3D(std::string &texture_name);
+
 	// 解放
-	void Release();
+	void AllRelease();
 
 
 private:
