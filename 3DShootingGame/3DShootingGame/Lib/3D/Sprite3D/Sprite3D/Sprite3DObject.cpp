@@ -31,7 +31,7 @@ void Sprite3DObject::BoardDraw(
 	float y2 = sprite_data.ofset.y;
 
 	// UV切り取り
-	UV uv(
+	Uv uv(
 		sprite_data.tu_cut_num,
 		sprite_data.tv_cut_num);
 

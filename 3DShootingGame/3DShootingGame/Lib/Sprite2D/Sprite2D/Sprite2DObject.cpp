@@ -47,7 +47,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	texture_format.tv += texture_data->uv.y;
 
 	// UVの分割
-	UV uv(texture_format.tu_cut_num, texture_format.tv_cut_num);
+	Uv uv(texture_format.tu_cut_num, texture_format.tv_cut_num);
 
 	// uvカットがオンならば
 	if (texture_format.tu_cut_num > 0 || texture_format.tv_cut_num > 0) {

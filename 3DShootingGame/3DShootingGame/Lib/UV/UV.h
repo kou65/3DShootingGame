@@ -43,11 +43,11 @@
 
 */
 
-class UV {
+class Uv {
 public:
 
 	// 引数に横と縦の分割したい画像数を入れる
-	UV(int div_w, int div_h);
+	Uv(int div_w, int div_h);
 
 	// 右から画像を分割する
 	void AnimationToTheRightDivGraph(int divsion_num);
@@ -55,7 +55,7 @@ public:
 	void AnimationToTheLeftDivGraph(int divsion_num);
 
 	// HACK　まだ完成していません
-	//void UAxisVAxisSelectionDivGraph(int u, int v);
+	void SelectTexture(int u, int v);
 
 	// 拡縮させながらテクスチャ座標指定する
 	/*

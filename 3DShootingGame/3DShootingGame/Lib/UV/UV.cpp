@@ -4,7 +4,7 @@
 
 
 // コンストラクタ
-UV::UV(int div_w,int div_h) {
+Uv::Uv(int div_w,int div_h) {
 
 	width_div_num = div_w;
 	height_div_num = div_h;
@@ -22,7 +22,7 @@ UV::UV(int div_w,int div_h) {
 }
 
 
-void UV::AnimationToTheRightDivGraph(int div_num) {
+void Uv::AnimationToTheRightDivGraph(int div_num) {
 
 	// 画像サイズを超えたら最大値を入れる
 	div_num = total_div_num < div_num ? total_div_num : div_num;
@@ -63,7 +63,7 @@ void UV::AnimationToTheRightDivGraph(int div_num) {
 }
 
 
-void UV::AnimationToTheLeftDivGraph(int div_num) {
+void Uv::AnimationToTheLeftDivGraph(int div_num) {
 
 	// 画像サイズを超えたら最大値を入れる
 	div_num = total_div_num < div_num ? total_div_num : div_num;
@@ -103,6 +103,48 @@ void UV::AnimationToTheLeftDivGraph(int div_num) {
 	// 右下
 	uv_down_right_pos.x = MAX_UV_SIZE - (MAX_UV_SIZE / width_div_num) * div_x;
 	uv_down_right_pos.y = (MAX_UV_SIZE / height_div_num)* (div_y + NEXT_GRAPH);
+}
+
+
+void Uv::SelectTexture(int u, int v) {
+
+	// 画像サイズを超えたら最大値を入れる
+	
+	// 先の頂点を含む
+	const float NEXT_GO_GRAPH = 1.f;
+
+	// 切り取る幅を変数に代入
+	int div_x = 0;
+	int div_y = 0;
+
+	int div_num_u = u * width_div_num;
+	int div_num_v = v * width_div_num;
+
+	// 最初の0だけはあまり算出来ないので応急措置
+	if (u == 0 || v == 0) {
+		div_x = u;
+		div_y = v;
+	}
+	else {
+		// y座標は変換しないと正しい値が取れない
+		div_x = ((div_num_u) % width_div_num);
+		div_y = ((div_num_v) / width_div_num);// 割った数分,y座標が進む
+	}
+	// 切り出すテクスチャ座標を(最大サイズ/横の分割数=一つの画像の大きさ)*全体の位置で割り出す
+	// 小さな画像を掛け算でずらしていく
+
+	// 左上
+	uv_up_left_pos.x = (MAX_UV_SIZE / width_div_num) * div_x;
+	uv_up_left_pos.y = (MAX_UV_SIZE / height_div_num)* div_y;
+	// 右上
+	uv_up_right_pos.x = (MAX_UV_SIZE / width_div_num) * (div_x + NEXT_GO_GRAPH);
+	uv_up_right_pos.y = (MAX_UV_SIZE / height_div_num)* div_y;
+	// 左下
+	uv_down_left_pos.x = (MAX_UV_SIZE / width_div_num) * div_x;
+	uv_down_left_pos.y = (MAX_UV_SIZE / height_div_num)* (div_y + NEXT_GO_GRAPH);
+	// 右下
+	uv_down_right_pos.x = (MAX_UV_SIZE / width_div_num) * (div_x + NEXT_GO_GRAPH);
+	uv_down_right_pos.y = (MAX_UV_SIZE / height_div_num)* (div_y + NEXT_GO_GRAPH);
 }
 
 
