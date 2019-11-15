@@ -20,6 +20,9 @@ public:
 
 	~TextureManager();
 
+	/**
+	* @テクスチャの読み込み
+	*/
 	void Load2D(
 		const char* file_name,
 		const char* texture_rename,
