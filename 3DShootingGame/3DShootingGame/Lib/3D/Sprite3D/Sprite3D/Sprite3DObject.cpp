@@ -109,7 +109,7 @@ void Sprite3DObject::BoardDraw(
 		// テクスチャをセット
 		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
 			0,
-			TextureManager::GetInstance()->GetTextureData2D(
+			TextureManager::GetInstance()->GetTextureData(
 			sprite_data.texture_name).p_texture_buffer);
 	}
 	else {

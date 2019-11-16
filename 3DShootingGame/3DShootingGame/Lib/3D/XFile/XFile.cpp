@@ -86,7 +86,7 @@ bool XFile::Load(
 				= *TextureManager::GetInstance();
 
 			// テクスチャが登録されていないなら
-			if (texture_manager.Find3DTexture(
+			if (texture_manager.FindMultipleTexture(
 				mesh_name.c_str()) == false
 				) {
 
@@ -94,7 +94,7 @@ bool XFile::Load(
 				file_name = file_hierarchy + file_name;
 
 				// テクスチャの読み込み
-				texture_manager.Load3D(
+				texture_manager.LoadMultiple(
 					file_name.c_str(),
 					mesh_name.c_str(),
 					i
@@ -140,7 +140,7 @@ void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 		// マテリアルで使用しているテクスチャをセット
 		device->SetTexture(
 			0,
-			TextureManager::GetInstance()->GetTextureData3D(mesh_name).texture_list[i]
+			TextureManager::GetInstance()->GetTextureDataMultiple(mesh_name).texture_list[i]
 		);
 
 		// ワールド座標を軸に変換

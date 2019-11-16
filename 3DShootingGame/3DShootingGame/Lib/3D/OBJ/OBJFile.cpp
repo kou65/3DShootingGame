@@ -62,13 +62,13 @@ void ObjFile::DrawSubSet(
 		std::string material_name = p_obj_file_data->m_usemtl_name_list[material_num];
 
 		// テクスチャが存在しているなら
-		if (TextureManager::GetInstance()->Find2DTexture(
+		if (TextureManager::GetInstance()->FindTexture(
 			p_obj_file_data->m_material_data_list[material_name].texture_name
 		) == true) {
 
 			// テクスチャ管理者からテクスチャ受け取り
-			TextureData2D texture_data = TextureManager::GetInstance()
-				->GetTextureData2D(
+			TextureData texture_data = TextureManager::GetInstance()
+				->GetTextureData(
 					p_obj_file_data->m_material_data_list[material_name].texture_name
 				);
 
@@ -693,7 +693,7 @@ bool ObjFile::MaterialFileLoad(
 				 texture_str;
 
 			// テクスチャ読み込み
-			TextureManager::GetInstance()->Load2D(
+			TextureManager::GetInstance()->Load(
 				texture_name.c_str(),
 				p_obj_file_data->m_material_data_list[texture_str].texture_name.c_str());
 		}

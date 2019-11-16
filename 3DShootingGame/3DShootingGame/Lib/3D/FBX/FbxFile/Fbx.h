@@ -3,7 +3,7 @@
 #include<string>
 #include<vector>
 #include<fbxsdk.h>
-#include"../../../../FbxModel.h"
+#include"../../../../FbxModel/FbxModel.h"
 #include"../../../Graphics/Graphics.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
@@ -67,8 +67,6 @@ struct FbxMeshData {
 	UINT				vertexStride;	// 1頂点辺りのサイズ
 	UINT				indexNum;		// インデックス数
 	UINT				materialIndex;	// マテリアル番号
-
-
 };
 
 

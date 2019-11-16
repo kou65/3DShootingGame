@@ -8,7 +8,7 @@ TextureManager::~TextureManager() {
 }
 
 
-void TextureManager::Load2D(
+void TextureManager::Load(
 	const char* file_name,
 	const char* texture_rename,
 	UINT width,
@@ -32,7 +32,7 @@ void TextureManager::Load2D(
 	}
 
 	// テクスチャデータを生成
-	m_texture_data2D_list[texture_rename] = new TextureData2D;
+	m_texture_data2D_list[texture_rename] = new TextureData;
 
 	// 最初はサイズ指定をしなければいけない。
 	m_texture_data2D_list[texture_rename]->width_size
@@ -83,7 +83,7 @@ void TextureManager::Load2D(
 }
 
 
-void TextureManager::Load3D(
+void TextureManager::LoadMultiple(
 	const char*file_name,
 	const char*texture_name,
 	const int &texture_num
@@ -92,7 +92,7 @@ void TextureManager::Load3D(
 	HRESULT result;
 
 	// テクスチャ生成
-	m_texture_data3D_list[texture_name] = new TextureData3D;
+	m_texture_data3D_list[texture_name] = new TextureMultipleData;
 
 	// 要素追加
 	m_texture_data3D_list[texture_name]->texture_list.emplace_back();
@@ -111,7 +111,7 @@ void TextureManager::Load3D(
 }
 
 
-bool TextureManager::Find2DTexture(std::string name) {
+bool TextureManager::FindTexture(std::string name) {
 
 	if (m_texture_data2D_list.count(name.c_str()) == 0) {
 		// ファイルが見つからない
@@ -122,7 +122,7 @@ bool TextureManager::Find2DTexture(std::string name) {
 }
 
 
-bool TextureManager::Find3DTexture(std::string name) {
+bool TextureManager::FindMultipleTexture(std::string name) {
 
 	if (m_texture_data3D_list.count(name.c_str()) == 0) {
 		// ファイルが見つからない
@@ -133,12 +133,12 @@ bool TextureManager::Find3DTexture(std::string name) {
 }
 
 
-TextureData2D &TextureManager::GetTextureData2D(std::string name) {
+TextureData &TextureManager::GetTextureData(std::string name) {
 	return *m_texture_data2D_list[name.c_str()];
 }
 
 
-TextureData3D &TextureManager::GetTextureData3D(std::string name) {
+TextureMultipleData &TextureManager::GetTextureDataMultiple(std::string name) {
 	return *m_texture_data3D_list[name.c_str()];
 }
 
@@ -170,7 +170,7 @@ void TextureManager::AllRelease() {
 }
 
 
-void TextureManager::ReleaseTexture2D(std::string &texture_name) {
+void TextureManager::ReleaseTexture(std::string &texture_name) {
 
 	// 解放
 	m_texture_data2D_list[texture_name]->p_texture_buffer->Release();
@@ -183,7 +183,7 @@ void TextureManager::ReleaseTexture2D(std::string &texture_name) {
 }
 
 
-void TextureManager::ReleaseTexture3D(std::string &texture_name) {
+void TextureManager::ReleaseTextureMultiple(std::string &texture_name) {
 
 	// 解放
 	for (auto &itr : m_texture_data3D_list[texture_name]->texture_list) {

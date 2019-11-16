@@ -23,7 +23,7 @@ public:
 	/**
 	* @テクスチャの読み込み
 	*/
-	void Load2D(
+	void Load(
 		const char* file_name,
 		const char* texture_rename,
 		UINT width = 0,
@@ -33,28 +33,31 @@ public:
 	);
 
 
-	void Load3D(
+	/**
+	* @brief 複数テクスチャ読み込み
+	*/
+	void LoadMultiple(
 		const char*file_name,
 		const char*texture_name,
 		const int &texture_num
 	);
 
 
-	bool Find2DTexture(std::string name);
+	bool FindTexture(std::string name);
 
-	bool Find3DTexture(std::string name);
+	bool FindMultipleTexture(std::string name);
 
 	// 2D用のテクスチャデータを返す
-	TextureData2D &GetTextureData2D(std::string name);
+	TextureData &GetTextureData(std::string name);
 
 	// XFile用のテクスチャデータを返す
-	TextureData3D &GetTextureData3D(std::string name);
+	TextureMultipleData &GetTextureDataMultiple(std::string name);
 
 	// テクスチャ2Dを解放
-	void ReleaseTexture2D(std::string &texture_name);
+	void ReleaseTexture(std::string &texture_name);
 
 	// テクスチャ3Dを解放
-	void ReleaseTexture3D(std::string &texture_name);
+	void ReleaseTextureMultiple(std::string &texture_name);
 
 	// 解放
 	void AllRelease();
@@ -65,18 +68,19 @@ private:
 	// 隠しコンストラクタ
 	TextureManager() {};
 
-	// 2Dのテクスチャリスト
+	// テクスチャリスト
 	std::unordered_map<
 		// キー
 		std::string,
 		// 入れ物
-		TextureData2D*
+		TextureData*
 	> m_texture_data2D_list;
 
+	// 複数のテクスチャリスト
 	std::unordered_map<
 		// キー
 		std::string,
 		// 入れ物
-		TextureData3D*
+		TextureMultipleData*
 	>m_texture_data3D_list;
 };

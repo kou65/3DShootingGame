@@ -22,15 +22,15 @@ struct CustomVertex2D
 void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	
 	// テクスチャが存在しているかどうか
-	if (TextureManager::GetInstance()->Find2DTexture(
+	if (TextureManager::GetInstance()->FindTexture(
 		texture_format.texture_name
 	) == false) {
 		return;
 	}
 
 	// テクスチャデータの参照受け取り
-	TextureData2D *texture_data = 
-		&TextureManager::GetInstance()->GetTextureData2D(
+	TextureData *texture_data = 
+		&TextureManager::GetInstance()->GetTextureData(
 			texture_format.texture_name
 		);
 
@@ -111,7 +111,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	// デバイスにそのまま渡すことができる。
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
 		0,
-		TextureManager::GetInstance()->GetTextureData2D(
+		TextureManager::GetInstance()->GetTextureData(
 			texture_format.texture_name));
 
 	// 図形を元にポリゴン作成

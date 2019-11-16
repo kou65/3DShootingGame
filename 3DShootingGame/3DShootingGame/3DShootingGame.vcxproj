@@ -157,28 +157,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bullet.cpp">
+    <ClCompile Include="Bullet\Bullet.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="BulletFactory.cpp">
+    <ClCompile Include="BulletFactory\BulletFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="DebugMode\DebugMode.cpp" />
-    <ClCompile Include="EndScene.cpp">
+    <ClCompile Include="Debugger\Debugger.cpp" />
+    <ClCompile Include="EndScene\EndScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="Enemy\Enemy.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Filed.cpp">
+    <ClCompile Include="Filed\Filed.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="GameScene.cpp">
+    <ClCompile Include="GameScene\GameScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -222,55 +222,56 @@
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
-    <ClCompile Include="ObjectManager.cpp">
+    <ClCompile Include="ObjectManager\ObjectManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="Player\Player.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="SceneBase.cpp">
+    <ClCompile Include="SceneBase\SceneBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
+    <ClCompile Include="SceneManager\SceneManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
-    <ClCompile Include="TitleScene.cpp">
+    <ClCompile Include="TitleScene\TitleScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Utility.cpp">
+    <ClCompile Include="Utility\Utility.cpp">
       <SubType>
       </SubType>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bullet.h">
+    <ClInclude Include="Bullet\Bullet.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="BulletFactory.h">
+    <ClInclude Include="BulletFactory\BulletFactory.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="DebugMode\DebugMode.h" />
-    <ClInclude Include="EndScene.h">
+    <ClInclude Include="Debugger\Debugger.h" />
+    <ClInclude Include="EndScene\EndScene.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="Enemy\Enemy.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Filed.h">
+    <ClInclude Include="FbxModel\FbxModel.h" />
+    <ClInclude Include="Filed\Filed.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameScene.h">
+    <ClInclude Include="GameScene\GameScene.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -316,40 +317,41 @@
     <ClInclude Include="Lib\UV\UV.h" />
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
-    <ClInclude Include="Object.h">
+    <ClInclude Include="ManagerBase\ManagerBase.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Object3D.h">
+    <ClInclude Include="Object\Object.h" />
+    <ClInclude Include="Object3D\Object3D.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
+    <ClInclude Include="ObjectManager\ObjectManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="Player\Player.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="SceneBase.h">
+    <ClInclude Include="SceneBase\SceneBase.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
+    <ClInclude Include="SceneManager\SceneManager.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
-    <ClInclude Include="TitleScene.h">
+    <ClInclude Include="TitleScene\TitleScene.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Utility.h">
+    <ClInclude Include="Utility\Utility.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Vec3.h">
+    <ClInclude Include="Vec3\Vec3.h">
       <SubType>
       </SubType>
     </ClInclude>

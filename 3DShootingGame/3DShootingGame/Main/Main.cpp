@@ -1,14 +1,14 @@
 ﻿#include"../LoadResource/LoadResource.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
-#include"../DebugMode/DebugMode.h"
+#include"../Debugger/Debugger.h"
 #include"../Lib/DirectInput/DirectInput.h"
 #include"../Lib/Sound/Sound.h"
 #include"../Lib/D3DFont/D3DFont.h"
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
 #include"../Lib/Lib/Lib.h"
-#include"../SceneManager.h"
-#include"../TitleScene.h"
+#include"../SceneManager/SceneManager.h"
+#include"../TitleScene/TitleScene.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 
 

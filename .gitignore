@@ -38,3 +38,7 @@
 # Debug
 x64
 Debug
+.vs/
+*.vs
+*Debug
+*x64

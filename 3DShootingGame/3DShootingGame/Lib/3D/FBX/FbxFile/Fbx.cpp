@@ -1,7 +1,7 @@
 ﻿#include"FBX.h"
 #include"../../../Window/Window.h"
 #include"../../../Texture/TextureManager/TextureManager.h"
-#include"../../../../Utility.h"
+#include"../../../../Utility/Utility.h"
 #include"../../../Graphics/Graphics.h"
 
 
@@ -76,10 +76,10 @@ void Fbx::Draw() {
 
 			// テクスチャーの設定
 			if (TextureManager::GetInstance()->
-				Find2DTexture(mate_info->texture_name) == true) {
+				FindTexture(mate_info->texture_name) == true) {
 				pDevice->SetTexture(
 					0,
-					TextureManager::GetInstance()->GetTextureData2D
+					TextureManager::GetInstance()->GetTextureData
 					(mate_info->texture_name)
 				);
 			}
@@ -622,7 +622,7 @@ bool Fbx::LoadTexture(
 
 	// テクスチャ読み込み
 	TextureManager::GetInstance()->
-		Load2D(path, file_name.c_str());
+		Load(path, file_name.c_str());
 
 	// テクスチャ登録名を保存
 	p_material_info->texture_name = file_name;

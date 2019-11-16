@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include"../../LoadResource/LoadResource.h"
 #include"../../SetRenderStateFile/SetRenderStateFile.h"
-#include"../../DebugMode/DebugMode.h"
+#include"../../Debugger/Debugger.h"
 #include"../../Lib/DirectInput/DirectInput.h"
 #include"../../Lib/Sound/Sound.h"
 #include"../../Lib/D3DFont/D3DFont.h"

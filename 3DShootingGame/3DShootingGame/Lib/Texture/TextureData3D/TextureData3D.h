@@ -6,7 +6,7 @@
 // 3Dテクスチャデータ情報
 
 
-struct TextureData3D{
+struct TextureMultipleData{
 
 	// テクスチャで使用するポインタ
 	std::vector<LPDIRECT3DTEXTURE9>texture_list;

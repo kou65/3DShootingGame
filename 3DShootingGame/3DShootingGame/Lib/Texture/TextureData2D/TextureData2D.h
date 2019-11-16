@@ -6,9 +6,9 @@
 
 
 
-struct TextureData2D{
+struct TextureData{
 
-	TextureData2D() {
+	TextureData() {
 		width_size = 0.f;
 		height_size = 0.f;
 	}
@@ -29,7 +29,7 @@ struct TextureData2D{
 
 
 	// 仮想デストラクタ
-	virtual ~TextureData2D() {};
+	virtual ~TextureData() {};
 
 
 	// テクスチャで使用するポインタ
