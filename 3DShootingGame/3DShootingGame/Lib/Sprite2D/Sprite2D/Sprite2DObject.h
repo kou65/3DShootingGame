@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../Sprite2DData/Sprite2DData.h"
+#include"../Sprite2DParameter/Sprite2DParameter.h"
 #include<map>
 #include<memory>
 
@@ -8,10 +8,33 @@
 class Sprite2DObject {
 public:
 
-	Sprite2DObject() {};
+	// シングルトン
+	static Sprite2DObject *GetInstance() {
+		static Sprite2DObject obj;
+		return &obj;
+	}
+
+public:
+
+
+	~Sprite2DObject();
 
 	// 板で描画する
-	void BoardDraw(Sprite2DData &texture_format_2d);
+	void BoardDraw(Sprite2DData&out_param);
+
+
+	// uv値を基準に画像サイズを変換
+	void GraphSizeConvertUvSize(
+		float &out_width_graph_size,
+		float &out_height_graph_size,
+		const int &div_num_x,
+		const int &div_num_y
+	);
+
+private:
+
+	// デフォルト
+	Sprite2DObject() {};
 
 private:
 

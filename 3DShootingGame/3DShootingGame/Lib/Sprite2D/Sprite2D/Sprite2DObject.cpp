@@ -1,6 +1,6 @@
-﻿#include"../../UV/UV.h"
+﻿#include"../../Uv/UvAnimation/UvAnimation.h"
 #include"../../Texture/TextureManager/TextureManager.h"
-#include"../Sprite2DData/Sprite2DData.h"
+#include"../Sprite2DParameter/Sprite2DParameter.h"
 #include"../Sprite2D/Sprite2DObject.h"
 
 
@@ -19,76 +19,99 @@ struct CustomVertex2D
 #define FVF_2D (D3DFVF_XYZRHW | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
-void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
+Sprite2DObject::~Sprite2DObject() {
+
+}
+
+
+void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 	
 	// テクスチャが存在しているかどうか
-	if (TextureManager::GetInstance()->FindTexture(
-		texture_format.texture_name
-	) == false) {
-		return;
-	}
+	//if (TextureManager::GetInstance()->FindTexture(
+	//	data.texture_name
+	//) == false) {
+	//	return;
+	//}
 
 	// テクスチャデータの参照受け取り
 	TextureData *texture_data = 
 		&TextureManager::GetInstance()->GetTextureData(
-			texture_format.texture_name
+			data.texture_name
 		);
 
 	// uvの範囲を設定する数
 	float u_range_num = 0.f;
 
-	const float x1 = -texture_format.ofset_x;
-	const float x2 = 1.f - texture_format.ofset_x;
-	const float y1 = -texture_format.ofset_y;
-	const float y2 = 1.f - texture_format.ofset_y;
+	const float x1 = -data.ofset_x;
+	const float x2 = 1.f - data.ofset_x;
+	const float y1 = -data.ofset_y;
+	const float y2 = 1.f - data.ofset_y;
 
 	// ロードで読み込んだUVを加算
-	texture_format.tu += texture_data->uv.x;
-	texture_format.tv += texture_data->uv.y;
+	data.tu += texture_data->uv.x;
+	data.tv += texture_data->uv.y;
+
+	AnimationParamter param = data.animation_param;
 
 	// UVの分割
-	Uv uv(texture_format.tu_cut_num, texture_format.tv_cut_num);
+	UvAnimation uv(
+		param.division_width,
+		param.division_height,
+		param.current_graph_num,
+		param.is_animation,
+		param.animation_frame,
+		param.use_type,
+		param.turn_type
+	);
 
-	// uvカットがオンならば
-	if (texture_format.tu_cut_num > 0 || texture_format.tv_cut_num > 0) {
+	// アニメーションがオンなら
+	if (param.is_animation == true) {
 
-		if (texture_format.type == Graphics::CLAMP) {
-			uv.AnimationToTheRightDivGraph(texture_format.graph_num);
+		if (data.type == Graphics::CLAMP) {
+			uv.ChangeRightAnimation();
 		}
-		else if (texture_format.type == Graphics::MIRROR) {
-			uv.AnimationToTheLeftDivGraph(texture_format.graph_num);
+		else if (data.type == Graphics::MIRROR) {
+			uv.ChangeLeftAnimation();
 		}
+
+		// 更新
+		uv.Update();
+		// アニメーション変更更新
+		uv.UpdateAnimation(data.animation_param);
 	}
 
 	// サンプラーステートの設定
-	if (SetSamplerStateSelect(texture_format.type) == true) {
+	if (SetSamplerStateSelect(data.type) == true) {
 		u_range_num = 1.f;
 	}
 
+	// uvの矩形受け取り
+	UvRect rect = uv.GetUvRect();
+	
 	// VERTEX3Dの初期化,UV.hからUVをずらして受け取り
 	CustomVertex2D custom_vertex[] =
 	{
 	// 左上
 	{ { x1,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ uv.GetUvUpLeftPos().x + u_range_num,uv.GetUvUpLeftPos().y } },
+	{ rect.m_top_left_pos.x + u_range_num,rect.m_top_left_pos.y} },
 	// 右上
 	{ { x2,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ uv.GetUvUpRightPos().x + texture_format.tu + u_range_num,uv.GetUvUpRightPos().y } },
+	{ rect.m_top_right_pos.x + data.tu + u_range_num,rect.m_top_right_pos.y } },
 	// 右下
 	{ { x2,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ uv.GetUvDownRightPos().x + texture_format.tu + u_range_num,uv.GetUvDownRightPos().y + texture_format.tv } },
+	{ rect.m_bottom_right_pos.x + data.tu + u_range_num,rect.m_bottom_right_pos.y + data.tv } },
 	// 左下
 	{ { x1,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ uv.GetUvDownLeftPos().x + u_range_num,uv.GetUvDownLeftPos().y + texture_format.tv } },
+	{ rect.m_bottom_left_pos.x + u_range_num,rect.m_bottom_left_pos.y + data.tv } },
 	};
 
 	// 行列計算
 	D3DXMATRIX mat_world = CalcMatrixTransform(
-		texture_format.x,
-		texture_format.y,
-		texture_data->width_size * texture_format.scale_width,
-		texture_data->height_size * texture_format.scale_height,
-		texture_format.angle);
+		data.x,
+		data.y,
+		texture_data->width_size * data.scale_width,
+		texture_data->height_size * data.scale_height,
+		data.angle);
 
 	// 行列を頂点配列に変換
 	D3DXVec2TransformCoordArray(
@@ -108,11 +131,18 @@ void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	// VERTEX3Dの構造情報をDirectXへ通知。
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_2D);
 
-	// デバイスにそのまま渡すことができる。
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
-		0,
-		TextureManager::GetInstance()->GetTextureData(
-			texture_format.texture_name));
+	// テクスチャが存在するなら
+	if (TextureManager::GetInstance()->FindTexture(
+		data.texture_name
+	) == true) {
+
+		// デバイスにそのまま渡すことができる。
+		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
+			0,
+			TextureManager::GetInstance()->GetTextureData(
+				data.texture_name));
+
+	}
 
 	// 図形を元にポリゴン作成
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->DrawPrimitiveUP(
@@ -125,6 +155,19 @@ void Sprite2DObject::BoardDraw(Sprite2DData &texture_format) {
 	// テクスチャ設定リセット
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
 
+}
+
+
+void Sprite2DObject::GraphSizeConvertUvSize(
+	float &out_width_graph_size,
+	float &out_height_graph_size,
+	const int &div_num_x,
+	const int &div_num_y
+) {
+
+	// 分割画像サイズ出力
+	out_width_graph_size = out_width_graph_size / div_num_x;
+	out_height_graph_size = out_height_graph_size / div_num_y;
 }
 
 

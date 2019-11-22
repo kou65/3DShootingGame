@@ -168,13 +168,13 @@ bool Fbx::Load(
 
 
 	/* ここに処理を書いていく */
-	RootNodeProbe();
+	LoadMesh();
 
 	return true;
 }
 
 
-void Fbx::RootNodeProbe() {
+void Fbx::LoadMesh() {
 
 	// 頂点情報
 	std::vector<D3DXVECTOR3>vertex_list;
@@ -223,6 +223,13 @@ void Fbx::RootNodeProbe() {
 		// uv情報読み込み
 		LoadUvInfo(
 			uv_list,
+			m_mesh_data_list,
+			p_mesh
+		);
+
+		// 法線情報読み込み
+		LoadNormal(
+			normal_list,
 			m_mesh_data_list,
 			p_mesh
 		);
@@ -424,6 +431,44 @@ void Fbx::LoadUvInfo(
 }
 
 
+void Fbx::LoadNormal(
+	std::vector<D3DXVECTOR3>&normal_list,
+	std::vector<FbxMeshData>&p_mesh_data_list,
+	FbxMesh*p_mesh
+) {
+
+	// 現在のメッシュデータ受け取り
+	FbxMeshData*p_mesh_data = &p_mesh_data_list.back();
+
+	// 法線情報受け取り用
+	FbxArray<FbxVector4>normals;
+
+	p_mesh->GetPolygonVertexNormals(normals);
+
+	// 頂点分のCustomVertexサイズを取り出す
+	UINT size = p_mesh_data->vertexNum * sizeof(FbxCustomVertex);
+
+	IDirect3DVertexBuffer9* p_vertex_buffer = p_mesh_data->vertex_buffer;
+
+	FbxCustomVertex * p_vertices;
+
+	// バッファをロックしてデータを書き込む
+	p_vertex_buffer->Lock(0, size, (void**)&p_vertices, 0);
+
+	for (int index = 0; index < normals.Size(); index++) {
+
+		FbxVector4&normal = normals[index];
+
+		// それぞれxyz代入
+		p_vertices[index].normal.x = -(float)normal[0];
+		p_vertices[index].normal.y = -(float)normal[1];
+		p_vertices[index].normal.z = -(float)normal[2];
+	}
+
+	p_vertex_buffer->Unlock();
+}
+
+
 void Fbx::LoadMaterial(
 	std::vector<FbxMeshData>&p_vertex_data_list,
 	FbxNode*p_node,
@@ -604,18 +649,28 @@ bool Fbx::LoadTexture(
 	char* ext = (char*)strstr(p_file_name, ".psd");
 	if (ext)
 	{
-		strcpy_s(ext,100,".tga");
+		strcpy_s(ext,5,".tga");
 	}
 
+
+	char path[MAX_PATH];
+	// ファイルパスが絶対パスなら
+	if ( p_file_name = strstr(p_file_name, "\\"))
+	{
+		strcpy_s(path, p_file_name);
+	}
+	// ファイルパスが相対パスなら
+	else
+	{
+		strcpy_s(path, m_root_path);
+		strcat_s(path, "/texture/");
+		strcat_s(path, p_file_name);
+	}
+	
 	// ファイルパス分割
 	std::vector<std::string>string_list;
 	string_list = Utility::SplitStr('\\', p_file_name);
 
-	// パスを整える
-	char path[MAX_PATH];
-	strcpy_s(path,MAX_PATH,m_root_path);
-	strcat_s(path, "/texture/");
-	strcat_s(path, string_list.back().c_str());
 
 	// 追加
 	//strcat_s(path, file_name.c_str());
@@ -627,7 +682,7 @@ bool Fbx::LoadTexture(
 	// テクスチャ登録名を保存
 	p_material_info->texture_name = file_name;
 
-	FbxFree(p_file_name);
+	//FbxFree(p_file_name);
 
 	return false;
 }
@@ -801,4 +856,23 @@ void Fbx::SetRootPath(const char*p_file_name) {
 void Fbx::Release() {
 
 	mp_manager->Destroy();
+}
+
+
+std::string Fbx::GetUTF8Path(const std::string& path)
+{
+	// 相対パス → 絶対パス
+	char fullPath[_MAX_PATH];
+	_fullpath(fullPath, path.c_str(), _MAX_PATH);
+
+	// cp932 → UTF8
+	char* path_utf8;
+	FbxAnsiToUTF8(fullPath, path_utf8);
+
+	// char* → std::string
+	std::string coverted_path(path_utf8);
+	// FBX SDK内部で確保されたメモリは専用の関数で解放
+	FbxFree(path_utf8);
+
+	return coverted_path;
 }

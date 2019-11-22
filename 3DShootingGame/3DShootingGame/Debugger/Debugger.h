@@ -53,4 +53,7 @@ private:
 	bool m_is_program_stop;
 
 	int m_total_material_num;
+
+	// データ
+	Sprite2DData s2d;
 };

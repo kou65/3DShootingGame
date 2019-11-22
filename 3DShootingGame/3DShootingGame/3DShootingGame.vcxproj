@@ -193,7 +193,7 @@
     <ClCompile Include="Lib\3D\IndexBuffer\IndexBuffer.cpp" />
     <ClCompile Include="Lib\3D\Light\Light.cpp" />
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
-    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp" />
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.cpp" />
     <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.cpp" />
     <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
@@ -215,10 +215,18 @@
     <ClCompile Include="Lib\Graphics\Graphics.cpp" />
     <ClCompile Include="Lib\Lib\Lib.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
-    <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp" />
+    <ClCompile Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.cpp" />
     <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.cpp" />
     <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp" />
-    <ClCompile Include="Lib\UV\UV.cpp" />
+    <ClCompile Include="Lib\Uv\AnimationParameter\AnimationParameter.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Uv\UvAnimation\UvAnimation.cpp" />
+    <ClCompile Include="Lib\Uv\UvBase\UvBase.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
@@ -249,6 +257,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Bullet\Bullet.h">
       <SubType>
       </SubType>
@@ -287,7 +299,7 @@
     <ClInclude Include="Lib\3D\Light\Light.h" />
     <ClInclude Include="Lib\3D\Object3DCustomVertex\MeshCustomVertex.h" />
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
-    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h" />
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.h" />
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.h" />
     <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Lib\3D\XFile\XFile.h" />
@@ -309,12 +321,16 @@
     <ClInclude Include="Lib\Graphics\Graphics.h" />
     <ClInclude Include="Lib\Lib\Lib.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
-    <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h" />
+    <ClInclude Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.h" />
     <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.h" />
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
-    <ClInclude Include="Lib\UV\UV.h" />
+    <ClInclude Include="Lib\Uv\UvAnimation\UvAnimation.h" />
+    <ClInclude Include="Lib\Uv\UvRect\UvRect.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
     <ClInclude Include="ManagerBase\ManagerBase.h">
@@ -351,7 +367,15 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Vec3\Vec3.h">
+    <ClInclude Include="Lib\Uv\UvBase\UvBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Vec2\Vec2.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Vec3\Vec3.h">
       <SubType>
       </SubType>
     </ClInclude>

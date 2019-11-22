@@ -107,14 +107,17 @@ public:
 
 private:
 
-	// 根のノードを探査する
-	void RootNodeProbe();
 
 	// ノードの種類を調べる
 	NodeType SerchNodeType(FbxNode*fbx_node);
 
-	// ポリゴンを3つに分割する
-	void Polygon3Convert();
+
+private:
+
+	// メッシュ //
+
+	// メッシュ読み込み
+	void LoadMesh();
 
 	// インデックス読み込み
 	void LoadIndeces(
@@ -135,6 +138,17 @@ private:
 		std::vector<D3DXVECTOR2>&uv_list,
 		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxMesh*p_mesh);
+
+	// 法線読み込み
+	void LoadNormal(
+		std::vector<D3DXVECTOR3>&normal_list,
+		std::vector<FbxMeshData>&p_mesh_data_list,
+		FbxMesh*p_mesh
+	);
+
+private:
+
+	// マテリアル関係 //
 
 	// マテリアル読み込み
 	void LoadMaterial(
@@ -160,6 +174,24 @@ private:
 		MaterialInfo*p_material_info
 	);
 
+
+private:
+
+	// ポリゴン2分割
+	std::vector<INT> SplitPolygon2(
+		const std::vector<INT>&indices
+	);
+
+	// ルートパスを作成する
+	void SetRootPath(const char*p_file_name);
+
+	// 相対パス(CP932) → 絶対パス(UTF-8)
+	std::string GetUTF8Path(const std::string& path);
+
+	// ポリゴンを3つに分割する
+	void Polygon3Convert();
+
+
 	// インデックスバッファ生成
 	bool IndexBufferCreate(
 		int total_face_num,
@@ -172,13 +204,6 @@ private:
 		int total_vertex,
 		LPDIRECT3DVERTEXBUFFER9 * p_vertex_buffer
 	);
-
-	// ポリゴン2分割
-	std::vector<INT> SplitPolygon2(
-		const std::vector<INT>&indices
-	);
-
-	void SetRootPath(const char*p_file_name);
 
 private:
 

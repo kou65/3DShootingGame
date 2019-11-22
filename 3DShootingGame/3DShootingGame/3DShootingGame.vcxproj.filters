@@ -120,9 +120,6 @@
     <ClCompile Include="Lib\Sound\Sound.cpp">
       <Filter>Lib\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\UV\UV.cpp">
-      <Filter>Lib\UV</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\Window\Window.cpp">
       <Filter>Lib\Window</Filter>
     </ClCompile>
@@ -164,12 +161,6 @@
     </ClCompile>
     <ClCompile Include="Lib\Graphics\Graphics.cpp">
       <Filter>Lib\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.cpp">
-      <Filter>Lib\Sprite\Sprite2DData</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.cpp">
-      <Filter>Lib\Sprite\Sprite3DData</Filter>
     </ClCompile>
     <ClCompile Include="Lib\Lib\Lib.cpp">
       <Filter>Lib\Lib</Filter>
@@ -228,6 +219,21 @@
     <ClCompile Include="SceneManager\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\Uv\UvAnimation\UvAnimation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Uv\UvBase\UvBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.cpp">
+      <Filter>Lib\Sprite\Sprite2DData</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.cpp">
+      <Filter>Lib\Sprite\Sprite3DData</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Uv\AnimationParameter\AnimationParameter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -235,9 +241,6 @@
     </ClInclude>
     <ClInclude Include="Lib\Sound\Sound.h">
       <Filter>Lib\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\UV\UV.h">
-      <Filter>Lib\UV</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Window\Window.h">
       <Filter>Lib\Window</Filter>
@@ -280,12 +283,6 @@
     </ClInclude>
     <ClInclude Include="Lib\Graphics\Graphics.h">
       <Filter>Lib\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Sprite2D\Sprite2DData\Sprite2DData.h">
-      <Filter>Lib\Sprite\Sprite2DData</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DData\Sprite3DData.h">
-      <Filter>Lib\Sprite\Sprite3DData</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Lib\Lib.h">
       <Filter>Lib\Lib</Filter>
@@ -332,9 +329,6 @@
     <ClInclude Include="GameScene\GameScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3\Vec3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Player\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -367,6 +361,30 @@
     </ClInclude>
     <ClInclude Include="Object\Object.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Vec3\Vec3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Vec2\Vec2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Uv\UvAnimation\UvAnimation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Uv\UvBase\UvBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Uv\UvRect\UvRect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.h">
+      <Filter>Lib\Sprite\Sprite2DData</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.h">
+      <Filter>Lib\Sprite\Sprite3DData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@
 class Object {
 public:
 
-	~Object() {};
+	~Object(){};
 
 	Object() {
 		m_is_active = true;

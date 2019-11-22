@@ -1,4 +1,4 @@
-﻿#include"../Sprite2DData/Sprite2DData.h"
+﻿#include"../Sprite2DParameter/Sprite2DParameter.h"
 
 
 
@@ -12,10 +12,6 @@ Sprite2DData::Sprite2DData(
 	float angle,
 	float ofset_x,
 	float ofset_y,
-	bool is_graph_uv_cut,
-	int tu_cut_num,
-	int tv_cut_num,
-	int graph_num,
 	float tu,
 	float tv,
 	DWORD color,
@@ -31,10 +27,6 @@ Sprite2DData::Sprite2DData(
 	this->angle = angle;
 	this->ofset_x = ofset_x;
 	this->ofset_y = ofset_y;
-	this->is_graph_uv_cut = is_graph_uv_cut;
-	this->tu_cut_num = tu_cut_num;
-	this->tv_cut_num = tv_cut_num;
-	this->graph_num = graph_num;
 	this->tu = tu;
 	this->tv = tv;
 	this->color = color;

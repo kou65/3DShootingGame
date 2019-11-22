@@ -1,4 +1,4 @@
-﻿#include"../Sprite3DData/Sprite3DData.h"
+﻿#include"../Sprite3DParameter/Sprite3DParameter.h"
 
 
 

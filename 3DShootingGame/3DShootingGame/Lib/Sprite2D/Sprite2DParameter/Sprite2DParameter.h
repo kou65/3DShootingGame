@@ -2,6 +2,7 @@
 #include"../../Graphics/Graphics.h"
 #include<Windows.h>
 #include<string>
+#include"../../Uv/AnimationParameter/AnimationParameter.h"
 
 
 // テクスチャのプロパティを設定する構造体
@@ -13,18 +14,14 @@ struct Sprite2DData {
 
 	// コンストラクタ
 	Sprite2DData(
-		float x,
-		float y,
-		const char * texture_name,
+		float x = 0.f,
+		float y = 0.f,
+		const char * texture_name = NULL,
 		float scale_width = 1.f,
 		float scale_height = 1.f,
 		float angle = 0.f,
 		float ofset_x = 0.f,
 		float ofset_y = 0.f,
-		bool is_graph_uv_cut = false,
-		int tu_cut_num = 0,
-		int tv_cut_num = 0,
-		int graph_num = 0,
 		float tu = 0.f,
 		float tv = 0.f,
 		DWORD color = D3DCOLOR(0xffffff),
@@ -56,17 +53,8 @@ struct Sprite2DData {
 	// オフセットy
 	float ofset_y;
 
-	// 画像をカットするかどうか
-	bool is_graph_uv_cut;
-
-	// u軸のカット数
-	int tu_cut_num;
-
-	// v軸のカット数
-	int tv_cut_num;
-
-	// カットした画像のどこを使うか
-	int graph_num;
+	// アニメーション用のパラメータ
+	AnimationParamter animation_param;
 
 	// テクスチャ座標のu軸をずらす
 	float tu;

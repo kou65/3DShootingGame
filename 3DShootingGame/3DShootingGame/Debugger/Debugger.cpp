@@ -1,8 +1,8 @@
 ﻿#include"../Debugger/Debugger.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
 #include"../Lib/Sprite2D/Sprite2D/Sprite2DObject.h"
-#include"../Lib/Sprite2D/Sprite2DData/Sprite2DData.h"
-#include"../Lib/3D/Sprite3D/Sprite3DData/Sprite3DData.h"
+#include"../Lib/Sprite2D/Sprite2DParameter/Sprite2DParameter.h"
+#include"../Lib/3D/Sprite3D/Sprite3DParameter/Sprite3DParameter.h"
 #include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DObject.h"
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
@@ -23,6 +23,16 @@ Debugger::Debugger() {
 	m_is_program_stop = false;
 	light->On();
 
+	
+	s2d.animation_param.division_width = 9;
+	s2d.animation_param.division_height = 6;
+
+	Sprite2DObject::GetInstance()->GraphSizeConvertUvSize(
+		s2d.scale_width,
+	s2d.scale_height,
+		s2d.animation_param.division_width,
+		s2d.animation_param.division_height
+	);
 }
 
 
@@ -144,6 +154,7 @@ void Debugger::Draw() {
 
 
 	{
+		// 地面
 		Sprite3DData td(0.f, 0.f, 0.f, "ground");
 		td.scale_width = 1000.f;
 		td.scale_height = 1000.f;
@@ -158,6 +169,7 @@ void Debugger::Draw() {
 			td
 		);
 
+		// 壁
 		td.scale_width = 1000.f;
 		td.scale_height = 1000.f;
 		td.polygon_dir = FRONT;
@@ -169,6 +181,16 @@ void Debugger::Draw() {
 		sprite_3d.BoardDraw(
 			td
 		);
+		
+		s2d.texture_name = "enemy1";
+		s2d.animation_param.animation_frame = 20.f;
+		
+		s2d.animation_param.is_animation = true;
+
+		s2d.x = 40.f;
+		s2d.y = 40.f;
+
+		Sprite2DObject::GetInstance()->BoardDraw(s2d);
 	}
 
 

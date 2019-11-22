@@ -27,6 +27,7 @@ void LoadTexture() {
 	TextureManager::GetInstance()->Load("Resource/Texture/UI/clear_logo.png","test");
 	TextureManager::GetInstance()->Load("Resource/Texture/UI/title.png","title");
 	TextureManager::GetInstance()->Load("Resource/Texture/Stage/Ground.jpg","ground");
+	TextureManager::GetInstance()->Load("Resource/Texture/Enemy/total_enemy1.png","enemy1");
 
 	// Xファイル読み込み
 	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x","Resource/Texture/Enemy/","Sample01.x");

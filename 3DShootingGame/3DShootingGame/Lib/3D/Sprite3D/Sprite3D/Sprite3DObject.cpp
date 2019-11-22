@@ -1,7 +1,7 @@
 ﻿#include"../Sprite3D/Sprite3DObject.h"
 #include"../../../Graphics/Graphics.h"
-#include"../../../UV/UV.h"
-#include"../../Sprite3D/Sprite3DData/Sprite3DData.h"
+#include"../../../Uv/UvAnimation/UvAnimation.h"
+#include"../../Sprite3D/Sprite3DParameter/Sprite3DParameter.h"
 #include"../../../../SetRenderStateFile/SetRenderStateFile.h"
 
 
@@ -31,14 +31,19 @@ void Sprite3DObject::BoardDraw(
 	float y2 = sprite_data.ofset.y;
 
 	// UV切り取り
-	Uv uv(
+	UvAnimation uv(
 		sprite_data.tu_cut_num,
-		sprite_data.tv_cut_num);
+		sprite_data.tv_cut_num,
+		sprite_data.graph_num,
+		true,
+		60.f,
+		Mode::LOOP,
+		TurnType::RIGHT
+	);
 
 	if (sprite_data.is_graph_uv_cut == true) {
-		uv.AnimationToTheRightDivGraph(sprite_data.graph_num);
+		uv.ChangeRightAnimation();
 	}
-
 
 	// トライアングルリスト
 	CustomVertex3D custom_vertex[6] =
@@ -63,14 +68,12 @@ void Sprite3DObject::BoardDraw(
 	},
 		
 	
-		// 二つ目のポリゴン
+	// 二つ目のポリゴン
 	{
 	{ x1,y2,0.f },
 	D3DXCOLOR(255,255,255,1),
 	{ -1.f,0.f }
 	},
-
-
 
 	{ { x2,y1,0.f },
 		D3DXCOLOR(255,255,255,1),
@@ -78,8 +81,8 @@ void Sprite3DObject::BoardDraw(
 	},
 
 	{
-		{ x2,y2,0.f },
-		D3DXCOLOR(255,255,255,1),
+	{ x2,y2,0.f },
+	D3DXCOLOR(255,255,255,1),
 	{ 0.f,0.f }
 	},
 

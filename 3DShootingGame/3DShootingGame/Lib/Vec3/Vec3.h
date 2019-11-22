@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include"../Lib/Graphics/Graphics.h"
+#include"../Window/Window.h"
 
 
 
-struct Vec3{
+struct Vec3 : public D3DXVECTOR3{
 
 	Vec3() {
 		x = 0.f;
@@ -16,8 +16,4 @@ struct Vec3{
 		this->y = y;
 		this->z = z;
 	}
-
-	float x;
-	float y;
-	float z;
 };
