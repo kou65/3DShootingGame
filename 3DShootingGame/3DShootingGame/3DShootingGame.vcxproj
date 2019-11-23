@@ -227,6 +227,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Lib\Uv\UvGauge\UvGauge.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
@@ -327,6 +331,10 @@
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
     <ClInclude Include="Lib\Uv\UvAnimation\UvAnimation.h" />
+    <ClInclude Include="Lib\Uv\UvGauge\UvGauge.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Uv\UvRect\UvRect.h">
       <SubType>
       </SubType>

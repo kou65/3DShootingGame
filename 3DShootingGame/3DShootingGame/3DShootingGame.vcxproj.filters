@@ -234,6 +234,9 @@
     <ClCompile Include="Lib\Uv\AnimationParameter\AnimationParameter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\Uv\UvGauge\UvGauge.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -385,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.h">
       <Filter>Lib\Sprite\Sprite3DData</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Uv\UvGauge\UvGauge.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

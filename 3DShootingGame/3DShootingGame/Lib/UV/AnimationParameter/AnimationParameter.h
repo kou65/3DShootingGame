@@ -21,6 +21,8 @@ struct AnimationParamter {
 	int division_width;
 	int division_height;
 	int current_graph_num;
+	// uvをカットするかどうか
+	bool is_uv_cut;
 	bool is_animation;
 	int current_animation_count;
 	float animation_frame;

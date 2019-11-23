@@ -43,8 +43,10 @@ public:
 	);
 
 
+	// テクスチャを調べる
 	bool FindTexture(std::string name);
 
+	// たくさんのテクスチャを調べる
 	bool FindMultipleTexture(std::string name);
 
 	// 2D用のテクスチャデータを返す
@@ -73,7 +75,7 @@ private:
 		// キー
 		std::string,
 		// 入れ物
-		TextureData*
+		std::unique_ptr<TextureData>
 	> m_texture_data2D_list;
 
 	// 複数のテクスチャリスト
@@ -81,6 +83,6 @@ private:
 		// キー
 		std::string,
 		// 入れ物
-		TextureMultipleData*
+		std::unique_ptr<TextureMultipleData>
 	>m_texture_data3D_list;
 };

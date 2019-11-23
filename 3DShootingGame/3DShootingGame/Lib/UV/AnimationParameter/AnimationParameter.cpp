@@ -6,6 +6,7 @@ AnimationParamter::AnimationParamter() :
 	division_width(0),
 	division_height(0),
 	current_graph_num(0),
+	is_uv_cut(false),
 	is_animation(false),
 	animation_frame(0.f),
 	current_animation_count(0),

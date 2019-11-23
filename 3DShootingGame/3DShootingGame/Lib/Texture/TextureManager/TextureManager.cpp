@@ -32,7 +32,8 @@ void TextureManager::Load(
 	}
 
 	// テクスチャデータを生成
-	m_texture_data2D_list[texture_rename] = new TextureData;
+	//m_texture_data2D_list[texture_rename] = new TextureData;
+	m_texture_data2D_list[texture_rename].reset(new TextureData);
 
 	// 最初はサイズ指定をしなければいけない。
 	m_texture_data2D_list[texture_rename]->width_size
@@ -92,7 +93,7 @@ void TextureManager::LoadMultiple(
 	HRESULT result;
 
 	// テクスチャ生成
-	m_texture_data3D_list[texture_name] = new TextureMultipleData;
+	m_texture_data3D_list[texture_name].reset(new TextureMultipleData);
 
 	// 要素追加
 	m_texture_data3D_list[texture_name]->texture_list.emplace_back();
@@ -146,25 +147,33 @@ TextureMultipleData &TextureManager::GetTextureDataMultiple(std::string name) {
 void TextureManager::AllRelease() {
 
 	// 2Dテクスチャの解放
-	for (auto texture : m_texture_data2D_list) {
+	for(auto itr = m_texture_data2D_list.begin();
+		itr!=m_texture_data2D_list.end();
+		itr++
+		){
 
 		// テクスチャが存在しているなら
-		if (texture.second->p_texture_buffer) {
+		if (itr->second->p_texture_buffer) {
 
 			// 解放
-			texture.second->p_texture_buffer->Release();
+			itr->second->p_texture_buffer->Release();
+			itr->second.reset();
 		}
-
+		
 		// 要素のメモリ削除
-		delete[] & texture;
+		//delete[] &itr;
 	}
 
 	// 3Dテクスチャの解放
-	for (auto texture : m_texture_data3D_list) {
+	for (auto itr = m_texture_data3D_list.begin();
+		itr != m_texture_data3D_list.end();
+		itr++
+		) {
 
-		for (auto t : texture.second->texture_list) {
+		for (auto t : itr->second->texture_list) {
 
-			delete[] t;
+			t->Release();
+			itr->second.reset();
 		}
 	}
 }
@@ -176,7 +185,7 @@ void TextureManager::ReleaseTexture(std::string &texture_name) {
 	m_texture_data2D_list[texture_name]->p_texture_buffer->Release();
 
 	// TextureDataのメモリ解放
-	delete m_texture_data2D_list[texture_name];
+	m_texture_data2D_list[texture_name].reset();
 
 	// 要素解放
 	m_texture_data2D_list.erase(texture_name);
@@ -191,7 +200,7 @@ void TextureManager::ReleaseTextureMultiple(std::string &texture_name) {
 	}
 
 	// TextureDataのメモリ解放
-	delete m_texture_data3D_list[texture_name];
+	m_texture_data3D_list[texture_name].reset();
 
 	// 要素解放
 	m_texture_data3D_list.erase(texture_name);

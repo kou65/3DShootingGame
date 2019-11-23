@@ -26,12 +26,6 @@ Sprite2DObject::~Sprite2DObject() {
 
 void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 	
-	// テクスチャが存在しているかどうか
-	//if (TextureManager::GetInstance()->FindTexture(
-	//	data.texture_name
-	//) == false) {
-	//	return;
-	//}
 
 	// テクスチャデータの参照受け取り
 	TextureData *texture_data = 
@@ -64,8 +58,8 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 		param.turn_type
 	);
 
-	// アニメーションがオンなら
-	if (param.is_animation == true) {
+	// カットがオンなら
+	if (param.is_uv_cut == true) {
 
 		if (data.type == Graphics::CLAMP) {
 			uv.ChangeRightAnimation();
@@ -74,10 +68,13 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 			uv.ChangeLeftAnimation();
 		}
 
-		// 更新
-		uv.Update();
-		// アニメーション変更更新
-		uv.UpdateAnimation(data.animation_param);
+		// アニメーションがオンなら
+		if (param.is_animation == true) {
+			// 更新
+			uv.Update();
+			// アニメーション変更更新
+			uv.UpdateAnimation(data.animation_param);
+		}
 	}
 
 	// サンプラーステートの設定
