@@ -688,6 +688,27 @@ bool Fbx::LoadTexture(
 }
 
 
+void Fbx::LoadAnimation(
+	FbxMesh*p_mesh,
+	FbxScene*scene
+) {
+	int anim_stack_number = 0;
+	
+	FbxArray<FbxString*>anim_stack_name_array;
+	// アニメーション名を受け取り
+	scene->FillAnimStackNameArray(anim_stack_name_array);
+
+	// アニメーション情報を探して保存
+	FbxAnimStack * animation_stack = 
+		scene->FindMember<FbxAnimStack>
+		(anim_stack_name_array[0]->Buffer);
+
+	// 
+	scene->SetCurrentAnimationStack(animation_stack);
+}
+
+
+
 Fbx::NodeType Fbx::SerchNodeType(FbxNode*p_node) {
 
 	FbxNodeAttribute * p_attrib = p_node->GetNodeAttribute();
