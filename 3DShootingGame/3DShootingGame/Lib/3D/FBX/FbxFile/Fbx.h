@@ -174,6 +174,9 @@ private:
 		MaterialInfo*p_material_info
 	);
 
+private:
+
+	void AnimationSet();
 
 private:
 
@@ -236,4 +239,9 @@ private:
 
 	// グラフィックス
 	Graphics * mp_graphics;
+
+	// アニメーション関連
+	FbxTime m_start;
+	FbxTime m_stop;
+	FbxTime m_frame_time;
 };

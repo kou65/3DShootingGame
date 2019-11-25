@@ -44,89 +44,82 @@ void Fbx::Draw() {
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->
 		SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	// マテリアル分描画する
-	//for (INT matIdx = 0; matIdx < m_material_num; matIdx++)
+
+
+	// ワールド座標初期化
+	D3DXMATRIX mat;
+	D3DXMatrixIdentity(&mat);
+
+	// 移動
+	D3DXMatrixTranslation(&mat, 0.f, 0.f, 0.f);
+
+	mp_graphics->GetInstance()->GetLpDirect3DDevice9()
+		->SetTransform(D3DTS_WORLD, &mat);
+
+
+	IDirect3DDevice9* pDevice =
+		Graphics::GetInstance()->GetLpDirect3DDevice9();
+
+
+	// メッシュインデックスを回す
+	for (UINT meshIdx = 0; meshIdx < m_mesh_num; meshIdx++)
 	{
 
-		// ワールド座標初期化
-		D3DXMATRIX mat;
-		D3DXMatrixIdentity(&mat);
+		MaterialInfo* mate_info =
+			&m_mesh_data_list[meshIdx].material_info;
 
-		// 移動
-		D3DXMatrixTranslation(&mat, 0.f, 0.f, 0.f);
-
-		mp_graphics->GetInstance()->GetLpDirect3DDevice9()
-			->SetTransform(D3DTS_WORLD, &mat);
-
-		//if (m_material_num == 0) { 
-		//	return;
-		//}
-
-
-		IDirect3DDevice9* pDevice =
-			Graphics::GetInstance()->GetLpDirect3DDevice9();
-
-
-		// メッシュインデックスを回す
-		for (UINT meshIdx = 0; meshIdx < m_mesh_num; meshIdx++)
-		{
-
-			MaterialInfo* mate_info = 
-				&m_mesh_data_list[meshIdx].material_info;
-
-			// テクスチャーの設定
-			if (TextureManager::GetInstance()->
-				FindTexture(mate_info->texture_name) == true) {
-				pDevice->SetTexture(
-					0,
-					TextureManager::GetInstance()->GetTextureData
-					(mate_info->texture_name)
-				);
-			}
-
-			// マテリアルの設定
-			pDevice->SetMaterial(
-				&mate_info->material
-			);
-			
-			FbxMeshData* p_mesh_data =
-				&m_mesh_data_list[meshIdx];
-
-			if (meshIdx != p_mesh_data->materialIndex)
-			{
-				continue;
-			}
-
-			// 頂点バッファの設定
-			pDevice->SetStreamSource(
+		// テクスチャーの設定
+		if (TextureManager::GetInstance()->
+			FindTexture(mate_info->texture_name) == true) {
+			pDevice->SetTexture(
 				0,
-				p_mesh_data->vertex_buffer,
-				0,
-				p_mesh_data->vertexStride
+				TextureManager::GetInstance()->GetTextureData
+				(mate_info->texture_name)
 			);
-
-			// 頂点フォーマットの指定
-			pDevice->SetFVF(p_mesh_data->fvf);
-
-			// インデックス数
-			if (p_mesh_data->indexNum)
-			{
-				// インデックスバッファの設定
-				pDevice->SetIndices(
-					p_mesh_data->index_buffer
-				);
-
-				// 描画
-				pDevice->DrawIndexedPrimitive(
-					p_mesh_data->primType,
-					0,
-					0,
-					p_mesh_data->vertexNum,
-					0,
-					p_mesh_data->primNum);
-			}
-
 		}
+
+		// マテリアルの設定
+		pDevice->SetMaterial(
+			&mate_info->material
+		);
+
+		FbxMeshData* p_mesh_data =
+			&m_mesh_data_list[meshIdx];
+
+		if (meshIdx != p_mesh_data->materialIndex)
+		{
+			continue;
+		}
+
+		// 頂点バッファの設定
+		pDevice->SetStreamSource(
+			0,
+			p_mesh_data->vertex_buffer,
+			0,
+			p_mesh_data->vertexStride
+		);
+
+		// 頂点フォーマットの指定
+		pDevice->SetFVF(p_mesh_data->fvf);
+
+		// インデックス数
+		if (p_mesh_data->indexNum)
+		{
+			// インデックスバッファの設定
+			pDevice->SetIndices(
+				p_mesh_data->index_buffer
+			);
+
+			// 描画
+			pDevice->DrawIndexedPrimitive(
+				p_mesh_data->primType,
+				0,
+				0,
+				p_mesh_data->vertexNum,
+				0,
+				p_mesh_data->primNum);
+		}
+
 	}
 }
 
@@ -688,23 +681,46 @@ bool Fbx::LoadTexture(
 }
 
 
-void Fbx::LoadAnimation(
+void Fbx::AnimationSet(
 	FbxMesh*p_mesh,
-	FbxScene*scene
+	FbxScene*fbx_scene
 ) {
 	int anim_stack_number = 0;
 	
 	FbxArray<FbxString*>anim_stack_name_array;
 	// アニメーション名を受け取り
-	scene->FillAnimStackNameArray(anim_stack_name_array);
+	fbx_scene->FillAnimStackNameArray(anim_stack_name_array);
 
 	// アニメーション情報を探して保存
 	FbxAnimStack * animation_stack = 
-		scene->FindMember<FbxAnimStack>
+		fbx_scene->FindMember<FbxAnimStack>
 		(anim_stack_name_array[0]->Buffer);
 
-	// 
-	scene->SetCurrentAnimationStack(animation_stack);
+	// 選んだアニメーションを設定
+	fbx_scene->SetCurrentAnimationStack(animation_stack);
+
+	FbxTakeInfo *p_take_info =
+		fbx_scene->GetTakeInfo(
+			*(anim_stack_name_array[anim_stack_number])
+		);
+
+	// 時間を扱う変数の設定をしている
+
+	// 開始時間
+	m_start = p_take_info->mLocalTimeSpan.GetStart();
+
+	// 終了時間
+	m_stop = p_take_info->mLocalTimeSpan.GetStop();
+
+	// アニメーション(1コマ)が実行されていく時間情報を保持する
+	m_frame_time.SetTime(
+		0,
+		0,
+		0,
+		1,
+		0,
+		mp_fbx_scene->GetGlobalSettings().GetTimeMode()
+	);
 }
 
 
