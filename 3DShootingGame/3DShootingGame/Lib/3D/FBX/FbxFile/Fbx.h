@@ -178,6 +178,8 @@ private:
 
 	void AnimationSet();
 
+	void LoadBone();
+
 private:
 
 	// ポリゴン2分割

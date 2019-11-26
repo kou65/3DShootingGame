@@ -243,6 +243,35 @@ void Fbx::LoadMesh() {
 }
 
 
+void Fbx::LoadBone(FbxMesh*p_mesh) {
+
+	// クラスター
+	FbxCluster*p_cluster;
+
+	// スキンの数を取得
+	int skin_count = p_mesh->GetDeformerCount(FbxDeformer::eSkin);
+
+	for (int i = 0; i < skin_count; i++) {
+
+		// i番目のスキンを取得
+		FbxSkin*p_skin = (FbxSkin*)p_mesh->GetDeformer(i,FbxDeformer::eSkin);
+
+		// クラスタの数を取得
+		int cluster_num = p_skin->GetClusterCount();
+
+		// クラスタ取得
+		for (int j = 0; j < cluster_num; j++) {
+			p_cluster = p_skin->GetCluster(j);
+		}
+	}
+
+	// 初期行列受け取り
+	FbxAMatrix init_mat;
+	p_cluster->GetTransformMatrix(init_mat);
+
+}
+
+
 void Fbx::LoadIndeces(
 	int &index_num,
 	std::vector<FbxMeshData>&p_mesh_data_list,
