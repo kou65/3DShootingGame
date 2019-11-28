@@ -176,9 +176,14 @@ private:
 
 private:
 
-	void AnimationSet();
+	void LoadAnimationFrame(
+		FbxMesh*p_mesh,
+		FbxScene*p_scene
+	);
 
-	void LoadBone();
+	void LoadBone(
+		FbxMesh*p_mesh
+	);
 
 private:
 

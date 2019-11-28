@@ -243,35 +243,6 @@ void Fbx::LoadMesh() {
 }
 
 
-void Fbx::LoadBone(FbxMesh*p_mesh) {
-
-	// クラスター
-	FbxCluster*p_cluster;
-
-	// スキンの数を取得
-	int skin_count = p_mesh->GetDeformerCount(FbxDeformer::eSkin);
-
-	for (int i = 0; i < skin_count; i++) {
-
-		// i番目のスキンを取得
-		FbxSkin*p_skin = (FbxSkin*)p_mesh->GetDeformer(i,FbxDeformer::eSkin);
-
-		// クラスタの数を取得
-		int cluster_num = p_skin->GetClusterCount();
-
-		// クラスタ取得
-		for (int j = 0; j < cluster_num; j++) {
-			p_cluster = p_skin->GetCluster(j);
-		}
-	}
-
-	// 初期行列受け取り
-	FbxAMatrix init_mat;
-	p_cluster->GetTransformMatrix(init_mat);
-
-}
-
-
 void Fbx::LoadIndeces(
 	int &index_num,
 	std::vector<FbxMeshData>&p_mesh_data_list,
@@ -710,36 +681,19 @@ bool Fbx::LoadTexture(
 }
 
 
-void Fbx::AnimationSet(
+void Fbx::LoadAnimationFrame(
 	FbxMesh*p_mesh,
 	FbxScene*fbx_scene
 ) {
 	int anim_stack_number = 0;
 	
-	FbxArray<FbxString*>anim_stack_name_array;
-	// アニメーション名を受け取り
-	fbx_scene->FillAnimStackNameArray(anim_stack_name_array);
+	// 文字列格納配列
+	FbxArray<FbxString*>take_name_ary;
+	// テイク名を受け取り
+	fbx_scene->FillAnimStackNameArray(take_name_ary);
+	// テイク数取得
+	int take_num = take_name_ary.GetCount();
 
-	// アニメーション情報を探して保存
-	FbxAnimStack * animation_stack = 
-		fbx_scene->FindMember<FbxAnimStack>
-		(anim_stack_name_array[0]->Buffer);
-
-	// 選んだアニメーションを設定
-	fbx_scene->SetCurrentAnimationStack(animation_stack);
-
-	FbxTakeInfo *p_take_info =
-		fbx_scene->GetTakeInfo(
-			*(anim_stack_name_array[anim_stack_number])
-		);
-
-	// 時間を扱う変数の設定をしている
-
-	// 開始時間
-	m_start = p_take_info->mLocalTimeSpan.GetStart();
-
-	// 終了時間
-	m_stop = p_take_info->mLocalTimeSpan.GetStop();
 
 	// アニメーション(1コマ)が実行されていく時間情報を保持する
 	m_frame_time.SetTime(
@@ -750,9 +704,69 @@ void Fbx::AnimationSet(
 		0,
 		mp_fbx_scene->GetGlobalSettings().GetTimeMode()
 	);
+
+	FbxTime start;
+	FbxTime stop;
+	bool is_take_exist = false;
+
+	for (int i = 0; i < take_num; ++i) {
+
+		// テイク名からテイク情報を取得
+		FbxTakeInfo*p_current_take_info
+			= fbx_scene->GetTakeInfo(*(take_name_ary[i]));
+
+		if (p_current_take_info != nullptr) {
+
+			// 最初と最後のフレーム数を取得
+			start = p_current_take_info->mLocalTimeSpan.GetStart();
+			stop = p_current_take_info->mLocalTimeSpan.GetStop();
+			is_take_exist = true;
+			break;
+		}
+	}
+
+	// 1フレーム時間(period)で割ればフレーム数になります
+	int start_frame = (int)(start.Get() / m_frame_time.Get());
+	int stop_frame = (int)(stop.Get() / m_frame_time.Get());
+
+	// アニメーション情報を探して保存
+	FbxAnimStack * animation_stack =  
+		fbx_scene->FindMember<FbxAnimStack>
+		(take_name_ary[0]->Buffer);
+
+	// メモリ解放
+	FbxFree(take_name_ary);
+
 }
 
 
+void Fbx::LoadBone(FbxMesh*p_mesh) {
+
+	// クラスター
+	FbxCluster*p_cluster;
+
+	// スキンの数を取得
+	int skin_count = p_mesh->GetDeformerCount(FbxDeformer::eSkin);
+
+	for (int i = 0; i < skin_count; i++) {
+
+		// i番目のスキンを取得
+		FbxSkin*p_skin = (FbxSkin*)p_mesh->GetDeformer(i, FbxDeformer::eSkin);
+
+		// クラスタの数を取得
+		int cluster_num = p_skin->GetClusterCount();
+
+		// クラスタ取得
+		for (int j = 0; j < cluster_num; j++) {
+			p_cluster = p_skin->GetCluster(j);
+		}
+	}
+
+	// 初期行列受け取り
+	FbxAMatrix init_mat;
+	p_cluster->GetTransformMatrix(init_mat);
+
+}
 
 Fbx::NodeType Fbx::SerchNodeType(FbxNode*p_node) {
 
