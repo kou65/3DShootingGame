@@ -34,9 +34,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	//Fbx::GetInstance()->
 	//	Load("Resource/3DModel/Cube3Poly.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HandGun/Handgun_fbx_7.4_binary.fbx");
 
@@ -55,6 +55,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		Debugger::GetInstance().Update();
 
 		game.Update(st);
+
+		// アニメーション更新
+		Fbx::GetInstance()->Animate();
 		
 
 		// 描画開始

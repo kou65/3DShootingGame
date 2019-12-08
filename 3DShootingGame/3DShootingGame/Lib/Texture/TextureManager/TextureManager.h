@@ -56,10 +56,10 @@ public:
 	TextureMultipleData &GetTextureDataMultiple(std::string name);
 
 	// テクスチャ2Dを解放
-	void ReleaseTexture(std::string &texture_name);
+	void ReleaseTexture(const std::string &texture_name);
 
 	// テクスチャ3Dを解放
-	void ReleaseTextureMultiple(std::string &texture_name);
+	void ReleaseTextureMultiple(const std::string &texture_name);
 
 	// 解放
 	void AllRelease();

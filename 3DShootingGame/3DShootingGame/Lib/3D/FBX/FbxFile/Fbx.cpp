@@ -3,6 +3,7 @@
 #include"../../../Texture/TextureManager/TextureManager.h"
 #include"../../../../Utility/Utility.h"
 #include"../../../Graphics/Graphics.h"
+#include"../../VertexBuffer/VertexBuffer.h"
 
 
 
@@ -18,11 +19,8 @@ Fbx::Fbx() {
 	// fbxシーンの作成
 	mp_fbx_scene = FbxScene::Create(mp_manager, "");
 
-	// マテリアル数初期化
-	m_material_num = 0;
-
-	// インデックス数初期化
-	m_current_index_num = 0;
+	// ボーン数
+	m_bone_num = 0;
 
 	// nullチェック
 	{
@@ -34,7 +32,6 @@ Fbx::Fbx() {
 			Window::TextMessageBox("FBXSceneの作成に失敗しました");
 		}
 	}
-
 }
 
 
@@ -60,6 +57,9 @@ void Fbx::Draw() {
 	IDirect3DDevice9* pDevice =
 		Graphics::GetInstance()->GetLpDirect3DDevice9();
 
+
+	// スキニング
+	Skinning();
 
 	// メッシュインデックスを回す
 	for (UINT meshIdx = 0; meshIdx < m_mesh_num; meshIdx++)
@@ -119,7 +119,6 @@ void Fbx::Draw() {
 				0,
 				p_mesh_data->primNum);
 		}
-
 	}
 }
 
@@ -188,9 +187,13 @@ void Fbx::LoadMesh() {
 	// ポリゴン変換
 	Polygon3Convert();
 
+	// モーション読み込み
+	LoadMotion(mp_fbx_scene);
+
 	// メッシュ数を追加
 	m_mesh_num = mesh_num;
 
+	// メッシュ数分回す
 	for (UINT i = 0; i < mesh_num;i++) {
 
 		// メッシュを取得
@@ -201,7 +204,6 @@ void Fbx::LoadMesh() {
 
 		// インデックス読み込み
 		LoadIndeces(
-			m_current_index_num,
 			m_mesh_data_list,
 			p_mesh
 		);
@@ -237,14 +239,196 @@ void Fbx::LoadMesh() {
 			p_mesh
 		);
 
+			// ボーン情報
+		LoadBone(
+			&m_mesh_data_list.back(),
+			p_mesh
+		);
+
 		// メッシュデータのインデックスを代入
 		m_mesh_data_list[i].materialIndex = i;
+
+		AnimationCustomVertex*p_vertics = nullptr;
+
+		// サイズ設定
+		UINT size =
+			(UINT)(m_mesh_data_list.back().vertexNum *
+				sizeof(AnimationCustomVertex));
+
+		// バッファをロックしてデータを書き込む
+		m_mesh_data_list[i].vertex_buffer->Lock(
+		0,size,(void**)&p_vertics,0);
+
+		// 頂点追加
+		m_p_vertics.emplace_back(new AnimationCustomVertex[size]);
+
+		// メモリコピー
+		memcpy(m_p_vertics[i], p_vertics, size);
+
+		m_mesh_data_list[i].vertex_buffer->Unlock();
+	}
+
+	// モーションセット
+	SetMotion("default");
+}
+
+
+void Fbx::SetMotion(std::string name)
+{
+	m_motion_name = name;
+	m_frame = 0.0f;
+}
+
+void Fbx::Animate(float sec)
+{
+	//	モーション時間の更新
+	m_frame += sec * 60.0f;
+
+	//	ループチェック
+	if (m_frame >= m_motion[m_motion_name].frame_num - 1)
+	{
+		// ループ
+		m_frame = 0;
+	}
+}
+
+//	ボーン行列の補間
+static void MatrixInterporate(D3DXMATRIX& out, D3DXMATRIX& A, D3DXMATRIX B, float rate)
+{
+	out = A * (1.0f - rate) + B * rate;
+}
+
+
+void Fbx::Skinning() {
+
+	// モーションがないならば
+	if (m_motion.empty() == true) {
+		return;
+	}
+
+	MotionData * p_motion = &m_motion[m_motion_name];
+
+	// null
+	if (p_motion == nullptr) {
+		return;
+	}
+
+	// フレームがない
+	if (p_motion->frame_num < 0) {
+		return;
+	}
+
+	float frame = m_frame;
+	
+	// 配列用変数
+	int f = (int)frame;
+
+	// 行列準備
+	D3DXMATRIX key_matrix[256];
+
+	for (INT b = 0; b < (INT)m_bone_num; b++) {
+
+		// キーフレームが入っていないならば
+		if (p_motion->key_list[b].empty() == true) {
+			continue;
+		}
+
+		// 行列補間
+		D3DXMATRIX m;
+
+		MatrixInterporate(
+			m,
+			p_motion->key_list[b][f],
+			p_motion->key_list[b][f + 1],
+			frame - (int)frame
+		);
+		
+		// キーフレーム
+		key_matrix[b] = m_bone_list[b].offset * m;
+	}
+
+	// 頂点変形
+	for (UINT mesh_index = 0; mesh_index < m_mesh_num; mesh_index++) {
+
+		// メッシュデータ受け取り
+		FbxMeshData*p_mesh_data = &m_mesh_data_list[mesh_index];
+
+		// 頂点データ受け取り
+		AnimationCustomVertex*p_src_vertics = m_p_vertics[mesh_index];
+
+		// 頂点バッファのサイズ作成
+		UINT size =
+			(UINT)(p_mesh_data->vertexNum *
+				sizeof(AnimationCustomVertex));
+
+		AnimationCustomVertex * p_vertics;
+
+		// バッファをロックして書き込み可能にする
+		m_mesh_data_list[mesh_index].vertex_buffer->Lock(
+			0, size, (void**)&p_vertics, 0
+		);
+
+		for (UINT v = 0; v < p_mesh_data->vertexNum; v++) {
+
+
+			// 頂点 * ボーン行列
+			// b = v番目の頂点の影響ボーン[n]
+			if (p_vertics[v].weight[0] <= 0.f) {
+				continue;
+			}
+
+			p_vertics[v].vertex.x = 0.f;
+			p_vertics[v].vertex.y = 0.f;
+			p_vertics[v].vertex.z = 0.f;
+
+			// 影響個数文ループ
+			for (int n = 0; n < 4; n++) {
+
+				// 重さがないなら頂点変更なし
+				if (p_vertics[v].weight[n] <= 0) {
+					break;
+				}
+
+				// ボーンインデックス
+				int b = (int)p_vertics[v].bone_index[n];
+
+				// 現在の頂点情報を位置として受け取る
+				float x = p_src_vertics[v].vertex.x;
+				float y = p_src_vertics[v].vertex.y;
+				float z = p_src_vertics[v].vertex.z;
+
+				// 座標を影響力分移動
+				// 頂点x * 1行1列番目の行列...
+				p_vertics[v].vertex.x 
+					+= (x * key_matrix[b]._11 + y * key_matrix[b]._21 + z * key_matrix[b]._31 + 1 * key_matrix[b]._41)*p_vertics[v].weight[n];
+				p_vertics[v].vertex.y 
+					+= (x * key_matrix[b]._12 + y * key_matrix[b]._22 + z * key_matrix[b]._32 + 1 * key_matrix[b]._42)*p_vertics[v].weight[n];
+				p_vertics[v].vertex.z
+					+= (x * key_matrix[b]._13 + y * key_matrix[b]._23 + z * key_matrix[b]._33 + 1 * key_matrix[b]._43)*p_vertics[v].weight[n];
+
+				// 法線情報受け取り
+				float nx = p_src_vertics[v].normal.x;
+				float ny = p_src_vertics[v].normal.y;
+				float nz = p_src_vertics[v].normal.z;
+
+				// 法線を影響力分変換
+				p_vertics[v].normal.x
+					+= (nx * key_matrix[b]._11 + ny * key_matrix[b]._21 + nz * key_matrix[b]._31)*p_vertics[v].weight[n];
+				p_vertics[v].normal.y
+					+= (nx * key_matrix[b]._12 + ny * key_matrix[b]._22 + nz * key_matrix[b]._32)*p_vertics[v].weight[n];
+				p_vertics[v].normal.z
+					+= (nx * key_matrix[b]._13 + ny * key_matrix[b]._23 + nz * key_matrix[b]._33)*p_vertics[v].weight[n];
+
+			}
+		}
+
+		// アンロック、描画設定
+		p_mesh_data->vertex_buffer->Unlock();
 	}
 }
 
 
 void Fbx::LoadIndeces(
-	int &index_num,
 	std::vector<FbxMeshData>&p_mesh_data_list,
 	FbxMesh*p_mesh
 ) {
@@ -285,21 +469,6 @@ void Fbx::LoadIndeces(
 		p_indeces[poly_idx * 3 + 0] = poly_idx * 3 + 2;
 		p_indeces[poly_idx * 3 + 1] = poly_idx * 3 + 1;
 		p_indeces[poly_idx * 3 + 2] = poly_idx * 3 + 0;
-
-		// インディシーズ代入
-		m_indeces.push_back(poly_idx * 3 + 0);
-		m_indeces.push_back(poly_idx * 3 + 1);
-		m_indeces.push_back(poly_idx * 3 + 2);
-
-		int size = (int)m_indeces.size() - 1;
-
-		// 反転
-		int temp = m_indeces[size - 2];
-
-		m_indeces[(size) - 2] = m_indeces[size - 0];
-		m_indeces[(size) - 1] = m_indeces[size - 1];
-		m_indeces[(size) - 0] = temp;
-
 	}
 
 	p_mesh_data->index_buffer->Unlock();
@@ -314,7 +483,9 @@ void Fbx::LoadVertexInfo(
 
 
 	int vertexNum = p_mesh->GetPolygonVertexCount();
-	UINT size = (UINT)(vertexNum * sizeof(FbxCustomVertex));
+
+	// 全ての頂点サイズ(数)を出力
+	UINT size = (UINT)(vertexNum * sizeof(AnimationCustomVertex));
 
 	FbxVector4* source = p_mesh->GetControlPoints();
 	// メッシュのトランスフォーム
@@ -331,7 +502,7 @@ void Fbx::LoadVertexInfo(
 	// メッシュデータ受け取り
 	FbxMeshData *p_mesh_data = &mesh_data_list.back();
 	p_mesh_data->vertexNum = (UINT)vertexNum;
-	p_mesh_data->vertexStride = sizeof(FbxCustomVertex);
+	p_mesh_data->vertexStride = sizeof(AnimationCustomVertex);
 
 	// バーテックスバッファ生成
 	Graphics::GetInstance()->GetLpDirect3DDevice9()->
@@ -344,7 +515,7 @@ void Fbx::LoadVertexInfo(
 			NULL
 		);
 	
-	FbxCustomVertex* pVertices;
+	AnimationCustomVertex* pVertices;
 
 	// バッファをロックしてデータを書き込む
 	p_mesh_data->vertex_buffer->Lock(
@@ -355,17 +526,26 @@ void Fbx::LoadVertexInfo(
 	);
 
 	int* pIndex = p_mesh->GetPolygonVertices();
+
 	for (int vtxIdx = 0; vtxIdx < vertexNum; vtxIdx++)
 	{
+		// インデックス受け取り
 		int index = pIndex[vtxIdx];
+
+		// 位置受け取り
 		FbxVector4& pos = source[index];
 
+		// 位置
 		pVertices[vtxIdx].vertex.x = -(float)pos[0];
 		pVertices[vtxIdx].vertex.y = (float)pos[1];
 		pVertices[vtxIdx].vertex.z = (float)pos[2];
+
+		// 法線
 		pVertices[vtxIdx].normal.x = 0.0f;
 		pVertices[vtxIdx].normal.y = 1.0f;
 		pVertices[vtxIdx].normal.z = 0.0f;
+
+		// テクセル
 		pVertices[vtxIdx].uv.x = 0.0f;
 		pVertices[vtxIdx].uv.y = 0.0f;
 	}
@@ -394,9 +574,9 @@ void Fbx::LoadUvInfo(
 	// 現在のメッシュデータ受け取り
 	FbxMeshData*p_mesh_data = &p_mesh_data_list.back();
 
-	UINT size = p_mesh_data->vertexNum * sizeof(FbxCustomVertex);
+	UINT size = p_mesh_data->vertexNum * sizeof(AnimationCustomVertex);
 
-	FbxCustomVertex*p_vertices;
+	AnimationCustomVertex*p_vertices;
 
 	// 再度ロックして読み込み可能にする
 	p_mesh_data->vertex_buffer->Lock(
@@ -439,11 +619,11 @@ void Fbx::LoadNormal(
 	p_mesh->GetPolygonVertexNormals(normals);
 
 	// 頂点分のCustomVertexサイズを取り出す
-	UINT size = p_mesh_data->vertexNum * sizeof(FbxCustomVertex);
+	UINT size = p_mesh_data->vertexNum * sizeof(AnimationCustomVertex);
 
 	IDirect3DVertexBuffer9* p_vertex_buffer = p_mesh_data->vertex_buffer;
 
-	FbxCustomVertex * p_vertices;
+	AnimationCustomVertex * p_vertices;
 
 	// バッファをロックしてデータを書き込む
 	p_vertex_buffer->Lock(0, size, (void**)&p_vertices, 0);
@@ -475,13 +655,13 @@ void Fbx::LoadMaterial(
 	}
 
 	// マテリアルの数
-	m_material_num = p_node->GetMaterialCount();
+	int material_num = p_node->GetMaterialCount();
 
-	if (m_material_num == 0) {
+	if (material_num == 0) {
 		return;
 	}
 
-	for (int i = 0; i < m_material_num; i++) {
+	for (int i = 0; i < material_num; i++) {
 
 		// サーフェイス受け取り
 		FbxSurfaceMaterial*p_material = p_node->GetMaterial(i);
@@ -509,7 +689,6 @@ void Fbx::LoadMaterial(
 				&p_vertex_data_list.back().material_info);
 		}
 	}
-	
 }
 
 
@@ -664,10 +843,6 @@ bool Fbx::LoadTexture(
 	std::vector<std::string>string_list;
 	string_list = Utility::SplitStr('\\', p_file_name);
 
-
-	// 追加
-	//strcat_s(path, file_name.c_str());
-
 	// テクスチャ読み込み
 	TextureManager::GetInstance()->
 		Load(path, file_name.c_str());
@@ -675,16 +850,16 @@ bool Fbx::LoadTexture(
 	// テクスチャ登録名を保存
 	p_material_info->texture_name = file_name;
 
-	//FbxFree(p_file_name);
-
 	return false;
 }
 
 
 void Fbx::LoadAnimationFrame(
+	FbxTime*m_frame_time,
 	FbxMesh*p_mesh,
 	FbxScene*fbx_scene
 ) {
+
 	int anim_stack_number = 0;
 	
 	// 文字列格納配列
@@ -696,7 +871,7 @@ void Fbx::LoadAnimationFrame(
 
 
 	// アニメーション(1コマ)が実行されていく時間情報を保持する
-	m_frame_time.SetTime(
+	m_frame_time->SetTime(
 		0,
 		0,
 		0,
@@ -709,7 +884,7 @@ void Fbx::LoadAnimationFrame(
 	FbxTime stop;
 	bool is_take_exist = false;
 
-	for (int i = 0; i < take_num; ++i) {
+	for (int i = 0; i < take_num; ++i){
 
 		// テイク名からテイク情報を取得
 		FbxTakeInfo*p_current_take_info
@@ -726,45 +901,273 @@ void Fbx::LoadAnimationFrame(
 	}
 
 	// 1フレーム時間(period)で割ればフレーム数になります
-	int start_frame = (int)(start.Get() / m_frame_time.Get());
-	int stop_frame = (int)(stop.Get() / m_frame_time.Get());
-
-	// アニメーション情報を探して保存
-	FbxAnimStack * animation_stack =  
-		fbx_scene->FindMember<FbxAnimStack>
-		(take_name_ary[0]->Buffer);
+	int start_frame = (int)(start.Get() / m_frame_time->Get());
+	int stop_frame = (int)(stop.Get() / m_frame_time->Get());
 
 	// メモリ解放
 	FbxFree(take_name_ary);
-
+	
 }
 
 
-void Fbx::LoadBone(FbxMesh*p_mesh) {
+void Fbx::LoadBone(
+	FbxMeshData*p_fbx_mesh_data,
+	FbxMesh*p_mesh
+) {
+
+	if (p_fbx_mesh_data == nullptr) {
+		return;
+	}
+
+	if (p_mesh == nullptr) {
+		return;
+	}
 
 	// クラスター
-	FbxCluster*p_cluster;
+	FbxCluster*p_cluster = nullptr;
+
+	// ボーン数初期化
+	int bone_num = 0;
+
+	// スキン
+	FbxSkin*p_skin = nullptr;
+
+	// アニメーションカスタムバーテックス
+	AnimationCustomVertex *p_mesh_vertics = nullptr;
+
+	// 頂点受け取り
+	int vertex_num = p_fbx_mesh_data->vertexNum;
 
 	// スキンの数を取得
 	int skin_count = p_mesh->GetDeformerCount(FbxDeformer::eSkin);
 
+	// バッファサイズ受け取り
+	UINT size = (UINT)(vertex_num * sizeof(AnimationCustomVertex));
+
+	// バーテックスバッファ受け取り
+	IDirect3DVertexBuffer9*p_vertex_buffer = p_fbx_mesh_data->vertex_buffer;
+
+	// 書き込み可能状態にする
+	p_vertex_buffer->Lock(0, size, (void**)&p_mesh_vertics, 0);
+
+
+	// スキンの数分回す
 	for (int i = 0; i < skin_count; i++) {
 
 		// i番目のスキンを取得
-		FbxSkin*p_skin = (FbxSkin*)p_mesh->GetDeformer(i, FbxDeformer::eSkin);
+		 p_skin = (FbxSkin*)p_mesh->GetDeformer(i, FbxDeformer::eSkin);
 
-		// クラスタの数を取得
-		int cluster_num = p_skin->GetClusterCount();
-
-		// クラスタ取得
-		for (int j = 0; j < cluster_num; j++) {
-			p_cluster = p_skin->GetCluster(j);
-		}
+		// クラスタの数を取得(ボーン数)
+		bone_num = p_skin->GetClusterCount();
 	}
 
-	// 初期行列受け取り
-	FbxAMatrix init_mat;
-	p_cluster->GetTransformMatrix(init_mat);
+	if (p_skin == nullptr) {
+		return;
+	}
+
+
+	// 全てのボーン情報取得
+	for (int bone = 0; bone < bone_num; bone++) {
+
+		// それぞれのボーンクラスタ取得
+		p_cluster = p_skin->GetCluster(bone);
+
+		// 行列
+		FbxAMatrix trans;
+
+		// ボーン情報取得
+		p_cluster->GetTransformMatrix(trans);
+
+		// 右手系を左手系に反転
+		trans.mData[0][1] *= -1;
+		trans.mData[0][2] *= -1;
+		trans.mData[1][0] *= -1;
+		trans.mData[2][0] *= -1;
+		trans.mData[3][0] *= -1;
+
+		// ボーンデータ
+		BoneData * p_bone;
+
+		// ボーン名取得
+		const char*p_name = p_cluster->GetLink()->GetName();
+
+		int bone_num = FindBone(p_name);
+
+		// 登録されているボーン名が一致していないならば
+		if (bone_num != -1) {
+			p_bone = &m_bone_list[bone_num];
+		}
+		else {
+
+			// ボーンを増やす
+			bone_num = m_bone_num;
+			p_bone = &m_bone_list[bone_num];
+			m_bone_num++;
+
+			// ボーン名を本体にコピー
+			strcpy_s(p_bone->name, p_name);
+
+			// オフセット行列作成
+			FbxAMatrix link_matrix;
+
+			// ボーン初期行列受け取り
+			p_cluster->GetTransformLinkMatrix(link_matrix);
+
+			// 反転
+			link_matrix.mData[0][1] *= -1;
+			link_matrix.mData[0][2] *= -1;
+			link_matrix.mData[1][0] *= -1;
+			link_matrix.mData[2][0] *= -1;
+			link_matrix.mData[3][0] *= -1;
+
+			// ボーンオフセット行列作成(逆行列 * 変換行列)
+			FbxAMatrix offset = link_matrix.Inverse() * trans;
+			FbxDouble * offset_mat = (FbxDouble*)offset;
+
+			// オフセット行列保存
+			for (int matrix = 0; matrix < 16; matrix++) {
+
+				p_bone->offset.m[matrix / 4][matrix % 4] =
+					(float)offset_mat[matrix];
+			}
+
+			// キーフレーム読み込み
+			LoadKeyFrame("default", bone_num, p_cluster->GetLink());
+		}
+
+
+		// クラスターがないならボーンもウェイトもない
+		if (p_cluster == nullptr) {
+			return;
+		}
+
+		// ウェイト読み込み
+		int weight_num = p_cluster->GetControlPointIndicesCount();
+		int * p_weight_index = p_cluster->GetControlPointIndices();
+		double * weight_list = p_cluster->GetControlPointWeights();
+
+		// ポリゴンインデックス数受け取り
+		int *index = p_mesh->GetPolygonVertices();
+
+
+		// それぞれの重さの分だけ回す
+		for (int i = 0; i < weight_num; i++) {
+
+			int weight_index2 = p_weight_index[i];
+
+			// 重みがある頂点を探す
+			for (int vertex_index = 0;
+				vertex_index < vertex_num;
+				vertex_index++) {
+
+				if (index[vertex_index] != weight_index2) {
+					continue;
+				}
+
+				int weight_count = 0;
+				// 頂点にウェイト保存
+				for (weight_count = 0;
+					weight_count < 4;
+					weight_count++
+					) {
+
+					// 重みがない場所から保存
+					if (p_mesh_vertics[vertex_index].weight[weight_count]
+						<= 0.f)
+					{
+						break;
+					}
+
+				}
+
+				// 重みの数が4つ以上あるなら戻す
+				if (4 <= weight_count) {
+					continue;
+				}
+
+				// 重みを追加
+				p_mesh_vertics[vertex_index].bone_index[weight_count]
+					= bone_num;
+				p_mesh_vertics[vertex_index].weight[weight_count]
+					= (float)weight_list[i];
+			}
+		}
+
+	}
+
+	// ウェイトを正規化
+	for (int vetex_index = 0;
+		vetex_index < vertex_num;
+		vetex_index++) {
+
+		// 正規化
+		float n = 0;
+		int weight_count;
+
+		// 頂点のウェイトの合計値
+		for (weight_count = 0; weight_count < 4; weight_count++) {
+
+			if (p_mesh_vertics[vetex_index].weight[weight_count]
+				<= 0.f) {
+				break;
+			}
+			n += p_mesh_vertics[vetex_index].weight[weight_count];
+		}
+
+		// 正規化
+		for (weight_count = 0; weight_count < 4; weight_count++) {
+			p_mesh_vertics[vetex_index].weight[weight_count] /= n;
+		}
+	}
+	
+
+	// 書き込み付加
+	p_fbx_mesh_data->vertex_buffer->Unlock();
+}
+
+
+void Fbx::LoadKeyFrame(
+	std::string name,
+	int bone,
+	FbxNode*p_bone_node
+) {
+
+	// キーフレーム読み込み
+
+	// メモリ確保
+	MotionData * p_motion = &m_motion[name];
+	p_motion->key_list[bone].resize(p_motion->frame_num);
+
+	// キーフレーム時間割り出し(0.016)
+	double time = (double)m_start_frame * (1.f / 60);
+
+	FbxTime fbx_time;
+
+	// モーションのフレーム数分回す
+	for (UINT f = 0; f < p_motion->frame_num; f++) {
+
+		// doubleの秒を受け取り
+		fbx_time.SetSecondDouble(time);
+
+		// t秒の姿勢行列を取得
+		FbxMatrix m = p_bone_node->EvaluateGlobalTransform(fbx_time);
+
+		// 行列について調べる
+		m.mData[0][1] *= -1;// _12
+		m.mData[0][2] *= -1;// _13
+		m.mData[1][0] *= -1;// _21
+		m.mData[2][0] *= -1;// _31
+		m.mData[3][0] *= -1;// _41
+
+		FbxDouble * mat = (FbxDouble*)m;
+
+		for (int i = 0; i < 16; i++) {
+			p_motion->key_list[bone][f].m[i / 4][i % 4]
+				= (float)mat[i];
+		}
+
+		time += 1.0 / 60.0;
+	}
 
 }
 
@@ -842,7 +1245,7 @@ bool Fbx::VertexBufferCreate(
 	// 頂点バッファ作成
 	mp_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		(sizeof(FbxCustomVertex) * total_vertex_num),
+		(sizeof(AnimationCustomVertex) * total_vertex_num),
 		// リソースの使用法
 		0,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -856,12 +1259,12 @@ bool Fbx::VertexBufferCreate(
 	);
 
 	// 頂点数分用意する
-	FbxCustomVertex *custom_vertex_list;
+	AnimationCustomVertex *custom_vertex_list;
 
 	// ロック
 	(*p_vertex_buffer)->Lock(
 		0,
-		total_vertex_num * sizeof(FbxCustomVertex),
+		total_vertex_num * sizeof(AnimationCustomVertex),
 		(void**)&custom_vertex_list,
 		0
 	);
@@ -927,9 +1330,58 @@ void Fbx::SetRootPath(const char*p_file_name) {
 	fbx_file_name = Utility::SplitStr('/', p_file_name);
 
 	// fbxのファイル名を受け取り
-	m_fbx_file_name = fbx_file_name.back();
+	//m_fbx_file_name = fbx_file_name.back();
 
 	m_root_path[i] = '\0';
+}
+
+
+void Fbx::LoadMotion(
+	FbxScene*p_scene
+) {
+
+	if (p_scene == nullptr) {
+		return;
+	}
+
+	FbxArray<FbxString*>names;
+
+	// 利用するアニメーションを選び設定を行う
+	p_scene->FillAnimStackNameArray(names);
+
+	int start_frame;
+
+	if (names != nullptr) {
+
+		// モーションが存在する時
+		FbxTakeInfo*p_take = p_scene->GetTakeInfo(names[0]->Buffer());
+
+		// アニメーション(1コマ)が実行されていく時間情報を保持する
+		FbxLongLong start = p_take->mLocalTimeSpan.GetStart().Get();
+		FbxLongLong stop = p_take->mLocalTimeSpan.GetStop().Get();
+		FbxLongLong fps60 = FbxTime::GetOneFrameValue(FbxTime::eFrames60);
+		start_frame = (int)(start / fps60);
+
+		// モーションのフレーム値を代入
+		m_motion["default"].frame_num =
+			(int)((stop - start) / fps60);
+	}
+
+	m_start_frame = start_frame;
+}
+
+
+int Fbx::FindBone(const char*p_name) {
+
+	for (INT bone_index = 0; bone_index < m_bone_num; bone_index++) {
+
+		// 文字列が一致しているならば
+		if (strcmp(m_bone_list[bone_index].name, p_name)) {
+			return (int)bone_index;
+		}
+	}
+
+	return -1;
 }
 
 

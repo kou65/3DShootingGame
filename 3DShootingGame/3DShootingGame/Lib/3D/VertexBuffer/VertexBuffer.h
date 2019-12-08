@@ -13,19 +13,11 @@ VRAM上に頂点情報を送れる
 class VertexBuffer {
 public:
 
-	// 形状
-	enum Shape{
-		NONE,
-		BOX,
-	};
-
-public:
-
 	// 独自の頂点バッファを作る場合のコンストラクタ
 	VertexBuffer(int vertex_num);
 
 	// 正方形頂点バッファ
-	VertexBuffer(Shape shape);
+	VertexBuffer();
 
 	// 描画
 	void Draw();
@@ -34,13 +26,17 @@ public:
 		return m_p_vertex_buffer9;
 	}
 
-private:
-
 	// 頂点バッファ作成
-	void Create(int vertex_num,Shape shape);
+	void Create(const UINT &buffer_size);
 
-	// 正方形形状に頂点作成する
-	void Cube(MeshCustomVertex v[8]);
+	// バッファを開ける
+	bool OpenBuffer(
+		const UINT&buffer_size,
+		void**p_custom_vertex
+	);
+
+	// バッファを閉じる
+	bool CloseBuffer();
 
 private:
 

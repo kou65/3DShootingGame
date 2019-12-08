@@ -3,7 +3,8 @@
 #include<string>
 #include<vector>
 #include<fbxsdk.h>
-#include"../../../../FbxModel/FbxModel.h"
+#include<map>
+#include"../../AnimationCustomVertex/AnimationCustomVertex.h"
 #include"../../../Graphics/Graphics.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
@@ -13,28 +14,32 @@
 #define FVF_FBX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
 
-struct FbxCustomVertex {
-
-	FbxCustomVertex(){
-		vertex.x = vertex.y = vertex.z = 0.f;
-		normal.x = normal.y = normal.z = 0.f;
-		uv.x = uv.y = 0.f;
-	}
-
-	// 頂点データ
-	D3DXVECTOR3 vertex;
-
-	// 法線ベクトル
-	D3DXVECTOR3 normal;
-
-	// テクセル
-	D3DXVECTOR2 uv;
-};
-
-
 struct MaterialInfo {
 	D3DMATERIAL9 material;
 	std::string texture_name;
+};
+
+
+struct BoneData {
+
+	// とりあえず8ビット
+	char name[64];
+
+	// 姿勢オフセット行列
+	D3DXMATRIX offset;
+
+	// 変換行列
+	D3DXMATRIX transform;
+};
+
+
+struct MotionData {
+
+	// フレーム数
+	UINT frame_num;
+
+	// キーフレーム
+	std::vector<D3DXMATRIX>key_list[256];
 };
 
 
@@ -79,6 +84,9 @@ public:
 		TOTAL,
 	};
 
+	static const int MOTION_MAX = 256;
+	static const int BONE_MAX = 256;
+
 public:
 
 	static Fbx *GetInstance() {
@@ -102,6 +110,12 @@ public:
 	// 描画
 	void Draw();
 
+	// アニメーション更新
+	void Animate(float sec = 1.0f / 60.0f);
+
+	// モーション情報をセットする
+	void SetMotion(std::string name = "default");
+
 	// FBX関連削除
 	void Release();
 
@@ -121,7 +135,6 @@ private:
 
 	// インデックス読み込み
 	void LoadIndeces(
-		int &index_num,
 		std::vector<FbxMeshData>&mp_vertex_data_list,
 		FbxMesh*p_mesh
 	);
@@ -177,13 +190,31 @@ private:
 private:
 
 	void LoadAnimationFrame(
+		FbxTime*m_frame_time,
 		FbxMesh*p_mesh,
 		FbxScene*p_scene
 	);
 
 	void LoadBone(
+		FbxMeshData*p_fbx_mesh_data,
 		FbxMesh*p_mesh
 	);
+
+	void LoadKeyFrame(
+		std::string name,
+		int bone,
+		FbxNode*p_bone_node);
+
+	// モーション読み込み
+	void LoadMotion(
+		FbxScene*p_scene
+	);
+
+	// ボーン検索
+	int FindBone(const char*p_name);
+
+	// すきにんぐ
+	void Skinning();
 
 private:
 
@@ -226,29 +257,36 @@ private:
 	// メッシュの数
 	UINT m_mesh_num;
 
-	// マテリアル数
-	int m_material_num;
-
-	// 現在のインデックス数
-	int m_current_index_num;
-
 	// カスタムバーテックスの配列
 	std::vector<FbxMeshData>m_mesh_data_list;
 
-	// インデックス配列
-	std::vector<int>m_indeces;
-
-	// ルート
+	// ルートパス
 	char m_root_path[MAX_PATH];
-
-	// fbx名
-	std::string m_fbx_file_name;
 
 	// グラフィックス
 	Graphics * mp_graphics;
 
-	// アニメーション関連
-	FbxTime m_start;
-	FbxTime m_stop;
-	FbxTime m_frame_time;
+	// 頂点配列
+	std::vector<AnimationCustomVertex*>m_p_vertics;
+
+
+	/* アニメーション関連 */
+	
+	// モーション名
+	std::string m_motion_name;
+
+	// フレーム
+	float m_frame;
+
+	// 最初のフレーム
+	int m_start_frame;
+
+	// モーション配列
+	std::map<std::string, MotionData> m_motion;
+
+	// ボーン数
+	int m_bone_num;
+
+	// ボーンデータ配列
+	BoneData m_bone_list[BONE_MAX];
 };

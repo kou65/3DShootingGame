@@ -231,6 +231,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Lib\UV\UvSlider\UvSlider.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
@@ -261,6 +265,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Lib\3D\AnimationCustomVertex\AnimationCustomVertex.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Model\Model.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
       <SubType>
       </SubType>
@@ -282,7 +294,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="FbxModel\FbxModel.h" />
     <ClInclude Include="Filed\Filed.h">
       <SubType>
       </SubType>
@@ -336,6 +347,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\Uv\UvRect\UvRect.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\UV\UvSlider\UvSlider.h">
       <SubType>
       </SubType>
     </ClInclude>

@@ -5,8 +5,6 @@
 
 IndexBuffer::IndexBuffer(Graphics * graphics) {
 	this->graphics = graphics;
-
-	m_p_vertex_buffer = new VertexBuffer(VertexBuffer::BOX);
 }
 
 
@@ -29,10 +27,13 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 		NULL
 	);
 
-	// nullチェック
-	if (m_p_index_buffer9 == nullptr) {
-		return false;
-	}
+	return true;
+}
+
+
+
+// バッファを開ける
+bool IndexBuffer::OpenBuffer(void**p_custom_vertex) {
 
 
 	WORD * buffer;
@@ -43,7 +44,7 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 		// ロックするサイズをバイト単位で指定する
 		0,
 		// 指定した頂点インデックスバッファへのポインタが返る
-		(void**)&buffer,
+		(void**)&p_custom_vertex,
 		// ロック目的をフラグで示す(大抵は節約なくロックする)
 		D3DLOCK_DISCARD
 	)
@@ -51,43 +52,20 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 		) {
 		return false;
 	}
+}
 
+// バッファを閉じる
+bool IndexBuffer::CloseBuffer() {
 
-	// インデックスをセット
-
-	// 表面
-	{
-		buffer[0] = 0;
-		buffer[1] = 2;
-		buffer[2] = 1;
-
-		buffer[3] = 2;
-		buffer[4] = 3;
-		buffer[5] = 1;
-	}
-
-	// 裏面
-	{
-		buffer[6] = 5;
-		buffer[7] = 6;
-		buffer[8] = 4;
-
-		buffer[9] = 5;
-		buffer[10] = 7;
-		buffer[11] = 6;
-	}
 
 	// nullチェック
-	if (p_data == nullptr) {
+	if (m_p_index_buffer9 == nullptr) {
 		return false;
 	}
 
 	// アンロック
 	m_p_index_buffer9->Unlock();
-
-	return true;
 }
-
 
 
 void IndexBuffer::Draw() {
@@ -100,12 +78,12 @@ void IndexBuffer::Draw() {
 
 
 	// ストリームをセット
-	graphics->GetLpDirect3DDevice9()->SetStreamSource(
-		0,
-		*m_p_vertex_buffer,
-		0,
-		sizeof(MeshCustomVertex)
-	);
+	//graphics->GetLpDirect3DDevice9()->SetStreamSource(
+	//	0,
+	//	*m_p_index_buffer,
+	//	0,
+	//	sizeof(MeshCustomVertex)
+	//);
 
 
 	// インデックス番号をデバイスに設定する

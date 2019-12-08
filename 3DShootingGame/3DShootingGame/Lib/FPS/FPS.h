@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include<timeapi.h>
 #include<Windows.h>
+#include"../Vec2/Vec2.h"
+
 
 #pragma comment(lib,"winmm.lib")
 
@@ -28,17 +30,32 @@
 class FPS {
 public:
 
+	enum DisplayMode {
+		FONT,
+		CONSOLE
+	};
+
+	// ミリ秒
+	const int MS = 1000;
+
+	// デフォルト
+	const int FPS_60 = 60;
+public:
+
 	FPS();
 
 	FPS(DWORD frame);
 
-	void DebugDraw();
+	void DebugDraw(
+		const Vec2&draw_pos = Vec2(1920.f / 2, 1080.f / 2),
+		const int&font_size = 256
+	);
 
 	void FrameWait();
 
 private:
 
-	int m_min_fream_time;
+	float m_min_fream_time;
 
 	// フレームカウント
 	int m_frame_count;
@@ -48,4 +65,10 @@ private:
 
 	// 過去
 	int m_prev_time;
+
+	// 現在のfps値
+	int m_current_fps;
+
+	// 表示モード
+	DisplayMode dispaly_mode;
 };

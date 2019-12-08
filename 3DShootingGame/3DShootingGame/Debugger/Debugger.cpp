@@ -7,6 +7,7 @@
 #include"../SetRenderStateFile/SetRenderStateFile.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
+#include"../Lib/Texture/TextureManager/TextureManager.h"
 
 
 
@@ -21,7 +22,10 @@ Debugger::Debugger() {
 	camera_3d = new Camera3D(Camera3D::FPS);
 	camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 	m_is_program_stop = false;
+
 	light->On();
+
+	fps = new FPS(60);
 
 	
 	s2d.animation_param.division_width = 9;
@@ -80,6 +84,8 @@ void Debugger::Update() {
 	KeyBoard::Update();
 
 	camera_3d->Update();
+
+	fps->FrameWait();
 }
 
 
@@ -143,6 +149,8 @@ void Debugger::Draw() {
 
 	camera_3d->TransformDraw();
 
+	fps->DebugDraw(Vec2(256.f,256.f),3000);
+
 	// ライトモードをファルスにする
 	//SetRenderStateFile::LightMode(FALSE);
 
@@ -190,7 +198,7 @@ void Debugger::Draw() {
 		s2d.x = 40.f;
 		s2d.y = 40.f;
 
-		Sprite2DObject::GetInstance()->BoardDraw(s2d);
+		//Sprite2DObject::GetInstance()->BoardDraw(s2d);
 	}
 
 

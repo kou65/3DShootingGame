@@ -159,10 +159,10 @@ void TextureManager::AllRelease() {
 			itr->second->p_texture_buffer->Release();
 			itr->second.reset();
 		}
-		
-		// 要素のメモリ削除
-		//delete[] &itr;
 	}
+
+	// 要素の解放
+	m_texture_data2D_list.clear();
 
 	// 3Dテクスチャの解放
 	for (auto itr = m_texture_data3D_list.begin();
@@ -176,10 +176,17 @@ void TextureManager::AllRelease() {
 			itr->second.reset();
 		}
 	}
+
+	m_texture_data3D_list.clear();
 }
 
 
-void TextureManager::ReleaseTexture(std::string &texture_name) {
+void TextureManager::ReleaseTexture(const std::string &texture_name) {
+
+	// テクスチャが存在しないなら
+	if (FindTexture(texture_name) == false) {
+		return;
+	}
 
 	// 解放
 	m_texture_data2D_list[texture_name]->p_texture_buffer->Release();
@@ -192,7 +199,12 @@ void TextureManager::ReleaseTexture(std::string &texture_name) {
 }
 
 
-void TextureManager::ReleaseTextureMultiple(std::string &texture_name) {
+void TextureManager::ReleaseTextureMultiple(const std::string &texture_name) {
+
+	// テクスチャが存在しないなら
+	if (FindMultipleTexture(texture_name) == false) {
+		return;
+	}
 
 	// 解放
 	for (auto &itr : m_texture_data3D_list[texture_name]->texture_list) {

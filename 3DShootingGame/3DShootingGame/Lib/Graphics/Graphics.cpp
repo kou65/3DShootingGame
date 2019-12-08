@@ -2,11 +2,6 @@
 
 
 
-
-
-
-
-
 LPDIRECT3DDEVICE9 Graphics::GetLpDirect3DDevice9() {
 	return m_p_d3d_device9;
 }
@@ -440,4 +435,52 @@ int *Graphics::LockIndexBuffer32BitSize(
 	}
 
 	return size_32bit;
+}
+
+
+
+bool Graphics::CreateVertexBuffer9(
+	LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer,
+	const UINT&buffer_size
+){
+
+	// 頂点バッファ作成
+	GetLpDirect3DDevice9()->CreateVertexBuffer(
+		// 頂点バッファサイズ(CustomVertex * 頂点数)
+		buffer_size,
+		// リソースの使用法
+		0,
+		// 柔軟な頂点フォーマットの型を指定する
+		0,
+		// 頂点バッファをどの種類のメモリに置くか
+		D3DPOOL_MANAGED,
+		// 頂点バッファ
+		p_vertex_buffer,
+		// phandleは現在使用されていない
+		NULL
+	);
+
+	return true;
+}
+
+
+void Graphics::LockVertexBuffer(
+	LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer,
+	const UINT&buffer_size,
+	void **pp_data
+) {
+	// ロック
+	(*p_vertex_buffer)->Lock(
+		0,
+		buffer_size,
+		(void**)&pp_data,
+		0
+	);
+}
+
+
+void Graphics::UnlockVertexBuffer(
+	LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer
+) {
+	(*p_vertex_buffer)->Unlock();
 }

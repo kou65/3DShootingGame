@@ -9,26 +9,23 @@ VertexBuffer::VertexBuffer(int vertex_num) {
 	this->graphics = Graphics::GetInstance();
 
 	// 頂点バッファ生成
-	Create(vertex_num,NONE);
+	Create(vertex_num);
 }
 
 
-VertexBuffer::VertexBuffer(Shape shape) {
+VertexBuffer::VertexBuffer() {
 
 	// グラフィック代入
 	this->graphics = Graphics::GetInstance();
-
-	// 正方形頂点バッファ作成
-	Create(8, shape);
 }
 
 
-void VertexBuffer::Create(int vertex_num,Shape shape) {
+void VertexBuffer::Create(const UINT &buffer_size) {
 	
 	// 頂点バッファ作成
 	graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
-		sizeof(MeshCustomVertex) * vertex_num,
+		buffer_size,
 		// リソースの使用法
 		D3DUSAGE_WRITEONLY,
 		// 柔軟な頂点フォーマットの型を指定する
@@ -41,25 +38,32 @@ void VertexBuffer::Create(int vertex_num,Shape shape) {
 		NULL
 	);
 
-	// 頂点数分用意する
-	MeshCustomVertex * v;
-
-	m_p_vertex_buffer9->Lock(0, 0, (void**)&v, 0);
-
-	// 形状ごとに頂点を作成する
-	if (shape == BOX) {
-
-		Cube(v);
-	}
-	// 独自の頂点情報を作成する 
-	else {
-
-		
-	}
-
-	m_p_vertex_buffer9->Unlock();
 }
 
+
+bool VertexBuffer::OpenBuffer(
+	const UINT&buffer_size,
+	void**p_custom_vertex
+) {
+
+	// ロックして読み込み可能にさせる
+	m_p_vertex_buffer9->Lock(
+		0,
+		buffer_size,
+		(void**)&p_custom_vertex,
+		0
+	);
+
+	return true;
+}
+
+
+bool VertexBuffer::CloseBuffer() {
+
+	m_p_vertex_buffer9->Unlock();
+
+	return true;
+}
 
 
 void VertexBuffer::Draw() {
@@ -68,9 +72,6 @@ void VertexBuffer::Draw() {
 		return;
 	}
 	
-	// テクスチャセット
-	//graphics->GetLpDirect3DDevice9()->SetTexture()
-
 
 	// 頂点処理の流れに頂点バッファを実際にセットできる
 	graphics->GetLpDirect3DDevice9()->SetStreamSource(
@@ -89,42 +90,6 @@ void VertexBuffer::Draw() {
 	);
 }
 
-
-void VertexBuffer::Cube(MeshCustomVertex v[8]) {
-
-
-	// 正方形
-
-	// 手前
-	{
-		// 左上(原点)
-		v[0].position = D3DXVECTOR3(0, 0, 0);
-
-		// 左下
-		v[1].position = D3DXVECTOR3(0, -1, 0);
-
-		// 右上
-		v[2].position = D3DXVECTOR3(1, 0, 0);
-
-		// 右下
-		v[3].position = D3DXVECTOR3(1, -1, 0);
-	}
-
-	// 奥
-	{
-		// 左上
-		v[4].position = D3DXVECTOR3(0, 0, 1);
-
-		// 左下
-		v[5].position = D3DXVECTOR3(0, -1, 1);
-
-		// 右上
-		v[6].position = D3DXVECTOR3(1, 0, 1);
-
-		// 右下
-		v[7].position = D3DXVECTOR3(1, -1, 1);
-	}
-}
 
 /*
 bool VertexBuffer::Load() {

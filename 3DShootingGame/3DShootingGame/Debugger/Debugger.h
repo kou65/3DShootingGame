@@ -46,7 +46,7 @@ private:
 
 	D3DDefaultMesh d3d_mesh;
 
-	FPS fps;
+	FPS *fps;
 
 	IndexBuffer *index_buffer;
 

@@ -199,6 +199,8 @@ public:
 
 	/**
 	* @brief インデックスバッファ16bitのロック
+	* @param[out] p_index_buffer インデックスバッファ
+	* @return unsigned short
 	*/
 	unsigned short *LockIndexBuffer16BitSize(
 		LPDIRECT3DINDEXBUFFER9*p_index_buffer
@@ -207,6 +209,8 @@ public:
 
 	/**
 	* @brief インデックスバッファ32bitのロック
+	* @param[out] p_index_buffer インデックスバッファ
+	* @return int
 	*/
 	int *LockIndexBuffer32BitSize(
 		LPDIRECT3DINDEXBUFFER9*p_index_buffer
@@ -215,10 +219,49 @@ public:
 
 	/**
 	* @brief インデックスバッファのアンロック
+	* @param[out] p_index_buffer インデックスバッファ
+	* @return bool
 	*/
 	bool UnlockIndexBuffer(
 		LPDIRECT3DINDEXBUFFER9*p_index_buffer
 	);
+
+
+	/*
+	* @brief バーテックスバッファの生成
+	* @param[out] バーテックスバッファ
+	* @param[in] バッファのサイズ(sizeofで割り出せばいい)
+	* sizeof(CustomVertex) * vertex_num 
+	*/
+	bool CreateVertexBuffer9(
+		LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer,
+		const UINT&buffer_size
+	);
+
+
+	/*
+	* @brief バーテックスバッファのロック(書き込み可能)
+	* @param[out] バーテックスバッファ
+	* @param[in]  バッファのサイズ(sizeofで割り出せばいい)
+	* sizeof(CustomVertex) * vertex_num
+	* @param[out] 保存するデータ型を入れる
+	* customvertexなど
+	*/
+	void LockVertexBuffer(
+		LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer,
+		const UINT&buffer_size,
+		void **pp_data
+	);
+
+
+	/*
+	* @brief バーテックスバッファのアンロック
+	(書き込み不可、描画可能状態に変更)
+	*/
+	void UnlockVertexBuffer(
+		LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer
+	);
+
 
 private:
 
