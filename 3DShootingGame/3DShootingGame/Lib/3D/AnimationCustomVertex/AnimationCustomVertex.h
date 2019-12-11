@@ -10,6 +10,7 @@ struct AnimationCustomVertex {
 		vertex.x = vertex.y = vertex.z = 0.f;
 		normal.x = normal.y = normal.z = 0.f;
 		uv.x = uv.y = 0.f;
+		color = 0xfffffff;
 	}
 
 	// 頂点データ
@@ -17,6 +18,9 @@ struct AnimationCustomVertex {
 
 	// 法線ベクトル
 	D3DXVECTOR3 normal;
+
+	// カラー
+	DWORD color;
 
 	// テクセル
 	D3DXVECTOR2 uv;

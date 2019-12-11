@@ -6,6 +6,7 @@
 #include<map>
 #include"../../AnimationCustomVertex/AnimationCustomVertex.h"
 #include"../../../Graphics/Graphics.h"
+#include"../../../Texture/TextureData2D/TextureData2D.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
 #pragma comment(lib,"libfbxsdk-md.lib")
@@ -34,6 +35,9 @@ struct BoneData {
 
 
 struct MotionData {
+
+	MotionData() {
+	}
 
 	// フレーム数
 	UINT frame_num;
@@ -107,14 +111,17 @@ public:
 	// 読み込み
 	bool Load(const std::string &fbx_file_path);
 
-	// 描画
-	void Draw();
+	// 描画(デフォルトで画像を入れれるようにする)
+	void Draw(TextureData*td = nullptr);
 
 	// アニメーション更新
 	void Animate(float sec = 1.0f / 60.0f);
 
 	// モーション情報をセットする
 	void SetMotion(std::string name = "default");
+
+	// アニメーション変更
+	void ChangeAnimation(const char*anim_name);
 
 	// FBX関連削除
 	void Release();
@@ -170,12 +177,6 @@ private:
 		FbxMesh*p_mesh
 	);
 
-	// ランバートからマテリアル情報を取得
-	void SetLambertInfo(
-		FbxSurfaceLambert*lambert,
-		D3DXMATERIAL*material_info
-	);
-
 	// phongからマテリアル情報を取得する
 	void SetPhongInfo(
 		FbxSurfacePhong*p_phong,
@@ -187,7 +188,19 @@ private:
 		MaterialInfo*p_material_info
 	);
 
+	// カラー読み込み
+	bool LoadColor(
+		std::vector<FbxMeshData>&p_vertex_data_list,
+		FbxMesh*p_mesh
+	);
+
 private:
+
+	// アニメーションを選択
+	void SelectAnimation(
+		int select_anim_num
+	);
+
 
 	void LoadAnimationFrame(
 		FbxTime*m_frame_time,
@@ -218,10 +231,6 @@ private:
 
 private:
 
-	// ポリゴン2分割
-	std::vector<INT> SplitPolygon2(
-		const std::vector<INT>&indices
-	);
 
 	// ルートパスを作成する
 	void SetRootPath(const char*p_file_name);
@@ -254,6 +263,9 @@ private:
 	// シーンの作成
 	FbxScene * mp_fbx_scene;
 
+	// インポーター
+	FbxImporter*mp_importer;
+
 	// メッシュの数
 	UINT m_mesh_num;
 
@@ -269,9 +281,18 @@ private:
 	// 頂点配列
 	std::vector<AnimationCustomVertex*>m_p_vertics;
 
+	// デバッグインディシーズ
+	std::vector<int>m_debug_indices;
+
+	// 頂点バッファ
+	std::vector<D3DXVECTOR3>m_debug_vertics;
+
 
 	/* アニメーション関連 */
 	
+	// モーション数
+	int m_motion_num;
+
 	// モーション名
 	std::string m_motion_name;
 

@@ -36,9 +36,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	//Fbx::GetInstance()->Load("Resource/3DModel/60-glass-cube/glass cube.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HandGun/Handgun_fbx_7.4_binary.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Character/StickFigurea.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Character/cavaleiro.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/dragon.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
+	//Fbx::GetInstance()->Load(
+	//	"Resource/3DModel/Lowpoly_Helicopter.fbx");
 
 	//SceneManager scene_manager(new TitleScene,TITLE);
 	GameScene game;
@@ -59,6 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		// アニメーション更新
 		Fbx::GetInstance()->Animate();
 		
+		TextureData td = TextureManager::GetInstance()->GetTextureData("taiki_tex");
 
 		// 描画開始
 		if (Graphics::GetInstance()->DrawStart() == true) {

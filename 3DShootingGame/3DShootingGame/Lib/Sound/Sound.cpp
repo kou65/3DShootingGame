@@ -220,6 +220,7 @@ namespace Sound {
 		return true;
 	}
 
+
 	void WaveDataLockAndUnlock(
 		IDirectSoundBuffer8 *idirect_sound_buffer8,
 		const char* p_wave_data

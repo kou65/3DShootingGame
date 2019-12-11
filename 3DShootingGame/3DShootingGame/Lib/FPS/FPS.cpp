@@ -103,7 +103,7 @@ void FPS::FrameWait() {
 	while(elapsed_time < m_min_fream_time){
 
 		// タイマー精度変更
-		timeBeginPeriod(1);
+		//timeBeginPeriod(1);
 
 		// 1ms待機(1秒)
 		Sleep(1);
