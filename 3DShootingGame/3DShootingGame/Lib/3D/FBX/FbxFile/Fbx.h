@@ -12,7 +12,7 @@
 #pragma comment(lib,"libfbxsdk-md.lib")
 
 
-#define FVF_FBX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
+#define FVF_FBX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
 struct MaterialInfo {
@@ -28,6 +28,9 @@ struct BoneData {
 
 	// 姿勢オフセット行列
 	D3DXMATRIX offset;
+
+	// 初期ボーン行列
+	D3DXMATRIX bone_mat;
 
 	// 変換行列
 	D3DXMATRIX transform;
@@ -115,20 +118,17 @@ public:
 	void Draw(TextureData*td = nullptr);
 
 	// アニメーション更新
-	void Animate(float sec = 1.0f / 60.0f);
+	void Animate(
+		float sec = 1.0f / 60.0f,
+		float reset_frame = 0.f);
 
 	// モーション情報をセットする
 	void SetMotion(std::string name = "default");
-
-	// アニメーション変更
-	void ChangeAnimation(const char*anim_name);
 
 	// FBX関連削除
 	void Release();
 
 private:
-
-
 	// ノードの種類を調べる
 	NodeType SerchNodeType(FbxNode*fbx_node);
 
@@ -177,11 +177,6 @@ private:
 		FbxMesh*p_mesh
 	);
 
-	// phongからマテリアル情報を取得する
-	void SetPhongInfo(
-		FbxSurfacePhong*p_phong,
-		D3DXMATERIAL*p_material_info
-	);
 
 	bool LoadTexture(
 		FbxMesh*p_mesh,
@@ -201,15 +196,29 @@ private:
 		int select_anim_num
 	);
 
+	// アニメーションをセット
+	void SetAnimation(int anim_num);
 
-	void LoadAnimationFrame(
-		FbxTime*m_frame_time,
+	// 読み込みアニメーションフレーム姿勢
+	void LoadAnimFrameAttitudeMatrix(
+		D3DXMATRIX*p_out_mat,
 		FbxMesh*p_mesh,
-		FbxScene*p_scene
+		float frame
 	);
+
 
 	void LoadBone(
 		FbxMeshData*p_fbx_mesh_data,
+		FbxMesh*p_mesh
+	);
+
+
+	void LoadModelInfo(
+		FbxMeshData*p_fbx_mesh_data,
+		FbxMesh*p_mesh
+	);
+
+	void LoadLocalMatrix(
 		FbxMesh*p_mesh
 	);
 
@@ -226,14 +235,11 @@ private:
 	// ボーン検索
 	int FindBone(const char*p_name);
 
-	// すきにんぐ
-	void Skinning();
+	// 姿勢すきにんぐ
+	void AttitudeSkinning();
 
 private:
 
-
-	// ルートパスを作成する
-	void SetRootPath(const char*p_file_name);
 
 	// 相対パス(CP932) → 絶対パス(UTF-8)
 	std::string GetUTF8Path(const std::string& path);
@@ -241,6 +247,11 @@ private:
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
 
+	// fbx行列をDirectXの行列に変換
+	void FbxMatConvertD3DMat(
+		D3DXMATRIX*p_out_mat,
+		FbxMatrix&fbx_mat
+	);
 
 	// インデックスバッファ生成
 	bool IndexBufferCreate(
@@ -254,6 +265,12 @@ private:
 		int total_vertex,
 		LPDIRECT3DVERTEXBUFFER9 * p_vertex_buffer
 	);
+
+	// ワールド座標変換
+	D3DXMATRIX WorldTransform(
+		D3DXVECTOR3 &pos,
+		D3DXVECTOR3 &rot,
+		D3DXVECTOR3 &scale);
 
 private:
 
@@ -281,18 +298,9 @@ private:
 	// 頂点配列
 	std::vector<AnimationCustomVertex*>m_p_vertics;
 
-	// デバッグインディシーズ
-	std::vector<int>m_debug_indices;
-
-	// 頂点バッファ
-	std::vector<D3DXVECTOR3>m_debug_vertics;
-
 
 	/* アニメーション関連 */
 	
-	// モーション数
-	int m_motion_num;
-
 	// モーション名
 	std::string m_motion_name;
 
@@ -302,12 +310,31 @@ private:
 	// 最初のフレーム
 	int m_start_frame;
 
+	// 停止フレーム
+	int m_stop_frame;
+
 	// モーション配列
 	std::map<std::string, MotionData> m_motion;
 
 	// ボーン数
 	int m_bone_num;
 
+	// ワールド座標行列
+	std::vector<std::vector<D3DXVECTOR3>>m_world_trans_list;
+
 	// ボーンデータ配列
-	BoneData m_bone_list[BONE_MAX];
+	BoneData m_bone_data_list[BONE_MAX];
+
+	// 二つ目のやり方
+	// ボーンデータ配列2
+	BoneData m_bone_data_list2[BONE_MAX];
+
+	// 重み
+	std::vector<float>m_weight_list;
+
+	// 重みを与えるインデックス
+	std::vector<int>m_weight_index_list;
+
+	// ワールド行列配列
+	std::vector<D3DXMATRIX>m_mat_trans_list;
 };

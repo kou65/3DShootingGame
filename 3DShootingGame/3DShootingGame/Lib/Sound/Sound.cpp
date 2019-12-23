@@ -396,7 +396,7 @@ namespace Sound {
 
 		// データサイズを受け取り
 		size = mmioRead(hMmio, (HPSTR)*p_wave_data, data_chunk.cksize);
-
+		
 		// サイズが違う場合
 		if (size != data_chunk.cksize) {
 			delete[] * p_wave_data;
@@ -460,5 +460,4 @@ namespace Sound {
 
 		return true;
 	}
-
 }
