@@ -253,6 +253,8 @@ private:
 	// 姿勢すきにんぐ
 	void AttitudeSkinning();
 
+	void RootNodeSample();
+
 private:
 
 

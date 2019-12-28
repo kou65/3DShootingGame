@@ -1466,6 +1466,7 @@ void Fbx::LoadAnimFrameAttitudeMatrix(
 }
 
 
+
 void Fbx::FbxMatConvertD3DMat(
 	D3DXMATRIX*p_out_mat,
 	FbxMatrix &fbx_mat
@@ -1891,3 +1892,22 @@ void Fbx::LoadModelInfo(
 		m_glo_bone_mat_list.emplace_back(total_mat);
 	}
 }
+
+
+
+void enumNodeNames(FbxNode *node, int indent) {
+	
+	const char *name = node->GetName();
+
+	int childCount = node->GetChildCount();
+	for (int i = 0; i < childCount; ++i) {
+		enumNodeNames(node->GetChild(i), indent + 1);
+	}
+}
+
+	void Fbx::RootNodeSample() {
+
+		FbxNode*root = m_fbx_mod.mp_fbx_scene->GetRootNode();
+
+
+	}
