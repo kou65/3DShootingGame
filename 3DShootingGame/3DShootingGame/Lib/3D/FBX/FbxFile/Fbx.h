@@ -21,6 +21,20 @@ struct MaterialInfo {
 };
 
 
+struct FbxModuleModel {
+
+	// SDK全体を管理して各種オブジェクトの生成を行う
+	FbxManager * mp_manager;
+
+	// シーンの作成
+	FbxScene * mp_fbx_scene;
+
+	// インポーター
+	FbxImporter*mp_importer;
+
+};
+
+
 struct BoneData {
 
 	// とりあえず8ビット
@@ -29,9 +43,6 @@ struct BoneData {
 	// 姿勢オフセット行列
 	D3DXMATRIX offset;
 
-	// 初期ボーン行列
-	D3DXMATRIX bone_mat;
-
 	// 変換行列
 	D3DXMATRIX transform;
 };
@@ -39,8 +50,6 @@ struct BoneData {
 
 struct MotionData {
 
-	MotionData() {
-	}
 
 	// フレーム数
 	UINT frame_num;
@@ -53,13 +62,13 @@ struct MotionData {
 struct FbxMeshData {
 
 	FbxMeshData() {
-		//fvf = FVF_FBX;
-		//primType = D3DPT_TRIANGLELIST;
-		//primNum = 0;
-		//vertexNum = 0;
-		//vertexStride = 0;
-		//indexNum = 0;
-		//materialIndex = 0;
+		fvf = FVF_FBX;
+		prim_type = D3DPT_TRIANGLELIST;
+		prim_num = 0;
+		vertex_num = 0;
+		vertex_stride = 0;
+		index_num = 0;
+		material_index = 0;
 	}
 
 	
@@ -73,12 +82,12 @@ struct FbxMeshData {
 	MaterialInfo material_info;
 
 	UINT				fvf;			// フォーマット
-	D3DPRIMITIVETYPE	primType;		// プリミティブの描画方法
-	UINT				primNum;		// プリミティブ数
-	UINT				vertexNum;		// 頂点数
-	UINT				vertexStride;	// 1頂点辺りのサイズ
-	UINT				indexNum;		// インデックス数
-	UINT				materialIndex;	// マテリアル番号
+	D3DPRIMITIVETYPE	prim_type;		// プリミティブの描画方法
+	UINT				prim_num;		// プリミティブ数
+	UINT				vertex_num;		// 頂点数
+	UINT				vertex_stride;	// 1頂点辺りのサイズ
+	UINT				index_num;		// インデックス数
+	UINT				material_index;	// マテリアル番号
 };
 
 
@@ -108,7 +117,7 @@ public:
 	~Fbx() {
 
 		// マネージャの破壊
-		mp_manager->Destroy();
+		m_fbx_mod.mp_manager->Destroy();
 	}
 	
 	// 読み込み
@@ -120,7 +129,8 @@ public:
 	// アニメーション更新
 	void Animate(
 		float sec = 1.0f / 60.0f,
-		float reset_frame = 0.f);
+		float reset_frame = 0.f
+	);
 
 	// モーション情報をセットする
 	void SetMotion(std::string name = "default");
@@ -173,7 +183,6 @@ private:
 	// マテリアル読み込み
 	void LoadMaterial(
 		std::vector<FbxMeshData>&p_vertex_data_list,
-		FbxNode*p_node,
 		FbxMesh*p_mesh
 	);
 
@@ -187,6 +196,12 @@ private:
 	bool LoadColor(
 		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxMesh*p_mesh
+	);
+
+	// エントリのマテリアルテクスチャを読み込む
+	void LoadEntryTexture(
+		FbxMesh*p_mesh,
+		MaterialInfo*p_material_info
 	);
 
 private:
@@ -244,6 +259,9 @@ private:
 	// 相対パス(CP932) → 絶対パス(UTF-8)
 	std::string GetUTF8Path(const std::string& path);
 
+	// カレントパスの読み込み
+	void LoadCurrentPath(const std::string &path_name);
+
 	// ポリゴンを3つに分割する
 	void Polygon3Convert();
 
@@ -272,25 +290,22 @@ private:
 		D3DXVECTOR3 &rot,
 		D3DXVECTOR3 &scale);
 
+
+	FbxAMatrix GetGeometry(FbxNode* pNode);
+
 private:
 
-	// SDK全体を管理して各種オブジェクトの生成を行う
-	FbxManager * mp_manager;
-
-	// シーンの作成
-	FbxScene * mp_fbx_scene;
-
-	// インポーター
-	FbxImporter*mp_importer;
-
+	// fbxsdk部品
+	FbxModuleModel m_fbx_mod;
+	
 	// メッシュの数
 	UINT m_mesh_num;
 
 	// カスタムバーテックスの配列
 	std::vector<FbxMeshData>m_mesh_data_list;
 
-	// ルートパス
-	char m_root_path[MAX_PATH];
+	// カレントパス
+	std::string m_current_path;
 
 	// グラフィックス
 	Graphics * mp_graphics;
@@ -337,4 +352,10 @@ private:
 
 	// ワールド行列配列
 	std::vector<D3DXMATRIX>m_mat_trans_list;
+
+	// クラスター数
+	int m_cluster_num;
+
+	// ずらし行列リスト
+	std::vector<FbxMatrix>m_glo_bone_mat_list;
 };
