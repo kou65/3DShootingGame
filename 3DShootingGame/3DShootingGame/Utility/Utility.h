@@ -11,4 +11,10 @@ namespace Utility {
 		const std::string &string
 	);
 
+	void SplitStr(
+		char *m_root_path,
+		const char*file_path,
+		char split_str
+	);
+
 }

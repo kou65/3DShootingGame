@@ -36,8 +36,6 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 bool IndexBuffer::OpenBuffer(void**p_custom_vertex) {
 
 
-	WORD * buffer;
-
 	if (FAILED(m_p_index_buffer9->Lock(
 		// ロックしたい位置をバイト単位で指定する
 		0,
@@ -52,6 +50,8 @@ bool IndexBuffer::OpenBuffer(void**p_custom_vertex) {
 		) {
 		return false;
 	}
+
+	return true;
 }
 
 // バッファを閉じる
@@ -65,6 +65,8 @@ bool IndexBuffer::CloseBuffer() {
 
 	// アンロック
 	m_p_index_buffer9->Unlock();
+
+	return true;
 }
 
 

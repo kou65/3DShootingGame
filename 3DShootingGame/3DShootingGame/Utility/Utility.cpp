@@ -1,4 +1,5 @@
 ﻿#include"Utility.h"
+#include<stdio.h>
 
 
 
@@ -46,6 +47,31 @@ namespace Utility {
 		}
 
 		return out_string_list;
+	}
+
+
+	void SplitStr(
+		char *m_root_path,
+		const char*file_path,
+		char split_str = '/'
+	) {
+
+		int str_num = (int)strlen(file_path);
+		str_num *= 2;
+
+		strcpy_s(
+			m_root_path,
+			str_num,
+			file_path
+		);
+
+		size_t i;
+		for (i = strlen(m_root_path); 0 < i; i--)
+		{
+			if (m_root_path[i] == split_str) break;
+		}
+		m_root_path[i] = '\0';
+
 	}
 
 }

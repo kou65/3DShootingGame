@@ -7,6 +7,7 @@
 #include"../../AnimationCustomVertex/AnimationCustomVertex.h"
 #include"../../../Graphics/Graphics.h"
 #include"../../../Texture/TextureData2D/TextureData2D.h"
+#include"../../Model/Model.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
 #pragma comment(lib,"libfbxsdk-md.lib")
@@ -48,8 +49,22 @@ struct BoneData {
 };
 
 
-struct MotionData {
+struct WeightData {
 
+	WeightData() {
+		weight = 0.f;
+		weight_index = 0;
+	}
+
+	// 重み
+	float weight;
+
+	// 重みを与えるインデックス
+	int weight_index;
+};
+
+
+struct MotionData {
 
 	// フレーム数
 	UINT frame_num;
@@ -73,10 +88,10 @@ struct FbxMeshData {
 
 	
 	// インデックスバッファ
-	IDirect3DIndexBuffer9 * index_buffer;
+	IDirect3DIndexBuffer9 * p_index_buffer;
 
 	// バーテックスバッファ
-	IDirect3DVertexBuffer9 * vertex_buffer;
+	IDirect3DVertexBuffer9 * p_vertex_buffer;
 
 	// マテリアル配列
 	MaterialInfo material_info;
@@ -91,7 +106,7 @@ struct FbxMeshData {
 };
 
 
-class Fbx {
+class Fbx : public Model{
 public:
 
 	enum NodeType {
@@ -212,7 +227,7 @@ private:
 	);
 
 	// アニメーションをセット
-	void SetAnimation(int anim_num);
+	void LoadMotion(int anim_num);
 
 	// 読み込みアニメーションフレーム姿勢
 	void LoadAnimFrameAttitudeMatrix(
@@ -242,10 +257,6 @@ private:
 		int bone,
 		FbxNode*p_bone_node);
 
-	// モーション読み込み
-	void LoadMotion(
-		FbxScene*p_scene
-	);
 
 	// ボーン検索
 	int FindBone(const char*p_name);
@@ -253,7 +264,11 @@ private:
 	// 姿勢すきにんぐ
 	void AttitudeSkinning();
 
-	void RootNodeSample();
+	void LoadWeight(
+		FbxCluster*current_cluster,
+		FbxMesh*p_mesh,
+		std::vector<WeightData>&weight_data_list
+	);
 
 private:
 
@@ -273,27 +288,22 @@ private:
 		FbxMatrix&fbx_mat
 	);
 
-	// インデックスバッファ生成
-	bool IndexBufferCreate(
-		int total_face_num,
-		std::vector<INT>indices,
-		LPDIRECT3DINDEXBUFFER9 * buffer
-	);
-
-	// 頂点バッファ生成
-	bool VertexBufferCreate(
-		int total_vertex,
-		LPDIRECT3DVERTEXBUFFER9 * p_vertex_buffer
-	);
-
-	// ワールド座標変換
-	D3DXMATRIX WorldTransform(
-		D3DXVECTOR3 &pos,
-		D3DXVECTOR3 &rot,
-		D3DXVECTOR3 &scale);
-
 
 	FbxAMatrix GetGeometry(FbxNode* pNode);
+
+	
+	void FbxMatLConvert(
+		FbxMatrix&out_fbx_mat
+	);
+
+	void FbxMatLConvert(
+		FbxAMatrix&out_fbx_mat
+	);
+
+	void FbxMatToFbxVec4Convert(
+		const FbxMatrix&fbx_mat,
+		FbxVector4&out_fbx_vec4
+	);
 
 private:
 
@@ -315,6 +325,8 @@ private:
 	// 頂点配列
 	std::vector<AnimationCustomVertex*>m_p_vertics;
 
+	// ルートパス
+	char m_root_path[MAX_PATH];
 
 	/* アニメーション関連 */
 	
@@ -322,7 +334,7 @@ private:
 	std::string m_motion_name;
 
 	// フレーム
-	float m_frame;
+	float m_current_frame;
 
 	// 最初のフレーム
 	int m_start_frame;
@@ -346,11 +358,10 @@ private:
 	// ボーンデータ配列2
 	BoneData m_bone_data_list2[BONE_MAX];
 
-	// 重み
-	std::vector<float>m_weight_list;
+	std::vector<std::vector<WeightData>>m_weight_data_list;
 
-	// 重みを与えるインデックス
-	std::vector<int>m_weight_index_list;
+	// ずらし行列リスト
+	std::vector<std::vector<FbxMatrix>>m_glo_bone_mat_list;
 
 	// ワールド行列配列
 	std::vector<D3DXMATRIX>m_mat_trans_list;
@@ -358,6 +369,4 @@ private:
 	// クラスター数
 	int m_cluster_num;
 
-	// ずらし行列リスト
-	std::vector<FbxMatrix>m_glo_bone_mat_list;
 };
