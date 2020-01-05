@@ -263,6 +263,8 @@ public:
 	);
 
 
+	void SetUpSurface9();
+
 private:
 
 	/**
@@ -289,7 +291,7 @@ private:
 	IDirect3DDevice9 *m_p_d3d_device9;     
 
 	//! 環境を設定するためのインターフェース
-	IDirect3D9 *m_p_direct3d9;	         
+	IDirect3D9 *m_p_direct3d9;	     
 
 	//! グラフィックス設定用
 	D3DPRESENT_PARAMETERS m_d3d_pp = {};   

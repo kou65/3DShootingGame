@@ -70,7 +70,7 @@ bool Graphics::Init(
 	m_d3d_pp.Windowed = windowed;
 	// 深度ステンシルバッファがあるかどうか
 	m_d3d_pp.EnableAutoDepthStencil = TRUE;
-	// ステンシルバッファのフォーマット
+	// 深度バッファフォーマット
 	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	// バックバッファからフロントバッファへ転送時のオプション
 	m_d3d_pp.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
@@ -78,7 +78,6 @@ bool Graphics::Init(
 	m_d3d_pp.FullScreen_RefreshRateInHz = 0;
 	// スワップエフェクトの書き換えタイミング
 	m_d3d_pp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-
 
 	// デバイスの作成
 	m_p_direct3d9->CreateDevice(
@@ -106,6 +105,9 @@ bool Graphics::Init(
 		// エラーを返す
 		return false;
 	}
+
+	// 深度バッファ変更
+	//m_p_d3d_device9->SetDepthStencilSurface();
 
 	// 正常終了
 	return true;
@@ -483,4 +485,72 @@ void Graphics::UnlockVertexBuffer(
 	LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer
 ) {
 	(*p_vertex_buffer)->Unlock();
+}
+
+
+void Graphics::SetUpSurface9() {
+
+	// 深度バッファの幅と高さを取得
+	UINT width;
+	UINT height;
+
+	IDirect3DSurface9*p_suf;
+	D3DSURFACE_DESC suf_desc;
+
+	// 深度バッファサーフェイスを取得
+	m_p_d3d_device9->GetDepthStencilSurface(&p_suf);
+
+	// サーフェイス情報取得
+	p_suf->GetDesc(&suf_desc);
+
+	width = suf_desc.Width;
+	height = suf_desc.Height;
+
+	// 解放を忘れない
+	p_suf->Release();
+
+	IDirect3DTexture9*p_tex;
+
+	// Zテクスチャの作成
+	D3DXCreateTexture(
+		m_p_d3d_device9,
+		width,
+		height,
+		// ミップマップレベルは必ず1に指定
+		1,
+		D3DUSAGE_RENDERTARGET,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_DEFAULT,
+		&p_tex
+	);
+
+	IDirect3DSurface9 * p_z_buffer_surf;
+
+	// テクスチャサイズが2のべき乗になっていないか注意
+
+	// Zテクスチャと同じ大きさを持つ深度バッファを新規に作成する必要がある
+	m_p_d3d_device9->CreateDepthStencilSurface(
+		// Zテクスチャの実質のサイズ
+		width,
+		height,
+
+		D3DFMT_D16,
+		D3DMULTISAMPLE_NONE,
+		0,
+		FALSE,
+		// もう一度受け取る
+		&p_z_buffer_surf,
+		NULL
+	);
+
+	IDirect3DSurface9 * p_dev_back_surf;
+	IDirect3DSurface9 * p_dev_z_buf;
+
+	// レンダリングターゲットを切り替える
+	m_p_d3d_device9->GetRenderTarget(0, &p_dev_back_surf);
+
+	m_p_d3d_device9->SetRenderTarget(0, p_z_buffer_surf);
+
+	// エフェクトを作成
+	
 }

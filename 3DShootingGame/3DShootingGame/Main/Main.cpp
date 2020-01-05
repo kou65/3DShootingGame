@@ -14,7 +14,11 @@
 
 
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(
+	_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE, 
+	_In_ LPSTR, 
+	_In_ int) {
 
 
 	// ライブラリの初期化
@@ -66,7 +70,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		game.Update(st);
 
 		// アニメーション更新
-		Fbx::GetInstance()->Animate(1.f);
+		Fbx::GetInstance()->Animate(1.f,-74.f);
 		
 		TextureData td = TextureManager::GetInstance()->GetTextureData("taiki_tex");
 

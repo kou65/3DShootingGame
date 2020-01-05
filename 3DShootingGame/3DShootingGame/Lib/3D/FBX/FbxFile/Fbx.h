@@ -61,6 +61,9 @@ struct WeightData {
 
 	// 重みを与えるインデックス
 	int weight_index;
+
+	// クラスターで受け取った行列
+	D3DXMATRIX base_mat;
 };
 
 
@@ -103,13 +106,14 @@ struct FbxMeshData {
 	UINT				vertex_stride;	// 1頂点辺りのサイズ
 	UINT				index_num;		// インデックス数
 	UINT				material_index;	// マテリアル番号
+	std::string			mesh_node_name;      // メッシュ名
 };
 
 
 class Fbx : public Model{
 public:
 
-	enum NodeType {
+	enum class NodeType {
 		NONE,
 		MESH,
 		TOTAL,
@@ -150,6 +154,10 @@ public:
 	// モーション情報をセットする
 	void SetMotion(std::string name = "default");
 
+	void LoadMotion(
+		std::string name,
+		const char* pFilename);
+
 	// FBX関連削除
 	void Release();
 
@@ -157,6 +165,8 @@ private:
 	// ノードの種類を調べる
 	NodeType SerchNodeType(FbxNode*fbx_node);
 
+	// ノード探査
+	void SerchNodeAttributes(FbxNode*p_parent_node);
 
 private:
 
@@ -164,11 +174,17 @@ private:
 
 	// メッシュ読み込み
 	void LoadMesh();
+	void LoadSkeleton();
 
 	// インデックス読み込み
 	void LoadIndeces(
 		std::vector<FbxMeshData>&mp_vertex_data_list,
 		FbxMesh*p_mesh
+	);
+
+	void LoadIndeces2(
+		std::vector<FbxMeshData>& mp_vertex_data_list,
+		FbxMesh* p_mesh
 	);
 
 	// 頂点読み込み
@@ -227,12 +243,13 @@ private:
 	);
 
 	// アニメーションをセット
-	void LoadMotion(int anim_num);
+	void LoadDefaultMotion(int anim_num);
 
 	// 読み込みアニメーションフレーム姿勢
 	void LoadAnimFrameAttitudeMatrix(
 		D3DXMATRIX*p_out_mat,
-		FbxMesh*p_mesh,
+		FbxMesh*p_current_mesh,
+		FbxCluster*p_current_cluster,
 		float frame
 	);
 
@@ -245,12 +262,10 @@ private:
 
 	void LoadModelInfo(
 		FbxMeshData*p_fbx_mesh_data,
-		FbxMesh*p_mesh
+		FbxMesh*p_mesh,
+		std::vector<D3DXMATRIX>&glo_bone_mat_list
 	);
 
-	void LoadLocalMatrix(
-		FbxMesh*p_mesh
-	);
 
 	void LoadKeyFrame(
 		std::string name,
@@ -270,6 +285,10 @@ private:
 		std::vector<WeightData>&weight_data_list
 	);
 
+	void AnimationSkinning();
+
+	void PracSkinning();
+	
 private:
 
 
@@ -279,15 +298,18 @@ private:
 	// カレントパスの読み込み
 	void LoadCurrentPath(const std::string &path_name);
 
-	// ポリゴンを3つに分割する
-	void Polygon3Convert();
+	// Fbx関数でポリゴンを3つに分割する
+	void FbxPolygon3Convert();
+
+	// ポリゴン4を3にする
+	std::vector<INT> Fbx::Polygon4ToPolygon3Convert(
+		const std::vector<INT>& vertex4_polygon_list);
 
 	// fbx行列をDirectXの行列に変換
 	void FbxMatConvertD3DMat(
 		D3DXMATRIX*p_out_mat,
 		FbxMatrix&fbx_mat
 	);
-
 
 	FbxAMatrix GetGeometry(FbxNode* pNode);
 
@@ -328,13 +350,17 @@ private:
 	// ルートパス
 	char m_root_path[MAX_PATH];
 
+	// インデックスリスト
+	// メッシュ > インデックス
+	std::vector<std::vector<int>>m_indeces;
+
 	/* アニメーション関連 */
 	
 	// モーション名
 	std::string m_motion_name;
 
 	// フレーム
-	float m_current_frame;
+	double m_current_frame;
 
 	// 最初のフレーム
 	int m_start_frame;
@@ -348,25 +374,23 @@ private:
 	// ボーン数
 	int m_bone_num;
 
-	// ワールド座標行列
-	std::vector<std::vector<D3DXVECTOR3>>m_world_trans_list;
-
 	// ボーンデータ配列
 	BoneData m_bone_data_list[BONE_MAX];
 
-	// 二つ目のやり方
-	// ボーンデータ配列2
-	BoneData m_bone_data_list2[BONE_MAX];
-
-	std::vector<std::vector<WeightData>>m_weight_data_list;
+	// メッシュ > クラスター > 重み
+	std::vector<std::vector<
+		std::vector<WeightData>>>m_weight_data_list;
 
 	// ずらし行列リスト
-	std::vector<std::vector<FbxMatrix>>m_glo_bone_mat_list;
+	// メッシュ > クラスター > 変換行列
+	std::vector<std::vector
+		<D3DXMATRIX>>m_glo_bone_mat_list;
 
-	// ワールド行列配列
-	std::vector<D3DXMATRIX>m_mat_trans_list;
+	// メッシュ > 頂点数分 > 行列
+	std::vector<std::vector<D3DXMATRIX>>m_trans_bone_list;
 
-	// クラスター数
-	int m_cluster_num;
+	// アニメーションモデル行列
+	std::vector<std::vector<FbxMatrix>>m_fbx_anim_mat_list;
 
+	std::vector<std::vector<int>>m_weight_index_list;
 };
