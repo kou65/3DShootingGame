@@ -187,3 +187,43 @@ void MatrixMultipleVec3(
 			+ 1 * mat._43);
 
 }
+
+
+// ポリゴン4を3にする
+std::vector<INT> Model::Polygon4ToPolygon3Convert(
+	const std::vector<INT>& vertex4_polygon_list) {
+
+
+	// 4面の場合は3面にする
+
+	// 面情報受け取り用
+	std::vector<INT>get_face_list;
+
+	// 2ポリゴン用意
+	const int POLYGON2 = 2;
+
+	// 代入する頂点(4つ分)
+	const int ENTRY_VERTEX_NUM[6] =
+	{
+		// 1面
+		0,1,3,
+		// 2面
+		3,1,2
+	};
+
+	// 頂点分回す
+	for (int j = 0; j < (3 * 2); j++) {
+
+		// 配列要素追加
+		get_face_list.emplace_back();
+
+		// 3頂点追加
+		get_face_list[j] = vertex4_polygon_list[ENTRY_VERTEX_NUM[j]];
+	}
+
+	// 3ポリを2個返す
+	return get_face_list;
+
+}
+
+

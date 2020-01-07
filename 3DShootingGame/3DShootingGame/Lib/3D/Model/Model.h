@@ -5,7 +5,7 @@
 
 
 class Model {
-public:
+protected:
 
 
 	// インデックスバッファ生成
@@ -27,4 +27,11 @@ public:
 		D3DXVECTOR3 &pos,
 		D3DXVECTOR3 &rot,
 		D3DXVECTOR3 &scale);
+
+
+	// ポリゴン4を3にする
+	std::vector<INT> Polygon4ToPolygon3Convert(
+		const std::vector<INT>& vertex4_polygon_list);
+
+
 };

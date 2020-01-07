@@ -41,6 +41,9 @@ int WINAPI WinMain(
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
 	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/CubePolygon4.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/cottage_fbx.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HandGun/Handgun_fbx_7.4_binary.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Character/StickFigurea.fbx");
