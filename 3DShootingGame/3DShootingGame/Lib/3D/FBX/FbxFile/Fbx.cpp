@@ -62,7 +62,8 @@ void Fbx::Draw(TextureData*td) {
 		Graphics::GetInstance()->GetLpDirect3DDevice9();
 
 	// 本チャン
-	AnimationSkinning();
+	//AnimationSkinning();
+	Skinning();
 
 	// メッシュインデックスを回す
 	for (UINT meshIdx = 0; meshIdx < m_mesh_num; meshIdx++)
@@ -280,6 +281,12 @@ void Fbx::LoadMesh() {
 		
 		// マテリアル情報
 		LoadMaterial(
+			m_mesh_data_list,
+			p_mesh
+		);
+
+		// ボーンモデルの読み込み
+		LoadModelInfo(
 			m_mesh_data_list,
 			p_mesh
 		);
@@ -557,7 +564,7 @@ void Fbx::LoadVertexInfo(
 		pVertices[v].uv.y = 0.0f;
 		
 		// 頂点カラー
-		pVertices[v].color = 0;
+		pVertices[v].color = 0xfffffff;
 	}
 
 	// アンロック
@@ -597,24 +604,33 @@ void Fbx::LoadUvInfo(
 
 	int uv_size = uv_sets.Size();
 
+	// バッファ書き込み
+	int* p_indeces;
+
+	// バッファをロックしてデータを書き込む
+	p_mesh_data->p_index_buffer->Lock(
+		0,
+		size,
+		(void**)&p_indeces,
+		0);
+	
 	for (int i = 0;
 		i <  uv_size;
 		i++) {
+	
+		// uv座標受け取り
+		FbxVector2& uv_set = uv_sets[i];
+	
+		// uvはインデックスに沿った物でないといけない
+		int index = p_indeces[i];
 
-		for (int j = 0; j < p_mesh->GetPolygonSize(i); j++) {
 
-			int index = p_mesh->GetPolygonVertex(i, j);
-
-			// uv座標受け取り
-			FbxVector2& uv_set = uv_sets[index];
-
-			// 右手系なので左手系にする
-			p_vertices[i * 3 + j].uv.x = (float)uv_set[0];
-			p_vertices[i * 3 + j].uv.y = (float)(1.f - uv_set[1]);
-		}
-		
+		p_vertices[index].uv.x = (float)uv_set[0];
+		// 右手系なので左手系にする
+		p_vertices[index].uv.y = (float)(1.f - uv_set[1]);
 	}
 
+	p_mesh_data->p_index_buffer->Unlock();
 	// アンロック
 	p_mesh_data->p_vertex_buffer->Unlock();
 }
@@ -645,7 +661,7 @@ void Fbx::LoadNormal(
 	// バッファをロックしてデータを書き込む
 	p_vertex_buffer->Lock(0, size, (void**)&p_vertices, 0);
 
-	for (int index = 0; index < p_mesh_data->vertex_num; index++) {
+	for (UINT index = 0; index < p_mesh_data->vertex_num; index++) {
 
 		FbxVector4&normal = normals[index];
 
@@ -1012,140 +1028,6 @@ void Fbx::SelectAnimation(
 }
 
 
-void Fbx::AttitudeSkinning() {
-
-	// モーションがないならば
-	if (m_motion.empty() == true) {
-		return;
-	}
-
-	MotionData * p_motion = &m_motion[m_motion_name];
-
-	// null
-	if (p_motion == nullptr) {
-		return;
-	}
-
-	// フレームがない
-	if (p_motion->frame_num < 0) {
-		return;
-	}
-
-	// フレーム受け取り
-	double frame = m_current_frame;
-
-	// 配列用変数
-	int f = (int)frame;
-
-	// 姿勢行列
-	D3DXMATRIX atti_mat;
-
-	// 行列初期化
-	D3DXMatrixIdentity(&atti_mat);
-	
-	// 頂点変形
-	for (UINT mesh_index = 0;
-		mesh_index < m_mesh_num;
-		mesh_index++) {
-
-		// メッシュを取得
-		FbxMesh * p_mesh = 
-			m_fbx_mod.mp_fbx_scene->GetSrcObject<FbxMesh>(mesh_index);
-
-
-		// メッシュデータ受け取り
-		FbxMeshData*p_mesh_data = &m_mesh_data_list[mesh_index];
-
-		// 頂点データ受け取り
-		AnimationCustomVertex*p_src_vertics = 
-			m_p_vertics[mesh_index];
-
-		// 頂点バッファのサイズ作成
-		UINT size =
-			(UINT)(p_mesh_data->vertex_num *
-				sizeof(AnimationCustomVertex));
-
-		// 頂点バッファを定義
-		AnimationCustomVertex * p_vertics;
-
-		// バッファをロックして書き込み可能にする
-		m_mesh_data_list[mesh_index].p_vertex_buffer->Lock(
-			0, size, (void**)&p_vertics, 0
-		);
-
-		D3DXMATRIX frame_mat[4];
-
-		// 頂点 * 逆行列 * 座標変換行列 * 初期行列(元に戻す行列)
-		for (int bn = 0; bn < 4; bn++) {
-			frame_mat[bn] = 
-				m_bone_data_list[bn].offset * 
-				atti_mat;
-		}
-
-		// 頂点全てアニメーションを行う
-		for (UINT v = 0; v < p_mesh_data->vertex_num; v++) {
-
-			// 頂点 * ボーン行列
-			// b = v番目の頂点の影響ボーン[n]
-			// 影響しないので戻る
-			if (p_vertics[v].weight[0] <= 0.f) {
-				continue;
-			}
-
-			// 一旦初期値にする
-			p_vertics[v].vertex.x = 0.f;
-			p_vertics[v].vertex.y = 0.f;
-			p_vertics[v].vertex.z = 0.f;
-
-			float weight = 0.f;
-
-			// 影響個数文ループ
-			for (int n = 0; n < 4; n++) {
-
-				weight = p_vertics[v].weight[n];
-
-				// ボーンインデックス
-				int b = (int)p_vertics[v].bone_index[n];
-
-				// 現在の頂点情報を位置として受け取る
-				float x = p_src_vertics[v].vertex.x;
-				float y = p_src_vertics[v].vertex.y;
-				float z = p_src_vertics[v].vertex.z;
-				
-				// 座標を影響力分移動
-				// 頂点x * 1行1列番目の行列...
-				p_vertics[v].vertex.x
-					+=
-					(x * frame_mat[b]._11
-						+ y * frame_mat[b]._21
-						+ z * frame_mat[b]._31
-						+ 1 * frame_mat[b]._41)
-					* weight;
-				
-				p_vertics[v].vertex.y
-					+=
-					(x * frame_mat[b]._12
-						+ y * frame_mat[b]._22
-						+ z * frame_mat[b]._32
-						+ 1 * frame_mat[b]._42)
-					* weight;
-				
-				p_vertics[v].vertex.z
-					+= (x * frame_mat[b]._13
-						+ y * frame_mat[b]._23
-						+ z * frame_mat[b]._33
-						+ 1 * frame_mat[b]._43)
-					* weight;
-
-			}
-		}
-
-		// アンロック、描画設定ok
-		p_mesh_data->p_vertex_buffer->Unlock();
-	}
-}
-
-
 
 void Fbx::LoadDefaultMotion(int anim_num) {
 
@@ -1320,55 +1202,19 @@ void Fbx::SerchNodeAttributes(FbxNode*p_parent_node) {
 
 void Fbx::FbxPolygon3Convert() {
 
-	//// メッシュを取得
-	//FbxMesh * p_mesh = 
-	//	m_fbx_mod.mp_fbx_scene->GetSrcObject<FbxMesh>(0);
-	//
-	//// 0番目のポリゴンの頂点数を取得
-	//
-	//int count = p_mesh->GetPolygonSize(0);
-	//
-	//// ポリゴンが4以上ならば
-	////if (count >= 4) {
-	//
-	//	fbxsdk::FbxGeometryConverter converter(m_fbx_mod.mp_manager);
-	//	// マテリアルと1メッシュ毎に分ける
-	//	converter.SplitMeshesPerMaterial(m_fbx_mod.mp_fbx_scene, true);
-	//	// 全てを三角形にする
-	//	converter.Triangulate(m_fbx_mod.mp_fbx_scene, true);
-	//
-	//	// 追加
-	//	converter.RemoveBadPolygonsFromMeshes(
-	//		m_fbx_mod.mp_fbx_scene
-	//	);
-	////}
+	fbxsdk::FbxGeometryConverter converter(m_fbx_mod.mp_manager);
+	// マテリアルと1メッシュ毎に分ける
+	converter.SplitMeshesPerMaterial(m_fbx_mod.mp_fbx_scene, true);
+	// 全てを三角形にする
+	converter.Triangulate(m_fbx_mod.mp_fbx_scene, true);
+	
+	// 追加
+	converter.RemoveBadPolygonsFromMeshes(
+		m_fbx_mod.mp_fbx_scene
+	);
 
-	FbxGeometryConverter geometryConverter(m_fbx_mod.mp_manager);
-	geometryConverter.Triangulate(m_fbx_mod.mp_fbx_scene, true);
-
-	FbxSystemUnit SceneSystemUnit = 
-		m_fbx_mod.mp_fbx_scene->GetGlobalSettings().GetSystemUnit();
-	if (SceneSystemUnit.GetScaleFactor() != 1.0f)
-	{
-		// シーンの単位をcmに設定する
-		FbxSystemUnit::cm.ConvertScene(m_fbx_mod.mp_fbx_scene);
-	}
 }
 
-
-
-int Fbx::FindBone(const char*p_name) {
-
-	for (INT bone_index = 0; bone_index < m_bone_num; bone_index++) {
-
-		// 文字列が一致しているならば
-		if (strcmp(m_bone_data_list[bone_index].name, p_name)) {
-			return (int)bone_index;
-		}
-	}
-
-	return -1;
-}
 
 
 void Fbx::LoadCurrentPath(const std::string &path_name) {
@@ -1393,7 +1239,7 @@ void Fbx::LoadKeyFrame(
 
 	// メモリ確保
 	MotionData * p_motion = &m_motion[name];
-	p_motion->key_list[bone].resize(p_motion->frame_num);
+	//p_motion->key_list[bone].resize(p_motion->frame_num);
 
 	// キーフレーム時間割り出し(0.016)
 	double time = (double)m_start_frame * (1.f / 60);
@@ -1416,8 +1262,8 @@ void Fbx::LoadKeyFrame(
 		FbxDouble * mat = (FbxDouble*)m;
 
 		for (int i = 0; i < 16; i++) {
-			p_motion->key_list[bone][f].m[i / 4][i % 4]
-				= (float)mat[i];
+			//p_motion->key_list[bone][f].m[i / 4][i % 4]
+			//	= (float)mat[i];
 		}
 
 		time += 1.0 / 60.0;
@@ -1460,13 +1306,13 @@ std::string Fbx::GetUTF8Path(const std::string& path)
 }
 
 
-FbxAMatrix Fbx::GetGeometry(FbxNode* pNode)
+FbxAMatrix Fbx::GetGeometry(FbxNode* p_mesh_node)
 {
-	const FbxVector4 lT = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-	const FbxVector4 lR = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
-	const FbxVector4 lS = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+	FbxVector4 t0 = p_mesh_node->GetGeometricTranslation(FbxNode::eSourcePivot);
+	FbxVector4 r0 = p_mesh_node->GetGeometricRotation(FbxNode::eSourcePivot);
+	FbxVector4 s0 = p_mesh_node->GetGeometricScaling(FbxNode::eSourcePivot);
 
-	return FbxAMatrix(lT, lR, lS);
+	return FbxAMatrix(t0, r0, s0);
 }
 
 
@@ -1535,15 +1381,15 @@ void Fbx::LoadMotion(
 	FbxNode* root = pScene->GetRootNode();
 
 	//	全ボーン読み込み
-	for (int b = 0; b < (int)m_bone_num; b++)
-	{
-		//	ボーンノード検索
-		FbxNode* pBone = root->FindChild(m_bone_data_list[b].name);
-		if (pBone == NULL) continue;
-
-		//	キーフレーム読み込み
-		LoadKeyFrame(name, b, pBone);
-	}
+	//for (int b = 0; b < (int)m_bone_num; b++)
+	//{
+	//	//	ボーンノード検索
+	//	FbxNode* pBone = root->FindChild(m_bone_data_list[b].name);
+	//	if (pBone == NULL) continue;
+	//
+	//	//	キーフレーム読み込み
+	//	LoadKeyFrame(name, b, pBone);
+	//}
 	//	解放
 	pScene->Destroy();
 	pManager->Destroy();
@@ -1571,19 +1417,6 @@ void Fbx::FbxMatLConvert(
 	out_fbx_mat.mData[1][0] *= -1;// _21
 	out_fbx_mat.mData[2][0] *= -1;// _31
 	out_fbx_mat.mData[3][0] *= -1;// _41
-}
-
-
-
-void Fbx::FbxMatToFbxVec4Convert(
-	const FbxMatrix&fbx_mat,
-	FbxVector4&out_fbx_vec4
-) {
-
-
-	out_fbx_vec4 = fbx_mat.MultNormalize(
-		out_fbx_vec4
-	);
 }
 
 
@@ -1622,7 +1455,6 @@ void Fbx::AnimationSkinning() {
 		FbxVector4 s0 = mesh_node->GetGeometricScaling(FbxNode::eSourcePivot);
 		FbxAMatrix geometryOffset = FbxAMatrix(t0, r0, s0);
 
-
 		// メッシュデータ受け取り
 		FbxMeshData* p_mesh_data = &m_mesh_data_list[mi];
 
@@ -1643,8 +1475,6 @@ void Fbx::AnimationSkinning() {
 			0, size, (void**)&vertices, 0
 		);
 
-
-
 		FbxMatrix init_mat;
 
 		init_mat.mData[0][0] = 0.f;
@@ -1661,24 +1491,28 @@ void Fbx::AnimationSkinning() {
 			init_mat
 		);
 
-
 		// スキンの数を取得
 		int defor_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
 
 		int weight_num = 0;
-		// ---- - Animation---- -
-			timeCount += FrameTime;
-			if (timeCount > stop) { 
-				timeCount = start; 
-			}
 
+		std::vector<FbxMatrix>mat_list;
+		std::vector<FbxMatrix>anim_mat_list;
+		std::vector<std::vector<double>>weight_list;
+		std::vector<std::vector<int>>weight_index_list;
+
+
+		timeCount += FrameTime;
+		if (timeCount > stop) {
+			timeCount = start;
+		}
 
 		// スキン分回す
 		for (int skin_num = 0; skin_num < defor_count; skin_num++) {
 
+
 			FbxSkin* skinDeformer = (FbxSkin*)
 				mesh->GetDeformer(skin_num, FbxDeformer::eSkin);
-
 
 			if (skinDeformer == nullptr) {
 				continue;
@@ -1733,21 +1567,22 @@ void Fbx::AnimationSkinning() {
 					clusterRelativeCurrentPositionInverse
 					* clusterRelativeInitPosition;
 
-				fanim_mat = vertexTransformMatrix;
+				// ボーン加算
+				total_bone_num++;
 
 				int control_point_indices_count = cluster->
 					GetControlPointIndicesCount();
 
-				// ボーン加算
-				total_bone_num++;
+				weight_list.emplace_back();
+				weight_index_list.emplace_back();
 
-				if (mi == 3) {
-					mi = 3;
-				}
+
+				// マトリックス追加
+				mat_list.emplace_back(vertexTransformMatrix);
+				
 
 				// <上で作った行列に各頂点毎の影響度(重み)
 				// を掛けてそれぞれに加算>
-				// ここでm_indecesに沿ったweightを作る
 				for (int cnt = 0;
 					cnt < control_point_indices_count;
 					cnt++) {
@@ -1759,53 +1594,368 @@ void Fbx::AnimationSkinning() {
 						GetControlPointWeights()[cnt];
 
 					// マトリックス変換
-					FbxMatrix influence = 
+					FbxMatrix influence =
 						vertexTransformMatrix * weight;
 
 					// 影響するインデックス行列
 					cluster_deformation[index] += influence;
 
+					// 重み
+					weight_list[clusterIndex].push_back(weight);
+
+					// 重みインデックス
+					weight_index_list[clusterIndex].push_back(index);
 				}
 			}
 		}
 
+		FbxSkin* skinDeformer = (FbxSkin*)
+			mesh->GetDeformer(0, FbxDeformer::eSkin);
 
-		// <最終的な頂点座標を計算しVERTEXに変換>
-		int count = mesh->GetControlPointsCount();
-
-		for (UINT cnt = 0;
-			cnt < count;
+		for (int cnt = 0;
+			cnt < skinDeformer->GetClusterCount();
 			cnt++) {
 
-			//int n_weight = new_weight_list[cnt];
+			for (UINT w = 0; w < weight_list[cnt].size(); w++) {
 
+				// 影響するインデックス受け取り
+				int w_idx = weight_index_list[cnt][w];
 
-			FbxVector4 pos = mesh->GetControlPointAt(
-				cnt
-			);
-
-			FbxVector4 out_vertex =
-				cluster_deformation[cnt]
-				.MultNormalize(pos);
-
-			float x = (FLOAT)out_vertex[0];
-			float y = (FLOAT)out_vertex[1];
-			float z = (FLOAT)out_vertex[2];
-
-			vertices[cnt].vertex.x = x;
-			vertices[cnt].vertex.y = y;
-			vertices[cnt].vertex.z = z;
+				vertices[w_idx].vertex.x = 0;
+				vertices[w_idx].vertex.y = 0;
+				vertices[w_idx].vertex.z = 0;
+			}
 		}
 
-		//for (int j = count; j < m_mesh_data_list[mi].vertex_num; j++) {
+		for (int cnt = 0;
+			cnt < skinDeformer->GetClusterCount();
+			cnt++) {
+
+
+			for (UINT w = 0; w < weight_list[cnt].size(); w++) {
+
+				// 影響するインデックス受け取り
+				int w_idx = weight_index_list[cnt][w];
+
+				// 位置の取得
+				FbxVector4 pos = mesh->GetControlPointAt(
+					w_idx
+				);
+
+				// new_mat
+				FbxMatrix new_mat = 
+					mat_list[cnt];
+
+				FbxVector4 out_vertex = 
+					new_mat.MultNormalize
+					(pos);
+
+				float x = (float)out_vertex[0];
+				float y = (float)out_vertex[1];
+				float z = (float)out_vertex[2];
+
+				float weight = (float)weight_list[cnt][w];
+
+				vertices[w_idx].vertex.x += x * weight;
+				vertices[w_idx].vertex.y += y * weight;
+				vertices[w_idx].vertex.z += z * weight;
+			}
+		}
+
+
+		//// <最終的な頂点座標を計算しVERTEXに変換>
+		//int count = mesh->GetControlPointsCount();
 		//
+		//for (int i = 0; i < count; i++) {
+		//
+		//	FbxVector4 pos = mesh->GetControlPointAt(
+		//		i
+		//	);
+		//
+		//	FbxVector4 out_vertex =
+		//		cluster_deformation[i].MultNormalize
+		//		(pos);
+		//
+		//	float x = (float)out_vertex[0];
+		//	float y = (float)out_vertex[1];
+		//	float z = (float)out_vertex[2];
+		//
+		//	vertices[i].vertex.x = x;
+		//	vertices[i].vertex.y = y;
+		//	vertices[i].vertex.z = z;
 		//}
 
 		m_mesh_data_list[mi].p_vertex_buffer->Unlock();
 	}
-
 }
 
+
+void Fbx::LoadModelInfo(
+	std::vector<FbxMeshData>& p_mesh_data_list,
+	FbxMesh* p_mesh
+) {
+
+	// ボーン姿勢行列の計算と受け取り
+	FbxNode* mesh_node = p_mesh->GetNode();
+
+	// メッシュでのgeo受け取り
+	FbxAMatrix geometryOffset = GetGeometry(m_fbx_mod.mp_fbx_scene->GetRootNode());
+
+	// スキンの数を取得
+	int defor_count = p_mesh->GetDeformerCount(FbxDeformer::eSkin);
+
+
+	FbxMeshData * data= &p_mesh_data_list.back();
+
+	int total_weight = 0;
+
+	// スキン分回す
+	for (int skin_num = 0; skin_num < defor_count; skin_num++) {
+
+		FbxSkin* skinDeformer = (FbxSkin*)
+			p_mesh->GetDeformer(skin_num, FbxDeformer::eSkin);
+
+		// スキンが受け取れていない場合
+		if (skinDeformer == nullptr) {
+			continue;
+		}
+
+		// クラスター数
+		int cluster_count = skinDeformer->
+			GetClusterCount();
+	
+
+		// <各クラスタから各頂点に影響を与えるための行列作成>
+		for (int ci = 0;
+			ci < cluster_count;
+			ci++) {
+
+			// <クラスタ(ボーン)の取り出し>
+			FbxCluster* cluster = skinDeformer->
+				GetCluster(ci);
+
+			// 行列
+			FbxAMatrix referenceGlobalInitPosition;
+			FbxAMatrix clusterGlobalInitPosition;
+			FbxMatrix clusterRelativeInitPosition;
+
+			cluster->GetTransformMatrix(referenceGlobalInitPosition);
+			referenceGlobalInitPosition *= geometryOffset;
+			cluster->GetTransformLinkMatrix(clusterGlobalInitPosition);
+
+			// クラスター位置
+			clusterRelativeInitPosition =
+				clusterGlobalInitPosition.Inverse() *
+				referenceGlobalInitPosition;
+
+			// ボーンリストに追加
+			p_mesh_data_list.back().bone_list.
+				emplace_back(clusterRelativeInitPosition);
+
+
+			// クラスタの追加
+			data->m_weight_index_list.emplace_back();
+			data->m_weight_list.emplace_back();
+
+			for (int i = 0; i < 
+				cluster->GetControlPointIndicesCount();
+				i++) {
+
+				double weight = cluster->
+					GetControlPointWeights()[i];
+
+				// 重み
+				data->
+				m_weight_list.back().push_back(weight);
+
+				int index = cluster->
+					GetControlPointIndices()[i];
+
+				// 重みインデックス
+				data->
+				m_weight_index_list.back().push_back(index);
+
+				total_weight++;
+			}
+		}
+	}
+
+	total_weight = total_weight;
+}
+
+
+void Fbx::LoadAnimationMatrix(
+	FbxMesh* mesh,
+	std::vector<FbxMatrix>& anim_mat_list
+) {
+
+	FbxNode* pNode = m_fbx_mod.mp_fbx_scene->GetRootNode();
+
+	// <移動、回転、拡大のための行列を作成>
+	FbxMatrix globalPosition = pNode->
+		EvaluateGlobalTransform(timeCount);
+
+	// メッシュノード
+	FbxNode* mesh_node = mesh->GetNode();
+
+	// スキンの数を取得
+	int defor_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
+
+	// スキン分回す
+	for (int skin_num = 0; skin_num < defor_count; skin_num++) {
+
+		FbxSkin* skinDeformer = (FbxSkin*)
+			mesh->GetDeformer(skin_num, FbxDeformer::eSkin);
+
+		// スキンが受け取れていない場合
+		if (skinDeformer == nullptr) {
+			continue;
+		}
+
+		// クラスター数
+		int cluster_count = skinDeformer->
+			GetClusterCount();
+
+		// <各クラスタから各頂点に影響を与えるための行列作成>
+		for (int ci = 0;
+			ci < cluster_count;
+			ci++) {
+
+			// <クラスタ(ボーン)の取り出し>
+			FbxCluster* cluster = skinDeformer->
+				GetCluster(ci);
+
+			// 行列
+			FbxMatrix clusterGlobalCurrentPosition;
+			FbxMatrix clusterRelativeCurrentPositionInverse;
+
+			clusterGlobalCurrentPosition =
+				cluster->GetLink()->
+				EvaluateGlobalTransform(timeCount);
+
+			clusterRelativeCurrentPositionInverse =
+				globalPosition.Inverse() *
+				clusterGlobalCurrentPosition;
+
+			anim_mat_list.emplace_back(clusterRelativeCurrentPositionInverse);
+		}
+	}
+}
+
+
+void Fbx::Skinning() {
+
+
+	std::vector<FbxMatrix>anim_list;
+
+
+	timeCount += FrameTime;
+	if (timeCount > stop) {
+		timeCount = start;
+	}
+
+
+	// 頂点変形
+	for (UINT mi = 0;
+		mi < m_mesh_num;
+		mi++) {
+
+		// メッシュデータ受け取り
+		FbxMeshData mesh_data = m_mesh_data_list[mi];
+
+		// メッシュを取得
+		FbxMesh* mesh = 
+			m_fbx_mod.mp_fbx_scene->GetSrcObject<FbxMesh>(mi);
+
+		anim_list.clear();
+
+		// アニメーション行列
+		LoadAnimationMatrix(mesh,anim_list);
+
+		// 頂点バッファを定義
+		AnimationCustomVertex* vertices;
+
+		// 頂点バッファのサイズ作成
+		UINT size =
+			(UINT)((mesh->GetControlPointsCount()) * 
+				sizeof(AnimationCustomVertex));
+
+		// バッファをロックして書き込み可能にする
+		m_mesh_data_list[mi].p_vertex_buffer->Lock(
+			0, 
+			size,
+			(void**)&vertices,
+			0
+		);
+
+
+		// スキン
+		FbxSkin* skinDeformer = (FbxSkin*)
+			mesh->GetDeformer(0, FbxDeformer::eSkin);
+
+
+		for (int cnt = 0;
+			cnt < skinDeformer->GetClusterCount();
+			cnt++) {
+		
+			for (UINT w = 0; 
+				w < mesh_data.m_weight_index_list[cnt].size();
+				w++) {
+
+				// 影響するインデックス受け取り
+				int w_idx = mesh_data.m_weight_index_list[cnt][w];
+		
+				vertices[w_idx].vertex.x = 0;
+				vertices[w_idx].vertex.y = 0;
+				vertices[w_idx].vertex.z = 0;
+			}
+		}
+
+		int count = skinDeformer->GetClusterCount();
+		
+		for (int cnt = 0;
+			cnt < count;
+			cnt++) {
+
+			// ボーン行列変換
+			FbxMatrix new_mat =
+				anim_list[cnt] *
+				m_mesh_data_list[mi].
+				bone_list[cnt];
+
+
+			for (UINT w = 0;
+				w < mesh_data.m_weight_index_list[cnt].size();
+				w++) {
+
+				// 影響するインデックス受け取り
+				int w_idx = mesh_data.m_weight_index_list[cnt][w];
+
+				FbxVector4 pos = mesh->GetControlPointAt(
+					w_idx
+				);
+
+				FbxVector4 out_vertex = 
+					new_mat.MultNormalize
+					(pos);
+
+				float x = (float)out_vertex[0];
+				float y = (float)out_vertex[1];
+				float z = (float)out_vertex[2];
+
+				float weight = 
+					(float)mesh_data.m_weight_list[cnt][w];
+
+				vertices[w_idx].vertex.x += x * weight;
+				vertices[w_idx].vertex.y += y * weight;
+				vertices[w_idx].vertex.z += z * weight;
+
+			}
+		}
+
+		m_mesh_data_list[mi].p_vertex_buffer->Unlock();
+	}
+}
 
 
 void Fbx::SetAnimation() {
@@ -1835,5 +1985,136 @@ void Fbx::SetAnimation() {
 		m_fbx_mod.mp_fbx_scene->GetGlobalSettings().GetTimeMode());
 
 	timeCount = start;
-
 }
+
+
+void Fbx::AttitudeSkinning() {
+
+	// モーションがないならば
+	if (m_motion.empty() == true) {
+		return;
+	}
+
+	MotionData* p_motion = &m_motion[m_motion_name];
+
+	if (p_motion == nullptr) {
+		return;
+	}
+	if (p_motion->frame_num < 0) {
+		return;
+	}
+	double frame = m_current_frame;
+
+	// 配列用変数
+	int f = (int)frame;
+
+	// 姿勢行列
+	D3DXMATRIX atti_mat;
+
+	// 行列初期化
+	D3DXMatrixIdentity(&atti_mat);
+
+	// 頂点変形
+	for (UINT mesh_index = 0;
+		mesh_index < m_mesh_num;
+		mesh_index++) {
+
+		// メッシュを取得
+		FbxMesh* p_mesh =
+			m_fbx_mod.mp_fbx_scene->GetSrcObject<FbxMesh>(mesh_index);
+
+
+		// メッシュデータ受け取り
+		FbxMeshData* p_mesh_data = &m_mesh_data_list[mesh_index];
+
+		// 頂点データ受け取り
+		AnimationCustomVertex* p_src_vertics =
+			m_p_vertics[mesh_index];
+
+		// 頂点バッファのサイズ作成
+		UINT size =
+			(UINT)(p_mesh_data->vertex_num *
+				sizeof(AnimationCustomVertex));
+
+		// 頂点バッファを定義
+		AnimationCustomVertex* p_vertics;
+
+		// バッファをロックして書き込み可能にする
+		m_mesh_data_list[mesh_index].p_vertex_buffer->Lock(
+			0, size, (void**)&p_vertics, 0
+		);
+
+		D3DXMATRIX frame_mat[4];
+
+		// 頂点 * 逆行列 * 座標変換行列 * 初期行列(元に戻す行列)
+		for (int bn = 0; bn < 4; bn++) {
+
+			frame_mat[bn] =
+				//m_bone_data_list[bn].offset *
+				atti_mat;
+		}
+
+		// 頂点全てアニメーションを行う
+		for (UINT v = 0; v < p_mesh_data->vertex_num; v++) {
+
+			// 頂点 * ボーン行列
+			// b = v番目の頂点の影響ボーン[n]
+			// 影響しないので戻る
+			if (p_vertics[v].weight[0] <= 0.f) {
+				continue;
+			}
+
+			// 一旦初期値にする
+			p_vertics[v].vertex.x = 0.f;
+			p_vertics[v].vertex.y = 0.f;
+			p_vertics[v].vertex.z = 0.f;
+
+			float weight = 0.f;
+
+			// 影響個数文ループ
+			for (int n = 0; n < 4; n++) {
+
+				weight = p_vertics[v].weight[n];
+
+				// ボーンインデックス
+				int b = (int)p_vertics[v].bone_index[n];
+
+				// 現在の頂点情報を位置として受け取る
+				float x = p_src_vertics[v].vertex.x;
+				float y = p_src_vertics[v].vertex.y;
+				float z = p_src_vertics[v].vertex.z;
+
+				// 座標を影響力分移動
+				// 頂点x * 1行1列番目の行列...
+				p_vertics[v].vertex.x
+					+=
+					(x * frame_mat[b]._11
+						+ y * frame_mat[b]._21
+						+ z * frame_mat[b]._31
+						+ 1 * frame_mat[b]._41)
+					* weight;
+
+				p_vertics[v].vertex.y
+					+=
+					(x * frame_mat[b]._12
+						+ y * frame_mat[b]._22
+						+ z * frame_mat[b]._32
+						+ 1 * frame_mat[b]._42)
+					* weight;
+
+				p_vertics[v].vertex.z
+					+= (x * frame_mat[b]._13
+						+ y * frame_mat[b]._23
+						+ z * frame_mat[b]._33
+						+ 1 * frame_mat[b]._43)
+					* weight;
+
+			}
+		}
+
+		// アンロック、描画設定ok
+		p_mesh_data->p_vertex_buffer->Unlock();
+	}
+}
+
+

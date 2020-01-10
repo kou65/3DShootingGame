@@ -38,14 +38,9 @@ struct FbxModuleModel {
 
 struct BoneData {
 
-	// とりあえず8ビット
-	char name[64];
+	std::string bone_name;
 
-	// 姿勢オフセット行列
-	D3DXMATRIX offset;
-
-	// 変換行列
-	D3DXMATRIX transform;
+	FbxMatrix bone_matrix;
 };
 
 
@@ -73,7 +68,7 @@ struct MotionData {
 	UINT frame_num;
 
 	// キーフレーム
-	std::vector<D3DXMATRIX>key_list[256];
+	std::vector<FbxMatrix>animation_matrix;
 };
 
 
@@ -97,10 +92,18 @@ struct FbxMeshData {
 	// マテリアル配列
 	MaterialInfo material_info;
 
-	UINT				polygon_num;	// ポリゴン数
-	UINT				vertex_num;		// 頂点数
-	UINT				index_num;		// インデックス数
-	std::string			mesh_node_name; // メッシュ名
+	UINT				 polygon_num;	 // ポリゴン数
+	UINT				 vertex_num;	 // 頂点数
+	UINT				 index_num;		 // インデックス数
+	std::string			 mesh_node_name; // メッシュ名
+	std::vector<FbxMatrix>bone_list;      // ボーン配列
+	std::vector<FbxMatrix>motion_list;   // モーション配列
+
+	// 影響数を保持
+	std::vector <std::vector<double>>m_weight_list;
+	// 影響インデックス
+	std::vector<std::vector<int>>m_weight_index_list;
+
 };
 
 
@@ -112,9 +115,6 @@ public:
 		MESH,
 		TOTAL,
 	};
-
-	static const int MOTION_MAX = 256;
-	static const int BONE_MAX = 256;
 
 public:
 
@@ -246,10 +246,6 @@ private:
 
 	void SetAnimation();
 
-
-	// ボーン検索
-	int FindBone(const char*p_name);
-
 	// 姿勢すきにんぐ
 	void AttitudeSkinning();
 
@@ -260,6 +256,18 @@ private:
 	);
 
 	void AnimationSkinning();
+
+	void LoadModelInfo(
+		std::vector<FbxMeshData>& p_vertex_data_list,
+		FbxMesh* p_mesh
+	);
+
+	void LoadAnimationMatrix(
+		FbxMesh* mesh,
+		std::vector<FbxMatrix>& anim_mat_list
+	);
+
+	void Skinning();
 	
 private:
 
@@ -291,11 +299,6 @@ private:
 		FbxAMatrix&out_fbx_mat
 	);
 
-	void FbxMatToFbxVec4Convert(
-		const FbxMatrix&fbx_mat,
-		FbxVector4&out_fbx_vec4
-	);
-
 private:
 
 	// fbxsdk部品
@@ -313,11 +316,8 @@ private:
 	// グラフィックス
 	Graphics * mp_graphics;
 
-	// 頂点配列
+	// 変更用頂点配列
 	std::vector<AnimationCustomVertex*>m_p_vertics;
-
-	// ルートパス
-	char m_root_path[MAX_PATH];
 
 	/* アニメーション関連 */
 	
@@ -339,9 +339,6 @@ private:
 	// ボーン数
 	int m_bone_num;
 
-	// ボーンデータ配列
-	BoneData m_bone_data_list[BONE_MAX];
-
-
 	FbxTime FrameTime, timeCount, start, stop;
+
 };
