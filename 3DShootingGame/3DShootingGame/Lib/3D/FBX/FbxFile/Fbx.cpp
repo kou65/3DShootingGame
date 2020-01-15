@@ -127,6 +127,7 @@ void Fbx::Draw(TextureData*td) {
 			&mate_info->material
 		);
 
+		// メッシュデータ
 		FbxMeshData* p_mesh_data = 
 			&m_mesh_data_list[meshIdx];
 		
@@ -666,9 +667,9 @@ void Fbx::LoadNormal(
 		FbxVector4&normal = normals[index];
 
 		// それぞれxyz代入
-		p_vertices[index].normal.x = -(float)normal[0];
-		p_vertices[index].normal.y = -(float)normal[1];
-		p_vertices[index].normal.z = -(float)normal[2];
+		p_vertices[index].normal.x = (float)normal[0];
+		p_vertices[index].normal.y = (float)normal[1];
+		p_vertices[index].normal.z = (float)normal[2];
 	}
 
 	p_vertex_buffer->Unlock();
@@ -1887,7 +1888,6 @@ void Fbx::Skinning() {
 			(void**)&vertices,
 			0
 		);
-
 
 		// スキン
 		FbxSkin* skinDeformer = (FbxSkin*)

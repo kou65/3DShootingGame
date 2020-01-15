@@ -1,4 +1,5 @@
 ﻿#include"Graphics.h"
+#include"../Com_ptr/Com_ptr.h"
 
 
 
@@ -151,7 +152,7 @@ void Graphics::PresentParametersConfig(
 	// 深度ステンシルバッファがあるかどうか
 	m_d3d_pp.EnableAutoDepthStencil = TRUE;
 	// ステンシルバッファのフォーマット
-	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D24S8;
+	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D24S8;// D3DFMT_D16フォーマットは深度バッファに対応しない
 	// バックバッファからフロントバッファへ転送時のオプション
 	m_d3d_pp.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 	// フルスクリーンでのリフレッシュレート
@@ -487,6 +488,11 @@ void Graphics::UnlockVertexBuffer(
 	(*p_vertex_buffer)->Unlock();
 }
 
+/*
+Zテクスチャを作成する理由は既存の深度バッファと
+Z値計算用深度バッファを分けて描画する為
+
+*/
 
 void Graphics::SetUpSurface9() {
 
@@ -552,5 +558,46 @@ void Graphics::SetUpSurface9() {
 	m_p_d3d_device9->SetRenderTarget(0, p_z_buffer_surf);
 
 	// エフェクトを作成
+	Com_ptr<ID3DXEffect>cpEffect;
+
+	// シェーダーファイル作成
+	D3DXCreateEffectFromFile(
+		m_p_d3d_device9,
+		TEXT("PixelShader.hlsl"),
+		NULL,
+		NULL,
+		D3DXSHADER_DEBUG,
+		NULL,
+		cpEffect.ToCreator(),
+		NULL
+	);
+
+	// エフェクト内のワールドビュー射影変換行列を設定
+	D3DXMATRIX mat, view, proj;
+
+	// プロジェクション
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DXToRadian(45),
+		640.f / 480.f,
+		20.f,
+		300.f
+	);
+
+	// ビュー
+	D3DXMatrixLookAtLH(
+		&view,
+		&D3DXVECTOR3(30, 20, 30),
+		&D3DXVECTOR3(0.f, 0.f, 0.f),
+		&D3DXVECTOR3(0.f, 1.f, 0.f)
+	);
+
+	D3DXMatrixIdentity(&mat);
+
+	// ワールドビュー射影行列作成
+	mat = mat * view * proj;
+
+	// ワールドビュー射影変換行列設定
+	cpEffect.GetPtr()->SetMatrix("matWorldViewProj", &mat);
 	
 }
