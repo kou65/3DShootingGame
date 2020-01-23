@@ -82,7 +82,9 @@ void FPS::DebugDraw(
 	}
 
 	// デバッグモードで表示
-	D3DFont::Draw(draw_pos.x,draw_pos.y,font_size, "FPS = %d",m_current_fps);
+	D3DFont::Draw(
+		draw_pos.x,draw_pos.y,font_size,
+		"FPS = %d",m_current_fps);
 
 	// コンソールで表示
 	//OutputDebugString("");

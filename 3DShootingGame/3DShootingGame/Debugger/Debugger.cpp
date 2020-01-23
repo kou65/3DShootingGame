@@ -85,7 +85,7 @@ void Debugger::Update() {
 
 	camera_3d->Update();
 
-	fps->FrameWait();
+	//fps->FrameWait();
 }
 
 
@@ -144,23 +144,13 @@ void Debugger::CameraRotation() {
 
 void Debugger::Draw() {
 
-
 	light->On();
 
 	camera_3d->TransformDraw();
 
 	fps->DebugDraw(Vec2(256.f,256.f),3000);
 
-	// ライトモードをファルスにする
-	//SetRenderStateFile::LightMode(FALSE);
-
-	// Xファイルの描画
-	//XFile::GetInstance()->Draw(
-	//	"Sample01.x",
-	//	camera_3d->GetPos()
-	//	);
-
-
+	
 	{
 		// 地面
 		Sprite3DData td(0.f, 0.f, 0.f, "ground");

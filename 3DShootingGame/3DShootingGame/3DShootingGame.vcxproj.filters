@@ -249,6 +249,12 @@
     <ClCompile Include="Lib\3D\ZTexture\ZTexture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\3D\AnimationCustomVertex\AnimationCustomVertex.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\EffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -416,11 +422,16 @@
     <ClInclude Include="Lib\3D\ZTexture\ZTexture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\EffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Lib\Sheader\PosSheader.hlsli" />
+    <FxCompile Include="Lib\Shader\PixelShader.hlsl" />
+    <FxCompile Include="effect.fx" />
+    <FxCompile Include="VertexBlend.fx" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Lib\Sheader\PixelShader.hlsl" />
+    <None Include="Lib\Shader\PosSheader.hlsli" />
   </ItemGroup>
 </Project>
