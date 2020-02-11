@@ -126,7 +126,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 
 
 	// VERTEX3Dの構造情報をDirectXへ通知。
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_2D);
+	Graphics::GetInstance()->GetDevice()->SetFVF(FVF_2D);
 
 	// テクスチャが存在するなら
 	if (TextureManager::GetInstance()->FindTexture(
@@ -134,7 +134,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 	) == true) {
 
 		// デバイスにそのまま渡すことができる。
-		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
+		Graphics::GetInstance()->GetDevice()->SetTexture(
 			0,
 			TextureManager::GetInstance()->GetTextureData(
 				data.texture_name));
@@ -142,7 +142,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 	}
 
 	// 図形を元にポリゴン作成
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->DrawPrimitiveUP(
+	Graphics::GetInstance()->GetDevice()->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN,
 		2,
 		custom_vertex,
@@ -150,7 +150,7 @@ void Sprite2DObject::BoardDraw(Sprite2DData&data) {
 	);
 
 	// テクスチャ設定リセット
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
+	Graphics::GetInstance()->GetDevice()->SetTexture(0, NULL);
 
 }
 

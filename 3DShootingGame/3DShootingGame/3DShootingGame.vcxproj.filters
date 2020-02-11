@@ -246,13 +246,22 @@
     <ClCompile Include="Lib\3D\FBX\FbxSample.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\3D\ZTexture\ZTexture.cpp">
+    <ClCompile Include="Lib\3D\SkinCustomVertex\SkinCustomVertex.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\3D\AnimationCustomVertex\AnimationCustomVertex.cpp">
+    <ClCompile Include="Lib\EffectFileShader\DepthShadowEffectFile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\EffectFile.cpp">
+    <ClCompile Include="Lib\EffectFileShader\EffectFileBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\VertexBlendEffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\ZTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\VertexDeclation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -407,29 +416,36 @@
     <ClInclude Include="Lib\Uv\UvGauge\UvGauge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\AnimationCustomVertex\AnimationCustomVertex.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\UV\UvSlider\UvSlider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Lib\3D\Model\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Com_ptr\Com_ptr.h">
+    <ClInclude Include="Lib\3D\SkinCustomVertex\SkinCustomVertex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\ZTexture\ZTexture.h">
+    <ClInclude Include="Lib\EffectFileShader\DepthShadowEffectFile.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\EffectFile.h">
+    <ClInclude Include="Lib\EffectFileShader\EffectFileBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\VertexBlendEffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\ZTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\VertexDeclation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Lib\Shader\PixelShader.hlsl" />
-    <FxCompile Include="effect.fx" />
     <FxCompile Include="VertexBlend.fx" />
+    <FxCompile Include="DepthShadow.fx" />
+    <FxCompile Include="ZTexture.fx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\Shader\PosSheader.hlsli" />

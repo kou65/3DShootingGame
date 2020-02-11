@@ -17,4 +17,8 @@ namespace Utility {
 		char split_str
 	);
 
+	std::string ValueToString(int num);
+	int StringToValue(const std::string &str);
+	int StringToValue(const char*str);
+
 }

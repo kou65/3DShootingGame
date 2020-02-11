@@ -26,7 +26,7 @@ bool XFile::Load(
 		// メッシュ作成用のオプションを指定
 		NULL,
 		// デバイス
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		// 基本未使用
 		NULL,
 		// マテリアル情報を指すポインタのアドレス
@@ -115,7 +115,7 @@ bool XFile::Load(
 
 void XFile::Draw(std::string mesh_name,const D3DXVECTOR3 &pos) {
 
-	LPDIRECT3DDEVICE9 device = Graphics::GetInstance()->GetLpDirect3DDevice9();
+	LPDIRECT3DDEVICE9 device = Graphics::GetInstance()->GetDevice();
 
 	D3DXMATRIX matrix_total;
 	D3DXMATRIX matrix_trans;

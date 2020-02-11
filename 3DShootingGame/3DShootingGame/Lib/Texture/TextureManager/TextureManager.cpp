@@ -51,7 +51,7 @@ void TextureManager::Load(
 	// EXバージョンの読み込み
 	result = D3DXCreateTextureFromFileEx(
 		// window_device
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		// ファイル名
 		file_name,
 		// 読み込むファイル幅
@@ -99,7 +99,7 @@ void TextureManager::LoadMultiple(
 	m_texture_data3D_list[texture_name]->texture_list.emplace_back();
 
 	result = D3DXCreateTextureFromFile(
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		file_name,
 		&m_texture_data3D_list[texture_name]->texture_list[texture_num]
 	);

@@ -9,6 +9,8 @@
 #include"../Lib/3D/IndexBuffer/IndexBuffer.h"
 #include"../Lib/3D/VertexBuffer/VertexBuffer.h"
 #include"../Lib/3D/OBJ/OBJFile.h"
+#include"../Lib/EffectFileShader/DepthShadowEffectFile.h"
+#include"../Lib/EffectFileShader/ZTexture.h"
 #include<string>
 
 
@@ -27,6 +29,13 @@ public:
 
 	// シングルトン設定
 	static Debugger&GetInstance();
+private:
+
+	void InitShader();
+
+	void ShadowDraw();
+
+	void ZTextureDraw();
 
 private:
 
@@ -40,20 +49,24 @@ private:
 
 private:
 
+	IDirect3DDevice9*m_p_device;
+
 	Light *light;
 
 	Camera3D *camera_3d;
-
-	D3DDefaultMesh d3d_mesh;
 
 	FPS *fps;
 
 	IndexBuffer *index_buffer;
 
-	bool m_is_program_stop;
-
 	int m_total_material_num;
 
-	// データ
 	Sprite2DData s2d;
+
+
+	DWORD dwMatNum, dwMatNum_Plate;
+	ID3DXMesh *cpMeshCube, *cpMeshPlate;
+	DepthShadowEffectFile m_d_effect;
+	ZTexture m_z_tex_effect;
+	IDirect3DTexture9*m_p_shadow_tex;
 };

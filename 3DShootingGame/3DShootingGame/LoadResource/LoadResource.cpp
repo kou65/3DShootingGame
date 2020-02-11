@@ -41,12 +41,25 @@ void LoadTexture() {
 	//);
 
 
-	//// オブジェクト読み込み
 	//ObjFile::GetInstance()->Load(
-	//	"Resource/3DModel/UH60/uh60.obj",
+	//	"Resource/3DModel/85-cottage_obj/cottage_obj.obj",
 	//	"1",
-	//	"Resource/3DModel/UH60/"
+	//	"Resource/3DModel/85-cottage_obj/"
 	//);
+
+	
+	//ObjFile::GetInstance()->Load(
+	//	"Resource/3DModel/deer/deer.obj",
+	//	"deer",
+	//	"Resource/3DModel/deer/"
+	//);
+
+
+	ObjFile::GetInstance()->Load(
+		"Resource/3DModel/untitled.obj",
+		"cube",
+		"Resource/3DModel/"
+	);
 }
 
 void LoadSound() {

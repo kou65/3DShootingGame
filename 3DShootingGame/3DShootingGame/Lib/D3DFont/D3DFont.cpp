@@ -29,11 +29,11 @@ namespace D3DFont {
 		HRESULT result;
 
 		// スプライト生成
-		D3DXCreateSprite(Graphics::GetInstance()->GetLpDirect3DDevice9(), &p_sprite);
+		D3DXCreateSprite(Graphics::GetInstance()->GetDevice(), &p_sprite);
 
 		// フォント生成
 		result = D3DXCreateFont(
-			Graphics::GetInstance()->GetLpDirect3DDevice9(),
+			Graphics::GetInstance()->GetDevice(),
 			// 高さ
 			16,
 			// 平均文字幅

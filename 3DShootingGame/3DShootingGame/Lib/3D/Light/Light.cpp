@@ -66,7 +66,7 @@ bool Light::On() {
 		return false;
 	}
 
-	LPDIRECT3DDEVICE9 device = graphics->GetLpDirect3DDevice9();
+	LPDIRECT3DDEVICE9 device = graphics->GetDevice();
 
 		device->SetLight(0, &m_light);
 		device->LightEnable(0, true);

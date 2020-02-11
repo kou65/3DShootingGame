@@ -13,7 +13,7 @@ void Sprite3DObject::BoardDraw(
 
 	// ライトオフ
 	SetRenderStateFile::LightMode(FALSE);
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_LIGHTING, NULL);
+	Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_LIGHTING, NULL);
 
 	// trueなら背面カリングモード無し
 	//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(
@@ -21,7 +21,7 @@ void Sprite3DObject::BoardDraw(
 	//	D3DCULL_CCW : D3DCULL_NONE
 	//);
 
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 
 	// 0.5fで中心にする。
@@ -101,26 +101,26 @@ void Sprite3DObject::BoardDraw(
 
 
 	// ワールド座標変換
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(D3DTS_WORLD,&matrix_world);
+	Graphics::GetInstance()->GetDevice()->SetTransform(D3DTS_WORLD,&matrix_world);
 
 	// どのように描画するか
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetFVF(FVF_3D);
+	Graphics::GetInstance()->GetDevice()->SetFVF(FVF_3D);
 
 	// テクスチャ描画しない
 	if (sprite_data.texture_name != NULL) {
 
 		// テクスチャをセット
-		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(
+		Graphics::GetInstance()->GetDevice()->SetTexture(
 			0,
 			TextureManager::GetInstance()->GetTextureData(
 			sprite_data.texture_name).p_texture_buffer);
 	}
 	else {
-		Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
+		Graphics::GetInstance()->GetDevice()->SetTexture(0, NULL);
 	}
 	
 	// プリミティブを形成(プリミティブの数は極力減らした方がいい)
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->
+	Graphics::GetInstance()->GetDevice()->
 		DrawPrimitiveUP(
 			D3DPT_TRIANGLELIST,
 			2,
@@ -129,14 +129,14 @@ void Sprite3DObject::BoardDraw(
 		);
 
 	// テクスチャ設定リセット
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTexture(0, NULL);
+	Graphics::GetInstance()->GetDevice()->SetTexture(0, NULL);
 
 	D3DXMATRIX init_matrix;
 
 	D3DXMatrixIdentity(&init_matrix);
 	
 	// ワールド座標初期化
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(D3DTS_WORLD,&init_matrix);
+	Graphics::GetInstance()->GetDevice()->SetTransform(D3DTS_WORLD,&init_matrix);
 }
 
 

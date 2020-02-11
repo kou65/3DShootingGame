@@ -147,7 +147,7 @@ public:
 	* @brief デバイスのゲッター
 	* @return LPDIRECT3DDEVICE9を返す
 	*/
-	LPDIRECT3DDEVICE9 GetLpDirect3DDevice9();
+	LPDIRECT3DDEVICE9 GetDevice();
 
 
 	/**
@@ -262,8 +262,12 @@ public:
 		LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer
 	);
 
+	/*
+	@brief 現在デバイスに設定されている変換行列を受け取る
+	@param[in] type x9が用意している変換行列定数 D3DTS_VIEWなど
+	*/
+	D3DXMATRIX GetTransformMatrix(const D3DTRANSFORMSTATETYPE&type);
 
-	void SetUpSurface9();
 
 private:
 

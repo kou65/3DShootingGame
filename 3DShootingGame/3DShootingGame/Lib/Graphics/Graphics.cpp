@@ -1,9 +1,8 @@
 ﻿#include"Graphics.h"
-#include"../Com_ptr/Com_ptr.h"
 
 
 
-LPDIRECT3DDEVICE9 Graphics::GetLpDirect3DDevice9() {
+LPDIRECT3DDEVICE9 Graphics::GetDevice() {
 	return m_p_d3d_device9;
 }
 
@@ -72,7 +71,7 @@ bool Graphics::Init(
 	// 深度ステンシルバッファがあるかどうか
 	m_d3d_pp.EnableAutoDepthStencil = TRUE;
 	// 深度バッファフォーマット
-	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D24S8;
+	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D16;
 	// バックバッファからフロントバッファへ転送時のオプション
 	m_d3d_pp.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 	// フルスクリーンでのリフレッシュレート
@@ -327,7 +326,7 @@ bool Graphics::CreateIndexBuffer16BitSize(
 	const int &index_size) {
 
 	// インデックスバッファ作成
-	GetLpDirect3DDevice9()->CreateIndexBuffer(
+	GetDevice()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
 		(index_size),
 		// 頂点バッファをどのように使用するか
@@ -391,7 +390,7 @@ bool Graphics::CreateIndexBuffer32BitSize(
 ) {
 
 	// インデックスバッファ作成
-	GetLpDirect3DDevice9()->CreateIndexBuffer(
+	GetDevice()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
 		(index_size),
 		// 頂点バッファをどのように使用するか
@@ -448,7 +447,7 @@ bool Graphics::CreateVertexBuffer9(
 ){
 
 	// 頂点バッファ作成
-	GetLpDirect3DDevice9()->CreateVertexBuffer(
+	GetDevice()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
 		buffer_size,
 		// リソースの使用法
@@ -488,116 +487,19 @@ void Graphics::UnlockVertexBuffer(
 	(*p_vertex_buffer)->Unlock();
 }
 
-/*
-Zテクスチャを作成する理由は既存の深度バッファと
-Z値計算用深度バッファを分けて描画する為
 
-*/
+D3DXMATRIX Graphics::GetTransformMatrix(
+	const D3DTRANSFORMSTATETYPE&type
+) {
 
-void Graphics::SetUpSurface9() {
+	D3DXMATRIX mat;
 
-	// 深度バッファの幅と高さを取得
-	UINT width;
-	UINT height;
+	HRESULT hr = m_p_d3d_device9
+		->GetTransform(type, &mat);
 
-	IDirect3DSurface9*p_suf;
-	D3DSURFACE_DESC suf_desc;
+	if (hr != S_OK) {
+		return mat;
+	}
 
-	// 深度バッファサーフェイスを取得
-	m_p_d3d_device9->GetDepthStencilSurface(&p_suf);
-
-	// サーフェイス情報取得
-	p_suf->GetDesc(&suf_desc);
-
-	width = suf_desc.Width;
-	height = suf_desc.Height;
-
-	// 解放を忘れない
-	p_suf->Release();
-
-	IDirect3DTexture9*p_tex;
-
-	// Zテクスチャの作成
-	D3DXCreateTexture(
-		m_p_d3d_device9,
-		width,
-		height,
-		// ミップマップレベルは必ず1に指定
-		1,
-		D3DUSAGE_RENDERTARGET,
-		D3DFMT_A8R8G8B8,
-		D3DPOOL_DEFAULT,
-		&p_tex
-	);
-
-	IDirect3DSurface9 * p_z_buffer_surf;
-
-	// テクスチャサイズが2のべき乗になっていないか注意
-
-	// Zテクスチャと同じ大きさを持つ深度バッファを新規に作成する必要がある
-	m_p_d3d_device9->CreateDepthStencilSurface(
-		// Zテクスチャの実質のサイズ
-		width,
-		height,
-
-		D3DFMT_D16,
-		D3DMULTISAMPLE_NONE,
-		0,
-		FALSE,
-		// もう一度受け取る
-		&p_z_buffer_surf,
-		NULL
-	);
-
-	IDirect3DSurface9 * p_dev_back_surf;
-	IDirect3DSurface9 * p_dev_z_buf;
-
-	// レンダリングターゲットを切り替える
-	m_p_d3d_device9->GetRenderTarget(0, &p_dev_back_surf);
-
-	m_p_d3d_device9->SetRenderTarget(0, p_z_buffer_surf);
-
-	// エフェクトを作成
-	Com_ptr<ID3DXEffect>cpEffect;
-
-	// シェーダーファイル作成
-	D3DXCreateEffectFromFile(
-		m_p_d3d_device9,
-		TEXT("PixelShader.hlsl"),
-		NULL,
-		NULL,
-		D3DXSHADER_DEBUG,
-		NULL,
-		cpEffect.ToCreator(),
-		NULL
-	);
-
-	// エフェクト内のワールドビュー射影変換行列を設定
-	D3DXMATRIX mat, view, proj;
-
-	// プロジェクション
-	D3DXMatrixPerspectiveFovLH(
-		&proj,
-		D3DXToRadian(45),
-		640.f / 480.f,
-		20.f,
-		300.f
-	);
-
-	// ビュー
-	D3DXMatrixLookAtLH(
-		&view,
-		&D3DXVECTOR3(30, 20, 30),
-		&D3DXVECTOR3(0.f, 0.f, 0.f),
-		&D3DXVECTOR3(0.f, 1.f, 0.f)
-	);
-
-	D3DXMatrixIdentity(&mat);
-
-	// ワールドビュー射影行列作成
-	mat = mat * view * proj;
-
-	// ワールドビュー射影変換行列設定
-	cpEffect.GetPtr()->SetMatrix("matWorldViewProj", &mat);
-	
+	return mat;
 }

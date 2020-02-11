@@ -45,13 +45,13 @@ void D3DDefaultMesh::Draw(const LPD3DXMESH &p_mesh,const D3DXVECTOR3 &pos) {
 		pos.z
 	);
 	
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetTransform(
+	Graphics::GetInstance()->GetDevice()->SetTransform(
 		D3DTS_WORLD,
 		&matrix_world
 		);
 
 	// マテリアルをセット
-	Graphics::GetInstance()->GetLpDirect3DDevice9()->SetMaterial(&material);
+	Graphics::GetInstance()->GetDevice()->SetMaterial(&material);
 
 	p_mesh->DrawSubset(0);
 }
@@ -60,7 +60,7 @@ void D3DDefaultMesh::Draw(const LPD3DXMESH &p_mesh,const D3DXVECTOR3 &pos) {
 void D3DDefaultMesh::CreateTeapot() {
 
 	D3DXCreateTeapot(
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		&m_p_teapot,
 		NULL
 	);
@@ -69,7 +69,7 @@ void D3DDefaultMesh::CreateTeapot() {
 
 void D3DDefaultMesh::CreateTorus() {
 	D3DXCreateTorus(
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		0.3f,
 		0.8f,
 		32,
@@ -82,7 +82,7 @@ void D3DDefaultMesh::CreateTorus() {
 
 void D3DDefaultMesh::CreateCone() {
 	D3DXCreateCylinder(
-		Graphics::GetInstance()->GetLpDirect3DDevice9(),
+		Graphics::GetInstance()->GetDevice(),
 		0.7f,
 		0.0f,
 		1.5f,

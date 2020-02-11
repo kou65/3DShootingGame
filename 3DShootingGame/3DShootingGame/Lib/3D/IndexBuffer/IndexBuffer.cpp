@@ -12,7 +12,7 @@ bool IndexBuffer::Create(DWORD polygon_num) {
 
 
 	// インデックスバッファ作成
-	graphics->GetLpDirect3DDevice9()->CreateIndexBuffer(
+	graphics->GetDevice()->CreateIndexBuffer(
 		// インデックスバッファのサイズをバイト単位で指定
 		polygon_num * sizeof(WORD) * TOTAL_VERTEX_TYPE,
 		// 頂点バッファをどのように使用するか
@@ -75,7 +75,7 @@ void IndexBuffer::Draw() {
 	// ワールド座標初期化
 	D3DXMATRIX mat;
 	D3DXMatrixIdentity(&mat);
-	graphics->GetInstance()->GetLpDirect3DDevice9()
+	graphics->GetInstance()->GetDevice()
 		->SetTransform(D3DTS_WORLD, &mat);
 
 
@@ -89,14 +89,14 @@ void IndexBuffer::Draw() {
 
 
 	// インデックス番号をデバイスに設定する
-	graphics->GetLpDirect3DDevice9()->SetIndices(
+	graphics->GetDevice()->SetIndices(
 		m_p_index_buffer9
 	);
 
 	// どの情報を伝えるか
-	graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
+	graphics->GetDevice()->SetFVF(FVF_CUSTOM);
 
-	graphics->GetLpDirect3DDevice9()->DrawIndexedPrimitive(
+	graphics->GetDevice()->DrawIndexedPrimitive(
 		// 頂点のつなぎ方
 		D3DPT_TRIANGLELIST,
 		// 頂点インデックスの一番最初までのオフセット値を指定

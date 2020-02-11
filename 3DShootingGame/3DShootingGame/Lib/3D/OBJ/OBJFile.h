@@ -6,6 +6,7 @@
 #include"../Object3DCustomVertex/MeshCustomVertex.h"
 #include<map>
 #include"../../../Utility/Utility.h"
+#include"../Model/Model.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -52,7 +53,7 @@ struct ObjFileData {
 
 
 
-class ObjFile {
+class ObjFile : public  Model{
 public:
 
 	static ObjFile *GetInstance(){
@@ -191,7 +192,4 @@ private:
 
 	// オブジェファイルリスト
 	std::map<std::string, ObjFileData*>m_obj_file_data;
-
-	// DirectGraphics
-	Graphics *m_p_graphics;
 };

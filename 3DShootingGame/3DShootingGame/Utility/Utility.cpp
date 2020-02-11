@@ -1,5 +1,6 @@
 ﻿#include"Utility.h"
 #include<stdio.h>
+#include<string>
 
 
 
@@ -72,6 +73,19 @@ namespace Utility {
 		}
 		m_root_path[i] = '\0';
 
+	}
+
+
+	std::string ValueToString(int num) {
+		return std::to_string(num);
+	}
+
+	int StringToValue(const std::string &str) {
+		return atoi(str.c_str());
+	}
+
+	int StringToValue(const char*str) {
+		return atoi(str);
 	}
 
 }

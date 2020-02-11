@@ -8,7 +8,7 @@
 
 
 
-ObjFile::ObjFile() {
+ObjFile::ObjFile() : Model(){
 
 	m_p_graphics = Graphics::GetInstance();
 }
@@ -43,7 +43,7 @@ void ObjFile::DrawSubSet(
 		// 移動
 		D3DXMatrixTranslation(&mat, pos_x, pos_y, pos_z);
 
-		m_p_graphics->GetInstance()->GetLpDirect3DDevice9()
+		m_p_graphics->GetInstance()->GetDevice()
 			->SetTransform(D3DTS_WORLD, &mat);
 
 		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
@@ -51,7 +51,7 @@ void ObjFile::DrawSubSet(
 		}
 
 		// ストリームをセット
-		m_p_graphics->GetLpDirect3DDevice9()->SetStreamSource(
+		m_p_graphics->GetDevice()->SetStreamSource(
 			0,
 			p_obj_file_data->m_p_vertex_buffer,
 			0,
@@ -73,19 +73,19 @@ void ObjFile::DrawSubSet(
 				);
 
 			// テクスチャセット
-			m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
+			m_p_graphics->GetDevice()->SetTexture(
 				0,
 				texture_data
 			);
 		}
 
 		// マテリアルをセット
-		m_p_graphics->GetLpDirect3DDevice9()->SetMaterial(
+		m_p_graphics->GetDevice()->SetMaterial(
 			&p_obj_file_data->m_material_data_list[material_name].material_color
 		);
 
 		// インデックス番号をデバイスに設定する
-		m_p_graphics->GetLpDirect3DDevice9()->SetIndices(
+		m_p_graphics->GetDevice()->SetIndices(
 			p_obj_file_data->m_p_index_buffer
 		);
 
@@ -110,10 +110,10 @@ void ObjFile::DrawSubSet(
 			m_object_sub_set_list[material_num].face_count;
 
 		// どの情報を伝えるか
-		m_p_graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
+		m_p_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
 
 		// インデックス描画
-		m_p_graphics->GetLpDirect3DDevice9()->DrawIndexedPrimitive(
+		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
 			// 頂点のつなぎ方
 			D3DPT_TRIANGLELIST,
 			// 頂点インデックスの一番最初までのオフセット値を指定
@@ -129,7 +129,7 @@ void ObjFile::DrawSubSet(
 		);
 
 		// セットテクスチャリセット
-		m_p_graphics->GetLpDirect3DDevice9()->SetTexture(
+		m_p_graphics->GetDevice()->SetTexture(
 			0,
 			NULL
 		);
@@ -480,18 +480,24 @@ void ObjFile::InsertFaceList(
 	
 		MeshCustomVertex mesh_vertex;
 
+
 		// 法線がない場合
-		if (face_info_str[1].size() == 2) {
-			subject_vertex = 1;
+		if (face_info_str[i].size() <= 2) {
+			subject_vertex = 3 - face_info_str[i].size();
 		}
 
 		// 軸分回す
 		for (int j = 0; j < 3 - subject_vertex; j++) {
 
+
 			// 頂点情報に変換する
 			Vector3ConversionByString(vertex_info[j],face_info_str[i][j]);
 
-			int id = vertex_info[j] - 1;
+			int id = 0;
+
+			if (vertex_info[j] != 0) {
+				id = vertex_info[j] - 1;
+			}
 
 			// 面情報へ代入
 			switch (j) {
@@ -501,11 +507,17 @@ void ObjFile::InsertFaceList(
 				break;
 
 			case UV:
-				mesh_vertex.uv = uv_list[id];
+
+				if (uv_list.size() > 0) {
+					mesh_vertex.uv = uv_list[id];
+				}
 				break;
 
 			case NORMAL:
-				mesh_vertex.normal = normal_list[id];
+
+				if (normal_list.size() > 0) {
+					mesh_vertex.normal = normal_list[id];
+				}
 				break;
 			}
 		}
@@ -817,7 +829,7 @@ void ObjFile::VertexBufferCreate(
 	ObjFileData*p_obj_file_data = m_obj_file_data[register_name];
 
 	// 頂点バッファ作成
-	m_p_graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
+	m_p_graphics->GetDevice()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
 		(sizeof(MeshCustomVertex) * vertex_num),
 		// リソースの使用法

@@ -23,7 +23,7 @@ VertexBuffer::VertexBuffer() {
 void VertexBuffer::Create(const UINT &buffer_size) {
 	
 	// 頂点バッファ作成
-	graphics->GetLpDirect3DDevice9()->CreateVertexBuffer(
+	graphics->GetDevice()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
 		buffer_size,
 		// リソースの使用法
@@ -74,16 +74,16 @@ void VertexBuffer::Draw() {
 	
 
 	// 頂点処理の流れに頂点バッファを実際にセットできる
-	graphics->GetLpDirect3DDevice9()->SetStreamSource(
+	graphics->GetDevice()->SetStreamSource(
 		0,
 		m_p_vertex_buffer9,
 		0,
 		sizeof(MeshCustomVertex)
 	);
 
-	graphics->GetLpDirect3DDevice9()->SetFVF(FVF_CUSTOM);
+	graphics->GetDevice()->SetFVF(FVF_CUSTOM);
 
-	graphics->GetLpDirect3DDevice9()->DrawPrimitive(
+	graphics->GetDevice()->DrawPrimitive(
 		D3DPT_TRIANGLESTRIP,
 		0,
 		2
