@@ -1,5 +1,5 @@
 ﻿#include"../LoadResource/LoadResource.h"
-#include"../SetRenderStateFile/SetRenderStateFile.h"
+#include"../RenderState/RenderState.h"
 #include"../Debugger/Debugger.h"
 #include"../Lib/DirectInput/DirectInput.h"
 #include"../Lib/Sound/Sound.h"
@@ -7,8 +7,8 @@
 #include"../Lib/FPS/FPS.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
 #include"../Lib/Lib/Lib.h"
-#include"../SceneManager/SceneManager.h"
-#include"../TitleScene/TitleScene.h"
+#include"../Scene/SceneManager/SceneManager.h"
+#include"../Scene/TitleScene/TitleScene.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 
 
@@ -30,10 +30,12 @@ int WINAPI WinMain(
 	Graphics::GetInstance()->SetClearBackGroundColor(0x0000ff);
 
 	// リソース読み込み
-	Resource::LoadResource();
+	LoadResources::Load();
 
 	// DirectX描画状態の設定
-	SetRenderStateFile::Init();
+	RenderState::AllOn();
+	RenderState::LightMode(false);
+	//RenderState::CullMode(false);
 
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
@@ -41,16 +43,17 @@ int WINAPI WinMain(
 	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/CubePolygon4.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/dragon.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan_WALK00_L.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan.fbx");
 
-	//SceneManager scene_manager(new TitleScene,TITLE);
-	GameScene game;
-	SceneType st;
+	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
 
+	// デバッグモード
+	bool is_debug_mode = false;
+
+	// ループ
 	while (Window::ProcessMessage() == true) {
 
 		// 終了処理
@@ -58,31 +61,51 @@ int WINAPI WinMain(
 			break;
 		}
 
+		// ジョイスティック更新
+		JoyStick::Update();
+
+		// キーボード更新
+		KeyBoard::Update();
+
 		// デバッグテスト
-		Debugger::GetInstance().Update();
+		if (is_debug_mode == true) {
 
-		game.Update(st);
+			Debugger::GetInstance().Update();
 
-		// アニメーション更新
-		Fbx::GetInstance()->Animate(5.f);
-		Fbx::GetInstance()->Update();
-		
-		TextureData td = TextureManager::GetInstance()->GetTextureData("taiki_tex");
+
+			// アニメーション更新
+			Fbx::GetInstance()->Animate(5.f);
+			Fbx::GetInstance()->Update();
+
+		}
+		else {
+
+			// シーンの更新
+			scene_manager.Update();
+		}
 
 		// 描画開始
 		if (Graphics::GetInstance()->DrawStart() == true) {
 
-			Fbx::GetInstance()->Draw();
-			// デバッグの描画
-			Debugger::GetInstance().Draw();
-			//game.Draw();
-		
+			if (is_debug_mode == true) {
+
+				Fbx::GetInstance()->Draw();
+
+				// デバッグの描画
+				Debugger::GetInstance().Draw();
+
+			}
+			else {
+				// シーンの描画
+				scene_manager.Draw();
+			}
 		}
 
 		// 描画終了
 		Graphics::GetInstance()->DrawEnd();
 	}
 
+	// 解放
 	Lib::Release();
 
 	return 0;

@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿
+
+#ifndef MESH_CUSTOM_VERTEX
+#define MESH_CUSTOM_VERTEX
+
 #include"../../Graphics/Graphics.h"
 
 
@@ -33,6 +37,7 @@ struct MeshCustomVertex {
 
 		position.x = position.y = position.z = 0.f;
 		normal.x = normal.y = normal.z = 0.f;
+		color = 0xfffffff;
 		uv.x = uv.y = 0.f;
 	}
 
@@ -40,6 +45,10 @@ struct MeshCustomVertex {
 	D3DXVECTOR3 position;
 	// 法線
 	D3DXVECTOR3 normal;
+	// 頂点カラー
+	DWORD color;
 	// テクスチャ座標
 	D3DXVECTOR2 uv;
 };
+
+#endif

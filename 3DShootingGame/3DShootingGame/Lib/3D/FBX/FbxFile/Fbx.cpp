@@ -5,15 +5,14 @@
 #include"../../../Graphics/Graphics.h"
 #include"../../VertexBuffer/VertexBuffer.h"
 #include"../../../D3DFont/D3DFont.h"
-#include<d3dcompiler.h>
 
 
 
-Fbx::Fbx() :
-	Model()
+
+Fbx::Fbx() : Model()
 {
 
-	m_is_shader = false;
+	m_is_shader = true;
 
 	m_is_skinning = true;
 
@@ -53,6 +52,7 @@ void Fbx::Update() {
 			CPUSkinning();
 		}
 	}
+	
 }
 
 
@@ -98,7 +98,7 @@ void Fbx::Draw(TextureData* td) {
 				}
 				else {
 
-					effect.SetTexture(
+					m_effect.SetTexture(
 						TextureManager::GetInstance()->
 						GetTextureData(mate_info->texture_name)
 					);
@@ -137,9 +137,13 @@ void Fbx::Draw(TextureData* td) {
 				p_mesh_data->vertex_num,
 				p_mesh_data->polygon_num,
 				world_mat,
+				// ボーン行列
 				m_motion
 				[m_current_motion_name][mi].
-				d3d_animation_mat[m_count].bone_list
+				d3d_animation_mat[m_count].bone_list,
+				// ボーン数
+				m_motion
+				[m_current_motion_name][mi].animation_matrix[m_count].size()
 			);
 		}
 		else
@@ -173,30 +177,37 @@ void Fbx::EffectDraw(
 	const int&vertex_num,
 	const int&polygon_num,
 	const D3DXMATRIX&world_mat,
-	D3DXMATRIX*bone_mat_list
+	D3DXMATRIX*bone_mat_list,
+	const int&max_bone_index
 ) {
 
 
 	// ボーン行列セット
-	effect.SetWorldMatrix(world_mat);
+	m_effect.SetWorldMatrix(world_mat);
 
 	// ボーンセット
-	effect.SetBoneMatrix(
+	m_effect.SetBoneMatrix(
 		bone_mat_list
 	);
 
-	// シェーダーを更新
-	effect.Update();
+	m_effect.SetBoneCount(max_bone_index);
+
+	m_effect.SetMaxIndex(
+		max_bone_index
+	);
+
+	// 更新
+	m_effect.Update();
 
 	UINT pass_num = 0;
 
-	effect.ShaderBegin(pass_num, 0);
-	effect.BeginPass(0);
+	m_effect.ShaderBegin(pass_num, 0);
+	m_effect.BeginPass(0);
 
 	DrawPrimitive(vertex_num, polygon_num);
 
-	effect.EndPass();
-	effect.ShaderEnd();
+	m_effect.EndPass();
+	m_effect.ShaderEnd();
 }
 
 
@@ -268,10 +279,10 @@ bool Fbx::Load(
 
 	// シェーダーの初期化
 	if (m_is_shader == true) {
-		effect.SetShaderName("VertexBlend.fx");
-		effect.SetTechnique("tech1");
+		m_effect.SetShaderName("VertexBlend.fx");
+		m_effect.SetTechnique("tech1");
 
-		effect.Init();
+		m_effect.Init();
 	}
 
 	/* ここに処理を書いていく */
@@ -586,7 +597,7 @@ void Fbx::InitVertexInfo(
 		p_vertices[v].vertex.x = (float)pos[v][0];
 		p_vertices[v].vertex.y = (float)pos[v][1];
 		p_vertices[v].vertex.z = (float)pos[v][2];
-		p_vertices[v].vertex.w = (float)pos[v][3];
+		p_vertices[v].vertex.w = 1.f;
 
 		// 初期値
 		D3DXCOLOR col;
@@ -603,8 +614,17 @@ void Fbx::InitVertexInfo(
 		p_vertices[v].normal.y = 1.0f;
 		p_vertices[v].normal.z = 0.0f;
 
+		for (int i = 0; i < 4; i++) {
+			p_vertices[v].weight[i] = 0.f;
+			p_vertices[v].bone_index[i] = 0.f;
+		}
+
 		// w値を1.fにする
 		//p_vertices[v].normal.w = 1.0f;
+
+		// デバッグ用
+		//p_vertices[v].bone_index[3] = 3;
+		//p_vertices[v].weight[3] = 100.f;
 	}
 
 	// アンロック
@@ -1613,7 +1633,6 @@ void Fbx::WeightSkinning(
 
 	// ボーン数受け取り
 	int cluster_count = mesh_data.bone_num;
-
 
 	MotionData *md = &m_motion[m_current_motion_name][mi];
 

@@ -5,7 +5,7 @@
 VertexBlendEffectFile::VertexBlendEffectFile()
 	: EffectFileBase(){
 
-	//D3DXMatrixIdentity(&m_bone_mat);
+	m_bone_count = 64;
 }
 
 
@@ -22,18 +22,33 @@ bool VertexBlendEffectFile::Init(){
 		m_p_effect->
 		GetParameterByName(NULL, "g_bone_mat");
 
+	// インデックス用
+	m_total_index_h =
+		m_p_effect->GetParameterByName(NULL, "g_max_blend_idx");
+
 	return true;
 }
 
 
 void VertexBlendEffectFile::Update() {
 
+	// 現在設定しているカメラを入れる
+	SetDefauleCamera();
+
 	// ボーン姿勢行列セット
 	ShaderUpdateMatrixArray(
 		m_bone_mat_h,
 		m_bone_mat_list,
-		m_bone_count
+		64
 	);
+
+	//SetBoneMatrixArray(
+	//	m_bone_mat_h,
+	//	m_bone_mat_list,
+	//	m_bone_count
+	//);
+
+	m_p_effect->SetInt(m_total_index_h,m_max_index);
 
 	// 頂点フォーマットの設定
 	SetDeclaration();
@@ -44,12 +59,39 @@ void VertexBlendEffectFile::Update() {
 }
 
 
+void VertexBlendEffectFile::SetMaxIndex(const int&index) {
+
+	m_max_index = index;
+}
+
+
 void VertexBlendEffectFile::SetBoneMatrix(
 	D3DXMATRIX*bone_mat
 ) {
 	m_bone_mat_list = bone_mat;
 }
 
+void VertexBlendEffectFile::SetBoneMatrixArray(
+	D3DXHANDLE&handle,
+	D3DXMATRIX*mat,
+	const int &array_num
+) {
+
+	// 行列配列をセット
+	HRESULT hr 
+		= m_p_effect->SetMatrixPointerArray(
+			handle,
+			(const D3DXMATRIX**)&mat,
+			array_num
+		);
+
+}
+
+
+void VertexBlendEffectFile::SetBoneCount(const int&count) {
+
+	m_bone_count = count;
+}
 
 void VertexBlendEffectFile::InitVertexDecl() {
 
@@ -127,7 +169,7 @@ void VertexBlendEffectFile::InitVertexDecl() {
 			// float 4バイト
 			40,
 			// 変数の型
-			D3DDECLTYPE_UBYTE4,
+			D3DDECLTYPE_FLOAT4,
 			// ポリゴン分割
 			D3DDECLMETHOD_DEFAULT,
 			// セマンティクス
@@ -142,7 +184,7 @@ void VertexBlendEffectFile::InitVertexDecl() {
 			// float 4バイト * 9 + 
 			// unsigned long 4バイト(カラー) + 
 			// float 4バイト * 2
-			44,
+			56,
 			// 変数の型
 			D3DDECLTYPE_FLOAT4,
 			// ポリゴン分割
@@ -155,6 +197,7 @@ void VertexBlendEffectFile::InitVertexDecl() {
 		// 終了
 		D3DDECL_END()
 	};
+
 
 	// 頂点データをシェーダー用のデータに変換
 	HRESULT hr = m_p_graphics->GetInstance()->

@@ -1,6 +1,9 @@
-﻿#pragma once
+﻿#ifndef DEBUGGER_H
+#define DEBUGGER_H
+
+
 #include"../Lib/DirectInput/KeyBoard/KeyBoard.h"
-#include"../Lib/Sprite2D/Sprite2D/Sprite2DObject.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2DUser.h"
 #include"../Lib/Sound/Sound.h"
 #include"../Lib/3D/Camera3D/Camera3D.h"
 #include"../Lib/3D/D3DDefaultMesh/D3DDefaultMesh.h"
@@ -61,7 +64,7 @@ private:
 
 	int m_total_material_num;
 
-	Sprite2DData s2d;
+	Sprite2DParameter s2d;
 
 
 	DWORD dwMatNum, dwMatNum_Plate;
@@ -70,3 +73,5 @@ private:
 	ZTexture m_z_tex_effect;
 	IDirect3DTexture9*m_p_shadow_tex;
 };
+
+#endif

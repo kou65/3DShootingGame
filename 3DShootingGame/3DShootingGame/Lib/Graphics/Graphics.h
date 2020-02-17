@@ -289,6 +289,12 @@ private:
 		bool windowed
 	);
 
+	// 自動検出してゲッターを行う
+	operator IDirect3DDevice9*() const {
+		return m_p_d3d_device9;
+	}
+
+
 private:
 
 	//! グラフィック関連のデバイスを管理

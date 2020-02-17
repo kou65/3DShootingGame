@@ -1,12 +1,13 @@
-﻿#pragma once
-#include<stdio.h>
+﻿#ifndef OBJ_FILE_H
+#define OBJ_FILE_H
+
 #include<iostream>
-#include"../../Graphics/Graphics.h"
 #include<vector>
 #include"../Object3DCustomVertex/MeshCustomVertex.h"
-#include<map>
+#include<unordered_map>
 #include"../../../Utility/Utility.h"
 #include"../Model/Model.h"
+#include"../../Vec3/Vec3.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -20,19 +21,20 @@ struct ObjectSubset {
 };
 
 
-// マテリアルのデータ
-struct MaterialData {
+struct ObjParameter {
 
-	MaterialData() {
-		texture_name = "";
+	ObjParameter() {
+		pos.x = pos.y = pos.z = 0.f;
+		rota = pos;
+		scale.x = scale.y = scale.z = 1.f;
 	}
 
-	// テクスチャ名
-	std::string texture_name;
-	// カラー
-	D3DMATERIAL9 material_color;
-};
+	Vec3 pos;
+	Vec3 scale;
+	Vec3 rota;
+	std::string register_name;
 
+};
 
 // オブジェファイルで保存するデータ
 struct ObjFileData {
@@ -44,7 +46,7 @@ struct ObjFileData {
 	// 描画を入れ替えるサブセット
 	std::vector<ObjectSubset>m_object_sub_set_list;
 	// マテリアルデータ配列(マテリアル名,マテリアルデータ)
-	std::map<std::string, MaterialData>m_material_data_list;
+	std::unordered_map<std::string, MaterialInfo>m_material_data_list;
 	// バーテックスバッファ
 	IDirect3DVertexBuffer9 * m_p_vertex_buffer;
 	// インデックスバッファ
@@ -74,11 +76,8 @@ public:
 	);
 
 	// 表示
-	void DrawSubSet(
-		const std::string &register_name,
-		float pos_x = 0.f,
-		float pos_y = 0.f,
-		float pos_z = 0.f
+	void Draw(
+		const ObjParameter &param
 	);
 
 private:
@@ -191,5 +190,7 @@ private:
 private:
 
 	// オブジェファイルリスト
-	std::map<std::string, ObjFileData*>m_obj_file_data;
+	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
 };
+
+#endif

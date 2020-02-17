@@ -9,11 +9,11 @@
 
 
 
-struct Sprite2DData {
+struct Sprite2DParameter {
 
 
 	// コンストラクタ
-	Sprite2DData(
+	Sprite2DParameter(
 		float x = 0.f,
 		float y = 0.f,
 		const char * texture_name = NULL,

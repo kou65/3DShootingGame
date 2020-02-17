@@ -2,7 +2,7 @@
 
 
 
-Sprite3DData::Sprite3DData(
+Sprite3DParameter::Sprite3DParameter(
 	float pos_x,
 	float pos_y,
 	float pos_z,

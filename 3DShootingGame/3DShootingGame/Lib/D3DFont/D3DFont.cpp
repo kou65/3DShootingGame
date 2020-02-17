@@ -1,7 +1,7 @@
 ﻿#include"D3DFont.h"
 #include<string>
 #include<stdarg.h>
-#include"../../SetRenderStateFile/SetRenderStateFile.h"
+#include"../../RenderState/RenderState.h"
 
 
 
@@ -118,8 +118,8 @@ namespace D3DFont {
 
 
 		// α値有効
-		SetRenderStateFile::AlphaEnable(TRUE);
-		SetRenderStateFile::AlphaTest(TRUE);
+		RenderState::AlphaEnable(TRUE);
+		RenderState::AlphaTest(TRUE);
 
 		// スプライト描画開始
 		p_sprite->Begin(0);
@@ -147,8 +147,8 @@ namespace D3DFont {
 		p_sprite->End();
 
 		// α値無効
-		SetRenderStateFile::AlphaEnable(FALSE);
-		SetRenderStateFile::AlphaTest(FALSE);
+		RenderState::AlphaEnable(FALSE);
+		RenderState::AlphaTest(FALSE);
 
 		// 文字列メモリ解放
 		delete[] string;

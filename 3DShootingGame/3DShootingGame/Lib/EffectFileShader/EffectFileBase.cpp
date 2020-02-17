@@ -205,16 +205,9 @@ void EffectFileBase::ShaderUpdateMatrixArray(
 	const int &count
 ) {
 
-	// 行列配列をセット
-	//HRESULT hr 
-	//	= m_p_effect->SetMatrixPointerArray(
-	//		handle,
-	//		(const D3DXMATRIX**)&update_mat,
-	//		count);
-
 	HRESULT hr
 		= m_p_effect->SetMatrixArray(
-			"g_bone_mat",
+			handle,
 			update_mat,
 			count
 		);

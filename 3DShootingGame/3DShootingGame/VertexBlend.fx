@@ -8,13 +8,13 @@ float4x4 g_view_mat : VIEW;
 float4x4 g_proj_mat : PROJECTION;
 
 // ワールド行列
-float4x4 g_world_mat;
+float4x4 g_world_mat : WORLD;
 
 // ボーン姿勢マトリックス
-float4x4 g_bone_mat[64] : WORLD;
+float4x4 g_bone_mat[64];
 
-// 現在のアニメーション数
-int current_anim_num;
+// ブレンドする配列の数
+int g_max_blend_idx;
 
 // 使用するテクスチャ
 texture g_tex;
@@ -27,18 +27,17 @@ sampler smp = sampler_state {
 
 // 頂点シェーダー
 void VS(
-	float3 pos : POSITION,
+	float4 pos : POSITION,
+	float4 blend : BLENDWEIGHT,
+	float4 idx : BLENDINDICES,
 	float3 normal : NORMAL,
 	float4 color : COLOR0,
 	float2 uv : TEXCOORD0,
-	float4 blend : BLENDWEIGHT,
-	int4 idx : BLENDINDICES,
 	out float4 get_pos : POSITION,
 	out float4 get_color : COLOR0,
 	out float2 get_uv : TEXCOORD0
 )
 {
-
 	// vs_out定義
 	float4 out_pos = (float4)0.f;
 
@@ -47,30 +46,40 @@ void VS(
 
 	float w[4] = (float[4])blend;
 
-	//// ワールド変換行列をブレンド
-	//for(int i = 0; i < 4; i++){
-	//
-	//	// 影響するボーン計算
-	//	mul_pos = mul(float4(pos,1.f),g_bone_mat[idx[i]]);
-	//
-	//	// 重みづけ(影響しないものは0にしている)
-	//	out_pos += mul_pos * w[i];
-	//}
+	float b_idx[4] = (float[4])idx;
 
 	// ワールド変換行列をブレンド
-	for(int i = 0; i < 4; i++){
-	
-		int b = idx[i];
-	
-		// 影響するボーン計算
-		mul_pos = mul(float4(pos,1.f),g_bone_mat[b]);
-	
-		// 重みづけ(影響しないものは0にしている)
-		out_pos += mul_pos * w[i];
-	}
 
-	//float4x4 comv = (float4x4)0;
-	//
+	//if (i == 3) {
+	//	pos = 0.f;
+	//	return;
+	//}
+
+	float4x4 skin_transform = float4x4(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	skin_transform += g_bone_mat[idx.x] * blend.x;
+	skin_transform += g_bone_mat[idx.y] * blend.y;
+	skin_transform += g_bone_mat[idx.z] * blend.z;
+	skin_transform += g_bone_mat[idx.w] * blend.w;
+
+	float4 trans_pos = mul(pos,skin_transform);
+	float4 world_pos = mul(trans_pos,g_world_mat);
+	float4 view_pos = mul(world_pos, g_view_mat);
+	float4 proj_pos = mul(view_pos,g_proj_mat);
+
+	//for (int j = 0; j < 4; j++) {
+		//// 影響するボーン計算
+		//mul_pos = mul(pos, g_bone_mat[idx.x]);
+		//// 重みづけ(影響しないものは0にしている)
+		//out_pos += mul_pos * w[b_idx[0]];
+	//}
+
+
+
 	//for (int i = 0; i < 4; i++) {
 	//	comv += g_bone_mat[idx[i]] * w[i];
 	//	comv += g_bone_mat[idx[3]] * (1.f - w[0] - w[1] - w[2] - w[3]);
@@ -78,20 +87,20 @@ void VS(
 	//
 	//pos = mul(float4(pos, 1.f), comv);
 
-	// ワールド変換
-	out_pos = mul(out_pos, g_world_mat);
-
-	// ビュー変換
-	out_pos = mul(out_pos,g_view_mat);
-
-	// 射影変換
-	out_pos = mul(out_pos,g_proj_mat);
+	//// ワールド変換
+	//out_pos = mul(out_pos, g_world_mat);
+	//
+	//// ビュー変換
+	//out_pos = mul(out_pos,g_view_mat);
+	//
+	//// 射影変換
+	//out_pos = mul(out_pos,g_proj_mat);
 
 
 	// 外へ出力
 	get_color = color;
 	get_uv = uv;
-	get_pos = out_pos;
+	get_pos = proj_pos;
 
 }
 

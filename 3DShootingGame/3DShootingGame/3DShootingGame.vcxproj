@@ -175,28 +175,48 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bullet\Bullet.cpp">
+    <ClCompile Include="GameApp\Bullet\Bullet.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="BulletFactory\BulletFactory.cpp">
+    <ClCompile Include="GameApp\BulletFactory\BulletFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="Debugger\Debugger.cpp" />
-    <ClCompile Include="EndScene\EndScene.cpp">
+    <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Enemy\Enemy.cpp">
+    <ClCompile Include="GameApp\EnemyFactory\EnemyFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Filed\Filed.cpp">
+    <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="GameScene\GameScene.cpp">
+    <ClCompile Include="ObjectSystem\Object2D\Object2D.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\Object3D\Object3D.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Scene\EndScene\EndScene.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="GameApp\Enemy\Enemy.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="GameApp\Filed\Filed.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Scene\GameScene\GameScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -228,7 +248,7 @@
     </ClCompile>
     <ClCompile Include="Lib\3D\OBJ\OBJFile.cpp" />
     <ClCompile Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.cpp" />
-    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.cpp" />
+    <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DUser.cpp" />
     <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
     <ClCompile Include="Lib\EffectFileShader\VertexDeclation.cpp">
@@ -270,7 +290,7 @@
     <ClCompile Include="Lib\Lib\Lib.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
     <ClCompile Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.cpp" />
-    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.cpp" />
+    <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DUser.cpp" />
     <ClCompile Include="Lib\Texture\TextureManager\TextureManager.cpp" />
     <ClCompile Include="Lib\Uv\AnimationParameter\AnimationParameter.cpp">
       <SubType>
@@ -292,24 +312,24 @@
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
-    <ClCompile Include="ObjectManager\ObjectManager.cpp">
+    <ClCompile Include="ObjectSystem\ObjectManager\ObjectManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Player\Player.cpp">
+    <ClCompile Include="GameApp\Player\Player.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="SceneBase\SceneBase.cpp">
+    <ClCompile Include="Scene\SceneBase\SceneBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="SceneManager\SceneManager.cpp">
+    <ClCompile Include="Scene\SceneManager\SceneManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="SetRenderStateFile\SetRenderStateFile.cpp" />
-    <ClCompile Include="TitleScene\TitleScene.cpp">
+    <ClCompile Include="RenderState\RenderState.cpp" />
+    <ClCompile Include="Scene\TitleScene\TitleScene.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -319,6 +339,30 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameApp\CharacterBase\CharacterBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\EnemyFactory\EnemyFactory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\Enemy\EnemyBase\EnemyBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\GameConstant\GameConstant.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\Camera3D\CameraData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\3D\SkinCustomVertex\SkinCustomVertex.h">
       <SubType>
       </SubType>
@@ -347,32 +391,37 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\TransformData\TransformData.h" />
     <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Bullet\Bullet.h">
+    <ClInclude Include="GameApp\Bullet\Bullet.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="BulletFactory\BulletFactory.h">
+    <ClInclude Include="GameApp\BulletFactory\BulletFactory.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Debugger\Debugger.h" />
-    <ClInclude Include="EndScene\EndScene.h">
+    <ClInclude Include="ObjectSystem\Object2D\Object2D.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Enemy\Enemy.h">
+    <ClInclude Include="Scene\EndScene\EndScene.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Filed\Filed.h">
+    <ClInclude Include="GameApp\Enemy\Enemy.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameScene\GameScene.h">
+    <ClInclude Include="GameApp\Filed\Filed.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Scene\GameScene\GameScene.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -389,7 +438,7 @@
     <ClInclude Include="Lib\3D\Object3DCustomVertex\MeshCustomVertex.h" />
     <ClInclude Include="Lib\3D\OBJ\OBJFile.h" />
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.h" />
-    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DObject.h" />
+    <ClInclude Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DUser.h" />
     <ClInclude Include="Lib\3D\VertexBuffer\VertexBuffer.h" />
     <ClInclude Include="Lib\3D\XFile\XFile.h" />
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
@@ -411,7 +460,7 @@
     <ClInclude Include="Lib\Lib\Lib.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
     <ClInclude Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.h" />
-    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2DObject.h" />
+    <ClInclude Include="Lib\Sprite2D\Sprite2D\Sprite2DUser.h" />
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
@@ -430,33 +479,29 @@
     </ClInclude>
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
-    <ClInclude Include="ManagerBase\ManagerBase.h">
+    <ClInclude Include="ObjectSystem\Object\Object.h" />
+    <ClInclude Include="ObjectSystem\Object3D\Object3D.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Object\Object.h" />
-    <ClInclude Include="Object3D\Object3D.h">
+    <ClInclude Include="ObjectSystem\ObjectManager\ObjectManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="ObjectManager\ObjectManager.h">
+    <ClInclude Include="GameApp\Player\Player.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Player\Player.h">
+    <ClInclude Include="Scene\SceneBase\SceneBase.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="SceneBase\SceneBase.h">
+    <ClInclude Include="Scene\SceneManager\SceneManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="SceneManager\SceneManager.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="SetRenderStateFile\SetRenderStateFile.h" />
-    <ClInclude Include="TitleScene\TitleScene.h">
+    <ClInclude Include="RenderState\RenderState.h" />
+    <ClInclude Include="Scene\TitleScene\TitleScene.h">
       <SubType>
       </SubType>
     </ClInclude>

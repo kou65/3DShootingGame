@@ -24,7 +24,7 @@ struct SkinCustomVertex {
 	D3DXVECTOR2 uv;
 
 	// スキンメッシュ用影響するボーン番号(頂点)
-	unsigned char bone_index[4];
+	D3DXVECTOR4 bone_index;
 
 	// スキンメッシュ用重み(この頂点で影響する重みを全て持たせる)
 	D3DXVECTOR4 weight;

@@ -71,7 +71,7 @@ bool Graphics::Init(
 	// 深度ステンシルバッファがあるかどうか
 	m_d3d_pp.EnableAutoDepthStencil = TRUE;
 	// 深度バッファフォーマット
-	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D16;
+	m_d3d_pp.AutoDepthStencilFormat = D3DFMT_D24S8;// D3DFMT_D16では描画に支障をきたした
 	// バックバッファからフロントバッファへ転送時のオプション
 	m_d3d_pp.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 	// フルスクリーンでのリフレッシュレート

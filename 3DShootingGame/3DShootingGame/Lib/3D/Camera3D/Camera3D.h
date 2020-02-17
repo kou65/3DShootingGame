@@ -1,6 +1,9 @@
-﻿#pragma once
-#include"../../Graphics/Graphics.h"
+﻿
+#ifndef CAMERA_3D
+#define CAMERA_3D
 
+#include"../../Graphics/Graphics.h"
+#include"CameraData.h"
 
 
 class Camera3D {
@@ -14,33 +17,42 @@ public:
 
 public:
 
+	// コンストラクタ
 	Camera3D(
 		CameraMode camera_mode,
-		float pos_x = 0.f,
-		float pos_y = 0.f,
-		float pos_z = 0.f,
-		float axis_pos_x = 0.f,
-		float axis_pos_y = 0.f,
-		float axis_pos_z = -50.f
+		CameraData data
 	);
 
+	// 更新
 	void Update();
+
+	// カメラをセット
+	void SetCamera(const CameraData&camera_data);
 	
+	// 位置をセット
 	void SetPos(const D3DXVECTOR3 &pos);
 
+	// 位置を返す
 	D3DXVECTOR3 GetPos();
 
+	// 位置を加算
 	void AddPos(const D3DXVECTOR3&pos);
 
+	// 回転値を加算
 	void AddRotation(const D3DXVECTOR3&rotation);
 
+	// 移動値を加算
 	void AddMove(const D3DXVECTOR3&move);
 
+	// 軸座標加算
+	void AddAxis(const D3DXVECTOR3&axis);
+
+	// 注視点
 	void SetLookAtPoint(const D3DXVECTOR3&point);
 
 	void AddLookAtPoint(const D3DXVECTOR3&point);
 
-	void TransformDraw();
+	void TransformDraw(float pos_x = 100.f,float pos_y = 100.f);
 
 private:
 
@@ -76,24 +88,9 @@ private:
 
 private:
 
-	// 位置
-	D3DXVECTOR3 m_pos;
-
-	// 軸の位置
-	D3DXVECTOR3 m_axis_pos;
-
-	// 移動値
-	D3DXVECTOR3 m_move;
-
-	// カメラの回転値
-	D3DXVECTOR3 m_rotation;
-
-	// 注視点
-	D3DXVECTOR3 m_look_at_point;
-
-	// 上方向
-	D3DXVECTOR3 m_up_direction;
-
+	CameraData m_data;
 	// カメラモード
-	CameraMode m_camera_mode;
+	CameraMode m_mode;
 };
+
+#endif 

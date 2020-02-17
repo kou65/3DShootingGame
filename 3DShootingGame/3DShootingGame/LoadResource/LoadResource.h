@@ -1,9 +1,10 @@
-﻿#pragma once
-#include"../Lib/Texture/TextureManager/TextureManager.h"
+﻿
+#ifndef LOAD_RESORUCE_H
+#define LOAD_RESORUCE_H
 #include<string>
 
 
-namespace  Resource {
+namespace  LoadResources {
 
 	// 読み込んだファイル名
 	namespace Name {
@@ -13,6 +14,8 @@ namespace  Resource {
 	}
 
 	// リソース読み込み
-	void LoadResource();
+	void Load();
 
 }
+
+#endif

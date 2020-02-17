@@ -16,10 +16,10 @@ enum PolygonDirection {
 };
 
 
-struct Sprite3DData{
+struct Sprite3DParameter{
 
 
-	Sprite3DData(
+	Sprite3DParameter(
 		float pos_x,
 		float pos_y,
 		float pos_z,
@@ -36,7 +36,7 @@ struct Sprite3DData{
 		int graph_num = 0,
 		float tu = 0.f,
 		float tv = 0.f,
-		D3DXCOLOR color = { 255,255,255,255 }
+		D3DXCOLOR color = 0xfffffff
 	);
 
 	// ポリゴン位置

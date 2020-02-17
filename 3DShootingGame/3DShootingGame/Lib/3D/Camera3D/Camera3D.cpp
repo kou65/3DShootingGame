@@ -4,46 +4,25 @@
 
 
 
+
 Camera3D::Camera3D(
 	CameraMode camera_mode,
-	float pos_x,
-	float pos_y,
-	float pos_z,
-	float axis_pos_x,
-	float axis_pos_y,
-	float axis_pos_z
+	CameraData data
 ) {
 
 	// 位置の初期化
-	D3DXVec3Init(m_pos);
+	D3DXVec3Init(m_data.pos);
 
-	m_pos.x = pos_x;
-	m_pos.y = pos_y;
-	m_pos.z = pos_z;
-
-	// 軸位置の初期化
-	D3DXVec3Init(m_axis_pos);
-
-	m_axis_pos.x = axis_pos_x;
-	m_axis_pos.y = axis_pos_y;
-	m_axis_pos.z = axis_pos_z;
-
-	// 回転軸初期化
-	D3DXVec3Init(m_rotation);
-
-	// 移動値初期化
-	D3DXVec3Init(m_move);
-
-	// 注視点の初期化
-	D3DXVec3Init(m_look_at_point);
+	// データを受け渡す
+	m_data = data;
 
 	// 上方向の定義
-	m_up_direction.x = 0.f;
-	m_up_direction.y = 1.f;
-	m_up_direction.z = 0.f;
+	m_data.up_direction.x = 0.f;
+	m_data.up_direction.y = 1.f;
+	m_data.up_direction.z = 0.f;
 
 	// カメラモードの代入
-	m_camera_mode = camera_mode;
+	m_mode = camera_mode;
 }
 
 
@@ -58,17 +37,19 @@ void Camera3D::D3DXVec3Init(D3DXVECTOR3&init_vec3) {
 
 void Camera3D::Update() {
 
-	switch (m_camera_mode) {
+	switch (m_mode) {
 
 	case FPS:
 		FPSTransform();
+
 		break;
 
 	case TPS:
 		TPSTransform(
-			D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z),
-			D3DXVECTOR3(m_axis_pos.x, m_axis_pos.y, m_axis_pos.z)
+			D3DXVECTOR3(m_data.pos.x, m_data.pos.y, m_data.pos.z),
+			D3DXVECTOR3(m_data.axis.x, m_data.axis.y, m_data.axis.z)
 		);
+
 		break;
 	}
 
@@ -77,21 +58,28 @@ void Camera3D::Update() {
 }
 
 
-void Camera3D::TransformDraw() {
+void Camera3D::TransformDraw(float pos_x,float pos_y) {
 
 	// カメラ位置描画
-	D3DFont::Draw(100.f, 100.f, 256, "postion_x => %f", m_pos.x);
-	D3DFont::Draw(100.f, 120.f, 256, "postion_y => %f", m_pos.y);
-	D3DFont::Draw(100.f, 140.f, 256, "postion_z => %f", m_pos.z);
+	D3DFont::Draw(pos_x, 100.f + pos_y, 256, "postion_x => %f", m_data.pos.x);
+	D3DFont::Draw(pos_x, 120.f + pos_y, 256, "postion_y => %f", m_data.pos.y);
+	D3DFont::Draw(pos_x, 140.f + pos_y, 256, "postion_z => %f", m_data.pos.z);
 
-	D3DFont::Draw(100.f, 180.f, 256, "rotation.x => %f", m_rotation.x);
+	D3DFont::Draw(pos_x, 180.f + pos_y, 256, "rotation.x => %f", m_data.rota.x);
+
+
 }
+
 
 /*
 正規化済みの回転行列と移動行列を加算、移動 
 回転行列 * 合成済み移動値
 で移動できる
 
+厳密には回転ラジアンと掛け合わせることで
+その方向に移動する
+正規化するのは1にして、回転値だけ出すため
+内積や外積もこれらに当てはまる
 
 回転方向を移動に加算
 
@@ -114,38 +102,50 @@ void Camera3D::FPSTransform() {
 	D3DXMatrixIdentity(&matrix_view);
 
 	// 正規化し方向だけもらう。(0,0,1)でもいい
-	D3DXVec3Normalize(&m_move, &m_move);
+	D3DXVec3Normalize(&m_data.move_num, &m_data.move_num);
 
 	// X軸回転
 	D3DXMatrixRotationX(
 		&matrix_rotation_x,
-		D3DXToRadian(m_rotation.y)
+		D3DXToRadian(m_data.rota.y)
 	);
 
 	// Y軸回転
 	D3DXMatrixRotationY(
 		&matrix_rotation_y,
-		D3DXToRadian(m_rotation.x));
+		D3DXToRadian(m_data.rota.x));
 
 
 	// 位置へ移動値加算(4*4の行列をベクトルに掛け算)
-	D3DXVec3TransformNormal(&m_move, &m_move, &matrix_rotation_x);
 
-	D3DXVec3TransformNormal(&m_move,&m_move,&matrix_rotation_y);
+	// デバッグモードなら
+	if (m_data.is_debug == true) {
+		D3DXVec3TransformNormal(
+			&m_data.move_num,
+			&m_data.move_num,
+			&matrix_rotation_x);
+	}
+
+	// 移動値
+	D3DXVec3TransformNormal(
+		&m_data.move_num,
+		&m_data.move_num,
+		&matrix_rotation_y);
 
 	// 回転方向を加算した移動加算
-	m_pos += m_move;
+	m_data.pos += m_data.move_num;
 
 	// 初期値
 	D3DXMatrixTranslation(
 		&matrix_pos,
-		m_pos.x,
-		m_pos.y,
-		m_pos.z
+		m_data.pos.x,
+		m_data.pos.y,
+		m_data.pos.z
 	);
 
 	// 移動 * 回転 * 初期位置で合成
 	matrix_pos = matrix_rotation_x * matrix_rotation_y * matrix_pos;
+	
 
 	// 逆行列変換
 	D3DXMatrixInverse(&matrix_view, NULL, &matrix_pos);
@@ -156,7 +156,7 @@ void Camera3D::FPSTransform() {
 		&matrix_view);
 
 	// 移動を初期化
-	D3DXVec3Init(m_move);
+	D3DXVec3Init(m_data.move_num);
 }
 
 
@@ -208,7 +208,7 @@ void Camera3D::TPSTransform(
 	D3DXMatrixIdentity(&mat_total);
 
 	// 注視点の初期化
-	D3DXVec3Init(m_look_at_point);
+	D3DXVec3Init(m_data.look_at_point);
 
 	// 軸の位置
 	//D3DXVECTOR3 axis_pos(-100.f,5.f,0.f);
@@ -224,13 +224,13 @@ void Camera3D::TPSTransform(
 	// カメラのX軸回転
 	D3DXMatrixRotationX(
 		&mat_rot_x,
-		D3DXToRadian(m_rotation.y)
+		D3DXToRadian(m_data.rota.y)
 	);
 
 	// カメラのY軸回転
 	D3DXMatrixRotationY(
 		&mat_rot_y,
-		D3DXToRadian(m_rotation.x)
+		D3DXToRadian(m_data.rota.x)
 	);
 
 	D3DXMATRIX mat_trans;
@@ -239,23 +239,24 @@ void Camera3D::TPSTransform(
 	{
 	
 		// 正規化
-		D3DXVec3Normalize(&m_move, &m_move);
+		D3DXVec3Normalize(&m_data.move_num, &m_data.move_num);
 
+		// 頂点化
 		D3DXVec3TransformCoord(
-			&m_move,
-			&m_move,
+			&m_data.move_num,
+			&m_data.move_num,
 			&mat_rot_y
 		);
 
 		// 位置加算
-		m_pos += m_move;
+		m_data.pos += m_data.move_num;
 
 		// カメラ位置行列作成
 		D3DXMatrixTranslation(
 			&mat_trans,
-			m_pos.x,
-			m_pos.y,
-			m_pos.z
+			m_data.pos.x,
+			m_data.pos.y,
+			m_data.pos.z
 		);
 	}
 
@@ -276,10 +277,10 @@ void Camera3D::TPSTransform(
 	);
 
 	// 注視点を軸地点から位置を加算する
-	m_look_at_point = axis_pos + m_pos;
+	m_data.look_at_point = axis_pos + m_data.pos;
 
 
-	D3DXVec3Init(m_move);
+	D3DXVec3Init(m_data.move_num);
 
 	// ビュー座標変換
 	{
@@ -290,9 +291,9 @@ void Camera3D::TPSTransform(
 			// カメラ位置
 			&new_pos,
 			// 注視点(どこを見ているか)
-			&m_look_at_point,
+			&m_data.look_at_point,
 			// 上方向の定義
-			&m_up_direction
+			&m_data.up_direction
 		);
 
 		// ビュー座標変換
@@ -309,7 +310,7 @@ D3DXVECTOR3 Camera3D::GetYAxisDirectionVector() {
 	D3DXVECTOR3 direction_y;
 
 	// 正規化して、方向を受け取る
-	D3DXVec3Normalize(&direction_y, &m_rotation);
+	D3DXVec3Normalize(&direction_y, &m_data.rota);
 
 	return direction_y;
 }
@@ -334,17 +335,17 @@ void Camera3D::TPSQuaternionTransform() {
 	}
 
 	// 移動正規化
-	D3DXVec3Normalize(&m_move, &m_move);
+	D3DXVec3Normalize(&m_data.move_num, &m_data.move_num);
 
 	// 平行移動値加算
-	m_pos += m_move;
+	m_data.pos += m_data.move_num;
 
 	// 移動
 	D3DXMatrixTranslation(
 		&matrix_trans,
-		m_pos.x,
-		m_pos.y,
-		m_pos.z
+		m_data.pos.x,
+		m_data.pos.y,
+		m_data.pos.z
 	);
 
 	// 注視点
@@ -381,7 +382,7 @@ void Camera3D::TPSQuaternionTransform() {
 		D3DXQuaternionRotationAxis(
 			&trans_q,
 			&rot_axis,
-			D3DXToRadian(m_rotation.x)
+			D3DXToRadian(m_data.rota.x)
 		);
 
 		// クオータニオンを行列に変換
@@ -432,7 +433,7 @@ void Camera3D::TPSQuaternionTransform() {
 	{
 
 		D3DXVECTOR3 *camera_z_axis = (D3DXVECTOR3*)matrix_view.m[Z_AXIS];
-		camera_pos += m_pos.z * (*camera_z_axis);
+		camera_pos += m_data.pos.z * (*camera_z_axis);
 
 		// 逆行列
 		D3DXMatrixInverse(&matrix_view, NULL, &matrix_view);
@@ -443,7 +444,7 @@ void Camera3D::TPSQuaternionTransform() {
 			&matrix_view);
 	}
 
-	D3DXVec3Init(m_move);
+	D3DXVec3Init(m_data.move_num);
 }
 
 
@@ -476,36 +477,46 @@ void Camera3D::ProjectionTransform() {
 }
 
 
+void Camera3D::SetCamera(const CameraData&camera) {
+	m_data = camera;
+}
+
+
 void Camera3D::SetPos(const D3DXVECTOR3 &pos) {
-	m_pos = pos;
+	m_data.pos = pos;
 }
 
 
 void Camera3D::AddPos(const D3DXVECTOR3&pos) {
-	m_pos += pos;
+	m_data.pos += pos;
+}
+
+
+void Camera3D::AddAxis(const D3DXVECTOR3&axis) {
+	m_data.axis += axis;
 }
 
 
 void Camera3D::SetLookAtPoint(const D3DXVECTOR3&point) {
-	m_look_at_point = point;
+	m_data.look_at_point = point;
 }
 
 
 void Camera3D::AddLookAtPoint(const D3DXVECTOR3&point) {
-	m_look_at_point = point;
+	m_data.look_at_point = point;
 }
 
 
 void Camera3D::AddRotation(const D3DXVECTOR3&rotation) {
-	m_rotation += rotation;
+	m_data.rota += rotation;
 }
 
 
 void Camera3D::AddMove(const D3DXVECTOR3&move) {
-	m_move += move;
+	m_data.move_num += move;
 }
 
 
 D3DXVECTOR3 Camera3D::GetPos() {
-	return m_pos;
+	return m_data.pos;
 }

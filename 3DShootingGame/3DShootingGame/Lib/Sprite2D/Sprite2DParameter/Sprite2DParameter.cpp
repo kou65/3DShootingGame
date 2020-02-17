@@ -3,7 +3,7 @@
 
 
 
-Sprite2DData::Sprite2DData(
+Sprite2DParameter::Sprite2DParameter(
 	float x,
 	float y,
 	const char* texture_name,

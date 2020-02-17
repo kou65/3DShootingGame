@@ -1,5 +1,4 @@
 ﻿#include<string>
-#include<sstream>
 #include<fstream>
 #include<iostream>
 #include<vector>
@@ -14,37 +13,28 @@ ObjFile::ObjFile() : Model(){
 }
 
 
-void ObjFile::DrawSubSet(
-	const std::string &register_name,
-	float pos_x,
-	float pos_y,
-	float pos_z
+void ObjFile::Draw(
+	const ObjParameter &param
 	){
 
-	// マテリアル数分回す
-	for (unsigned int material_num = 0; material_num < m_obj_file_data[register_name]->material_num; material_num++) {
 
-		// キーが登録されていないなら描画しない
-		if (m_obj_file_data.count(register_name) == 0) {
-			return;
-		}
-		// 生成されていないなら描画しない
-		if (m_obj_file_data[register_name] == nullptr) {
-			return;
-		}
+	// キーが登録されていないなら描画しない
+	if (m_obj_file_data.count(param.register_name) == 0) {
+		return;
+	}
+	// 生成されていないなら描画しない
+	if (m_obj_file_data[param.register_name] == nullptr) {
+		return;
+	}
+
+	// マテリアル数分回す
+	for (unsigned int i = 0;
+		i < m_obj_file_data[param.register_name]->material_num;
+		i++) {
 
 		// 特定のオブジェクトファイルデータを受け取る
-		ObjFileData *p_obj_file_data = m_obj_file_data[register_name];
-
-		// ワールド座標初期化
-		D3DXMATRIX mat;
-		D3DXMatrixIdentity(&mat);
-
-		// 移動
-		D3DXMatrixTranslation(&mat, pos_x, pos_y, pos_z);
-
-		m_p_graphics->GetInstance()->GetDevice()
-			->SetTransform(D3DTS_WORLD, &mat);
+		ObjFileData *p_obj_file_data = 
+			m_obj_file_data[param.register_name];
 
 		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
 			return;
@@ -59,7 +49,8 @@ void ObjFile::DrawSubSet(
 		);
 
 		// マテリアル名
-		std::string material_name = p_obj_file_data->m_usemtl_name_list[material_num];
+		std::string material_name = 
+			p_obj_file_data->m_usemtl_name_list[i];
 
 		// テクスチャが存在しているなら
 		if (TextureManager::GetInstance()->FindTexture(
@@ -69,7 +60,8 @@ void ObjFile::DrawSubSet(
 			// テクスチャ管理者からテクスチャ受け取り
 			TextureData texture_data = TextureManager::GetInstance()
 				->GetTextureData(
-					p_obj_file_data->m_material_data_list[material_name].texture_name
+					p_obj_file_data->
+					m_material_data_list[material_name].texture_name
 				);
 
 			// テクスチャセット
@@ -81,7 +73,8 @@ void ObjFile::DrawSubSet(
 
 		// マテリアルをセット
 		m_p_graphics->GetDevice()->SetMaterial(
-			&p_obj_file_data->m_material_data_list[material_name].material_color
+			&p_obj_file_data->m_material_data_list[material_name]
+			.material
 		);
 
 		// インデックス番号をデバイスに設定する
@@ -89,45 +82,55 @@ void ObjFile::DrawSubSet(
 			p_obj_file_data->m_p_index_buffer
 		);
 
-		// インデックスをオフセットする
-		int BASE_VERTEX_INDEX = 0;
-
-		// 描画に使用する最小のインデックス番号
-		int MIN_INDEX = p_obj_file_data->
-			m_object_sub_set_list[material_num].face_start;
-
-		// 描画を開始する頂点インデックスまでのオフセット値を指定
-		// 途中から描画したい場合に有効
-		int START_INDEX = p_obj_file_data->
-			m_object_sub_set_list[material_num].face_start;
-
-		// 三角ポリゴン頂点数
-		int NUM_VERTEX = p_obj_file_data->
-			m_object_sub_set_list[material_num].face_count * 3;
-
-		// START_INDEXを先頭として描画するポリゴンの数を指定する
-		unsigned int PRIMITIVE_COUNT = p_obj_file_data->
-			m_object_sub_set_list[material_num].face_count;
-
 		// どの情報を伝えるか
 		m_p_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
+
+		// ワールド座標初期化
+		D3DXMATRIX total_mat, rota_mat,scale_mat,move_mat;
+		D3DXMatrixIdentity(&total_mat);
+
+		D3DXMATRIX rota_x, rota_y, rota_z;
+
+		// 回転
+		D3DXMatrixRotationZ(&rota_z, D3DXToRadian(param.rota.z));
+		D3DXMatrixRotationX(&rota_x, D3DXToRadian(param.rota.x));
+		D3DXMatrixRotationY(&rota_y, D3DXToRadian(param.rota.y));
+
+		rota_mat = (rota_z * rota_x * rota_y);
+
+		// 拡縮
+		D3DXMatrixScaling(
+			&scale_mat, param.scale.x, param.scale.y, param.scale.z);
+		// 移動
+		D3DXMatrixTranslation(
+			&move_mat, param.pos.x, param.pos.y, param.pos.z);
+
+		total_mat = (rota_mat * scale_mat * move_mat);
+
+		m_p_graphics->GetInstance()->GetDevice()
+			->SetTransform(D3DTS_WORLD, &total_mat);
+
 
 		// インデックス描画
 		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
 			// 頂点のつなぎ方
 			D3DPT_TRIANGLELIST,
 			// 頂点インデックスの一番最初までのオフセット値を指定
-			BASE_VERTEX_INDEX,
+			0,
 			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
-			MIN_INDEX,
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_start,
 			// 上引数の最小以降の頂点数を指定
-			NUM_VERTEX,
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_count * 3,
 			// 描画を開始する頂点インデックスまでのオフセット値を指定
-			START_INDEX,
-			// 上引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
-			PRIMITIVE_COUNT
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_start,
+			// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_count
 		);
-
+		
 		// セットテクスチャリセット
 		m_p_graphics->GetDevice()->SetTexture(
 			0,
@@ -147,7 +150,7 @@ bool ObjFile::Load(
 	split_file_name = Utility::SplitStr('/',obj_file_path);
 
 	// マテリアルデータバッファ
-	std::vector<MaterialData>material_data_list;
+	std::vector<MaterialInfo>material_data_list;
 
 	// マテリアル名
 	std::string material_name;
@@ -161,8 +164,6 @@ bool ObjFile::Load(
 	// 総マテリアル数
 	int material_num = 0;
 
-	// オブジェクトファイルデータを生成
-	m_obj_file_data[register_name] = new ObjFileData;
 
 	// メイン読み込み
 	if (MeshLoad(
@@ -247,6 +248,9 @@ bool ObjFile::MeshLoad(
 		Window::TextMessageBox("OBJファイルオープンに失敗しました");
 		return false;
 	}
+
+	// オブジェクトファイルデータを生成
+	m_obj_file_data[registr_name] = new ObjFileData;
 
 	// とりあえず256で
 	const int BUFFER = 256;
@@ -626,7 +630,7 @@ bool ObjFile::MaterialFileLoad(
 				1.0f
 			};
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Emissive = color;
+				material.Emissive = color;
 		}
 		// アンビエントカラー
 		else if (strcmp(str_list[0].c_str(), "Ka ") == 0) {
@@ -640,7 +644,7 @@ bool ObjFile::MaterialFileLoad(
 
 			// マテリアルに代入
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Ambient = color;
+				material.Ambient = color;
 		}
 		// ディフューズカラー
 		else if (strcmp(str_list[0].c_str(), "Kd ") == 0) {
@@ -654,7 +658,7 @@ bool ObjFile::MaterialFileLoad(
 
 			// マテリアルに代入
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Diffuse = color;
+				material.Diffuse = color;
 		}
 		// スペキュラーカラー
 		else if (strcmp(str_list[0].c_str(), "Ks ") == 0) {
@@ -668,27 +672,27 @@ bool ObjFile::MaterialFileLoad(
 
 			// マテリアルに代入
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Specular = color;
+				material.Specular = color;
 		}
 		// α値なら
 		else if (strcmp(str_list[0].c_str(), "d ") == 0) {
 
 			// α値設定
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Ambient.a = (float)atof(str_list[1].c_str());
+				material.Ambient.a = (float)atof(str_list[1].c_str());
 
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Diffuse.a = (float)atof(str_list[1].c_str());
+				material.Diffuse.a = (float)atof(str_list[1].c_str());
 
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Specular.a = (float)atof(str_list[1].c_str());
+				material.Specular.a = (float)atof(str_list[1].c_str());
 
 		}
 		// パワー
 		else if (strcmp(str_list[0].c_str(), "Ns ") == 0) {
 
 			m_obj_file_data[register_name]->m_material_data_list[texture_str].
-				material_color.Power = (float)atof(str_list[1].c_str());
+				material.Power = (float)atof(str_list[1].c_str());
 		}
 		// テクスチャなら
 		else if (strcmp(str_list[0].c_str(), "map_Kd ") == 0) {

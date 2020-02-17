@@ -160,7 +160,8 @@ private:
 		const int&vertex_num,
 		const int&polygon_num,
 		const D3DXMATRIX&world_mat,
-		D3DXMATRIX*bone_mat_list
+		D3DXMATRIX*bone_mat_list,
+		const int&max_bone_index
 	);
 
 private:
@@ -338,9 +339,8 @@ private:
 	std::vector<SkinCustomVertex*>m_p_vertics;
 
 	// シェーダー
-	VertexBlendEffectFile effect;
-	DepthShadowEffectFile shadow_effect;
-
+	VertexBlendEffectFile m_effect;
+	
 	/* アニメーション関連 */
 	
 	// モーション名

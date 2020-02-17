@@ -1,10 +1,10 @@
 ﻿#include"../Debugger/Debugger.h"
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
-#include"../Lib/Sprite2D/Sprite2D/Sprite2DObject.h"
+#include"../Lib/Sprite2D/Sprite2D/Sprite2DUser.h"
 #include"../Lib/Sprite2D/Sprite2DParameter/Sprite2DParameter.h"
 #include"../Lib/3D/Sprite3D/Sprite3DParameter/Sprite3DParameter.h"
-#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DObject.h"
-#include"../SetRenderStateFile/SetRenderStateFile.h"
+#include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DUser.h"
+#include"../RenderState/RenderState.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/Texture/TextureManager/TextureManager.h"
@@ -22,24 +22,25 @@ Debugger::Debugger() {
 
 	light = new Light(Graphics::GetInstance());
 
-	camera_3d = new Camera3D(Camera3D::FPS);
+	CameraData data;
+
+	camera_3d = new Camera3D(Camera3D::FPS,data);
+
 	camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 
 	light->On();
 
 	fps = new FPS(60);
 
-	
 	s2d.animation_param.division_width = 9;
 	s2d.animation_param.division_height = 6;
 
-	Sprite2DObject::GetInstance()->GraphSizeConvertUvSize(
+	Sprite2DUser::GetInstance()->GraphSizeConvertUvSize(
 		s2d.scale_width,
 	s2d.scale_height,
 		s2d.animation_param.division_width,
 		s2d.animation_param.division_height
 	);
-
 
 	InitShader();
 
@@ -58,6 +59,7 @@ Debugger::Debugger() {
 		&cpMeshCube))) {
 		return;
 	}
+
 
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Plate.x"),
@@ -92,32 +94,13 @@ bool Debugger::IsEnd() {
 }
 
 
-bool Debugger::IsStopUpdate() {
-
-	// 更新をストップする
-	if (KeyBoard::IsKeyExit(DIK_S)) {
-		//m_is_program_stop = !m_is_program_stop;
-	}
-
-	return true;//m_is_program_stop;
-}
 
 
 void Debugger::Update() {
 
-	if (IsStopUpdate() == true) {
-		// 終了
-		return;
-	}
-
 	CameraRotation();
 
 	CameraMove();
-
-	// ジョイスティックを列挙する
-	JoyStick::Update();
-
-	KeyBoard::Update();
 
 	camera_3d->Update();
 
@@ -180,29 +163,29 @@ void Debugger::CameraRotation() {
 void Debugger::Draw() {
 
 	// ライトオン
-	light->On();
+	//light->On();
 
 
-	ZTextureDraw();
-	ShadowDraw();
+	//ZTextureDraw();
+	//ShadowDraw();
 
 	fps->DebugDraw(Vec2(256.f, 256.f), 3000);
 	camera_3d->TransformDraw();
 
-	//// 地面
-	//Sprite3DData td(0.f, 0.f, 0.f, "ground");
-	//td.scale_width = 1000.f;
-	//td.scale_height = 1000.f;
-	//td.polygon_dir = FLOOR;
-	//td.pos.y = -5.f;
-	//td.ofset.x = 0.0f;
-	//td.ofset.y = 1.0f;
-	//
-	//Sprite3DObject sprite_3d;
-	//
-	//sprite_3d.BoardDraw(
-	//	td
-	//);
+	// 地面
+	Sprite3DParameter td(0.f, 0.f, 0.f, "ground");
+	td.scale_width = 1000.f;
+	td.scale_height = 1000.f;
+	td.polygon_dir = FLOOR;
+	td.pos.y = -5.f;
+	td.ofset.x = 0.0f;
+	td.ofset.y = 1.0f;
+	
+	Sprite3DUser sprite_3d;
+	
+	sprite_3d.BoardDraw(
+		td
+	);
 
 		s2d.texture_name = "enemy1";
 
@@ -244,7 +227,7 @@ void Debugger::InitShader() {
 
 	D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
 		LightScale * 20,
-		LightScale * 20,
+		LightScale * 100,
 		LightScale * 0),
 		&D3DXVECTOR3(0, -60, 0),
 		&D3DXVECTOR3(0, 1, 0)
@@ -315,7 +298,7 @@ void Debugger::ShadowDraw() {
 	m_d_effect.SetWorldMatrix(&world_mat);
 	m_d_effect.SetParamToEffect();
 
-	for (int i = 0; i < dwMatNum; i++) {
+	for (UINT i = 0; i < dwMatNum; i++) {
 
 		m_d_effect.SetParamToEffect();
 
@@ -337,7 +320,7 @@ void Debugger::ShadowDraw() {
 	m_d_effect.SetWorldMatrix(&mat);
 	m_d_effect.SetParamToEffect();
 
-	for (int i = 0; i < dwMatNum_Plate; i++) {
+	for (UINT i = 0; i < dwMatNum_Plate; i++) {
 		m_d_effect.BeginPass();
 		cpMeshPlate->DrawSubset(i);
 		m_d_effect.EndPass();
@@ -375,10 +358,10 @@ void Debugger::ZTextureDraw() {
 	m_z_tex_effect.Begin();
 	
 	// ワールド座標変換
-	GetCubeWorldMatrix(0.20,1.f,0.f,&world_mat);
+	GetCubeWorldMatrix(20,1,0,&world_mat);
 	m_z_tex_effect.SetWorldMatrix(&world_mat);
 
-	for (int i = 0; i < dwMatNum; i++) {
+	for (UINT i = 0; i < dwMatNum; i++) {
 
 		m_z_tex_effect.SetParameter();
 
@@ -391,7 +374,7 @@ void Debugger::ZTextureDraw() {
 	GetPlateWorldMatrix(&world_mat);
 	m_z_tex_effect.SetWorldMatrix(&world_mat);
 
-	for (int i = 0; i < dwMatNum_Plate;i++) {
+	for (UINT i = 0; i < dwMatNum_Plate;i++) {
 		
 		m_z_tex_effect.SetParameter();
 
