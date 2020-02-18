@@ -37,7 +37,7 @@ private:
 
 private:
 
-	void Move();
+	void AddMove();
 
 	void Rotation();
 

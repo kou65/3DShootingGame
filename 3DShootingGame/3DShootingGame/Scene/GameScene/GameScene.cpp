@@ -61,11 +61,13 @@ void GameScene::Update(SceneType&scene_type){
 
 	// オブジェクト更新
 	m_object_manager.Update();
-
 }
 
 
 void GameScene::Draw(){
+
+	// カメラデバッグ描画
+	m_p_camera->TransformDraw();
 
 	// オブジェクト描画
 	m_object_manager.Draw();

@@ -17,9 +17,11 @@ void HomingBulletEnemy::Update() {
 
 }
 
+
 void HomingBulletEnemy::Draw() {
 
 }
+
 
 Vec3 HomingBulletEnemy::CalcDirection() {
 

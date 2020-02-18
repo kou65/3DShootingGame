@@ -391,6 +391,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\SingletonTemplate\SingletonTemplate.h" />
     <ClInclude Include="Lib\TransformData\TransformData.h" />
     <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
       <SubType>

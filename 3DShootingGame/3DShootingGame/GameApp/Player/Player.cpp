@@ -1,6 +1,7 @@
 ﻿#include"../Player/Player.h"
 #include"../../Lib/3D/OBJ/OBJFile.h"
 #include"../../Lib/DirectInput/KeyBoard/KeyBoard.h"
+#include"../../Lib/D3DFont/D3DFont.h"
 #include<math.h>
 
 
@@ -51,6 +52,10 @@ void Player::Draw() {
 	ObjFile::GetInstance()->Draw(
 		param
 	);
+
+	D3DFont::Draw(150.f, 100.f, 100.f,"p_pos_x=>%f",m_pos.x);
+	D3DFont::Draw(150.f, 110.f, 100.f,"p_pos_y=>%f", m_pos.y);
+	D3DFont::Draw(150.f, 120.f, 100.f,"p_pos_z=>%f", m_pos.z);
 }
 
 

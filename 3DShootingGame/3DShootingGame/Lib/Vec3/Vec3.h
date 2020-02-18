@@ -66,6 +66,16 @@ struct Vec3 : public D3DXVECTOR3{
 		return vec3;
 	}
 
+	Vec3 operator +(const Vec3& vec3) {
+
+		Vec3 d_vec3;
+		d_vec3.x = this->x + vec3.x;
+		d_vec3.y = this->y + vec3.y;
+		d_vec3.z = this->z + vec3.z;
+
+		return vec3;
+	}
+
 	D3DXVECTOR3 operator -(const D3DXVECTOR3& vec3) {
 
 		D3DXVECTOR3 d_vec3;

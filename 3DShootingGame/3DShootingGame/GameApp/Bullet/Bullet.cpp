@@ -29,7 +29,7 @@ Bullet::Bullet(
 void Bullet::Update() {
 
 	Rotation();
-	//Move();
+	AddMove();
 	Exit();
 }
 
@@ -44,13 +44,9 @@ void Bullet::Draw() {
 }
 
 
-void Bullet::Move() {
+void Bullet::AddMove() {
 
 	m_radius = 0.f;
-
-	// 角度の対して移動速度を掛けて進ませる
-	//m_pos.z += cosf(m_radius) * m_speed;
-	//m_pos.y += sinf(m_radius) * m_speed;
 
 	m_pos += m_move;
 
@@ -89,6 +85,11 @@ void Bullet::Rotation() {
 
 	// 移動値
 	m_move = move;
+
+	// 角度の対して移動速度を掛けて進ませる
+	//m_pos.z += cosf(m_radius) * m_speed;
+	//m_pos.y += sinf(m_radius) * m_speed;
+
 }
 
 
