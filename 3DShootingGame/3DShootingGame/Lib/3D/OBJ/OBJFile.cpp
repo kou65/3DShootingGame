@@ -7,13 +7,13 @@
 
 
 
-ObjFile::ObjFile() : Model(){
+Obj::Obj() : Model(){
 
 	m_p_graphics = Graphics::GetInstance();
 }
 
 
-void ObjFile::Draw(
+void Obj::Draw(
 	const ObjParameter &param
 	){
 
@@ -96,16 +96,18 @@ void ObjFile::Draw(
 		D3DXMatrixRotationX(&rota_x, D3DXToRadian(param.rota.x));
 		D3DXMatrixRotationY(&rota_y, D3DXToRadian(param.rota.y));
 
+		// 回転行列作成
 		rota_mat = (rota_z * rota_x * rota_y);
 
 		// 拡縮
 		D3DXMatrixScaling(
 			&scale_mat, param.scale.x, param.scale.y, param.scale.z);
+
 		// 移動
 		D3DXMatrixTranslation(
 			&move_mat, param.pos.x, param.pos.y, param.pos.z);
 
-		total_mat = (rota_mat * scale_mat * move_mat);
+		total_mat = (scale_mat * rota_mat * move_mat);
 
 		m_p_graphics->GetInstance()->GetDevice()
 			->SetTransform(D3DTS_WORLD, &total_mat);
@@ -141,13 +143,21 @@ void ObjFile::Draw(
 }
 
 
-bool ObjFile::Load(
+bool Obj::Load(
 	const std::string &obj_file_path,
 	const std::string &register_name,
 	const std::string &texture_file_path) {
 
 	std::vector<std::string>split_file_name;
-	split_file_name = Utility::SplitStr('/',obj_file_path);
+
+	// サイズがないならobjファイルがある階層ディレクトリを取ってくる
+	if (texture_file_path.size() <= 0) {
+		split_file_name = Utility::SplitStr('/', obj_file_path);
+	}
+	else {
+		split_file_name.emplace_back(texture_file_path);
+		split_file_name.emplace_back();
+	}
 
 	// マテリアルデータバッファ
 	std::vector<MaterialInfo>material_data_list;
@@ -169,7 +179,6 @@ bool ObjFile::Load(
 	if (MeshLoad(
 		obj_file_path,
 		register_name,
-		texture_file_path,
 		material_name,
 		material_num,
 		indices,
@@ -178,10 +187,15 @@ bool ObjFile::Load(
 	}
 
 	std::string file_path_material_name;
+	std::string file_path_texture;
 
+	// 最後のカレントdは外す
 	for (unsigned int i = 0; i < split_file_name.size() - 1; i++) {
 		 file_path_material_name += split_file_name[i];
 	}
+
+	// テクスチャファイルパス作成
+	file_path_texture = file_path_material_name;
 
 	// ファイルパス付のマテリアル名にする
 	file_path_material_name += material_name;
@@ -190,7 +204,8 @@ bool ObjFile::Load(
 	MaterialFileLoad(
 		file_path_material_name,
 		register_name,
-		texture_file_path);
+		file_path_texture
+	);
 
 	
 	// バーテックスバッファ生成
@@ -215,10 +230,9 @@ bool ObjFile::Load(
 
 
 
-bool ObjFile::MeshLoad(
+bool Obj::MeshLoad(
 	const std::string &file_path,
 	const std::string &registr_name,
-	const std::string &texture_file_path,
 	std::string&out_material_name,
 	int &out_total_material_num,
 	std::vector<INT>&indices,
@@ -328,7 +342,7 @@ bool ObjFile::MeshLoad(
 }
 
 
-void ObjFile::VertexFscanfLoad(
+void Obj::VertexFscanfLoad(
 	FILE*p_file,
 	D3DXVECTOR3 &vec3) {
 
@@ -341,7 +355,7 @@ void ObjFile::VertexFscanfLoad(
 }
 
 
-void ObjFile::VertexInfoLoad(
+void Obj::VertexInfoLoad(
 	FILE *p_file,
 	const char*front_str,
 	std::vector<D3DXVECTOR3>&out_vertex_list,
@@ -385,7 +399,7 @@ void ObjFile::VertexInfoLoad(
 
 
 
-void ObjFile::FaceInfoLoad(
+void Obj::FaceInfoLoad(
 	FILE*p_file,
 	const std::string &register_name,
 	std::vector<INT>&indices,
@@ -454,7 +468,7 @@ void ObjFile::FaceInfoLoad(
 }
 
 
-void ObjFile::InsertFaceList(
+void Obj::InsertFaceList(
 	const std::vector<std::vector<std::string>>&face_info_str,
 	std::vector<MeshCustomVertex>&custom_vertex,
 	std::vector<INT>&indices,
@@ -575,10 +589,10 @@ void ObjFile::InsertFaceList(
 }
 
 
-bool ObjFile::MaterialFileLoad(
+bool Obj::MaterialFileLoad(
 	const std::string &mtl_file_name,
 	const std::string &register_name,
-	const std::string &texture_file_path
+	const std::string &file_path_texture
 ) {
 
 	const int BUFFER = 256;
@@ -620,6 +634,7 @@ bool ObjFile::MaterialFileLoad(
 			m_obj_file_data[register_name]->
 				m_material_data_list[str_list[1].c_str()].texture_name
 				= str_list[1].c_str();
+
 			texture_str = str_list[1].c_str();
 
 			// 使わない色を初期化
@@ -702,7 +717,7 @@ bool ObjFile::MaterialFileLoad(
 				continue;
 			}
 
-			std::string texture_name = texture_file_path + str_list[1];
+			std::string texture_name = file_path_texture + str_list[1];
 
 			// テクスチャ名代入
 			p_obj_file_data->m_material_data_list[texture_str].texture_name =
@@ -719,7 +734,7 @@ bool ObjFile::MaterialFileLoad(
 }
 
 
-void ObjFile::UseMaterialInfoLoad(
+void Obj::UseMaterialInfoLoad(
 	FILE*p_file,
 	const std::string &register_name,
 	int &out_total_material_num,
@@ -764,7 +779,7 @@ void ObjFile::UseMaterialInfoLoad(
 }
 
 
-bool ObjFile::Vector3ConversionByString(
+bool Obj::Vector3ConversionByString(
 	int &axis,
 	const std::string &string
 ) {
@@ -787,7 +802,7 @@ bool ObjFile::Vector3ConversionByString(
 }
 
 
-std::vector<INT> ObjFile::Vertex4CutToVertex3Face(
+std::vector<INT> Obj::Vertex4CutToVertex3Face(
 	const std::vector<INT>&vertex4_polygon_list
 ) {
 
@@ -823,7 +838,7 @@ std::vector<INT> ObjFile::Vertex4CutToVertex3Face(
 
 
 // 頂点バッファ生成
-void ObjFile::VertexBufferCreate(
+void Obj::VertexBufferCreate(
 	const int &vertex_num,
 	const std::string &register_name,
 	const std::vector<MeshCustomVertex>&mesh_vertex_list
@@ -875,7 +890,7 @@ void ObjFile::VertexBufferCreate(
 
 
 // 面情報から頂点情報埋め込み
-bool ObjFile::IndexBufferCreateFaceBase(
+bool Obj::IndexBufferCreateFaceBase(
 	const int &face_num,
 	const std::string &register_name,
 	const std::vector<INT>&indices

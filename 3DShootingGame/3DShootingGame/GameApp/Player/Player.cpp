@@ -48,14 +48,17 @@ void Player::Draw() {
 	param.register_name = Const::Graph::PLAYER;
 	param.rota.y = 90.f;
 	
+	// 位置
+	//param.pos = m_p_camera_3d->GetPos();
 
-	ObjFile::GetInstance()->Draw(
+	// 描画
+	Obj::GetInstance()->Draw(
 		param
 	);
 
-	D3DFont::Draw(150.f, 100.f, 100.f,"p_pos_x=>%f",m_pos.x);
-	D3DFont::Draw(150.f, 110.f, 100.f,"p_pos_y=>%f", m_pos.y);
-	D3DFont::Draw(150.f, 120.f, 100.f,"p_pos_z=>%f", m_pos.z);
+	D3DFont::Draw(150.f, 100.f, 100,"p_pos_x=>%f",m_pos.x);
+	D3DFont::Draw(150.f, 110.f, 100,"p_pos_y=>%f", m_pos.y);
+	D3DFont::Draw(150.f, 120.f, 100,"p_pos_z=>%f", m_pos.z);
 }
 
 

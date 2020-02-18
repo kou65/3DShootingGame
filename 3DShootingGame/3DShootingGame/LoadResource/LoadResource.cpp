@@ -39,22 +39,24 @@ void LoadTexture() {
 	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x", "Resource/Texture/Enemy/", "Sample01.x");
 
 	// オブジェファイルの読み込み
-	ObjFile::GetInstance()->Load(
+	Obj::GetInstance()->Load(
 		"Resource/3DModel/Player/Player.obj",
-		Const::Graph::PLAYER,
-		"Resource/3DModel/Player/"
+		Const::Graph::PLAYER
 	);
 
-	ObjFile::GetInstance()->Load(
+	Obj::GetInstance()->Load(
 		"Resource/3DModel/Bullet/bullet.obj",
-		Const::Graph::BULLET,
-		"Resource/3DModel/Bullet/"
+		Const::Graph::BULLET
 	);
 
-	ObjFile::GetInstance()->Load(
+	Obj::GetInstance()->Load(
 		"Resource/3DModel/Cube.obj",
-		Const::Graph::ENEMY,
-		"Resource/3DModel/"
+		Const::Graph::ENEMY
+	);
+
+	Obj::GetInstance()->Load(
+		"Resource/3DModel/ShotEnemy/ShotEnemy.obj",
+		Const::Graph::ENEMY_BULLETER
 	);
 }
 

@@ -1,5 +1,5 @@
 ﻿#include"HomingBulletEnemy.h"
-
+#include"../../../Lib/3D/OBJ/OBJFile.h"
 
 
 HomingBulletEnemy::HomingBulletEnemy(
@@ -10,16 +10,47 @@ HomingBulletEnemy::HomingBulletEnemy(
 	// オブジェクト代入
 	m_p_bullet_factory = factory;
 	m_p_player = player;
+	m_shot_timer = 0.f;
 }
 
 
 void HomingBulletEnemy::Update() {
 
+	// shot_timer加算
+	AddShotTimer();
+
+	// trueなら撃つ
+	if (IsShot() == true) {
+		Shot();
+	}
 }
 
 
 void HomingBulletEnemy::Draw() {
 
+	ObjParameter param;
+
+	param.pos = m_pos;
+	param.register_name = Const::Graph::ENEMY_BULLETER;
+
+	//Obj::GetInstance()->Draw();
+}
+
+
+bool HomingBulletEnemy::IsShot() {
+
+	if (m_shot_timer > INTERVAL) {
+		m_shot_timer = 0.f;
+
+		return true;
+	}
+
+	return false;
+}
+
+
+void HomingBulletEnemy::AddShotTimer() {
+	m_shot_timer++;
 }
 
 

@@ -145,7 +145,6 @@ void Camera3D::FPSTransform() {
 
 	// 移動 * 回転 * 初期位置で合成
 	matrix_pos = matrix_rotation_x * matrix_rotation_y * matrix_pos;
-	
 
 	// 逆行列変換
 	D3DXMatrixInverse(&matrix_view, NULL, &matrix_pos);
@@ -159,28 +158,6 @@ void Camera3D::FPSTransform() {
 	D3DXVec3Init(m_data.move_num);
 }
 
-
-D3DXMATRIX Camera3D::CalcLookAtPointMatrix(
-	D3DXMATRIX* pout,
-	D3DXVECTOR3* pPos,
-	D3DXVECTOR3* pLook,
-	D3DXVECTOR3* pUp
-) {
-
-	D3DXVECTOR3 X, Y, Z, D;
-	D = *pLook - *pPos;
-	D3DXVec3Normalize(&D, &D);
-	D3DXVec3Cross(&X, D3DXVec3Normalize(&Y, pUp), &D);
-	D3DXVec3Normalize(&X, &X);
-	D3DXVec3Normalize(&Z, D3DXVec3Cross(&Z, &X, &Y));
-
-	pout->_11 = X.x; pout->_12 = X.y; pout->_13 = X.z; pout->_14 = 0;
-	pout->_21 = Y.x; pout->_22 = Y.y; pout->_23 = Y.z; pout->_24 = 0;
-	pout->_31 = Z.x; pout->_32 = Z.y; pout->_33 = Z.z; pout->_34 = 0;
-	pout->_41 = 0.0f; pout->_42 = 0.0f; pout->_43 = 0.0f; pout->_44 = 1.0f;
-
-	return *pout;
-}
 
 
 void Camera3D::TPSTransform(
@@ -258,14 +235,17 @@ void Camera3D::TPSTransform(
 		);
 	}
 
-	// カメラの軸初期位置と回転を合成
-	mat_total = mat_rot_x * mat_rot_y * mat_axis_trans;
+	// カメラの軸の距離
+	mat_total = mat_rot_x * mat_rot_y;
+
+	// 軸分カメラから離れる
+	mat_total *= mat_axis_trans;
 
 	// 移動をオフセット
 	mat_total *= mat_trans;
 
 	// 初期化
-	D3DXVec3Init(m_data.move_num);
+	m_data.move_num.Init();
 
 	// 軸からのカメラの位置
 	D3DXVECTOR3 new_pos = axis_distance;
@@ -311,6 +291,29 @@ D3DXVECTOR3 Camera3D::GetYAxisDirectionVector() {
 	D3DXVec3Normalize(&direction_y, &m_data.rota);
 
 	return direction_y;
+}
+
+
+D3DXMATRIX Camera3D::CalcLookAtPointMatrix(
+	D3DXMATRIX* pout,
+	D3DXVECTOR3* pPos,
+	D3DXVECTOR3* pLook,
+	D3DXVECTOR3* pUp
+) {
+
+	D3DXVECTOR3 X, Y, Z, D;
+	D = *pLook - *pPos;
+	D3DXVec3Normalize(&D, &D);
+	D3DXVec3Cross(&X, D3DXVec3Normalize(&Y, pUp), &D);
+	D3DXVec3Normalize(&X, &X);
+	D3DXVec3Normalize(&Z, D3DXVec3Cross(&Z, &X, &Y));
+
+	pout->_11 = X.x; pout->_12 = X.y; pout->_13 = X.z; pout->_14 = 0;
+	pout->_21 = Y.x; pout->_22 = Y.y; pout->_23 = Y.z; pout->_24 = 0;
+	pout->_31 = Z.x; pout->_32 = Z.y; pout->_33 = Z.z; pout->_34 = 0;
+	pout->_41 = 0.0f; pout->_42 = 0.0f; pout->_43 = 0.0f; pout->_44 = 1.0f;
+
+	return *pout;
 }
 
 

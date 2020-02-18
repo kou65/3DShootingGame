@@ -21,6 +21,7 @@ struct ObjectSubset {
 };
 
 
+// オブジェクトパラメータ
 struct ObjParameter {
 
 	ObjParameter() {
@@ -33,8 +34,8 @@ struct ObjParameter {
 	Vec3 scale;
 	Vec3 rota;
 	std::string register_name;
-
 };
+
 
 // オブジェファイルで保存するデータ
 struct ObjFileData {
@@ -55,11 +56,11 @@ struct ObjFileData {
 
 
 
-class ObjFile : public  Model{
+class Obj : public  Model{
 public:
 
-	static ObjFile *GetInstance(){
-		static ObjFile obj_file;
+	static Obj *GetInstance(){
+		static Obj obj_file;
 		return &obj_file;
 	}
 
@@ -72,7 +73,7 @@ public:
 	bool Load(
 		const std::string &obj_file_path,
 		const std::string &registr_name,
-		const std::string &texture_file_path
+		const std::string &mtl_file_path = ""
 	);
 
 	// 表示
@@ -83,14 +84,13 @@ public:
 private:
 
 
-	ObjFile();
+	Obj();
 
 
 	// メッシュ情報読み込み
 	bool MeshLoad(
 		const std::string &file_path,
 		const std::string &registr_name,
-		const std::string &texture_file_path,
 		std::string&out_material_name,
 		int &out_total_material_num,
 		std::vector<INT>&indices,
@@ -185,7 +185,6 @@ private:
 	void VertexFscanfLoad(
 		FILE*p_file,
 		D3DXVECTOR3 &vec3);
-
 
 private:
 

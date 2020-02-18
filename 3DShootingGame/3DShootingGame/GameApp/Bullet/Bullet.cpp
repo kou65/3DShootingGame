@@ -40,7 +40,7 @@ void Bullet::Draw() {
 	param.register_name = Const::Graph::BULLET;
 	param.pos = m_pos;
 
-	ObjFile::GetInstance()->Draw(param);
+	Obj::GetInstance()->Draw(param);
 }
 
 

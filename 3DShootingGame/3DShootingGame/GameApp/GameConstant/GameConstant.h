@@ -10,6 +10,7 @@ namespace Const {
 		const std::string PLAYER = "player";
 		const std::string ENEMY = "enemy";
 		const std::string BULLET = "bullet";
+		const std::string ENEMY_BULLETER = "enemy_bulleter";
 	}
 
 }
