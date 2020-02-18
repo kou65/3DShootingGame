@@ -2,12 +2,12 @@
 #ifndef OBJECT3D_H
 #define OBJECT3D_H
 
-#include"../Object/Object.h"
+#include"../ObjectBase/ObjectBase.h"
 #include"../../Lib/Vec3/Vec3.h"
 
 
 
-class Object3D : public Object{
+class Object3D : public ObjectBase{
 public:
 
 	Vec3 GetPos();

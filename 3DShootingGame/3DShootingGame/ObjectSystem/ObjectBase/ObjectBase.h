@@ -7,21 +7,17 @@
 
 
 
-class Object {
+class ObjectBase {
 public:
 
-	~Object(){};
+	~ObjectBase(){};
 
-	Object() {
-		m_is_active = true;
-	}
+	ObjectBase();
 
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
-	bool IsActive() {
-		return m_is_active;
-	}
+	bool IsActive();
 
 protected:
 

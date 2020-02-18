@@ -41,15 +41,10 @@ void Camera3D::Update() {
 
 	case FPS:
 		FPSTransform();
-
 		break;
 
 	case TPS:
-		TPSTransform(
-			D3DXVECTOR3(m_data.pos.x, m_data.pos.y, m_data.pos.z),
-			D3DXVECTOR3(m_data.axis.x, m_data.axis.y, m_data.axis.z)
-		);
-
+		TPSTransform();
 		break;
 	}
 
@@ -160,10 +155,7 @@ void Camera3D::FPSTransform() {
 
 
 
-void Camera3D::TPSTransform(
-	const D3DXVECTOR3 &axis_pos,
-	const D3DXVECTOR3 &axis_distance
-) {
+void Camera3D::TPSTransform() {
 
 	// ビュー行列
 	D3DXMATRIX matrix_view;
@@ -187,12 +179,12 @@ void Camera3D::TPSTransform(
 	// 注視点の初期化
 	D3DXVec3Init(m_data.look_at_point);
 
-	// 軸移動行列作成
+	// 軸移動行列作成(軸を中心に回転)
 	D3DXMatrixTranslation(
 		&mat_axis_trans,
-		m_data.pos.x,
-		m_data.pos.y,
-		m_data.pos.z 
+		m_data.axis.x,
+		m_data.axis.y,
+		m_data.axis.z 
 	);
 
 	// カメラのX軸回転
@@ -241,14 +233,14 @@ void Camera3D::TPSTransform(
 	// 軸分カメラから離れる
 	mat_total *= mat_axis_trans;
 
-	// 移動をオフセット
+	// カメラ移動
 	mat_total *= mat_trans;
 
 	// 初期化
 	m_data.move_num.Init();
 
 	// 軸からのカメラの位置
-	D3DXVECTOR3 new_pos = axis_distance;
+	D3DXVECTOR3 new_pos = m_data.view_distance;
 
 	// 回転後の移動
 	D3DXVec3TransformCoord(
@@ -258,7 +250,7 @@ void Camera3D::TPSTransform(
 	);
 
 	// 注視点を軸地点から位置を加算する
-	m_data.look_at_point = axis_pos + m_data.pos;
+	m_data.look_at_point = m_data.axis + m_data.pos;
 
 	// ビュー座標変換
 	{
@@ -279,7 +271,6 @@ void Camera3D::TPSTransform(
 			D3DTS_VIEW,
 			&matrix_view);
 	}
-
 }
 
 
@@ -485,6 +476,11 @@ void Camera3D::SetCamera(const CameraData&camera) {
 
 void Camera3D::SetPos(const D3DXVECTOR3 &pos) {
 	m_data.pos = pos;
+}
+
+
+void Camera3D::SetAxis(const D3DXVECTOR3&axis) {
+	m_data.axis = axis;
 }
 
 

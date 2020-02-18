@@ -2,12 +2,12 @@
 #ifndef OBJECT2D_H
 #define OBJECT2D_H
 
-#include"../Object/Object.h"
+#include"../ObjectBase/ObjectBase.h"
 #include"../../Lib/Vec2/Vec2.h"
 
 
 
-class Object2D : public Object{
+class Object2D : public ObjectBase{
 public:
 
 	Vec2 GetPos();

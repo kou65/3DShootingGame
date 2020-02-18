@@ -32,6 +32,9 @@ public:
 	// 位置をセット
 	void SetPos(const D3DXVECTOR3 &pos);
 
+	// 軸をセット
+	void SetAxis(const D3DXVECTOR3&axis);
+
 	// 位置を返す
 	D3DXVECTOR3 GetPos();
 
@@ -50,8 +53,10 @@ public:
 	// 注視点
 	void SetLookAtPoint(const D3DXVECTOR3&point);
 
+	// 注視点加算
 	void AddLookAtPoint(const D3DXVECTOR3&point);
 
+	// デバッグ描画
 	void TransformDraw(float pos_x = 100.f,float pos_y = 100.f);
 
 private:
@@ -63,12 +68,7 @@ private:
 	void FPSTransform();
 
 	// 3人称カメラ変換
-	void TPSTransform(
-		// 軸の位置
-		const D3DXVECTOR3 &axis_pos,
-		// 軸からの距離の位置にカメラを置く
-		const D3DXVECTOR3 &axis_distance
-	);
+	void TPSTransform();
 
 	// 注視点行列変換
 	D3DXMATRIX CalcLookAtPointMatrix(

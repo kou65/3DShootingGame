@@ -15,6 +15,8 @@ struct CameraData {
 		move_num.Init();
 		rota.Init();
 		look_at_point.Init();
+		view_distance.Init();
+		view_distance.z = -50.f;
 
 		// 上方向だけ持たせる
 		up_direction.Init();
@@ -40,6 +42,9 @@ struct CameraData {
 
 	// 上方向
 	Vec3 up_direction;
+
+	// カメラからの距離
+	Vec3 view_distance;
 
 	// デバッグモードか
 	bool is_debug;

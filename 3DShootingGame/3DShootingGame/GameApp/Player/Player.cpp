@@ -15,6 +15,7 @@ Player::Player(
 	m_pos = pos;
 	m_p_camera_3d = camera_3d;
 	m_p_bullet_factory = bullet_factory;
+	
 }
 
 
@@ -47,7 +48,7 @@ void Player::Draw() {
 	param.pos = m_pos;
 	param.register_name = Const::Graph::PLAYER;
 	param.rota.y = 90.f;
-	
+
 	// 位置
 	//param.pos = m_p_camera_3d->GetPos();
 

@@ -175,6 +175,22 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionSystem\Collision\CollisionManager\CollisionManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Collision\Collision\Collision.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Collision\Shape\Shape3DBase\ShapeBase.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Collision\Shape\Sphere\Sphere.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="GameApp\Bullet\Bullet.cpp">
       <SubType>
       </SubType>
@@ -201,6 +217,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="ObjectSystem\Object3D\Object3D.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -339,6 +359,26 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionSystem\Collision\CollisionManager\CollisionManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Collision\Collision\Collision.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Collision\Shape\Shape3DBase\ShapeBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Collision\Shape\ShapeData\ShapeData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Collision\Shape\Sphere\Sphere.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameApp\CharacterBase\CharacterBase.h">
       <SubType>
       </SubType>
@@ -406,6 +446,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Debugger\Debugger.h" />
+    <ClInclude Include="CollisionSystem\Collision\CollisionObject3DBase\CollisionObject3DBase.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="ObjectSystem\Object2D\Object2D.h">
       <SubType>
       </SubType>
@@ -480,7 +524,7 @@
     </ClInclude>
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
-    <ClInclude Include="ObjectSystem\Object\Object.h" />
+    <ClInclude Include="ObjectSystem\ObjectBase\ObjectBase.h" />
     <ClInclude Include="ObjectSystem\Object3D\Object3D.h">
       <SubType>
       </SubType>
