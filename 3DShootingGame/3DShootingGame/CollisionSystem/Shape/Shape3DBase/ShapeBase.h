@@ -1,11 +1,10 @@
 ﻿#pragma once
 #include"../ShapeData/ShapeData.h"
-#include"../../../../Lib/Vec3/Vec3.h"
+#include"../../../Lib/Vec3/Vec3.h"
 
 
 
-class Shape3DBase {
-public:
+struct Shape3DBase {
 
 	Shape3DBase(const Vec3 &vec);
 
@@ -15,11 +14,11 @@ public:
 		const float&z
 	);
 
+	Shape3DBase() {};
+
 	ShapeType GetShapeType();
 	Vec3 GetPos();
 
-protected:
-
-	Vec3 m_vec;
+	Vec3 vec;
 	ShapeType m_shape_type;
 };

@@ -1,8 +1,9 @@
 ﻿#include"ShapeBase.h"
 
 
+
 Shape3DBase::Shape3DBase(const Vec3 &pos) {
-	m_vec = pos;
+	vec = pos;
 }
 
 
@@ -11,14 +12,14 @@ Shape3DBase::Shape3DBase(
 	const float&y,
 	const float&z
 ) {
-	m_vec.x = x;
-	m_vec.y = y;
-	m_vec.z = z;
+	vec.x = x;
+	vec.y = y;
+	vec.z = z;
 }
 
 
 Vec3 Shape3DBase::GetPos() {
-	return m_vec;
+	return vec;
 }
 
 

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"../../../Lib/Vec3/Vec3.h"
+#include"../../Lib/Vec3/Vec3.h"
 
 
 

@@ -12,7 +12,13 @@
 class ObjectManager {
 public:
 
-	ObjectManager() {}
+	// アクセス権
+	static ObjectManager*GetInstance() {
+		static ObjectManager obj_mng;
+		return &obj_mng;
+	}
+
+public:
 
 	void Update();
 
@@ -22,9 +28,15 @@ public:
 
 	void InsertListEntry(ObjectBase*object);
 
-	void ObjListAutoDelete();
+	void AllDelete();
 
-	void ObjListAllDelete();
+private:
+
+	ObjectManager() {};
+
+	void NotActiveAutoDelete();
+
+	void InsertObject();
 
 private:
 

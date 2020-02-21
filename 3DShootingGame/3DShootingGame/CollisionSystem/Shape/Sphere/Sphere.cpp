@@ -2,5 +2,5 @@
 
 
 float Sphere::GetRadian() {
-	return m_radian;
+	return radian;
 }

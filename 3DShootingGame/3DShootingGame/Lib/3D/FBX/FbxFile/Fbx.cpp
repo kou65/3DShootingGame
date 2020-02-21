@@ -279,7 +279,7 @@ bool Fbx::Load(
 
 	// シェーダーの初期化
 	if (m_is_shader == true) {
-		m_effect.SetShaderName("VertexBlend.fx");
+		m_effect.SetShaderName("VertexBlend.hlsl");
 		m_effect.SetTechnique("tech1");
 
 		m_effect.Init();
@@ -616,14 +616,14 @@ void Fbx::InitVertexInfo(
 
 		for (int i = 0; i < 4; i++) {
 			p_vertices[v].weight[i] = 0.f;
-			p_vertices[v].bone_index[i] = 0.f;
+			p_vertices[v].bone_index[i] = 0;
 		}
 
 		// w値を1.fにする
 		//p_vertices[v].normal.w = 1.0f;
 
 		// デバッグ用
-		//p_vertices[v].bone_index[3] = 3;
+		p_vertices[v].bone_index[2] = 3;
 		//p_vertices[v].weight[3] = 100.f;
 	}
 
@@ -1641,7 +1641,8 @@ void Fbx::WeightSkinning(
 		w < mesh_data.vertex_num;
 		w++) {
 
-		D3DXVECTOR4 vec4 = vertices[w].vertex;
+		D3DXVECTOR4 vec4 =
+			m_p_vertics[mi][w].vertex;
 
 		// 一旦初期化
 		vertices[w].vertex.x = 0.f;
@@ -1668,15 +1669,15 @@ void Fbx::WeightSkinning(
 			FbxVector4 out_vertex = md->
 				animation_matrix[m_count][w_idx].
 				MultNormalize(pos);
-
+			
 			// 頂点取り出し
 			float x = (float)out_vertex[0];
 			float y = (float)out_vertex[1];
 			float z = (float)out_vertex[2];
 
-			// d3d用
+			//// d3d用
 			//D3DXVECTOR4 out;
-
+			//
 			//Model::MatrixMultipleVec4(
 			//	out,
 			//	vec4,

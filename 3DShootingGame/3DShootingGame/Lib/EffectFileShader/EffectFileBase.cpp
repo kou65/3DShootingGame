@@ -223,7 +223,7 @@ void EffectFileBase::ShaderUpdateMatrixArray(
 void EffectFileBase::CommitShader() {
 
 	HRESULT hr = m_p_effect->CommitChanges();
-
+	
 	if (hr != S_OK) {
 		hr = S_FALSE;
 	}

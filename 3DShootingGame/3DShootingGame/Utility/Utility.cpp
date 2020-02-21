@@ -88,4 +88,31 @@ namespace Utility {
 		return atoi(str);
 	}
 
+
+	FILE* FileOpen(
+		const std::string&load_file_name,
+		const char*mode
+	) {
+
+		FILE * fp;
+
+		// ファイルを開く
+		fopen_s(&fp, load_file_name.c_str(), mode);
+
+		if (fp == NULL) {
+			return fp;
+		}
+	}
+
+
+	void FileClose(FILE*p_file) {
+
+		// ファイルを閉じる
+		fclose(p_file);
+	}
+
+
+
+	//void LoadUntilLineFeed(FILE*p_file,);
+
 }

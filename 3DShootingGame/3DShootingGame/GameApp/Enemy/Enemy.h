@@ -4,16 +4,16 @@
 #include"../../ObjectSystem/Object3D/Object3D.h"
 #include"../../Lib/3D/OBJ/OBJFile.h"
 #include"../GameConstant/GameConstant.h"
+#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
 
 
 
-class Enemy : public Object3D{
+class Enemy : public CollisionObject3DBase{
 public:
 
 	const int WIDTH_MOVE_RIGHT = 200;
 	const int WIDTH_MOVE_LEFT = 100;
 	
-
 public:
 
 	Enemy(
@@ -24,6 +24,10 @@ public:
 	void Update()override;
 
 	void Draw()override;
+
+	void HitAction()override;
+
+	Sphere GetSphere()override;
 
 private:
 

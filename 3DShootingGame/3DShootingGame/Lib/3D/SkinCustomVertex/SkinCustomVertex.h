@@ -3,7 +3,8 @@
 
 
 // fvf
-#define FVF_SKIN ( D3DFVF_XYZW | D3DFVF_NORMAL | D3DFVF_TEX1 | D3DFVF_DIFFUSE /*| D3DFVF_LASTBETA_UBYTE4 | D3DFVF_XYZB4*/)
+#define FVF_SKIN ( D3DFVF_XYZW /*| D3DFVF_LASTBETA_UBYTE4| D3DFVF_XYZB4*/|D3DFVF_NORMAL | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
+
 
 
 struct SkinCustomVertex {
@@ -23,9 +24,10 @@ struct SkinCustomVertex {
 	// テクセル
 	D3DXVECTOR2 uv;
 
-	// スキンメッシュ用影響するボーン番号(頂点)
-	D3DXVECTOR4 bone_index;
-
 	// スキンメッシュ用重み(この頂点で影響する重みを全て持たせる)
 	D3DXVECTOR4 weight;
+
+	// スキンメッシュ用影響するボーン番号(頂点)
+	unsigned char bone_index[4];
+
 };

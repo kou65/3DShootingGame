@@ -3,12 +3,12 @@
 
 
 HomingBulletEnemy::HomingBulletEnemy(
-	BulletFactory*factory,
+	ObjectFactory*factory,
 	Player*player
 ) {
 
 	// オブジェクト代入
-	m_p_bullet_factory = factory;
+	m_p_obj_factory = factory;
 	m_p_player = player;
 	m_shot_timer = 0.f;
 }
@@ -71,5 +71,5 @@ void HomingBulletEnemy::Shot(){
 	Vec3 dir = CalcDirection();
 
 	// 弾を生成
-	m_p_bullet_factory->Create(dir, 1.f, 300.f);
+	m_p_obj_factory->CreateBullet(dir, 1.f, 300.f);
 }

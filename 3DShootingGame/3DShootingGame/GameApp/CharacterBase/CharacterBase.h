@@ -1,13 +1,13 @@
 ﻿#pragma once
-#include"../../ObjectSystem/Object3D/Object3D.h"
+#include"../../CollisionSystem/CollisionObject3DBase/CollisionObject3DBase.h"
 
 
 
-class CharacterBase : public Object3D{
+class CharacterBase : public CollisionObject3DBase{
 public:
 
-	void Update()override {}
-	void Draw()override {}
+	void Update()override {};
+	void Draw()override {};
 
 protected:
 

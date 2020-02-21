@@ -13,7 +13,6 @@ public:
 	Vec3 GetPos();
 
 protected:
-
 	Vec3 m_pos;
 };
 

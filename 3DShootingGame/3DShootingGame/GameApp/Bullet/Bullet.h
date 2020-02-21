@@ -1,13 +1,13 @@
 ﻿#ifndef BULLET_H
 #define BULLET_H
 
-#include"../../ObjectSystem/Object3D/Object3D.h"
+#include"../../CollisionSystem/CollisionObject3DBase/CollisionObject3DBase.h"
 #include<math.h>
 #include"../../Lib/Vec3/Vec3.h"
 
 
 
-class Bullet : public Object3D{
+class Bullet : public CollisionObject3DBase{
 public:
 
 	Bullet(
@@ -23,6 +23,11 @@ public:
 
 	// 描画
 	void Draw()override;
+
+	// 衝突後の処理
+	void HitAction()override;
+
+	Sphere GetSphere()override;
 
 	// 移動加算
 	void AddSpeed(const float &add_speed) {

@@ -6,39 +6,61 @@
 void ObjectManager::Update() {
 
 
-	for (auto &i_obj : m_p_insert_obj) {
+	// 活動していなかった削除する関数
+	NotActiveAutoDelete();
 
-		m_p_object_list.emplace_back(std::move(i_obj));
-	}
+	// オブジェクトを挿入
+	InsertObject();
 
-	if (m_p_insert_obj.size() > 0) {
-		m_p_insert_obj.clear();
-	}
-
+	// オブジェクトを回す
 	for (auto &object : m_p_object_list) {
 
-		if (object.get()->IsActive() == true) {
-			object.get()->Update();
-		}
+		// 更新
+		object.get()->Update();
 	}
-
-	ObjListAutoDelete();
 }
 
 
 
 void ObjectManager::Draw() {
 
+	// オブジェクトを描画
 	for (auto &object : m_p_object_list) {
 
-		if (object.get() != nullptr) {
-			object.get()->Draw();
+		// 活動していないなら
+		if (object.get()->IsActive() != true) {
+			continue;
 		}
+
+		// 描画できないなら
+		if (object.get()->CanDraw() != true) {
+			continue;
+		}
+
+		// 描画
+		object.get()->Draw();
 	}
 }
 
 
-void ObjectManager::ObjListAutoDelete() {
+void ObjectManager::InsertObject() {
+
+
+	// 配列に溜めていたオブジェクトを代入
+	for (auto &i_obj : m_p_insert_obj) {
+
+		// オブジェクトポインタを委譲
+		m_p_object_list.emplace_back(std::move(i_obj));
+	}
+
+	// オブジェクトが存在するなら
+	if (m_p_insert_obj.size() > 0) {
+		m_p_insert_obj.clear();
+	}
+}
+
+
+void ObjectManager::NotActiveAutoDelete() {
 
 	for (auto itr = m_p_object_list.begin();
 		itr != m_p_object_list.end();) {
@@ -67,7 +89,7 @@ void ObjectManager::ObjListAutoDelete() {
 }
 
 
-void ObjectManager::ObjListAllDelete() {
+void ObjectManager::AllDelete() {
 
 	for (auto itr = m_p_object_list.begin();
 		itr != m_p_object_list.end(); itr++) {

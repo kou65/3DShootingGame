@@ -249,13 +249,7 @@
     <ClCompile Include="GameApp\Bullet\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameApp\BulletFactory\BulletFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp\Enemy\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp\EnemyFactory\EnemyFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\Filed\Filed.cpp">
@@ -278,6 +272,24 @@
     </ClCompile>
     <ClCompile Include="Lib\D3DFont\D3DFont.cpp">
       <Filter>Lib\D3DFont</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Collision\Collision.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\CollisionManager\CollisionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionSystem\Shape\Sphere\Sphere.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -416,9 +428,6 @@
     <ClInclude Include="Scene\SceneManager\SceneManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectSystem\Object\Object.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectSystem\Object3D\Object3D.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -446,13 +455,7 @@
     <ClInclude Include="GameApp\Bullet\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameApp\BulletFactory\BulletFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameApp\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp\EnemyFactory\EnemyFactory.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\Filed\Filed.h">
@@ -479,12 +482,36 @@
     <ClInclude Include="Lib\D3DFont\D3DFont.h">
       <Filter>Lib\D3DFont</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectSystem\ObjectBase\ObjectBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Collision\Collision.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\CollisionObject3DBase\CollisionObject3DBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Shape\ShapeData\ShapeData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem\Shape\Sphere\Sphere.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Lib\Shader\PixelShader.hlsl" />
-    <FxCompile Include="VertexBlend.fx" />
     <FxCompile Include="DepthShadow.fx" />
     <FxCompile Include="ZTexture.fx" />
+    <FxCompile Include="VertexBlend.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\Shader\PosSheader.hlsli" />

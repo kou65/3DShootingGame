@@ -10,17 +10,23 @@
 class ObjectBase {
 public:
 
-	~ObjectBase(){};
+	// 仮想デストラクタ
+	virtual ~ObjectBase(){};
 
 	ObjectBase();
 
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
+	// 活動しているか
 	bool IsActive();
+
+	// 描画できるか
+	bool CanDraw();
 
 protected:
 
+	bool m_can_draw;
 	bool m_is_active;
 };
 

@@ -175,19 +175,19 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionSystem\Collision\CollisionManager\CollisionManager.cpp">
+    <ClCompile Include="CollisionSystem\CollisionManager\CollisionManager.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="CollisionSystem\Collision\Collision\Collision.cpp">
+    <ClCompile Include="CollisionSystem\Collision\Collision.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="CollisionSystem\Collision\Shape\Shape3DBase\ShapeBase.cpp">
+    <ClCompile Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="CollisionSystem\Collision\Shape\Sphere\Sphere.cpp">
+    <ClCompile Include="CollisionSystem\Shape\Sphere\Sphere.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -195,16 +195,8 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="GameApp\BulletFactory\BulletFactory.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="Debugger\Debugger.cpp" />
     <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="GameApp\EnemyFactory\EnemyFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -221,6 +213,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -359,31 +355,27 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionSystem\Collision\CollisionManager\CollisionManager.h">
+    <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="CollisionSystem\Collision\Collision\Collision.h">
+    <ClInclude Include="CollisionSystem\Collision\Collision.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="CollisionSystem\Collision\Shape\Shape3DBase\ShapeBase.h">
+    <ClInclude Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="CollisionSystem\Collision\Shape\ShapeData\ShapeData.h">
+    <ClInclude Include="CollisionSystem\Shape\ShapeData\ShapeData.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="CollisionSystem\Collision\Shape\Sphere\Sphere.h">
+    <ClInclude Include="CollisionSystem\Shape\Sphere\Sphere.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="GameApp\CharacterBase\CharacterBase.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="GameApp\EnemyFactory\EnemyFactory.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -441,16 +433,16 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameApp\BulletFactory\BulletFactory.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Debugger\Debugger.h" />
-    <ClInclude Include="CollisionSystem\Collision\CollisionObject3DBase\CollisionObject3DBase.h">
+    <ClInclude Include="CollisionSystem\CollisionObject3DBase\CollisionObject3DBase.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="ObjectSystem\Object2D\Object2D.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -587,7 +579,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="VertexBlend.fx">
+    <FxCompile Include="VertexBlend.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>

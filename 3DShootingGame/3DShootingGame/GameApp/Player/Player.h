@@ -4,7 +4,7 @@
 
 #include"../CharacterBase/CharacterBase.h"
 #include"../../Lib/3D/Camera3D/Camera3D.h"
-#include"../../GameApp/BulletFactory/BulletFactory.h"
+#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
 #include"../../Lib/Vec2/Vec2.h"
 
 
@@ -15,11 +15,12 @@ public:
 	Player(
 		D3DXVECTOR3 pos,
 		Camera3D*camera_3d,
-		BulletFactory*bullet_factory);
+		ObjectFactory*bullet_factory);
 
 	void Update()override;
 
 	void Draw()override;
+
 
 private:
 
@@ -51,7 +52,7 @@ private:
 	Camera3D * m_p_camera_3d;
 
 	// 弾の生成
-	BulletFactory * m_p_bullet_factory;
+	ObjectFactory * m_p_obj_factory;
 
 	// 移動値
 	Vec3 m_move;

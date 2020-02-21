@@ -1,5 +1,6 @@
 ﻿#include"Bullet.h"
 #include"../../Lib/3D/OBJ/OBJFile.h"
+#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
 
 
 
@@ -23,6 +24,12 @@ Bullet::Bullet(
 
 	// 弾の制限距離
 	m_distance_limit_num = distance_limit_num;
+
+	m_shape_type = ShapeType::SPHERE;
+
+	// 弾を衝突物として登録
+	CollisionManager::GetInstance()
+		->Entry(CollisionObjectType::BULLET,this);
 }
 
 
@@ -41,6 +48,24 @@ void Bullet::Draw() {
 	param.pos = m_pos;
 
 	Obj::GetInstance()->Draw(param);
+}
+
+
+void Bullet::HitAction() {
+	
+	// 消滅
+	m_is_active = false;
+}
+
+
+Sphere Bullet::GetSphere(){
+
+	Sphere s;
+
+	s.vec = m_pos;
+	s.radian = 30.f;
+
+	return s;
 }
 
 

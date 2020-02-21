@@ -1,14 +1,19 @@
 ﻿#include"../../GameApp/Player/Player.h"
 #include"../../GameApp/Enemy/Enemy.h"
-#include"../../GameApp/BulletFactory/BulletFactory.h"
+#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
 #include"../../Lib\DirectInput\KeyBoard\KeyBoard.h"
 #include"../../Lib\Sprite2D\Sprite2D\Sprite2DUser.h"
 #include"GameScene.h"
 #include"../../GameApp/Filed/Filed.h"
+#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
+
 
 
 
 GameScene::GameScene() {
+
+	// ファクトリー生成
+	m_p_obj_factory.reset(new ObjectFactory);
 
 	// カメラのデータ
 	CameraData set_data;
@@ -26,32 +31,25 @@ GameScene::GameScene() {
 		set_data
 	));
 
-	// 弾工場
-	m_p_bullet_factory.reset(new BulletFactory(
-		&m_object_manager
-	));
-
 	// 自機
-	m_object_manager.Entry(new Player(
-		D3DXVECTOR3(0.f, 0.f, 20.f),
+	m_p_obj_factory->CreatePlayer(
+		Vec3(0.f, 0.f, 20.f),
 		m_p_camera.get(),
-		m_p_bullet_factory.get()));
+		m_p_obj_factory.get());
 
 	// 敵
-	m_object_manager.Entry(new Enemy(
-		D3DXVECTOR3(0.f, 0.f, 1000.f), 2.f)
-	);
+	m_p_obj_factory->CreateEnemy(
+		Vec3(0.f, 0.f, 1000.f), 2.f
+		);
 
 	// 部屋
-	m_object_manager.Entry(new Filed);
+	m_p_obj_factory->CreateFiled();
 }
-
 
 
 GameScene::~GameScene() {
 	
 }
-
 
 
 void GameScene::Update(SceneType&scene_type){
@@ -60,7 +58,10 @@ void GameScene::Update(SceneType&scene_type){
 	m_p_camera->Update();
 
 	// オブジェクト更新
-	m_object_manager.Update();
+	ObjectManager::GetInstance()->Update();
+
+	// 当たり判定更新
+	CollisionManager::GetInstance()->Update();
 }
 
 
@@ -70,5 +71,5 @@ void GameScene::Draw(){
 	m_p_camera->TransformDraw();
 
 	// オブジェクト描画
-	m_object_manager.Draw();
+	ObjectManager::GetInstance()->Draw();
 }

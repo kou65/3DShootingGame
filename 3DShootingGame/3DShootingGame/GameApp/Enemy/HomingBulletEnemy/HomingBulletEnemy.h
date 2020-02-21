@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../EnemyBase/EnemyBase.h"
-#include"../../BulletFactory/BulletFactory.h"
+#include"../../../ObjectSystem/ObjectFactory/ObjectFactory.h"
 #include"../../Player/Player.h"
 
 
@@ -13,7 +13,7 @@ public:
 public:
 
 	HomingBulletEnemy(
-		BulletFactory*factory,
+		ObjectFactory*factory,
 		Player*player
 	);
 
@@ -40,7 +40,7 @@ private:
 private:
 
 	// !弾生成工場
-	BulletFactory*m_p_bullet_factory;
+	ObjectFactory*m_p_obj_factory;
 
 	// !プレイヤー
 	Player*m_p_player;

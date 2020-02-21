@@ -1,5 +1,5 @@
 ﻿#include"../Enemy/Enemy.h"
-
+#include"../../CollisionSystem/Shape/ShapeData/ShapeData.h"
 
 
 Enemy::Enemy(
@@ -8,6 +8,12 @@ Enemy::Enemy(
 
 	m_pos = pos;
 	m_speed = speed;
+
+	m_shape_type = ShapeType::SPHERE;
+
+	// 衝突に追加
+	CollisionManager::GetInstance()->Entry(
+		CollisionObjectType::ENEMY,this);
 }
 
 
@@ -26,4 +32,22 @@ void Enemy::Draw(){
 
 	Obj::GetInstance()->Draw(param);
 
+}
+
+
+void Enemy::HitAction() {
+
+	// 消滅
+	m_is_active = false;
+}
+
+
+Sphere Enemy::GetSphere() {
+
+	Sphere s;
+
+	s.vec = m_pos;
+	s.radian = 30.f;
+
+	return s;
 }

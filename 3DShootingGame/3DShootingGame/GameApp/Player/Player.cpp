@@ -2,6 +2,7 @@
 #include"../../Lib/3D/OBJ/OBJFile.h"
 #include"../../Lib/DirectInput/KeyBoard/KeyBoard.h"
 #include"../../Lib/D3DFont/D3DFont.h"
+#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
 #include<math.h>
 
 
@@ -9,12 +10,12 @@
 Player::Player(
 	D3DXVECTOR3 pos,
 	Camera3D*camera_3d,
-	BulletFactory*bullet_factory) {
+	ObjectFactory*bullet_factory) {
 
 
 	m_pos = pos;
 	m_p_camera_3d = camera_3d;
-	m_p_bullet_factory = bullet_factory;
+	m_p_obj_factory = bullet_factory;
 	
 }
 
@@ -130,10 +131,11 @@ void Player::Rotation() {
 		- m_pos.y * cosf(m_radius.y / 180);
 }
 
+
 void Player::ShotBullet() {
 
 	if (KeyBoard::IsKeyPush(DIK_RETURN)) {
-		m_p_bullet_factory->Create(
+		m_p_obj_factory->CreateBullet(
 			Vec3(m_pos.x,
 			m_pos.y,
 			m_pos.z),
