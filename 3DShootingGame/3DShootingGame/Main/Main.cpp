@@ -137,7 +137,8 @@ VOID Render()
 		pDevice->EndScene();
 	}
 	pDevice->Present(NULL, NULL, NULL, NULL);
-}*/
+}
+*/
 
 
 int WINAPI WinMain(
@@ -180,7 +181,7 @@ int WINAPI WinMain(
 	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
 
 	// デバッグモード
-	bool is_debug_mode = true;
+	bool is_debug_mode = false;
 
 	// ループ
 	while (Window::ProcessMessage() == true) {

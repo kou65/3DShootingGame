@@ -6,6 +6,7 @@
 #include"../../ObjectSystem/ObjectManager/ObjectManager.h"
 #include"../../Lib\3D\Camera3D\Camera3D.h"
 #include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../ObjectSystem/FileObjectDataManager/FileObjectDataManager.h"
 #include<memory>
 
 
@@ -23,6 +24,7 @@ public:
 
 private:
 
+	std::unique_ptr<FileObjectDataManager>m_p_file_obj_mng;
 	std::unique_ptr<Camera3D>m_p_camera;
 	std::unique_ptr<ObjectFactory>m_p_obj_factory;
 };

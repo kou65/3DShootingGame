@@ -24,18 +24,20 @@ public:
 
 private:
 
-	const float SPEED = 1.f;
+	const float PLAYER_SPEED = 1.f;
+	const float BULLET_SPEED = 5.f;
+	const float SHOT_DISTANCE = 300.f;
 
 private:
 
-	// 移動
-	void Move();
+	// キーによる移動
+	void MoveByKey();
+
+	// キーによる回転
+	void RotationByKey();
 
 	// 弾を撃つ
 	void ShotBullet();
-
-	// 角度
-	void SetRadius(const float&rad);
 
 	// 回転
 	void Rotation();
@@ -57,8 +59,11 @@ private:
 	// 移動値
 	Vec3 m_move;
 
-	// 半径
-	Vec2 m_radius;
+	// 回転値
+	Vec3 m_vec_rot;
+
+	// 正規化回転値
+	Vec3 m_nor_rot;
 
 	// プレイヤー行列
 	D3DXMATRIX m_player_mat;

@@ -47,6 +47,10 @@ Sphere Enemy::GetSphere() {
 	Sphere s;
 
 	s.vec = m_pos;
+
+	// 中心
+	s.vec /= 2;
+
 	s.radian = 30.f;
 
 	return s;

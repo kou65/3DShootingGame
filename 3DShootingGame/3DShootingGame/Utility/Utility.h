@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include<vector>
 #include<string>
+#include"../Lib/Vec3/Vec3.h"
+
 
 
 namespace Utility {
@@ -22,15 +24,28 @@ namespace Utility {
 	int StringToValue(const char*str);
 
 
+	bool IsStrCmp(
+		const char*str_cmp1,
+		const char*str_cmp2
+	);
+
+	bool IsStrInclude(
+		const char*str1,
+		const char*str2
+	);
+
 	// ファイルを開く
-	FILE* FileOpen(
+	bool FileOpen(
+		FILE**p_fp,
 		const std::string&load_file_name,
 		const char*mode
 	);
 
 	// ファイルを閉じる
-	void FileClose(FILE*p_file);
+	void FileClose(FILE**p_file);
 
 
-	//void LoadUntilLineFeed();
+	void LoadFloatVec3(FILE*p_file,Vec3&v,char break_str);
+
+
 }

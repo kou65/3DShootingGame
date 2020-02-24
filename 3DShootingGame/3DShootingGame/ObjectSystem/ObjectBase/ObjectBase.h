@@ -6,7 +6,6 @@
 #include"../../GameApp/GameConstant/GameConstant.h"
 
 
-
 class ObjectBase {
 public:
 

@@ -1,6 +1,7 @@
 ﻿#include"Utility.h"
 #include<stdio.h>
 #include<string>
+#include"../Lib/Vec3/Vec3.h"
 
 
 
@@ -75,6 +76,34 @@ namespace Utility {
 
 	}
 
+	bool IsStrCmp(
+		const char*str_cmp1,
+		const char*str_cmp2
+	) {
+
+		int result = strcmp(str_cmp1, str_cmp2);
+
+		// 0なら文字列が一致
+		if (result == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool IsStrInclude(
+		const char*str1,
+		const char*str2
+	) {
+
+		if (strstr(str1, str2) == NULL) {
+			return false;
+		}
+
+		return true;
+	}
+
 
 	std::string ValueToString(int num) {
 		return std::to_string(num);
@@ -89,28 +118,52 @@ namespace Utility {
 	}
 
 
-	FILE* FileOpen(
+	bool FileOpen(
+		FILE**p_fp,
 		const std::string&load_file_name,
 		const char*mode
 	) {
 
-		FILE * fp;
-
 		// ファイルを開く
-		fopen_s(&fp, load_file_name.c_str(), mode);
+		fopen_s(&*p_fp, load_file_name.c_str(), mode);
 
-		if (fp == NULL) {
-			return fp;
+		if (p_fp == NULL) {
+			return false;
 		}
+
+		return true;
 	}
 
 
-	void FileClose(FILE*p_file) {
+	void FileClose(FILE**p_file) {
+
+		if (p_file == nullptr) {
+			return;
+		}
 
 		// ファイルを閉じる
-		fclose(p_file);
+		fclose(*p_file);
 	}
 
+
+	void LoadFloatVec3(FILE*p_fp,Vec3&vec3,char break_str) {
+
+		std::string str;
+
+		for (int i = 0; i < 2; i++) {
+			str += "%f";
+			str += break_str;
+		}
+
+		str += "%f";
+
+		// x軸,y軸,z軸を取得
+		fscanf_s(
+			p_fp,str.c_str(),
+			&vec3.x,
+			&vec3.y,
+			&vec3.z);
+	}
 
 
 	//void LoadUntilLineFeed(FILE*p_file,);

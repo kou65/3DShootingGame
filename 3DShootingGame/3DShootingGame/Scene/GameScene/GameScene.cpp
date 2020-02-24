@@ -20,9 +20,8 @@ GameScene::GameScene() {
 
 	// 20先に回転軸を置く
 	set_data.axis.z = -20.f;
-	//set_data.rota.y = 20.f;
-	set_data.pos.y = 15.f;
-	set_data.pos.z = -20.f;
+	set_data.pos.y = 10.f;
+	set_data.pos.z = 0.f;
 	set_data.is_debug = false;
 
 	m_p_camera.reset(
@@ -33,7 +32,7 @@ GameScene::GameScene() {
 
 	// 自機
 	m_p_obj_factory->CreatePlayer(
-		Vec3(0.f, 0.f, 20.f),
+		Vec3(0.f, 0.f, -20.f),
 		m_p_camera.get(),
 		m_p_obj_factory.get());
 
@@ -44,6 +43,20 @@ GameScene::GameScene() {
 
 	// 部屋
 	m_p_obj_factory->CreateFiled();
+
+	// ファイル管理者
+	m_p_file_obj_mng.reset(
+		new FileObjectDataManager(
+			m_p_obj_factory.get(), m_p_camera.get())
+	);
+
+	FILE*p_file = nullptr;
+
+	Utility::FileOpen(&p_file, "FileObject/ObjectList.txt", "r");
+	m_p_file_obj_mng->Load(p_file);
+	Utility::FileClose(&p_file);
+
+	m_p_file_obj_mng->CreateObject();
 }
 
 

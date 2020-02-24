@@ -73,13 +73,11 @@ void Bullet::AddMove() {
 
 	m_radius = 0.f;
 
-	m_pos += m_move;
+	m_pos += m_move * m_speed;
 
 	m_move.Init();
 }
 
-static float t_rot_x = 0.f;
-static float t_rot_y = 0.f;
 
 void Bullet::Rotation() {
 	

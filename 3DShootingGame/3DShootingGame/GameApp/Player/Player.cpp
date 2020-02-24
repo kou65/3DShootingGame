@@ -22,18 +22,20 @@ Player::Player(
 
 void Player::Update() {
 
-
 	// 移動値加算
 	AddMoveToPos();
 
 	// 移動値初期化
 	InitMove();
 
-	// 移動
-	Move();
+	// キー移動
+	MoveByKey();
+
+	// キー回転
+	RotationByKey();
 
 	// 回転
-	//Rotation();
+	Rotation();
 
 	// 弾発射
 	ShotBullet();
@@ -50,9 +52,6 @@ void Player::Draw() {
 	param.register_name = Const::Graph::PLAYER;
 	param.rota.y = 90.f;
 
-	// 位置
-	//param.pos = m_p_camera_3d->GetPos();
-
 	// 描画
 	Obj::GetInstance()->Draw(
 		param
@@ -64,57 +63,57 @@ void Player::Draw() {
 }
 
 
-void Player::Move() {
+void Player::MoveByKey() {
 
 	// キーボード操作
 	{
 
 		// 移動
 		if (KeyBoard::IsKeyPushing(DIK_UP)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, SPEED));
-			m_move.z = SPEED;
+			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
+			m_move.z = PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -SPEED));
-			m_move.z = -SPEED;
+			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
+			m_move.z = -PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(SPEED, 0.f, 0.f));
-			m_move.x = SPEED;
+			m_p_camera_3d->AddMove(D3DXVECTOR3(PLAYER_SPEED, 0.f, 0.f));
+			m_move.x = PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(-SPEED, 0.f, 0.f));
-			m_move.x = -SPEED;
+			m_p_camera_3d->AddMove(D3DXVECTOR3(-PLAYER_SPEED, 0.f, 0.f));
+			m_move.x = -PLAYER_SPEED;
 		}
 
+	}
+}
 
-		// 回転
-		if (KeyBoard::IsKeyPushing(DIK_D)) {
-			m_p_camera_3d->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
-			m_radius.x++;
-		}
-		if (KeyBoard::IsKeyPushing(DIK_A)) {
-			m_p_camera_3d->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
-			m_radius.x--;
-		}
-		if (KeyBoard::IsKeyPushing(DIK_W)) {
-			m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
-			m_radius.y++;
-		}
-		if (KeyBoard::IsKeyPushing(DIK_S)) {
-			m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
-			m_radius.y--;
-		}
+void Player::RotationByKey() {
+
+
+	// 回転
+	if (KeyBoard::IsKeyPushing(DIK_D)) {
+		m_p_camera_3d->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
+		m_vec_rot.x++;
+	}
+	if (KeyBoard::IsKeyPushing(DIK_A)) {
+		m_p_camera_3d->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
+		m_vec_rot.x--;
+	}
+	if (KeyBoard::IsKeyPushing(DIK_W)) {
+		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
+		m_vec_rot.y++;
+	}
+	if (KeyBoard::IsKeyPushing(DIK_S)) {
+		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
+		m_vec_rot.y--;
 	}
 }
 
 
 void Player::AddMoveToPos() {
-	m_pos += m_move;
-}
-
-void Player::SetRadius(const float&rad) {
-	m_radius.x = rad;
+	m_pos += m_nor_rot * m_move;
 }
 
 void Player::InitMove() {
@@ -124,11 +123,33 @@ void Player::InitMove() {
 
 void Player::Rotation() {
 
-	m_pos.x = m_pos.x * cosf(m_radius.x / 180) 
-		- m_pos.y * sinf(m_radius.x / 180);
+	// 行列
+	D3DXMATRIX rot_m_x, rot_m_y, rot_m_z, total;
+	D3DXMATRIX trans_m;
 
-	m_pos.z = m_pos.x * sinf(m_radius.y / 180) 
-		- m_pos.y * cosf(m_radius.y / 180);
+	// 初期化
+	D3DXMatrixIdentity(&total);
+
+	// 移動値
+	Vec3 move;
+
+	move.x = 0.f;
+	move.y = 0.f;
+	move.z = 1.f;
+
+	// 正規化
+	D3DXVec3Normalize(&move, &move);
+
+	// 回転
+	D3DXMatrixRotationX(&rot_m_x, D3DXToRadian(m_vec_rot.x));
+	D3DXMatrixRotationY(&rot_m_y, D3DXToRadian(m_vec_rot.y));
+
+	// 頂点変換
+	D3DXVec3TransformNormal(&move, &move, &rot_m_y);
+	D3DXVec3TransformNormal(&move, &move, &rot_m_x);
+
+	// 移動値
+	m_nor_rot = move;
 }
 
 
@@ -139,8 +160,8 @@ void Player::ShotBullet() {
 			Vec3(m_pos.x,
 			m_pos.y,
 			m_pos.z),
-			2.f,
-			200.f
+			BULLET_SPEED,
+			SHOT_DISTANCE
 		);
 	}
 }

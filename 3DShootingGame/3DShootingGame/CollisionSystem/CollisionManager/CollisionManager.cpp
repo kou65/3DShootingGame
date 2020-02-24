@@ -32,6 +32,7 @@ bool CollisionManager::Entry(
 
 	// 追加
 	m_p_collision_list[type].emplace_back(obj);
+
 }
 
 

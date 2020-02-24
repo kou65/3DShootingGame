@@ -53,7 +53,17 @@ struct Vec3 : public D3DXVECTOR3{
 		d_vec3.y = this->y * vec3.y;
 		d_vec3.z = this->z * vec3.z;
 
-		return vec3;
+		return d_vec3;
+	}
+
+	D3DXVECTOR3 operator *(const float& float_num) {
+
+		D3DXVECTOR3 d_vec3;
+		d_vec3.x = this->x * float_num;
+		d_vec3.y = this->y * float_num;
+		d_vec3.z = this->z * float_num;
+
+		return d_vec3;
 	}
 
 	D3DXVECTOR3 operator +(const D3DXVECTOR3& vec3) {
@@ -63,7 +73,7 @@ struct Vec3 : public D3DXVECTOR3{
 		d_vec3.y = this->y + vec3.y;
 		d_vec3.z = this->z + vec3.z;
 
-		return vec3;
+		return d_vec3;
 	}
 
 	Vec3 operator +(const Vec3& vec3) {
@@ -73,7 +83,7 @@ struct Vec3 : public D3DXVECTOR3{
 		d_vec3.y = this->y + vec3.y;
 		d_vec3.z = this->z + vec3.z;
 
-		return vec3;
+		return d_vec3;
 	}
 
 	D3DXVECTOR3 operator -(const D3DXVECTOR3& vec3) {
@@ -83,7 +93,7 @@ struct Vec3 : public D3DXVECTOR3{
 		d_vec3.y = this->y - vec3.y;
 		d_vec3.z = this->z - vec3.z;
 
-		return vec3;
+		return d_vec3;
 	}
 
 	D3DXVECTOR3 operator /(const D3DXVECTOR3& vec3) {
@@ -93,7 +103,7 @@ struct Vec3 : public D3DXVECTOR3{
 		d_vec3.y = this->y / vec3.y;
 		d_vec3.z = this->z / vec3.z;
 
-		return vec3;
+		return d_vec3;
 	}
 
 
@@ -119,6 +129,18 @@ struct Vec3 : public D3DXVECTOR3{
 		this->x /= vec3.x;
 		this->y /= vec3.y;
 		this->z /= vec3.z;
+	}
+
+	void operator /=(const int& int_num) {
+		this->x /= int_num;
+		this->y /= int_num;
+		this->z /= int_num;
+	}
+
+	void operator /=(const float& float_num) {
+		this->x /= float_num;
+		this->y /= float_num;
+		this->z /= float_num;
 	}
 
 };

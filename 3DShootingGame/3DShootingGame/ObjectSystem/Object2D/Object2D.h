@@ -6,6 +6,9 @@
 #include"../../Lib/Vec2/Vec2.h"
 
 
+enum class Object2DType {
+	UI
+};
 
 class Object2D : public ObjectBase{
 public:
@@ -15,6 +18,8 @@ public:
 protected:
 
 	Vec2 m_pos;
+	Vec2 m_rotate;
+	Vec2 m_scale;
 };
 
 #endif

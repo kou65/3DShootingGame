@@ -2,9 +2,8 @@
 #include"../ObjectManager/ObjectManager.h"
 #include"../../Lib/Vec3/Vec3.h"
 #include"../../Lib/SingletonTemplate/SingletonTemplate.h"
-#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
 #include"../../Lib/3D/Camera3D/Camera3D.h"
-#include<memory>
+
 
 
 class ObjectFactory {

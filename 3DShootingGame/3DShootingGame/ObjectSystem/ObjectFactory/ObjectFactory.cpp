@@ -14,7 +14,7 @@ void ObjectFactory::CreatePlayer(
 
 	ObjectManager::GetInstance()->InsertListEntry(
 		new Player(
-			Vec3(0.f, 0.f, 20.f),
+			pos,
 			m_p_camera,
 			this)
 	);
@@ -29,7 +29,7 @@ void ObjectFactory::CreateBullet(
 
 	ObjectManager::GetInstance()->InsertListEntry
 	(new Bullet(
-		Vec3(pos.x, pos.y, pos.z),
+		pos,
 		0.f,
 		speed,
 		Vec3(distance + pos.x, distance + pos.y, distance + pos.z)

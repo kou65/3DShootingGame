@@ -48,4 +48,14 @@ namespace KeyBoard {
 	*/
 	bool IsKeyExit(int key_code);
 
+
+	/*
+	* @brief キー数字入力
+	*/
+	void InputKeyNum();
+
+	/*
+	* @brief キー入力数字出力
+	*/
+	void OutPutKeyNum();
 }

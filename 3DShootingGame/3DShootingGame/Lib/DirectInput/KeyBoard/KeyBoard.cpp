@@ -17,6 +17,8 @@ namespace KeyBoard {
 	// キーボード情報を受け取る
 	BYTE key_board_state[KEY_INFO][KEY_BUFFER];
 
+	std::string push_str;
+
 	bool Init() {
 		// DirectInputデバイスオブジェクト作成
 		if (FAILED(
@@ -109,5 +111,49 @@ namespace KeyBoard {
 			return true;
 		}
 		return false;
+	}
+
+
+	void InputKeyNum() {
+
+		if (IsKeyPush(DIK_0)) {
+			push_str += "0";
+		}
+		if (IsKeyPush(DIK_1)) {
+			push_str += "1";
+		}
+		if (IsKeyPush(DIK_2)) {
+			push_str += "2";
+		}
+		if (IsKeyPush(DIK_3)) {
+			push_str += "3";
+		}
+		if (IsKeyPush(DIK_4)) {
+			push_str += "4";
+		}
+		if (IsKeyPush(DIK_5)) {
+			push_str += "5";
+		}
+		if (IsKeyPush(DIK_6)) {
+			push_str += "6";
+		}
+		if (IsKeyPush(DIK_7)) {
+			push_str += "7";
+		}
+		if (IsKeyPush(DIK_8)) {
+			push_str += "8";
+		}
+		if (IsKeyPush(DIK_9)) {
+			push_str += "9";
+		}
+
+		if (IsKeyPush(DIK_PERIOD)) {
+			push_str += ".";
+		}
+	}
+
+
+	void OutPutKeyNum() {
+
 	}
 }

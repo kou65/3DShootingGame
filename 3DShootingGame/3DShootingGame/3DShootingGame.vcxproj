@@ -204,6 +204,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="ObjectSystem\FileObjectDataManager\FileObjectDataManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="ObjectSystem\Object2D\Object2D.cpp">
       <SubType>
       </SubType>
@@ -217,6 +221,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="ObjectSystem\Object3DInterface\Object3DInterface.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -423,6 +431,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="ObjectSystem\FileObjectDataManager\FileObjectDataManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\SingletonTemplate\SingletonTemplate.h" />
     <ClInclude Include="Lib\TransformData\TransformData.h" />
     <ClInclude Include="Lib\Uv\AnimationParameter\AnimationParameter.h">
@@ -443,6 +455,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="ObjectSystem\Object3DInterface\Object3DInterface.h">
       <SubType>
       </SubType>
     </ClInclude>
