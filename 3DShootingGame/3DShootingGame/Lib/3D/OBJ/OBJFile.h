@@ -8,6 +8,7 @@
 #include"../../../Utility/Utility.h"
 #include"../Model/Model.h"
 #include"../../Vec3/Vec3.h"
+#include"../../EffectFileShader/NormalShader.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -33,7 +34,8 @@ struct ObjParameter {
 	Vec3 pos;
 	Vec3 scale;
 	Vec3 rota;
-	std::string register_name;
+	std::string register_obj_file_name;
+	std::string texture_name;
 };
 
 
@@ -76,9 +78,14 @@ public:
 		const std::string &mtl_file_path = ""
 	);
 
-	// 表示
-	void Draw(
+	// GPU
+	void ShaderDraw(
 		const ObjParameter &param
+	);
+
+	// 固定機能
+	void NormalDraw(
+		const ObjParameter&param
 	);
 
 private:
@@ -186,10 +193,16 @@ private:
 		FILE*p_file,
 		D3DXVECTOR3 &vec3);
 
+
+	// 変換行列を返す
+	D3DXMATRIX GetTransformMatrix(const ObjParameter&param);
+
 private:
 
 	// オブジェファイルリスト
 	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
+
+	NormalShader m_ns;
 };
 
 #endif

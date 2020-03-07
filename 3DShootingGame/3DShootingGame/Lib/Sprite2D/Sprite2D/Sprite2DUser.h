@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include"../Sprite2DParameter/Sprite2DParameter.h"
+#include"../../UV/UvSlider/UvSlider.h"
 #include<map>
 #include<memory>
 
@@ -49,4 +50,8 @@ private:
 		const float & height_scale,
 		const float & angle
 	);
+
+private:
+
+	UvSlider m_uv_slider;
 };

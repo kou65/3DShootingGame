@@ -6,9 +6,11 @@ LPDIRECT3DDEVICE9 Graphics::GetDevice() {
 	return m_p_d3d_device9;
 }
 
+
 void Graphics::SetClearBackGroundColor(D3DCOLOR color) {
 	background_color = color;
 }
+
 
 bool Graphics::Init(
 	UINT width_size,
@@ -16,7 +18,7 @@ bool Graphics::Init(
 	BOOL windowed,
 	UINT back_buffer_count) {
 
-	// 背景色(黒色)
+	// 背景色(黒色)デフォルト
 	background_color = 0x0000000;
 
 	// ウィンドウハンドルのnullチェック
@@ -488,7 +490,7 @@ void Graphics::UnlockVertexBuffer(
 }
 
 
-D3DXMATRIX Graphics::GetTransformMatrix(
+D3DXMATRIX Graphics::GetTransformDataMatrix(
 	const D3DTRANSFORMSTATETYPE&type
 ) {
 
@@ -503,3 +505,4 @@ D3DXMATRIX Graphics::GetTransformMatrix(
 
 	return mat;
 }
+

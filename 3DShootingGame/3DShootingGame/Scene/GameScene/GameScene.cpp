@@ -12,51 +12,7 @@
 
 GameScene::GameScene() {
 
-	// ファクトリー生成
-	m_p_obj_factory.reset(new ObjectFactory);
-
-	// カメラのデータ
-	CameraData set_data;
-
-	// 20先に回転軸を置く
-	set_data.axis.z = -20.f;
-	set_data.pos.y = 10.f;
-	set_data.pos.z = 0.f;
-	set_data.is_debug = false;
-
-	m_p_camera.reset(
-		new Camera3D(
-		Camera3D::TPS,
-		set_data
-	));
-
-	// 自機
-	m_p_obj_factory->CreatePlayer(
-		Vec3(0.f, 0.f, -20.f),
-		m_p_camera.get(),
-		m_p_obj_factory.get());
-
-	// 敵
-	m_p_obj_factory->CreateEnemy(
-		Vec3(0.f, 0.f, 1000.f), 2.f
-		);
-
-	// 部屋
-	m_p_obj_factory->CreateFiled();
-
-	// ファイル管理者
-	m_p_file_obj_mng.reset(
-		new FileObjectDataManager(
-			m_p_obj_factory.get(), m_p_camera.get())
-	);
-
-	FILE*p_file = nullptr;
-
-	Utility::FileOpen(&p_file, "FileObject/ObjectList.txt", "r");
-	m_p_file_obj_mng->Load(p_file);
-	Utility::FileClose(&p_file);
-
-	m_p_file_obj_mng->CreateObject();
+	Init();
 }
 
 
@@ -65,7 +21,7 @@ GameScene::~GameScene() {
 }
 
 
-void GameScene::Update(SceneType&scene_type){
+void GameScene::Update(SceneType&scene_type) {
 
 	// カメラ更新
 	m_p_camera->Update();
@@ -78,11 +34,81 @@ void GameScene::Update(SceneType&scene_type){
 }
 
 
-void GameScene::Draw(){
+void GameScene::Draw() {
+
+	// fps値表示
+	m_fps.DebugDraw(Vec2(0.f,0.f),200);
 
 	// カメラデバッグ描画
 	m_p_camera->TransformDraw();
 
 	// オブジェクト描画
 	ObjectManager::GetInstance()->Draw();
+}
+
+
+void GameScene::Init() {
+
+	// 操作者生成
+	CreateOperator();
+
+	// オブジェクト生成
+	CreateObject();
+}
+
+
+void GameScene::CreateOperator() {
+
+	// ファクトリー生成
+	m_p_obj_factory.reset(new ObjectFactory);
+
+	// オブジェクトデータ生成
+	m_p_object_data.reset(new ObjectData);
+
+	// カメラのデータ
+	CameraData set_data;
+
+	// 20先に回転軸を置く
+	set_data.axis.z = -20.f;
+	set_data.pos.y = 10.f;
+	set_data.pos.z = 0.f;
+	set_data.is_debug = false;
+
+	m_p_camera.reset(
+		new Camera3D(
+			Camera3D::TPS,
+			set_data
+		));
+
+	// ファイル管理者生成
+	m_p_file_obj_mng.reset(
+		new FileObjectDataManager(
+			m_p_obj_factory.get(),
+			m_p_camera.get(),
+			m_p_object_data.get()
+		)
+	);
+
+	FILE*p_file = nullptr;
+
+	// ファイル生成
+	Utility::FileOpen(&p_file, "FileObject/ObjectList.txt", "r");
+	m_p_file_obj_mng->Load(p_file);
+	Utility::FileClose(&p_file);
+
+}
+
+
+
+void GameScene::CreateObject() {
+
+	// ファイルの情報から自機と敵を生成する
+	m_p_file_obj_mng->CreatePlayerAndEnemy();
+
+	// UI生成
+	m_p_obj_factory->CreateHPUI(m_p_object_data.get());
+
+	// フィールド生成
+	m_p_obj_factory->CreateFiled(m_p_object_data.get());
+
 }

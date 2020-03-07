@@ -1,8 +1,19 @@
 ﻿#pragma once
 #include<timeapi.h>
 #include<Windows.h>
+#include<stdlib.h>
+#include<stdio.h>
 #include"../Vec2/Vec2.h"
 
+
+// GAMEWAORK LAB
+// 参照↑
+//#define	TRACE(_format_, ...)\
+//		{\
+//			char temp[MAX_PATH];\
+//			sprintf(temp, _format_, __VA_ARGS__);\
+//			OutputDebugString(temp);\
+//		}
 
 #pragma comment(lib,"winmm.lib")
 
@@ -46,9 +57,11 @@ public:
 
 	FPS(DWORD frame);
 
+	// フォント
 	void DebugDraw(
-		const Vec2&draw_pos = Vec2(1920.f / 2, 1080.f / 2),
-		const int&font_size = 256
+		const Vec2&draw_pos = Vec2(0.f,0.f),
+		const int&font_size = 256,
+		bool is_consol = false
 	);
 
 	void FrameWait();

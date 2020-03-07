@@ -28,7 +28,7 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 	
 
 	// テクスチャデータの参照受け取り
-	TextureData *texture_data = 
+	TextureData *tex_data = 
 		&TextureManager::GetInstance()->GetTextureData(
 			data.texture_name
 		);
@@ -41,73 +41,105 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 	const float y1 = -data.ofset_y;
 	const float y2 = 1.f - data.ofset_y;
 
-	// ロードで読み込んだUVを加算
-	data.tu += texture_data->uv.x;
-	data.tv += texture_data->uv.y;
+	// uv値
+	UvRect rect;
 
-	AnimationParamter param = data.animation_param;
+	// tex画像サイズ
+	Vec2 graph_size(tex_data->width_size, tex_data->height_size);
 
-	// UVの分割
-	UvAnimation uv(
-		param.division_width,
-		param.division_height,
-		param.current_graph_num,
-		param.is_animation,
-		param.animation_frame,
-		param.use_type,
-		param.turn_type
-	);
+	// uv設定
+	{
+		// ロードで読み込んだUVを加算
+		data.tu += tex_data->uv.x;
+		data.tv += tex_data->uv.y;
 
-	// カットがオンなら
-	if (param.is_uv_cut == true) {
+		AnimationParamter param = data.animation_param;
 
-		if (data.type == Graphics::CLAMP) {
-			uv.ChangeRightAnimation();
+		// UVの分割
+		UvAnimation uv_anim(
+			param.division_width,
+			param.division_height,
+			param.current_graph_num,
+			param.is_animation,
+			param.animation_frame,
+			param.use_type,
+			param.turn_type
+		);
+
+		// カットがオンなら
+		if (param.is_uv_cut == true) {
+
+			if (data.type == Graphics::CLAMP) {
+				uv_anim.ChangeRightAnimation();
+			}
+			else if (data.type == Graphics::MIRROR) {
+				uv_anim.ChangeLeftAnimation();
+			}
+
+			// アニメーションがオンなら
+			if (param.is_animation == true) {
+				// 更新
+				uv_anim.Update();
+				// アニメーション変更更新
+				uv_anim.UpdateAnimation(data.animation_param);
+			}
 		}
-		else if (data.type == Graphics::MIRROR) {
-			uv.ChangeLeftAnimation();
+
+		// スライダーオンなら
+		if (data.is_uv_slider == true) {
+
+			// 画像サイズ And UVサイズ
+			graph_size = m_uv_slider.
+				CalcGraphSizeSetUv(
+					data.max_uv_slider,
+					data.min_uv_slider,
+					graph_size
+				);
 		}
 
-		// アニメーションがオンなら
-		if (param.is_animation == true) {
-			// 更新
-			uv.Update();
-			// アニメーション変更更新
-			uv.UpdateAnimation(data.animation_param);
+		// アニメーション
+		UvRect rect1 = uv_anim.GetUvRect();
+		// スライダーの矩形受け取り
+		UvRect rect2 = m_uv_slider.GetUvRect();
+
+		// スライダーの方を優先にする
+		if (data.is_uv_slider == true) {
+			rect1 = rect2;
 		}
+
+		// 本代入
+		rect = rect1;
+
+		// サンプラーステートの設定
+		if (SetSamplerStateSelect(data.type) == true) {
+			u_range_num = 1.f;
+		}
+
 	}
-
-	// サンプラーステートの設定
-	if (SetSamplerStateSelect(data.type) == true) {
-		u_range_num = 1.f;
-	}
-
-	// uvの矩形受け取り
-	UvRect rect = uv.GetUvRect();
 	
 	// VERTEX3Dの初期化,UV.hからUVをずらして受け取り
 	CustomVertex2D custom_vertex[] =
 	{
 	// 左上
 	{ { x1,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.m_top_left_pos.x + u_range_num,rect.m_top_left_pos.y} },
+	{ rect.top_left_pos.x + u_range_num,rect.top_left_pos.y} },
 	// 右上
 	{ { x2,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.m_top_right_pos.x + data.tu + u_range_num,rect.m_top_right_pos.y } },
+	{ rect.top_right_pos.x + data.tu + u_range_num,rect.top_right_pos.y } },
 	// 右下
 	{ { x2,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.m_bottom_right_pos.x + data.tu + u_range_num,rect.m_bottom_right_pos.y + data.tv } },
+	{ rect.bottom_right_pos.x + data.tu + u_range_num,rect.bottom_right_pos.y + data.tv } },
 	// 左下
 	{ { x1,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.m_bottom_left_pos.x + u_range_num,rect.m_bottom_left_pos.y + data.tv } },
+	{ rect.bottom_left_pos.x + u_range_num,rect.bottom_left_pos.y + data.tv } },
 	};
 
 	// 行列計算
 	D3DXMATRIX mat_world = CalcMatrixTransform(
 		data.x,
 		data.y,
-		texture_data->width_size * data.scale_width,
-		texture_data->height_size * data.scale_height,
+		graph_size.x * data.scale_width,
+		graph_size.y * data.scale_height,
 		data.angle);
 
 	// 行列を頂点配列に変換
@@ -177,7 +209,13 @@ bool Sprite2DUser::SetSamplerStateSelect(Graphics::SamplerStateType type) {
 
 		Graphics::GetInstance()->SamplerStateClamp();
 
-		return false;
+		return true;
+
+	case Graphics::WARP:
+
+		Graphics::GetInstance()->SamplerStateWrap();
+
+		return true;
 
 	case Graphics::MIRROR:
 

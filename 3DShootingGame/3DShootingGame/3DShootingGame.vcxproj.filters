@@ -189,9 +189,6 @@
     <ClCompile Include="Lib\Uv\AnimationParameter\AnimationParameter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Uv\UvGauge\UvGauge.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\UV\UvSlider\UvSlider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -297,6 +294,30 @@
     <ClCompile Include="ObjectSystem\Object3DInterface\Object3DInterface.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\NormalShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Filed\Taile\Taile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Filed\RightWall\RightWall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Filed\LeftWall\LeftWall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Cube\Cube.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\ShapeIndex\PlaneIndex\PlaneIndex.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Math.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\HPUI\HPUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
@@ -391,9 +412,6 @@
     </ClInclude>
     <ClInclude Include="Lib\3D\Sprite3D\Sprite3DParameter\Sprite3DParameter.h">
       <Filter>Lib\Sprite\Sprite3DData</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Uv\UvGauge\UvGauge.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Lib\UV\UvSlider\UvSlider.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -518,14 +536,44 @@
     <ClInclude Include="ObjectSystem\Object3DInterface\Object3DInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\NormalShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\Taile\Taile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\RightWall\RightWall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\LeftWall\LeftWall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Cube\Cube.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\ShapeIndex\PlaneIndex\PlaneIndex.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\ShapeIndex\IndexCustomVertex\IndexCustomVertex.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\ShapeIndex\IndexShapeParameter\IndexShapeParameter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Math.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\HPUI\HPUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSystem\ObjectData\ObjectData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Lib\Shader\PixelShader.hlsl" />
-    <FxCompile Include="DepthShadow.fx" />
-    <FxCompile Include="ZTexture.fx" />
-    <FxCompile Include="VertexBlend.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lib\Shader\PosSheader.hlsli" />
+    <FxCompile Include="Lib\ShaderFile\DepthShadow.fx" />
+    <FxCompile Include="Lib\ShaderFile\ObjDraw.fx" />
+    <FxCompile Include="Lib\ShaderFile\VertexBlend.hlsl" />
+    <FxCompile Include="Lib\ShaderFile\ZTexture.fx" />
   </ItemGroup>
 </Project>

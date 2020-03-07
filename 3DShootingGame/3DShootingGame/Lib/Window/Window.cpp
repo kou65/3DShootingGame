@@ -7,6 +7,9 @@ namespace Window {
 	// ウィンドウハンドル
 	HWND window_handle;
 
+	// ウィンドウネーム
+	std::string window_name = "DirectX9";
+
 	/* ---内部関数--- */
 
 	// PeekMessageから送られてきたメッセージを処理する
@@ -48,7 +51,7 @@ namespace Window {
 			// メニュー名(メニューがない場合はNULL)
 			NULL,					  
 			// Windowクラスの名前
-			TEXT("DirectX9"),		  
+			TEXT(window_name.c_str()),		  
 			// タイトルバーで使用されるアイコン
 			NULL,
 		};
@@ -232,6 +235,10 @@ namespace Window {
 
 	HWND GetWindowHandle() {
 		return window_handle;
+	}
+
+	void SetWindowName(const std::string&get_window_name) {
+		window_name = get_window_name;
 	}
 
 }

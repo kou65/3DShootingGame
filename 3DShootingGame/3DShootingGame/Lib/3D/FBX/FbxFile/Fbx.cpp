@@ -169,7 +169,7 @@ void Fbx::NormalDraw(
 	m_p_graphics->GetInstance()->GetDevice()
 		->SetTransform(D3DTS_WORLD, &world_mat);
 
-	DrawPrimitive(vertex_num, polygon_num);
+	DrawPrimitive(vertex_num,polygon_num);
 }
 
 
@@ -279,7 +279,7 @@ bool Fbx::Load(
 
 	// シェーダーの初期化
 	if (m_is_shader == true) {
-		m_effect.SetShaderName("VertexBlend.hlsl");
+		m_effect.SetShaderName("Lib/ShaderFile/VertexBlend.hlsl");
 		m_effect.SetTechnique("tech1");
 
 		m_effect.Init();
@@ -619,12 +619,6 @@ void Fbx::InitVertexInfo(
 			p_vertices[v].bone_index[i] = 0;
 		}
 
-		// w値を1.fにする
-		//p_vertices[v].normal.w = 1.0f;
-
-		// デバッグ用
-		p_vertices[v].bone_index[2] = 3;
-		//p_vertices[v].weight[3] = 100.f;
 	}
 
 	// アンロック
@@ -1278,6 +1272,10 @@ void Fbx::LoadKeyFrame(
 				//	back().
 				//	emplace_back(conv_mat);
 
+				// 最大ボーン数を過ぎたら入れない
+				if (b > BONE_NUM - 1) {
+					break;
+				}
 
 				// d3d用に追加
 				motion.d3d_animation_mat.back().bone_list[b] =
@@ -1561,8 +1559,7 @@ void Fbx::LoadWeightVertexPoint(
 
 					// 現在のボーン数を代入
 					p_vertics[index].bone_index[w] = ci;
-				
-					
+
 						debug_weight_list[index].
 							push_back((float)weight);
 

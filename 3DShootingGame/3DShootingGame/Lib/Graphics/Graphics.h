@@ -20,6 +20,8 @@ public:
 
 		// つなぎ目なし
 		CLAMP,
+		// ワープ
+		WARP,
 		// 反転
 		MIRROR,
 	};
@@ -266,7 +268,7 @@ public:
 	@brief 現在デバイスに設定されている変換行列を受け取る
 	@param[in] type x9が用意している変換行列定数 D3DTS_VIEWなど
 	*/
-	D3DXMATRIX GetTransformMatrix(const D3DTRANSFORMSTATETYPE&type);
+	D3DXMATRIX GetTransformDataMatrix(const D3DTRANSFORMSTATETYPE&type);
 
 
 private:

@@ -153,11 +153,11 @@ void CollisionManager::ChackSphereAndSphere(
 	sphere2 = s2->GetSphere();
 
 	// 球の当たり判定
-	if (Collision::HitSphereAndSphere(
+	if (Collision::IsHitSphereAndSphere(
 		s1->GetPos(),
 		s2->GetPos(),
-		sphere1.GetRadian(),
-		sphere2.GetRadian())
+		sphere1.radian,
+		sphere2.radian)
 		 == true) {
 
 		// 衝突したのでそれぞれの衝突処理に入る

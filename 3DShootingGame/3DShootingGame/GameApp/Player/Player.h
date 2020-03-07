@@ -12,15 +12,21 @@
 class Player : public CharacterBase{
 public:
 
+	static constexpr float MAX_HP = 10;
+
+public:
+
 	Player(
 		D3DXVECTOR3 pos,
 		Camera3D*camera_3d,
-		ObjectFactory*bullet_factory);
+		ObjectFactory*bullet_factory
+	);
 
 	void Update()override;
 
 	void Draw()override;
 
+	float GetHp();
 
 private:
 
@@ -67,9 +73,6 @@ private:
 
 	// プレイヤー行列
 	D3DXMATRIX m_player_mat;
-
-	// 体力
-	float m_hp;
 };
 
 #endif

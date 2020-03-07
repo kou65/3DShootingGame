@@ -105,13 +105,13 @@ void ObjectManager::AllDelete() {
 }
 
 
-void ObjectManager::Entry(ObjectBase*object) {
+void ObjectManager::EmplaceBack(ObjectBase*object) {
 
 	m_p_object_list.emplace_back(object);
 }
 
 
-void ObjectManager::InsertListEntry(ObjectBase*object) {
+void ObjectManager::Entry(ObjectBase*object) {
 	m_p_insert_obj.emplace_back(object);
 }
 

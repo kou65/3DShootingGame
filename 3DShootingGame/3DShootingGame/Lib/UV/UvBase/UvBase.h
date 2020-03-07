@@ -10,10 +10,14 @@
 class UvBase {
 public:
 
-	virtual void Update() = 0;
-
 	UvRect GetUvRect();
 
+protected:
+
+	void SetMaxMinUvParam(
+		const Vec2&max_uv,
+		const Vec2&min_uv
+	);
 
 protected:
 

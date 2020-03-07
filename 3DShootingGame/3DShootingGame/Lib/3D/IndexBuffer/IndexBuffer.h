@@ -8,21 +8,28 @@
 class IndexBuffer {
 public:
 
-	IndexBuffer(Graphics * graphics);
+	IndexBuffer();
 
-	bool Create(DWORD polygon_num);
-
-	// バッファを開ける
-	bool OpenBuffer(void**p_custom_vertex);
+	// 頂点データの数(頂点、法線、色など)
+	bool Create16(DWORD polygon_num);
 
 	// バッファを閉じる
 	bool CloseBuffer();
 
-	void Draw();
+	// インデックスをセット
+	void SetIndices();
 
 	operator IDirect3DIndexBuffer9*() const {
 		return m_p_index_buffer9;
 	}
+
+	// ポインタ返し
+	IDirect3DIndexBuffer9*GetBufferPtr() {
+		return m_p_index_buffer9;
+	}
+
+	// バッファを開ける
+	//bool OpenBuffer(void**p_custom_vertex);
 
 private:
 

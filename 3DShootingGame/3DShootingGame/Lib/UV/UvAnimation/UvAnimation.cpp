@@ -25,14 +25,14 @@ UvAnimation::UvAnimation(
 	UvRect *rect = &m_uv_rect;
 
 	// テクスチャ座標の初期化(頂点は全体に設定)
-	rect->m_top_left_pos.x = 0.f;
-	rect->m_top_left_pos.y = 0.f;
-	rect->m_top_right_pos.x = MAX_UV_SIZE;
-	rect->m_top_right_pos.y = 0.f;
-	rect->m_bottom_left_pos.x = 0.f;
-	rect->m_bottom_left_pos.y = MAX_UV_SIZE;
-	rect->m_bottom_right_pos.x = MAX_UV_SIZE;
-	rect->m_bottom_right_pos.y = MAX_UV_SIZE;
+	rect->top_left_pos.x = 0.f;
+	rect->top_left_pos.y = 0.f;
+	rect->top_right_pos.x = MAX_UV_SIZE;
+	rect->top_right_pos.y = 0.f;
+	rect->bottom_left_pos.x = 0.f;
+	rect->bottom_left_pos.y = MAX_UV_SIZE;
+	rect->bottom_right_pos.x = MAX_UV_SIZE;
+	rect->bottom_right_pos.y = MAX_UV_SIZE;
 
 	// アニメーション関連初期化
 	param.animation_frame = animation_frame;
@@ -104,17 +104,17 @@ void UvAnimation::ToRightDivGraph(int div_num) {
 	UvRect *rect = &m_uv_rect;
 
 	// 左上
-	rect->m_top_left_pos.x =    (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_top_left_pos.y =    (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_left_pos.x =    (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->top_left_pos.y =    (MAX_UV_SIZE / param.division_height)* div_y;
 	// 右上
-	rect->m_top_right_pos.x =   (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
-	rect->m_top_right_pos.y =   (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_right_pos.x =   (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
+	rect->top_right_pos.y =   (MAX_UV_SIZE / param.division_height)* div_y;
 	// 左下
-	rect->m_bottom_left_pos.x =  (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_bottom_left_pos.y =  (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
+	rect->bottom_left_pos.x =  (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->bottom_left_pos.y =  (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
 	// 右下
-	rect->m_bottom_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
-	rect->m_bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
+	rect->bottom_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
+	rect->bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
 }
 
 
@@ -149,17 +149,17 @@ void UvAnimation::ToLeftDivGraph(int div_num) {
 	UvRect *rect = &m_uv_rect;
 
 	// 左上
-	rect->m_top_left_pos.x =  (MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width)) - (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_top_left_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_left_pos.x =  (MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width)) - (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->top_left_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
 	// 右上
-	rect->m_top_right_pos.x = MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_top_right_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_right_pos.x = MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->top_right_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
 	// 左下
-	rect->m_bottom_left_pos.x = (MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width)) - (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_bottom_left_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GRAPH);
+	rect->bottom_left_pos.x = (MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width)) - (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->bottom_left_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GRAPH);
 	// 右下
-	rect->m_bottom_right_pos.x = MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GRAPH);
+	rect->bottom_right_pos.x = MAX_UV_SIZE - (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GRAPH);
 }
 
 
@@ -193,17 +193,17 @@ void UvAnimation::SelectTexture(int u, int v) {
 	UvRect *rect = &m_uv_rect;
 
 	// 左上
-	rect->m_top_left_pos.x = (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_top_left_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_left_pos.x = (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->top_left_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
 	// 右上
-	rect->m_top_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
-	rect->m_top_right_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
+	rect->top_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
+	rect->top_right_pos.y = (MAX_UV_SIZE / param.division_height)* div_y;
 	// 左下
-	rect->m_bottom_left_pos.x = (MAX_UV_SIZE / param.division_width) * div_x;
-	rect->m_bottom_left_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
+	rect->bottom_left_pos.x = (MAX_UV_SIZE / param.division_width) * div_x;
+	rect->bottom_left_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
 	// 右下
-	rect->m_bottom_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
-	rect->m_bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
+	rect->bottom_right_pos.x = (MAX_UV_SIZE / param.division_width) * (div_x + NEXT_GO_GRAPH);
+	rect->bottom_right_pos.y = (MAX_UV_SIZE / param.division_height)* (div_y + NEXT_GO_GRAPH);
 }
 
 

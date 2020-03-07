@@ -44,10 +44,10 @@ void Bullet::Update() {
 void Bullet::Draw() {
 
 	ObjParameter param;
-	param.register_name = Const::Graph::BULLET;
+	param.register_obj_file_name = Const::Obj::BULLET;
 	param.pos = m_pos;
 
-	Obj::GetInstance()->Draw(param);
+	Obj::GetInstance()->ShaderDraw(param);
 }
 
 

@@ -7,38 +7,60 @@
 
 
 
+
 Obj::Obj() : Model(){
 
 	m_p_graphics = Graphics::GetInstance();
+	m_ns.Init();
 }
 
 
-void Obj::Draw(
+void Obj::ShaderDraw(
 	const ObjParameter &param
 	){
 
-
 	// キーが登録されていないなら描画しない
-	if (m_obj_file_data.count(param.register_name) == 0) {
+	if (m_obj_file_data.count(param.register_obj_file_name) == 0) {
 		return;
 	}
 	// 生成されていないなら描画しない
-	if (m_obj_file_data[param.register_name] == nullptr) {
+	if (m_obj_file_data[param.register_obj_file_name] == nullptr) {
+		return;
+	}
+
+	D3DXMATRIX total_mat = GetTransformMatrix(param);
+
+	// ワールド座標にセット
+	m_ns.SetWorldMatrix(&total_mat);
+
+	// シェーダー更新
+	m_ns.Update();
+
+	// テクスチャが存在するかどうか
+	bool is_texture = false;
+
+	// パス
+	UINT pass;
+
+	// シェーダーの描画開始
+	m_ns.ShaderBegin(pass, 0);
+
+	// オブジェクトファイルへアクセス
+	ObjFileData* data = m_obj_file_data[param.register_obj_file_name];
+
+
+	if (data == nullptr) {
 		return;
 	}
 
 	// マテリアル数分回す
 	for (unsigned int i = 0;
-		i < m_obj_file_data[param.register_name]->material_num;
+		i < data->material_num;
 		i++) {
 
 		// 特定のオブジェクトファイルデータを受け取る
-		ObjFileData *p_obj_file_data = 
-			m_obj_file_data[param.register_name];
-
-		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
-			return;
-		}
+		ObjFileData *p_obj_file_data =
+			data;
 
 		// ストリームをセット
 		m_p_graphics->GetDevice()->SetStreamSource(
@@ -49,26 +71,54 @@ void Obj::Draw(
 		);
 
 		// マテリアル名
-		std::string material_name = 
+		std::string material_name;
+
+		// マテリアルが存在するなら
+		material_name =
 			p_obj_file_data->m_usemtl_name_list[i];
+
+		// マテリアル情報取得
+		MaterialInfo mtl = 
+		p_obj_file_data->m_material_data_list[material_name];
 
 		// テクスチャが存在しているなら
 		if (TextureManager::GetInstance()->FindTexture(
-			p_obj_file_data->m_material_data_list[material_name].texture_name
+			mtl.texture_name
 		) == true) {
 
 			// テクスチャ管理者からテクスチャ受け取り
 			TextureData texture_data = TextureManager::GetInstance()
 				->GetTextureData(
-					p_obj_file_data->
-					m_material_data_list[material_name].texture_name
+					mtl.texture_name
 				);
 
-			// テクスチャセット
-			m_p_graphics->GetDevice()->SetTexture(
-				0,
-				texture_data
-			);
+			// シェーダーテクスチャセット
+			m_ns.SetTexture(texture_data);
+
+			// テクスチャが存在する
+			is_texture = true;
+		}
+		// テクスチャがない場合
+		else {
+
+			// 外部からテクスチャがあるなら
+			if (param.texture_name.size() != 0) {
+
+				// テクスチャ名代入
+				material_name = param.texture_name;
+
+				// テクスチャ管理者からテクスチャ受け取り
+				TextureData texture_data = TextureManager::GetInstance()
+					->GetTextureData(
+						material_name
+					);
+
+				// シェーダーテクスチャセット
+				m_ns.SetTexture(texture_data);
+
+				// テクスチャが存在する
+				is_texture = true;
+			}
 		}
 
 		// マテリアルをセット
@@ -82,36 +132,14 @@ void Obj::Draw(
 			p_obj_file_data->m_p_index_buffer
 		);
 
-		// どの情報を伝えるか
-		m_p_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
+		UINT now_pass = 0;
 
-		// ワールド座標初期化
-		D3DXMATRIX total_mat, rota_mat,scale_mat,move_mat;
-		D3DXMatrixIdentity(&total_mat);
+		if (is_texture == false){
+			now_pass = 1;
+		}
 
-		D3DXMATRIX rota_x, rota_y, rota_z;
-
-		// 回転
-		D3DXMatrixRotationZ(&rota_z, D3DXToRadian(param.rota.z));
-		D3DXMatrixRotationX(&rota_x, D3DXToRadian(param.rota.x));
-		D3DXMatrixRotationY(&rota_y, D3DXToRadian(param.rota.y));
-
-		// 回転行列作成
-		rota_mat = (rota_z * rota_x * rota_y);
-
-		// 拡縮
-		D3DXMatrixScaling(
-			&scale_mat, param.scale.x, param.scale.y, param.scale.z);
-
-		// 移動
-		D3DXMatrixTranslation(
-			&move_mat, param.pos.x, param.pos.y, param.pos.z);
-
-		total_mat = (scale_mat * rota_mat * move_mat);
-
-		m_p_graphics->GetInstance()->GetDevice()
-			->SetTransform(D3DTS_WORLD, &total_mat);
-
+		// パスの開始
+		m_ns.BeginPass(now_pass);
 
 		// インデックス描画
 		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
@@ -132,7 +160,115 @@ void Obj::Draw(
 			p_obj_file_data->
 			m_object_sub_set_list[i].face_count
 		);
+
+		// シェーダーのパス終了
+		m_ns.EndPass();
 		
+	}
+
+	// シェーダの描画終了
+	m_ns.ShaderEnd();
+
+}
+
+
+void Obj::NormalDraw(
+	const ObjParameter&param
+) {
+
+
+	// キーが登録されていないなら描画しない
+	if (m_obj_file_data.count(param.register_obj_file_name) == 0) {
+		return;
+	}
+	// 生成されていないなら描画しない
+	if (m_obj_file_data[param.register_obj_file_name] == nullptr) {
+		return;
+	}
+
+
+	D3DXMATRIX total_mat = GetTransformMatrix(param);
+
+
+	// マテリアル数分回す
+	for (unsigned int i = 0;
+		i < m_obj_file_data[param.register_obj_file_name]->material_num;
+		i++) {
+
+		// 特定のオブジェクトファイルデータを受け取る
+		ObjFileData *p_obj_file_data =
+			m_obj_file_data[param.register_obj_file_name];
+
+		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
+			return;
+		}
+
+		// ストリームをセット
+		m_p_graphics->GetDevice()->SetStreamSource(
+			0,
+			p_obj_file_data->m_p_vertex_buffer,
+			0,
+			sizeof(MeshCustomVertex)
+		);
+
+		// マテリアル名
+		std::string material_name =
+			p_obj_file_data->m_usemtl_name_list[i];
+
+		// テクスチャが存在しているなら
+		if (TextureManager::GetInstance()->FindTexture(
+			p_obj_file_data->m_material_data_list[material_name].texture_name
+		) == true) {
+
+			// テクスチャ管理者からテクスチャ受け取り
+			TextureData texture_data = TextureManager::GetInstance()
+				->GetTextureData(
+					p_obj_file_data->
+					m_material_data_list[material_name].texture_name
+				);
+
+			// テクスチャセット
+			m_p_graphics->GetDevice()->
+				SetTexture(0,texture_data);
+		}
+
+		// マテリアルをセット
+		m_p_graphics->GetDevice()->SetMaterial(
+			&p_obj_file_data->m_material_data_list[material_name]
+			.material
+		);
+
+		// インデックス番号をデバイスに設定する
+		m_p_graphics->GetDevice()->SetIndices(
+			p_obj_file_data->m_p_index_buffer
+		);
+
+		// どの情報を伝えるか
+		m_p_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
+
+		m_p_graphics->GetInstance()->GetDevice()
+			->SetTransform(D3DTS_WORLD, &total_mat);
+
+		// インデックス描画
+		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
+			// 頂点のつなぎ方
+			D3DPT_TRIANGLELIST,
+			// 頂点インデックスの一番最初までのオフセット値を指定
+			0,
+			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_start,
+			// 上引数の最小以降の頂点数を指定
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_count * 3,
+			// 描画を開始する頂点インデックスまでのオフセット値を指定
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_start,
+			// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
+			p_obj_file_data->
+			m_object_sub_set_list[i].face_count
+		);
+
 		// セットテクスチャリセット
 		m_p_graphics->GetDevice()->SetTexture(
 			0,
@@ -140,6 +276,38 @@ void Obj::Draw(
 		);
 
 	}
+}
+
+
+
+D3DXMATRIX Obj::GetTransformMatrix(const ObjParameter&param) {
+	
+
+	// ワールド座標初期化
+	D3DXMATRIX total_mat, rota_mat, scale_mat, move_mat;
+	D3DXMatrixIdentity(&total_mat);
+
+	D3DXMATRIX rota_x, rota_y, rota_z;
+
+	// 回転
+	D3DXMatrixRotationZ(&rota_z, D3DXToRadian(param.rota.z));
+	D3DXMatrixRotationX(&rota_x, D3DXToRadian(param.rota.x));
+	D3DXMatrixRotationY(&rota_y, D3DXToRadian(param.rota.y));
+
+	// 回転行列作成
+	rota_mat = (rota_z * rota_y * rota_x);
+
+	// 拡縮
+	D3DXMatrixScaling(
+		&scale_mat, param.scale.x, param.scale.y, param.scale.z);
+
+	// 移動
+	D3DXMatrixTranslation(
+		&move_mat, param.pos.x, param.pos.y, param.pos.z);
+
+	total_mat = (scale_mat * rota_mat * move_mat);
+
+	return total_mat;
 }
 
 

@@ -31,6 +31,10 @@ Sprite2DParameter::Sprite2DParameter(
 	this->tv = tv;
 	this->color = color;
 	this->type = state_type;
+
+	this->is_uv_slider = false;
+	this->max_uv_slider.Initialization();
+	this->min_uv_slider.Initialization();
 }
 
 

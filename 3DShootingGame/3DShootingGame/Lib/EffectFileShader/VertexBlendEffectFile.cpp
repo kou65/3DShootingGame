@@ -2,20 +2,24 @@
 
 
 
-VertexBlendEffectFile::VertexBlendEffectFile()
-	: EffectFileBase(){
+VertexBlendEffectFile::VertexBlendEffectFile() : EffectFileBase(){
 
 	m_bone_count = 64;
+
+	D3DXMatrixIdentity(&m_world_mat);
 }
 
 
-bool VertexBlendEffectFile::Init(){
+void VertexBlendEffectFile::Init(){
 
 	// 通常のシェーダー初期化
-	InitBaseShader(m_shader_name,m_tech_name);
+	CreateEffectFile();
 
 	// デクラレーション初期化
-	InitVertexDecl();
+	m_p_decl.CreateFbxFileDecl();
+
+	// 頂点フォーマットの設定
+	m_p_decl.Set();
 
 	// アニメーション用
 	m_bone_mat_h = 
@@ -25,31 +29,57 @@ bool VertexBlendEffectFile::Init(){
 	// インデックス用
 	m_total_index_h =
 		m_p_effect->GetParameterByName(NULL, "g_max_blend_idx");
-
-	return true;
 }
 
 
 void VertexBlendEffectFile::Update() {
 
-	// 現在設定しているカメラを入れる
-	SetDefauleCamera();
 
-	// ボーン姿勢行列セット
-	m_p_effect->SetMatrixArray(
-		m_bone_mat_h,
-		m_bone_mat_list,
-		64
-	);
+	// 頂点フォーマットの設定
+	m_p_decl.Set();
+	
+	// 現在設定しているカメラを入れる
+	OutDefauleCamera(&m_camera_view_mat,&m_camera_proj_mat);
+
 
 	m_p_effect->SetInt(m_total_index_h,m_max_index);
 
-	// 頂点フォーマットの設定
-	SetDeclaration();
-
 	// シェーダーの更新
-	SetBaseParam();
+	//SetBaseParam();
 
+	//// ボーン姿勢行列セット
+	//m_p_effect->SetMatrixTransposeArray(
+	//	m_bone_mat_h,
+	//	m_bone_mat_list,
+	//	64
+	//);
+
+	// レジスタセット
+	RegisterMat(0, &m_camera_view_mat, 4);
+	RegisterMat(4, &m_camera_proj_mat, 4);
+	RegisterMat(8, &m_world_mat, 4);
+	RegisterMat(12, m_bone_mat_list, 50);
+
+	CommitShader();
+}
+
+void VertexBlendEffectFile::UpdateParam() {
+
+	// パラメータセット
+	m_p_effect->
+		SetMatrixTranspose(m_camera_view_mat_h, &m_camera_view_mat);
+	m_p_effect->
+		SetMatrixTranspose(m_camera_proj_mat_h, &m_camera_proj_mat);
+	m_p_effect->
+		SetMatrixTranspose(m_world_mat_h, &m_world_mat);
+	m_p_effect->
+		SetVector(m_color_h, &m_color);
+
+	// テクニックをセット
+	m_p_effect->SetTechnique(m_tech_h);
+
+	// シェーダー更新
+	CommitShader();
 }
 
 
@@ -87,131 +117,38 @@ void VertexBlendEffectFile::SetBoneCount(const int&count) {
 	m_bone_count = count;
 }
 
-void VertexBlendEffectFile::InitVertexDecl() {
 
 
-	// 頂点要素定義
-	D3DVERTEXELEMENT9 elem[] = 
-	{
-		// 位置
-		{
-			// ストリーム番号
-			0,
-			// オフセット 頂点数 * サイズ
-			0,
-			// 変数の型
-			D3DDECLTYPE_FLOAT4,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_POSITION,
-			0
-		},
+void VertexBlendEffectFile::RegisterMat(
+	const int &start_regster,
+	const D3DXMATRIX*mat,
+	const int &vector4count){
 
-
-		// 法線
-		{
-			// ストリーム番号
-			0,
-			// float 4バイト * 3 = 12
-			16,
-			// 変数の型
-			D3DDECLTYPE_FLOAT3,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_NORMAL,
-			0
-		},
-
-		// カラー
-		{
-			// ストリーム番号
-			0,
-			// float 4バイト * 9
-			28,
-			// カラー(UBYTE4)
-			D3DDECLTYPE_D3DCOLOR,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_COLOR,
-			0
-		},
-
-		// uv
-		{
-			// ストリーム番号
-			0,
-			// float 4バイト * 9 + unsigned long 4バイト(カラー)
-			32,
-			// 変数の型
-			D3DDECLTYPE_FLOAT2,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_TEXCOORD,
-			0
-		},
-
-
-
-		// 重み
-		{
-			// ストリーム番号
-			0,
-			// float 4バイト * 9 + 
-			// unsigned long 4バイト(カラー) + 
-			// float 4バイト * 2
-			40,
-			// 変数の型
-			D3DDECLTYPE_FLOAT4,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_BLENDWEIGHT,
-			0
-		},
-
-
-
-		// 重みインデックス
-		{
-			// ストリーム番号
-			0,
-			// float 4バイト * 9 + 
-			// unsigned long 4バイト(カラー) +
-			// float 4バイト * 2 + 
-			// float 4バイト
-			56,
-			// 変数の型
-			D3DDECLTYPE_UBYTE4,
-			// ポリゴン分割
-			D3DDECLMETHOD_DEFAULT,
-			// セマンティクス
-			D3DDECLUSAGE_BLENDINDICES,
-			0
-		},
-
-
-
-		// 終了
-		D3DDECL_END()
-	};
-
-
-	// 頂点データをシェーダー用のデータに変換
-	HRESULT hr = m_p_graphics->GetInstance()->
+	Graphics::
+		GetInstance()->
 		GetDevice()->
-		CreateVertexDeclaration(
-			elem,
-			&m_p_decl
-		);
+		SetVertexShaderConstantF(start_regster, (const float*)mat,vector4count);
+}
 
 
-	// 読み込めてなかったら
+
+void VertexBlendEffectFile::SetTexture(
+	IDirect3DTexture9* p_tex
+) {
+
+	HRESULT hr = m_p_effect->SetTexture(m_texture_h, p_tex);
+
 	if (hr != S_OK) {
-		hr = S_OK;
-		return;
+		// 失敗
+		hr = S_FALSE;
 	}
+}
+
+
+void VertexBlendEffectFile::SetColor(const D3DXVECTOR4 &color) {
+	m_color = color;
+}
+
+void VertexBlendEffectFile::SetWorldMatrix(const D3DXMATRIX&world_mat) {
+	m_world_mat = world_mat;
 }

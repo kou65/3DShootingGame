@@ -3,15 +3,6 @@
 
 
 
-VertexBuffer::VertexBuffer(int vertex_num) {
-
-	// グラフィック代入
-	this->graphics = Graphics::GetInstance();
-
-	// 頂点バッファ生成
-	Create(vertex_num);
-}
-
 
 VertexBuffer::VertexBuffer() {
 
@@ -41,22 +32,6 @@ void VertexBuffer::Create(const UINT &buffer_size) {
 }
 
 
-bool VertexBuffer::OpenBuffer(
-	const UINT&buffer_size,
-	void**p_custom_vertex
-) {
-
-	// ロックして読み込み可能にさせる
-	m_p_vertex_buffer9->Lock(
-		0,
-		buffer_size,
-		(void**)&p_custom_vertex,
-		0
-	);
-
-	return true;
-}
-
 
 bool VertexBuffer::CloseBuffer() {
 
@@ -66,22 +41,26 @@ bool VertexBuffer::CloseBuffer() {
 }
 
 
+void VertexBuffer::SetStream(
+	const UINT &size,
+	const int &stream_number
+) {
+
+	// 頂点処理の流れに頂点バッファを実際にセットできる
+	graphics->GetDevice()->SetStreamSource(
+		stream_number,
+		m_p_vertex_buffer9,
+		0,
+		size
+	);
+}
+
+
 void VertexBuffer::Draw() {
 
 	if (m_p_vertex_buffer9 == nullptr) {
 		return;
 	}
-	
-
-	// 頂点処理の流れに頂点バッファを実際にセットできる
-	graphics->GetDevice()->SetStreamSource(
-		0,
-		m_p_vertex_buffer9,
-		0,
-		sizeof(MeshCustomVertex)
-	);
-
-	graphics->GetDevice()->SetFVF(FVF_CUSTOM);
 
 	graphics->GetDevice()->DrawPrimitive(
 		D3DPT_TRIANGLESTRIP,
@@ -89,6 +68,29 @@ void VertexBuffer::Draw() {
 		2
 	);
 }
+
+
+
+//bool VertexBuffer::OpenBufferIndex(
+//	const UINT&buffer_size,
+//	IndexCustomVertex*p_custom_vertex
+//) {
+//
+//	// ロックして読み込み可能にさせる
+//	HRESULT hr = m_p_vertex_buffer9->Lock(
+//		0,
+//		buffer_size,
+//		(void**)&p_custom_vertex,
+//		0
+//	);
+//
+//	if (hr != S_OK) {
+//		return false;
+//	}
+//
+//	return true;
+//}
+
 
 
 /*

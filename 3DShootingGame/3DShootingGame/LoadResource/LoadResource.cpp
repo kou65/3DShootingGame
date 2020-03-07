@@ -28,12 +28,15 @@ namespace  LoadResources {
 
 void LoadTexture() {
 
-	// 勝利UI
-	TextureManager::GetInstance()->Load("Resource/Texture/UI/clear_logo.png", "test");
-	TextureManager::GetInstance()->Load("Resource/Texture/UI/title.png", "title");
+	// テクスチャ
+	TextureManager::GetInstance()->Load("Resource/Texture/UI/HPGauge.png", "hp_gauge");
 	TextureManager::GetInstance()->Load("Resource/Texture/Stage/Ground.jpg", "ground");
 	TextureManager::GetInstance()->Load("Resource/Texture/Enemy/total_enemy1.png", "enemy1");
 	TextureManager::GetInstance()->Load("Resource/3DModel/taiki/txtr1.png", "taiki_tex");
+	
+	TextureManager::GetInstance()->
+		Load("Resource/Texture/Stage/Taile.jpg",Const::Graph::TAILE.c_str());
+
 
 	// Xファイル読み込み
 	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x", "Resource/Texture/Enemy/", "Sample01.x");
@@ -41,23 +44,29 @@ void LoadTexture() {
 	// オブジェファイルの読み込み
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/Player/Player.obj",
-		Const::Graph::PLAYER
+		Const::Obj::PLAYER
 	);
 
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/Bullet/bullet.obj",
-		Const::Graph::BULLET
+		Const::Obj::BULLET
 	);
 
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/Cube.obj",
-		Const::Graph::ENEMY
+		Const::Obj::ENEMY
 	);
 
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/ShotEnemy/ShotEnemy.obj",
-		Const::Graph::ENEMY_BULLETER
+		Const::Obj::ENEMY_BULLETER
 	);
+
+	Obj::GetInstance()->Load(
+		"Resource/3DModel/Plane/Plane.obj",
+		Const::Obj::PLANE
+	);
+
 }
 
 void LoadSound() {

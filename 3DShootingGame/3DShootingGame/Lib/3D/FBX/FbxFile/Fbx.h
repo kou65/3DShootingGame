@@ -32,11 +32,12 @@ struct FbxModuleModel {
 
 };
 
+const int BONE_NUM = 50;
 
 struct Bone {
 
 	// ボーン行列
-	D3DXMATRIX bone_list[64];
+	D3DXMATRIX bone_list[BONE_NUM];// 64
 };
 
 

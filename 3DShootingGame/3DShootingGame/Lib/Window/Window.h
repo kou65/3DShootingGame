@@ -68,6 +68,11 @@ namespace Window {
 	*/
 	HWND GetWindowHandle();
 
+	/*
+	* @brief ウィンドウ名変更
+	*/
+	void SetWindowName(const std::string&window_name);
+
 
 	// HACK　まだ使えません
 	// フルスクリーンに対応したウィンドウにする

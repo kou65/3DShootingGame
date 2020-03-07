@@ -17,8 +17,12 @@ Player::Player(
 	m_p_camera_3d = camera_3d;
 	m_p_obj_factory = bullet_factory;
 	
+	// 3つ分ある
+	m_hp = MAX_HP;
 }
 
+static float ref_hp = 1.f;
+static int fps = 0;
 
 void Player::Update() {
 
@@ -49,11 +53,14 @@ void Player::Draw() {
 
 	param.pos.z = 0.f;
 	param.pos = m_pos;
-	param.register_name = Const::Graph::PLAYER;
-	param.rota.y = 90.f;
+	param.register_obj_file_name = Const::Obj::PLAYER;
+
+	param.rota.x = m_vec_rot.y;
+	param.rota.y = 90.f + m_vec_rot.x;
+	//param.rota.z = m_vec_rot.y;
 
 	// 描画
-	Obj::GetInstance()->Draw(
+	Obj::GetInstance()->ShaderDraw(
 		param
 	);
 
@@ -68,15 +75,27 @@ void Player::MoveByKey() {
 	// キーボード操作
 	{
 
-		// 移動
-		if (KeyBoard::IsKeyPushing(DIK_UP)) {
+		// 前後移動
+		if (KeyBoard::IsKeyPushing(DIK_V)) {
 			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
 			m_move.z = PLAYER_SPEED;
 		}
-		else if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
+		else if (KeyBoard::IsKeyPushing(DIK_SPACE)) {
 			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
 			m_move.z = -PLAYER_SPEED;
 		}
+
+		// 上下
+		else if (KeyBoard::IsKeyPushing(DIK_UP)) {
+			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, PLAYER_SPEED,0.f));
+			m_move.y = PLAYER_SPEED;
+		}
+		else if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
+			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, -PLAYER_SPEED, 0.f));
+			m_move.y = -PLAYER_SPEED;
+		}
+
+		// 左右
 		else if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
 			m_p_camera_3d->AddMove(D3DXVECTOR3(PLAYER_SPEED, 0.f, 0.f));
 			m_move.x = PLAYER_SPEED;
@@ -113,8 +132,11 @@ void Player::RotationByKey() {
 
 
 void Player::AddMoveToPos() {
-	m_pos += m_nor_rot * m_move;
+
+	//m_pos += m_nor_rot * m_move;
+	m_pos += m_move;
 }
+
 
 void Player::InitMove() {
 	m_move.Init();
@@ -150,12 +172,29 @@ void Player::Rotation() {
 
 	// 移動値
 	m_nor_rot = move;
+
+	// 移動値
+	D3DXMatrixTranslation(
+		&trans_m,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z
+	);
+
+	D3DXMATRIX mat = rot_m_x * rot_m_y * trans_m;
+
+}
+
+
+float Player::GetHp() {
+	return m_hp;
 }
 
 
 void Player::ShotBullet() {
 
 	if (KeyBoard::IsKeyPush(DIK_RETURN)) {
+
 		m_p_obj_factory->CreateBullet(
 			Vec3(m_pos.x,
 			m_pos.y,

@@ -6,6 +6,12 @@
 class VertexDecl {
 public:
 
+	// obj用
+	bool CreateFbxFileDecl();
+
+	// 形状インデックス用
+	bool CreateShapeIndexDecl();
+
 	// objファイル送信頂点作成
 	bool CreateObjFileDecl();
 
@@ -22,7 +28,7 @@ public:
 private:
 
 	// デバイスに送信
-	bool SubmitDevice(
+	bool CreateDeclByDevice(
 		D3DVERTEXELEMENT9*elem
 	);
 

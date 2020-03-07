@@ -9,10 +9,15 @@ o%d = オブジェクト番号
 */
 
 
-FileObjectDataManager::FileObjectDataManager(ObjectFactory*of,Camera3D*c) {
+FileObjectDataManager::FileObjectDataManager(
+	ObjectFactory*of,
+	Camera3D*c,
+	ObjectData*p_data
+) {
 
 	m_p_mng = of;
 	m_p_camera = c;
+	m_p_object_data = p_data;
 }
 
 
@@ -55,17 +60,23 @@ void FileObjectDataManager::Load(FILE*p_file) {
 }
 
 
-void FileObjectDataManager::CreateObject() {
+void FileObjectDataManager::CreatePlayerAndEnemy() {
 
-	//// プレイヤー
-	//for (auto &player_pos : m_obj_pos["res1"]) {
-	//	m_p_mng->CreatePlayer(player_pos,m_p_camera,m_p_mng);
-	//}
+
+	// プレイヤー(プレイヤー参照値取得)
+	for (auto &player_pos : m_obj_pos["res1"]) {
+		m_p_mng->CreatePlayer(
+			player_pos,
+			m_p_camera,
+			m_p_object_data
+		);
+	}
 
 	// 敵
 	for (auto &enemy_pos : m_obj_pos["res2"]) {
 		m_p_mng->CreateEnemy(enemy_pos, 2.f);
 	}
+
 }
 
 

@@ -26,11 +26,11 @@ public:
 
 	void Entry(ObjectBase*object);
 
-	void InsertListEntry(ObjectBase*object);
-
 	void AllDelete();
 
 private:
+
+	void EmplaceBack(ObjectBase*object);
 
 	ObjectManager() {};
 
@@ -39,6 +39,7 @@ private:
 	void InsertObject();
 
 private:
+
 
 	std::vector<std::unique_ptr<ObjectBase>>m_p_insert_obj;
 	std::vector<std::unique_ptr<ObjectBase>>m_p_object_list;

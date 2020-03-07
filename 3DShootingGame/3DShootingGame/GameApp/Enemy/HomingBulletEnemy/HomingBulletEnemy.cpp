@@ -31,7 +31,7 @@ void HomingBulletEnemy::Draw() {
 	ObjParameter param;
 
 	param.pos = m_pos;
-	param.register_name = Const::Graph::ENEMY_BULLETER;
+	param.register_obj_file_name = Const::Obj::ENEMY_BULLETER;
 
 	//Obj::GetInstance()->Draw();
 }

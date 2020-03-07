@@ -48,9 +48,6 @@ private:
 
 private:
 
-	// 位置
-	Vec3 m_pos;
-
 	// 角度
 	float m_radius;
 

@@ -29,7 +29,7 @@ public:
 
 
 	// 更新
-	void Update()override;
+	void Update();
 
 	// HACK　まだ完成していません
 	void SelectTexture(int u, int v);

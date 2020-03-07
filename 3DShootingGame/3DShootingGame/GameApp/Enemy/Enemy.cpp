@@ -2,9 +2,12 @@
 #include"../../CollisionSystem/Shape/ShapeData/ShapeData.h"
 
 
+
+
 Enemy::Enemy(
 	D3DXVECTOR3 pos,
-	float speed) {
+	float speed
+){
 
 	m_pos = pos;
 	m_speed = speed;
@@ -27,10 +30,10 @@ void Enemy::Draw(){
 
 	ObjParameter param;
 
-	param.register_name = Const::Graph::ENEMY;
+	param.register_obj_file_name = Const::Obj::ENEMY;
 	param.pos = m_pos;
 
-	Obj::GetInstance()->Draw(param);
+	Obj::GetInstance()->ShaderDraw(param);
 
 }
 

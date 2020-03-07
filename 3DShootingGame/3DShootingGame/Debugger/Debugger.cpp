@@ -17,8 +17,8 @@ Debugger::Debugger() {
 	// デバイス取得
 	m_p_device = Graphics::GetInstance()->GetDevice();
 
-	index_buffer = new IndexBuffer(Graphics::GetInstance());
-	index_buffer->Create(16);
+	index_buffer = new IndexBuffer();
+	index_buffer->Create16(16);
 
 	light = new Light(Graphics::GetInstance());
 

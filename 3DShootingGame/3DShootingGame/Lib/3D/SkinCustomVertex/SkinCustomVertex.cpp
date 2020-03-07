@@ -18,4 +18,8 @@ SkinCustomVertex::SkinCustomVertex() {
 
 	diffuse = 0xfffffff;
 
+	for (int i = 0; i < 4; i++) {
+		bone_index[i] = 0;
+	}
+
 }

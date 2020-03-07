@@ -28,7 +28,7 @@ enum VertexType {
 頂点色(ディフューズ色)
 テクスチャ座標
 */
-#define FVF_CUSTOM (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
+#define FVF_CUSTOM (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
 struct MeshCustomVertex {
@@ -37,8 +37,8 @@ struct MeshCustomVertex {
 
 		position.x = position.y = position.z = 0.f;
 		normal.x = normal.y = normal.z = 0.f;
-		color = 0xfffffff;
-		uv.x = uv.y = 0.f;
+		color = 0xffffff;
+		uv.x = uv.y = 1.f;
 	}
 
 	// 頂点

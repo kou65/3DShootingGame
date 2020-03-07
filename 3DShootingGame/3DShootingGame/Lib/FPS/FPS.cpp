@@ -52,7 +52,8 @@ m_current_time(0)
 
 void FPS::DebugDraw(
 	const Vec2&draw_pos,
-	const int&font_size
+	const int&font_size,
+	bool is_consol
 ) {
 
 	// 前回の計測時間
@@ -86,8 +87,10 @@ void FPS::DebugDraw(
 		draw_pos.x,draw_pos.y,font_size,
 		"FPS = %d",m_current_fps);
 
-	// コンソールで表示
-	//OutputDebugString("");
+	//if (is_consol == true) {
+	//	// コンソールで表示
+	//	TRACE("FPS = %d\n", m_current_fps);
+	//}
 }
 
 
