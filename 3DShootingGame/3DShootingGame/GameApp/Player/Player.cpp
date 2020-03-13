@@ -16,6 +16,14 @@ Player::Player(
 	m_pos = pos;
 	m_p_camera_3d = camera_3d;
 	m_p_obj_factory = bullet_factory;
+
+	// カメラ位置を補正
+	m_p_camera_3d->SetPos(Vec3(
+		m_p_camera_3d->GetPos().x,
+		m_p_camera_3d->GetPos().y,
+		m_p_camera_3d->GetPos().z
+	)
+	);
 	
 	// 3つ分ある
 	m_hp = MAX_HP;
@@ -87,21 +95,21 @@ void Player::MoveByKey() {
 
 		// 上下
 		else if (KeyBoard::IsKeyPushing(DIK_UP)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, PLAYER_SPEED,0.f));
+			//m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, PLAYER_SPEED,0.f));
 			m_move.y = PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, -PLAYER_SPEED, 0.f));
+			//m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, -PLAYER_SPEED, 0.f));
 			m_move.y = -PLAYER_SPEED;
 		}
 
 		// 左右
 		else if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(PLAYER_SPEED, 0.f, 0.f));
+			//m_p_camera_3d->AddMove(D3DXVECTOR3(PLAYER_SPEED, 0.f, 0.f));
 			m_move.x = PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(-PLAYER_SPEED, 0.f, 0.f));
+			//m_p_camera_3d->AddMove(D3DXVECTOR3(-PLAYER_SPEED, 0.f, 0.f));
 			m_move.x = -PLAYER_SPEED;
 		}
 
@@ -122,11 +130,11 @@ void Player::RotationByKey() {
 	}
 	if (KeyBoard::IsKeyPushing(DIK_W)) {
 		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
-		m_vec_rot.y++;
+		m_vec_rot.y--;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_S)) {
 		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
-		m_vec_rot.y--;
+		m_vec_rot.y++;
 	}
 }
 

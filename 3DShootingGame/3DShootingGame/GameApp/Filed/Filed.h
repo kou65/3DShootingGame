@@ -19,26 +19,34 @@ public:
 
 private:
 
+	// タイルの種類
+	enum class TaileType {
+		TAILE,
+		LEFT_WALL,
+		RIGHT_WALL
+	};
+
 	// 前方の総合タイル数
-	const int TOTAL_TAILE_FRONT = 1000;
+	const static int TOTAL_FRONT_OBJ = 1000;
 
 	// 横の総合タイル数
-	const int TOTAL_TAILE_WIDTH = 3;
+	const static int TOTAL_TAILE_OBJ = 5;
 
 	// 生成範囲前方
-	const float CREATE_RANGE_F_Z = 200.f;
+	const static int CREATE_RANGE_FRONT = 20;
 
 	// 生成範囲後方
-	const float CREATE_RANGE_B_Z = -200.f;
+	const static int CREATE_RANGE_BACK = 2;
 
-	// 生成範囲右
-	const float CREATE_RANGE_R_X = 200.f;
 
-	// 生成範囲左
-	const float CREATE_RANGE_L_Y = -200.f;
-
-	// テクスチャサイズ
-	const float TAILE_SIZE = 16.f;
+	// 横のオブジェクト種類
+	const TaileType WIDHT_FILED_OBJ[TOTAL_TAILE_OBJ] = {
+		TaileType::LEFT_WALL,
+		TaileType::TAILE,
+		TaileType::TAILE,
+		TaileType::TAILE,
+		TaileType::RIGHT_WALL
+	};
 
 private:
 
@@ -52,10 +60,11 @@ private:
 	void CreateLeftWall();
 
 	// バトル床を描画
-	void CreateTaile();
+	void Init();
 
-	// 部分的に描画する
-	void DrawTaile();
+	// 毎ターンタイルを生成するか調べて生成する
+	void SerchCreateDeleteTaile();
+
 
 private:
 
@@ -65,6 +74,10 @@ private:
 	// キャラクターを中心に描画
 	CharacterBase*m_p_chara;
 
-	// マップオブジェクトの参照
-	std::vector<MapObjectBase*>m_p_map_obj_list;
+	// マップオブジェクトの参照()
+	//std::vector<std::vector<std::weak_ptr<MapObjectBase>>>m_p_map_obj_list;
+	std::vector<std::vector<MapObjectBase*>>m_p_map_obj_list;
+
+	// 生成されたかどうかの状態
+	std::vector<std::vector<bool>>m_is_create_list;
 };

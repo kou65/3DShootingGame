@@ -208,11 +208,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="GameApp\Filed\LeftWall\LeftWall.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="GameApp\Filed\RightWall\RightWall.cpp">
+    <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -423,18 +419,19 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="GameApp\Enemy\EnemyManager\EnemyManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameApp\Filed\LeftWall\LeftWall.h">
+    <ClInclude Include="GameApp\Filed\BackGround\BackGround.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameApp\Filed\RightWall\RightWall.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
+    <ClInclude Include="GameApp\Filed\MapObjectBase\MapObjectBase.h" />
     <ClInclude Include="GameApp\GameConstant\GameConstant.h">
       <SubType>
       </SubType>

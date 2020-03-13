@@ -37,6 +37,10 @@ void LoadTexture() {
 	TextureManager::GetInstance()->
 		Load("Resource/Texture/Stage/Taile.jpg",Const::Graph::TAILE.c_str());
 
+	TextureManager::GetInstance()->
+		Load("Resource/Texture/Stage/dev.jpg", Const::Graph::BACK_GROUND.c_str());
+
+
 
 	// Xファイル読み込み
 	XFile::GetInstance()->Load("Resource/3DModel/Sample01.x", "Resource/Texture/Enemy/", "Sample01.x");

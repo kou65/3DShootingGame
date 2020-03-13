@@ -3,6 +3,7 @@
 #include"../../GameApp/Enemy/Enemy.h"
 #include"../../GameApp/Filed/Filed.h"
 #include"../../GameApp/HPUI/HPUI.h"
+#include"../../GameApp/Filed/BackGround/BackGround.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
 
 
@@ -75,38 +76,49 @@ void ObjectFactory::CreateEnemy(
 }
 
 
-void ObjectFactory::CreateTaile(
-	const ObjParameter&data,
-	MapObjectBase*p_map_obj
+void ObjectFactory::CreateBackGround(
+	const Vec3 &pos
 ) {
 
-	Taile*p_taile = new Taile(data);
+	// 生成
+	ObjectManager::GetInstance()->Entry(
+		new BackGround(
+			pos
+		));
+}
+
+
+void ObjectFactory::CreateTaile(
+	const ObjParameter&data,
+	MapObjectBase**p_map_obj,
+	const Taile::Direction &dir
+) {
+
+	Taile*p_taile = new Taile(data,dir);
 
 	ObjectManager::GetInstance()->Entry(
 		p_taile
 	);
 
 	// マップオブジェクト代入
+	*p_map_obj = p_taile;
+}
+
+
+void ObjectFactory::CreateTaile2(
+	const ObjParameter&data,
+	std::weak_ptr<MapObjectBase>p_map_obj
+) {
+
+	// 共有用生成
+	std::shared_ptr<Taile>p_taile = std::make_shared<Taile>(data);
+
+	ObjectManager::GetInstance()->SharedEntry(
+		p_taile
+	);
+
+	// マップオブジェクト代入
 	p_map_obj = p_taile;
-}
-
-
-void ObjectFactory::CreateRightWall(
-	const TransformData3D&data
-) {
-
-	ObjectManager::GetInstance()->Entry(
-		new RightWall()
-	);
-}
-
-
-void ObjectFactory::CreateLeftWall(
-	const TransformData3D&data
-) {
-	ObjectManager::GetInstance()->Entry(
-		new LeftWall()
-	);
 }
 
 

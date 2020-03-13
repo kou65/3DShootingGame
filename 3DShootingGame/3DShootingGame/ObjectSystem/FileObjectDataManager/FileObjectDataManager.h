@@ -15,6 +15,10 @@
 class FileObjectDataManager {
 public:
 
+
+
+public:
+
 	// インスタンス
 	FileObjectDataManager(
 		ObjectFactory*of,

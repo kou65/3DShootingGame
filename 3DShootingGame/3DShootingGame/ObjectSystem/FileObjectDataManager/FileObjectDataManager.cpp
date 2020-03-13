@@ -37,6 +37,11 @@ void FileObjectDataManager::Load(FILE*p_file) {
 		// リソース番号読み込み
 		fscanf_s(p_file, "%s", (char*)load_str,LOAD_BUFFER_SIZE);
 
+		// コメントなら
+		if (Utility::IsStrInclude(load_str, "#") == true) {
+			continue;
+		}
+
 		// リソースが存在するなら
 		if (Utility::IsStrInclude(load_str,"res") == true) {
 
@@ -75,6 +80,11 @@ void FileObjectDataManager::CreatePlayerAndEnemy() {
 	// 敵
 	for (auto &enemy_pos : m_obj_pos["res2"]) {
 		m_p_mng->CreateEnemy(enemy_pos, 2.f);
+	}
+
+	// 背景
+	for (auto &back_ground : m_obj_pos["res3"]) {
+		m_p_mng->CreateBackGround(back_ground);
 	}
 
 }

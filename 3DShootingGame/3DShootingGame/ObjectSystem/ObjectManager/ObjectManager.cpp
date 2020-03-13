@@ -57,6 +57,15 @@ void ObjectManager::InsertObject() {
 	if (m_p_insert_obj.size() > 0) {
 		m_p_insert_obj.clear();
 	}
+
+	for (auto &obj : m_p_insert_obj_shared) {
+
+		m_p_object_list_shared.emplace_back(std::move(obj));
+	}
+
+	if (m_p_insert_obj_shared.size() > 0) {
+		m_p_insert_obj_shared.clear();
+	}
 }
 
 
@@ -74,7 +83,6 @@ void ObjectManager::NotActiveAutoDelete() {
 			if (obj != nullptr)
 			{
 				// メモリ解放
-				//delete(obj);
 				(*itr).reset();
 			}
 
@@ -86,6 +94,33 @@ void ObjectManager::NotActiveAutoDelete() {
 		// イテレータ加算
 		itr++;
 	}
+}
+
+
+void ObjectManager::SharedEntry(std::shared_ptr<ObjectBase>obj) {
+
+	m_p_insert_obj_shared.emplace_back(obj);
+}
+
+
+void ObjectManager::InsertSharedObject() {
+
+
+	// 配列に溜めていたオブジェクトを代入
+	for (auto &i_obj : m_p_insert_obj) {
+
+		// オブジェクトポインタを委譲
+		m_p_object_list_shared.emplace_back(std::move(i_obj));
+	}
+
+	// オブジェクトが存在するなら
+	if (m_p_insert_obj.size() > 0) {
+		m_p_insert_obj.clear();
+	}
+}
+
+void ObjectManager::SharedAutoDelete() {
+
 }
 
 

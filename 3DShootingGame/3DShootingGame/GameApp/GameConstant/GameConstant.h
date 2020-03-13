@@ -7,6 +7,7 @@ namespace Const {
 
 	namespace Graph {
 		const std::string TAILE = "taile";
+		const std::string BACK_GROUND = "back_ground";
 	}
 
 	namespace Obj {

@@ -6,10 +6,9 @@
 #include"../ObjectManager/ObjectManager.h"
 #include"../../Lib/3D/Camera3D/Camera3D.h"
 #include"../../GameApp/Filed/Taile/Taile.h"
-#include"../../GameApp/Filed/LeftWall/LeftWall.h"
-#include"../../GameApp/Filed/RightWall/RightWall.h"
 #include"../../Lib/Vec3/Vec3.h"
 #include"../../GameApp/CharacterBase/CharacterBase.h"
+#include"../../GameApp/Filed/BackGround/BackGround.h"
 
 
 class Player;
@@ -50,21 +49,23 @@ public:
 	);
 
 
+	// 背景生成
+	void CreateBackGround(
+		const Vec3 &pos
+	);
+
+
 	// 床生成
 	void CreateTaile(
-		const ObjParameter&data
+		const ObjParameter&data,
+		MapObjectBase**p_map_obj,
+		const Taile::Direction &dir = Taile::Direction::FLOOR
 	);
 
-
-	// 右壁生成
-	void CreateRightWall(
-		const TransformData3D&data
-	);
-
-
-	// 左壁生成
-	void CreateLeftWall(
-		const TransformData3D&data
+	// 板生成
+	void CreateTaile2(
+		const ObjParameter&data,
+		std::weak_ptr<MapObjectBase>p_map_obj
 	);
 
 

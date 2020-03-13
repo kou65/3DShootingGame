@@ -300,12 +300,6 @@
     <ClCompile Include="GameApp\Filed\Taile\Taile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameApp\Filed\RightWall\RightWall.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp\Filed\LeftWall\LeftWall.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp\Cube\Cube.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -316,6 +310,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\HPUI\HPUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -542,12 +539,6 @@
     <ClInclude Include="GameApp\Filed\Taile\Taile.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameApp\Filed\RightWall\RightWall.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp\Filed\LeftWall\LeftWall.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameApp\Cube\Cube.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -567,6 +558,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSystem\ObjectData\ObjectData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\MapObjectBase\MapObjectBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\BackGround\BackGround.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Enemy\EnemyManager\EnemyManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

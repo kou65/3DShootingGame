@@ -70,13 +70,15 @@ void GameScene::CreateOperator() {
 
 	// 20先に回転軸を置く
 	set_data.axis.z = -20.f;
+	set_data.pos.x = 16.f;
 	set_data.pos.y = 10.f;
-	set_data.pos.z = 0.f;
+	set_data.pos.z = -16.f;
+
 	set_data.is_debug = false;
 
 	m_p_camera.reset(
 		new Camera3D(
-			Camera3D::TPS,
+			Camera3D::FPS,
 			set_data
 		));
 
