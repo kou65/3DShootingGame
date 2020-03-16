@@ -105,7 +105,7 @@ void GameScene::CreateOperator() {
 void GameScene::CreateObject() {
 
 	// ファイルの情報から自機と敵を生成する
-	m_p_file_obj_mng->CreatePlayerAndEnemy();
+	m_p_file_obj_mng->CreateObject();
 
 	// UI生成
 	m_p_obj_factory->CreateHPUI(m_p_object_data.get());

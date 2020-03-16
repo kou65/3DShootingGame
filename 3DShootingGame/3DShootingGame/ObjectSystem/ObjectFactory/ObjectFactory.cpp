@@ -4,6 +4,7 @@
 #include"../../GameApp/Filed/Filed.h"
 #include"../../GameApp/HPUI/HPUI.h"
 #include"../../GameApp/Filed/BackGround/BackGround.h"
+#include"../../GameApp/Enemy/HomingBulletEnemy/HomingBulletEnemy.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
 
 
@@ -73,6 +74,22 @@ void ObjectFactory::CreateEnemy(
 			pos,
 			speed
 		));
+}
+
+
+void ObjectFactory::CreateHEnemy(
+	const Vec3&pos,
+	CharacterBase*p_data
+) {
+
+	if (p_data == nullptr) {
+		return;
+	}
+
+	// 生成
+	ObjectManager::GetInstance()->Entry(
+		new HomingBulletEnemy(this, p_data)
+	);
 }
 
 

@@ -26,22 +26,34 @@ public:
 		ObjectData*p_data
 	);
 
-	void CreatePlayerAndEnemy();
+	void CreateObject();
 
 	// オブジェクトファイルを読み込み
 	void Load(FILE*p_file);
 
+	// ソート
 	void Sort();
+
+	// 位置配列の最大数を返す
+	int GetMaxPosListNum(const std::string&res_name);
+
+	// 位置情報を返す
+	Vec3 OutPosList(const std::string&res_name,const int &i);
 
 private:
 
+	// カメラ
 	Camera3D*m_p_camera;
+
+	// 工場
 	ObjectFactory *m_p_mng;
+
+	// オブジェクトデータ
 	ObjectData*m_p_object_data;
 
 	// オブジェクトのパラメータを入れて後で生成する用
 	// 位置で比較し、位置が近いオブジェクトだけ生成する
-	std::unordered_map<std::string, std::vector<Vec3>>m_obj_pos;
+	std::unordered_map<std::string, std::vector<Vec3>>m_obj_pos_list;
 };
 
 #endif

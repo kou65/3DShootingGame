@@ -14,7 +14,7 @@ public:
 
 	HomingBulletEnemy(
 		ObjectFactory*factory,
-		Player*player
+		CharacterBase*player
 	);
 
 	// 更新
@@ -43,7 +43,7 @@ private:
 	ObjectFactory*m_p_obj_factory;
 
 	// !プレイヤー
-	Player*m_p_player;
+	CharacterBase*m_p_player;
 
 	// !打ち出す時間
 	float m_shot_timer;

@@ -59,17 +59,17 @@ void FileObjectDataManager::Load(FILE*p_file) {
 			Utility::LoadFloatVec3(p_file, v, ' ');
 
 			// リソース番号付きで位置を代入
-			m_obj_pos[res_num_str].emplace_back(v);
+			m_obj_pos_list[res_num_str].emplace_back(v);
 		}
 	}
 }
 
 
-void FileObjectDataManager::CreatePlayerAndEnemy() {
+void FileObjectDataManager::CreateObject() {
 
 
 	// プレイヤー(プレイヤー参照値取得)
-	for (auto &player_pos : m_obj_pos["res1"]) {
+	for (auto &player_pos : m_obj_pos_list["res1"]) {
 		m_p_mng->CreatePlayer(
 			player_pos,
 			m_p_camera,
@@ -78,22 +78,34 @@ void FileObjectDataManager::CreatePlayerAndEnemy() {
 	}
 
 	// 敵
-	for (auto &enemy_pos : m_obj_pos["res2"]) {
+	for (auto &enemy_pos : m_obj_pos_list["res2"]) {
 		m_p_mng->CreateEnemy(enemy_pos, 2.f);
 	}
 
 	// 背景
-	for (auto &back_ground : m_obj_pos["res3"]) {
+	for (auto &back_ground : m_obj_pos_list["res3"]) {
 		m_p_mng->CreateBackGround(back_ground);
 	}
 
 }
 
 
+int FileObjectDataManager::GetMaxPosListNum(const std::string&res_name) {
+
+	return (int)m_obj_pos_list[res_name].size();
+}
+
+
+Vec3 FileObjectDataManager::OutPosList(const std::string&res_name, const int &i) {
+
+	return m_obj_pos_list[res_name][i];
+}
+
+
 void FileObjectDataManager::Sort() {
 
 	// 位置のソートを行う
-	for (auto &obj : m_obj_pos) {
+	for (auto &obj : m_obj_pos_list) {
 
 		std::sort(obj.second.begin(), obj.second.end(),
 			[](const Vec3 obj1, const Vec3 obj2) {

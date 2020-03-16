@@ -4,7 +4,7 @@
 
 HomingBulletEnemy::HomingBulletEnemy(
 	ObjectFactory*factory,
-	Player*player
+	CharacterBase*player
 ) {
 
 	// オブジェクト代入

@@ -49,6 +49,13 @@ public:
 	);
 
 
+	// ホーミング弾を撃つ敵生成
+	void CreateHEnemy(
+		const Vec3&pos,
+		CharacterBase*p_data
+	);
+
+
 	// 背景生成
 	void CreateBackGround(
 		const Vec3 &pos
