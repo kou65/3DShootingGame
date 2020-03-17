@@ -113,4 +113,7 @@ void GameScene::CreateObject() {
 	// フィールド生成
 	m_p_obj_factory->CreateFiled(m_p_object_data.get());
 
+	// 敵生成
+	m_p_obj_factory->CreateHEnemy(Vec3(0.f, 0.f, 200.f), m_p_object_data.get()->p_player);
+
 }

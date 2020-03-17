@@ -39,7 +39,7 @@ void HomingBulletEnemy::Draw() {
 
 bool HomingBulletEnemy::IsShot() {
 
-	if (m_shot_timer > INTERVAL) {
+	if (m_shot_timer > INTERVAL){
 		m_shot_timer = 0.f;
 
 		return true;
@@ -69,6 +69,14 @@ Vec3 HomingBulletEnemy::CalcDirection() {
 void HomingBulletEnemy::Shot(){
 
 	Vec3 dir = CalcDirection();
+
+	// 三平方の定理で距離を出す
+	float l = sqrtf((dir.x * dir.x) + (dir.y * dir.y) + (dir.z * dir.z));
+
+	// 正規化
+	dir.x = dir.x / l;
+	dir.y = dir.y / l;
+	dir.z = dir.z / l;
 
 	// 弾を生成
 	m_p_obj_factory->CreateBullet(dir, 1.f, 300.f);
