@@ -9,11 +9,11 @@ DepthShadowEffectFile() {
 }
 
 bool DepthShadowEffectFile::
-Init() {
+Init(const char*file_name) {
 
 	if (FAILED(D3DXCreateEffectFromFile(
 		m_p_graphics->GetInstance()->GetDevice(),
-		TEXT("DepthShadow.fx"),
+		TEXT(file_name),
 		NULL,
 		NULL,
 		0,

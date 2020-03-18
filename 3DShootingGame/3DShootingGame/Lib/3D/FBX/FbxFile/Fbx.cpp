@@ -12,7 +12,7 @@
 Fbx::Fbx() : Model()
 {
 
-	m_is_shader = true;
+	m_is_shader = false;
 
 	m_is_skinning = true;
 
@@ -52,7 +52,8 @@ void Fbx::Update() {
 			CPUSkinning();
 		}
 	}
-	
+
+	m_is_shader = false;
 }
 
 
@@ -211,37 +212,6 @@ void Fbx::EffectDraw(
 }
 
 
-D3DXMATRIX Fbx::GetFbxWorldD3DMatrix(int mesh_index) {
-
-	// ワールド行列変換
-	{
-
-		FbxMatrix local_fmat;
-		D3DXMATRIX l_mat;
-
-		D3DXMatrixIdentity(&l_mat);
-
-		// メッシュを取得
-		FbxMesh* mesh =
-			m_fbx_module.mp_fbx_scene->GetSrcObject<FbxMesh>(mesh_index);
-
-		// メッシュノード
-		FbxNode* mesh_node = mesh->GetNode();
-
-		// <移動、回転、拡大のための行列を作成>
-		// ジョイントのローカル SRT 受け取り
-		fbxsdk::FbxDouble3 local_translate = mesh_node->LclTranslation.Get();
-		fbxsdk::FbxDouble3 local_rotate = mesh_node->LclRotation.Get();
-		fbxsdk::FbxDouble3 local_scale = mesh_node->LclScaling.Get();
-
-		local_fmat = FbxAMatrix(
-			local_translate, local_rotate, local_scale);
-
-		FbxMatConvertD3DMat(&l_mat, local_fmat);
-
-		return l_mat;
-	}
-}
 
 
 bool Fbx::Load(
@@ -402,6 +372,38 @@ void Fbx::LoadMesh() {
 
 }
 
+
+D3DXMATRIX Fbx::GetFbxWorldD3DMatrix(int mesh_index) {
+
+	// ワールド行列変換
+	{
+
+		FbxMatrix local_fmat;
+		D3DXMATRIX l_mat;
+
+		D3DXMatrixIdentity(&l_mat);
+
+		// メッシュを取得
+		FbxMesh* mesh =
+			m_fbx_module.mp_fbx_scene->GetSrcObject<FbxMesh>(mesh_index);
+
+		// メッシュノード
+		FbxNode* mesh_node = mesh->GetNode();
+
+		// <移動、回転、拡大のための行列を作成>
+		// ジョイントのローカル SRT 受け取り
+		fbxsdk::FbxDouble3 local_translate = mesh_node->LclTranslation.Get();
+		fbxsdk::FbxDouble3 local_rotate = mesh_node->LclRotation.Get();
+		fbxsdk::FbxDouble3 local_scale = mesh_node->LclScaling.Get();
+
+		local_fmat = FbxAMatrix(
+			local_translate, local_rotate, local_scale);
+
+		FbxMatConvertD3DMat(&l_mat, local_fmat);
+
+		return l_mat;
+	}
+}
 
 void Fbx::SetMotion(std::string name)
 {
@@ -614,10 +616,10 @@ void Fbx::InitVertexInfo(
 		p_vertices[v].normal.y = 1.0f;
 		p_vertices[v].normal.z = 0.0f;
 
-		for (int i = 0; i < 4; i++) {
-			p_vertices[v].weight[i] = 0.f;
-			p_vertices[v].bone_index[i] = 0;
-		}
+		//for (int i = 0; i < 4; i++) {
+		//	p_vertices[v].weight[i] = 0.f;
+		//	p_vertices[v].bone_index[i] = 0;
+		//}
 
 	}
 
@@ -1634,33 +1636,42 @@ void Fbx::WeightSkinning(
 	MotionData *md = &m_motion[m_current_motion_name][mi];
 
 	// 重み分回す
-	for (UINT w = 0;
-		w < mesh_data.vertex_num;
-		w++) {
+	for (UINT v = 0;
+		v < mesh_data.vertex_num;
+		v++) {
+
+		// 1200から1300までが怪しい
+		if (v == 1200) {
+			v = 1200;
+		}
 
 		D3DXVECTOR4 vec4 =
-			m_p_vertics[mi][w].vertex;
+			m_p_vertics[mi][v].vertex;
 
 		// 一旦初期化
-		vertices[w].vertex.x = 0.f;
-		vertices[w].vertex.y = 0.f;
-		vertices[w].vertex.z = 0.f;
+		vertices[v].vertex.x = 0.f;
+		vertices[v].vertex.y = 0.f;
+		vertices[v].vertex.z = 0.f;
 		
 		for (int b = 0; b < 4; b++){
 
 			// 中身がないなら
-			if (vertices[w].weight[b] <= 0.f) {
+			if (vertices[v].weight[b] <= 0.f) {
 				// そのあとの配列にもないと思うので抜ける
 				break;
 			}
 
-			int w_idx = vertices[w].bone_index[b];
-			float weight = vertices[w].weight[b];
+			int w_idx = vertices[v].bone_index[b];
+			float weight = vertices[v].weight[b];
 
 			// 初期位置受け取り
 			FbxVector4 pos = mesh->GetControlPointAt(
-				w
+				v
 			);
+
+			if (w_idx >= 51) {
+				w_idx = 51;
+			}
 
 			// 頂点受け取り
 			FbxVector4 out_vertex = md->
@@ -1688,9 +1699,9 @@ void Fbx::WeightSkinning(
 
 
 			// 重みを掛け合わせ(影響しない場合は0なので大丈夫)
-			vertices[w].vertex.x += x * weight;
-			vertices[w].vertex.y += y * weight;
-			vertices[w].vertex.z += z * weight;
+			vertices[v].vertex.x += x * weight;
+			vertices[v].vertex.y += y * weight;
+			vertices[v].vertex.z += z * weight;
 		}
 	}
 }

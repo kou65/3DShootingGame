@@ -41,21 +41,11 @@ int WINAPI WinMain(
 	// ブレンドオン
 	Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
 
-	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/portal/Cube.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/CubePolygon4.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan_WALK00_L.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan.fbx");
 
 	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
 
 	// デバッグモード
-	bool is_debug_mode = false;
+	bool is_debug_mode = true;
 
 	// ループ
 	while (Window::ProcessMessage() == true) {
@@ -75,12 +65,6 @@ int WINAPI WinMain(
 		if (is_debug_mode == true) {
 
 			Debugger::GetInstance().Update();
-
-
-			// アニメーション更新
-			Fbx::GetInstance()->Animate(5.f);
-			Fbx::GetInstance()->Update();
-
 		}
 		else {
 
@@ -92,8 +76,6 @@ int WINAPI WinMain(
 		if (Graphics::GetInstance()->DrawStart() == true) {
 
 			if (is_debug_mode == true) {
-
-				Fbx::GetInstance()->Draw();
 
 				// デバッグの描画
 				Debugger::GetInstance().Draw();

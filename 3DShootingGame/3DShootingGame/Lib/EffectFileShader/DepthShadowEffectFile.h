@@ -9,7 +9,7 @@ public:
 
 	DepthShadowEffectFile();
 
-	bool Init();
+	bool Init(const char*file_name);
 
 	bool SetShandowMap(IDirect3DTexture9*shandow_map);
 

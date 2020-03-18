@@ -9,13 +9,18 @@
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/Texture/TextureManager/TextureManager.h"
 #include"../Lib/EffectFileShader/VertexDeclation.h"
+#include"../GameApp/GameConstant/GameConstant.h"
 
 
+void GetPlateWorldMatrix(D3DXMATRIX *PlateWorld);
+void GetCubeWorldMatrix(float f, int x, int z, D3DXMATRIX *mat);
 
 Debugger::Debugger() {
 
 	// デバイス取得
 	m_p_device = Graphics::GetInstance()->GetDevice();
+
+	fps = new FPS(60);
 
 	index_buffer = new IndexBuffer();
 	index_buffer->Create16(16);
@@ -25,12 +30,9 @@ Debugger::Debugger() {
 	CameraData data;
 
 	camera_3d = new Camera3D(Camera3D::FPS,data);
-
 	camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 
 	light->On();
-
-	fps = new FPS(60);
 
 	s2d.animation_param.division_width = 9;
 	s2d.animation_param.division_height = 6;
@@ -74,6 +76,13 @@ Debugger::Debugger() {
 		return;
 	}
 
+	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan.fbx");
 
 }
 
@@ -94,8 +103,6 @@ bool Debugger::IsEnd() {
 }
 
 
-
-
 void Debugger::Update() {
 
 	CameraRotation();
@@ -104,59 +111,9 @@ void Debugger::Update() {
 
 	camera_3d->Update();
 
-}
-
-
-void Debugger::CameraMove() {
-
-	// キーボード操作
-	{
-		if (KeyBoard::IsKeyPushing(DIK_UP)) {
-			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
-		}
-		if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
-			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
-		}
-		if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
-			camera_3d->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
-		}
-		if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
-			camera_3d->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
-		}
-	}
-	
-	// ジョイスティック操作
-	{
-		if (JoyStick::IsBottomPushing(0)) {
-			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
-		}
-		if (JoyStick::IsBottomPushing(2)) {
-			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
-		}
-		if (JoyStick::IsBottomPushing(1)) {
-			camera_3d->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
-		}
-		if (JoyStick::IsBottomPushing(3)) {
-			camera_3d->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
-		}
-	}
-}
-
-
-void Debugger::CameraRotation() {
-
-	if (KeyBoard::IsKeyPushing(DIK_D)) {
-		camera_3d->AddRotation(D3DXVECTOR3(1.f,0.f,0.f));
-	}
-	if (KeyBoard::IsKeyPushing(DIK_A)) {
-		camera_3d->AddRotation(D3DXVECTOR3(-1.f,0.f, 0.f));
-	}
-	if (KeyBoard::IsKeyPushing(DIK_W)) {
-		camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
-	}
-	if (KeyBoard::IsKeyPushing(DIK_S)) {
-		camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
-	}
+	// アニメーション更新
+	Fbx::GetInstance()->Animate(5.f);
+	Fbx::GetInstance()->Update();
 }
 
 
@@ -166,8 +123,8 @@ void Debugger::Draw() {
 	//light->On();
 
 
-	//ZTextureDraw();
-	//ShadowDraw();
+	ZTextureDraw();
+	ShadowDraw();
 
 	fps->DebugDraw(Vec2(256.f, 256.f), 3000);
 	camera_3d->TransformDraw();
@@ -187,16 +144,9 @@ void Debugger::Draw() {
 		td
 	);
 
-		s2d.texture_name = "enemy1";
+	// fbx描画
+		Fbx::GetInstance()->Draw();
 
-		s2d.animation_param.animation_frame = 20.f;
-		
-		s2d.animation_param.is_animation = true;
-
-		s2d.x = 40.f;
-		s2d.y = 40.f;
-
-		//Sprite2DObject::GetInstance()->BoardDraw(s2d);
 	}
 
 
@@ -204,10 +154,10 @@ void Debugger::InitShader() {
 
 
 	// 深度とzテクスチャを初期化
-	m_d_effect.Init();
+	m_d_effect.Init("Lib/ShaderFile/ZTexture.fx");
 
 	m_z_tex_effect.Init(
-		"ZTexture.fx",
+		"Lib/ShaderFile/ZTexture.fx",
 		1000,
 		1000
 	);
@@ -245,29 +195,6 @@ void Debugger::InitShader() {
 
 }
 
-// 板のワールド変換行列生成
-void GetPlateWorldMatrix(D3DXMATRIX *PlateWorld)
-{
-	float PlateScale = 1.0f;
-	D3DXMATRIX Scale;
-	D3DXMatrixIdentity(PlateWorld);
-	D3DXMatrixScaling(&Scale, PlateScale, 1.0f, PlateScale);
-	*PlateWorld *= Scale;
-	PlateWorld->_42 = -60.0f;
-}
-
-// 立方体のワールド変換行列生成
-void GetCubeWorldMatrix(float f, int x, int z, D3DXMATRIX *mat)
-{
-	D3DXMATRIX RotY, RotZ;
-	D3DXMatrixIdentity(mat);
-	D3DXMatrixRotationY(&RotY, D3DXToRadian(f));
-	D3DXMatrixRotationZ(&RotZ, D3DXToRadian(f*2.353f));
-	*mat *= RotY * RotZ;
-	mat->_41 = x * 20.0f;  mat->_43 = z * 20.0f; mat->_42 = sin(f / 10) * 40;
-}
-
-
 void Debugger::ShadowDraw() {
 
 	// 木偶レーション
@@ -276,9 +203,7 @@ void Debugger::ShadowDraw() {
 	//v_d.Set();
 
 	D3DXMATRIX world_mat;
-
 	D3DXMatrixIdentity(&world_mat);
-
 	D3DXMATRIX view, proj;
 
 	// ビュー行列
@@ -298,6 +223,7 @@ void Debugger::ShadowDraw() {
 	m_d_effect.SetWorldMatrix(&world_mat);
 	m_d_effect.SetParamToEffect();
 
+	// xファイル
 	for (UINT i = 0; i < dwMatNum; i++) {
 
 		m_d_effect.SetParamToEffect();
@@ -307,11 +233,10 @@ void Debugger::ShadowDraw() {
 		m_d_effect.EndPass();
 	}
 
-	D3DXMATRIX mat;
-
 
 	float PlateScale = 1.0f;
 	D3DXMATRIX Scale;
+	D3DXMATRIX mat;
 	D3DXMatrixIdentity(&mat);
 	D3DXMatrixScaling(&Scale, PlateScale, 1.0f, PlateScale);
 	mat *= Scale;
@@ -320,11 +245,20 @@ void Debugger::ShadowDraw() {
 	m_d_effect.SetWorldMatrix(&mat);
 	m_d_effect.SetParamToEffect();
 
+	// xファイル
 	for (UINT i = 0; i < dwMatNum_Plate; i++) {
 		m_d_effect.BeginPass();
 		cpMeshPlate->DrawSubset(i);
-		m_d_effect.EndPass();
 	}
+
+	// オブジェシェーダー描画
+	ObjParameter param;
+	param.register_obj_file_name = Const::Obj::PLANE;
+	param.pos.y = -10.f;
+
+	m_d_effect.BeginPass();
+	Obj::GetInstance()->ShaderDraw(param);
+	m_d_effect.EndPass();
 
 	m_d_effect.End();
 }
@@ -332,11 +266,6 @@ void Debugger::ShadowDraw() {
 
 
 void Debugger::ZTextureDraw() {
-
-	// 木偶レーション
-	//VertexDecl v_d;
-	//v_d.CreateObjFileDecl();
-	//v_d.Set();
 
 	D3DXMATRIX world_mat;
 
@@ -384,7 +313,92 @@ void Debugger::ZTextureDraw() {
 		
 	}
 
+	ObjParameter param;
+	param.register_obj_file_name = Const::Obj::PLANE;
+	param.pos.y = -20.f;
+
+	m_z_tex_effect.BeginPass();
+	Obj::GetInstance()->ShaderDraw(param);
+	m_z_tex_effect.EndPass();
+
 	m_z_tex_effect.End();
+}
+
+
+// 板のワールド変換行列生成
+void GetPlateWorldMatrix(D3DXMATRIX *PlateWorld)
+{
+	float PlateScale = 1.0f;
+	D3DXMATRIX Scale;
+	D3DXMatrixIdentity(PlateWorld);
+	D3DXMatrixScaling(&Scale, PlateScale, 1.0f, PlateScale);
+	*PlateWorld *= Scale;
+	PlateWorld->_42 = -60.0f;
+}
+
+// 立方体のワールド変換行列生成
+void GetCubeWorldMatrix(float f, int x, int z, D3DXMATRIX *mat)
+{
+	D3DXMATRIX RotY, RotZ;
+	D3DXMatrixIdentity(mat);
+	D3DXMatrixRotationY(&RotY, D3DXToRadian(f));
+	D3DXMatrixRotationZ(&RotZ, D3DXToRadian(f*2.353f));
+	*mat *= RotY * RotZ;
+	mat->_41 = x * 20.0f;  mat->_43 = z * 20.0f; mat->_42 = sin(f / 10) * 40;
+}
+
+
+
+void Debugger::CameraMove() {
+
+	// キーボード操作
+	{
+		if (KeyBoard::IsKeyPushing(DIK_UP)) {
+			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
+		}
+		if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
+			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
+		}
+		if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
+			camera_3d->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
+		}
+		if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
+			camera_3d->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
+		}
+	}
+
+	// ジョイスティック操作
+	{
+		if (JoyStick::IsBottomPushing(0)) {
+			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
+		}
+		if (JoyStick::IsBottomPushing(2)) {
+			camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
+		}
+		if (JoyStick::IsBottomPushing(1)) {
+			camera_3d->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
+		}
+		if (JoyStick::IsBottomPushing(3)) {
+			camera_3d->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
+		}
+	}
+}
+
+
+void Debugger::CameraRotation() {
+
+	if (KeyBoard::IsKeyPushing(DIK_D)) {
+		camera_3d->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
+	}
+	if (KeyBoard::IsKeyPushing(DIK_A)) {
+		camera_3d->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
+	}
+	if (KeyBoard::IsKeyPushing(DIK_W)) {
+		camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
+	}
+	if (KeyBoard::IsKeyPushing(DIK_S)) {
+		camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
+	}
 }
 
 

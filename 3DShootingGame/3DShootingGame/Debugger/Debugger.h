@@ -14,7 +14,9 @@
 #include"../Lib/3D/OBJ/OBJFile.h"
 #include"../Lib/EffectFileShader/DepthShadowEffectFile.h"
 #include"../Lib/EffectFileShader/ZTexture.h"
+#include"../Lib/3D/FBX/FbxFile/Fbx.h"
 #include<string>
+
 
 
 

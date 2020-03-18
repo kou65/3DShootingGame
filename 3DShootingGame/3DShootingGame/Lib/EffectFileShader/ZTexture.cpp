@@ -30,7 +30,7 @@ bool ZTexture::Init(
 	// エフェクトファイル作成
 	if (FAILED(D3DXCreateEffectFromFile(
 		m_p_device,
-		TEXT("ZTexture.fx"),
+		TEXT(effect_file_name),
 		NULL,
 		NULL,
 		0,
@@ -205,7 +205,6 @@ bool ZTexture::SetParameter() {
 	m_p_effect->SetMatrix(m_h_world_mat, &m_world_mat);
 	m_p_effect->SetMatrix(m_h_view_mat, &m_view_mat);
 	m_p_effect->SetMatrix(m_h_proj_mat, &m_proj_mat);
-
 
 	return true;
 }
