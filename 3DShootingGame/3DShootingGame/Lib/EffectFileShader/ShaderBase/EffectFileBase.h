@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include"../Graphics/Graphics.h"
-#include"VertexDeclation.h"
+#include"../../Graphics/Graphics.h"
+#include"../Declation/VertexDeclation.h"
 #include<string>
 
 

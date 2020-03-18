@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include"EffectFileBase.h"
+#include"../ShaderBase/EffectFileBase.h"
 
 
 

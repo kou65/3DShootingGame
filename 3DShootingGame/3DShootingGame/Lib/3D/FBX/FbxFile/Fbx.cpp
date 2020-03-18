@@ -1241,11 +1241,12 @@ void Fbx::LoadKeyFrame(
 		// デフォーマ数分回す
 		for (int s = 0; s < skin_count; s++) {
 
-			// 合成行列を計算
+			// 総ボーン数分回す
 			for (int b = 0;
 				b < bone_num;
 				b++) {
 
+				// 合成行列を計算
 				// アニメーション行列取得
 				FbxMatrix anim_mat = GetAnimationMatrix(
 					mesh,
@@ -1275,7 +1276,7 @@ void Fbx::LoadKeyFrame(
 				//	emplace_back(conv_mat);
 
 				// 最大ボーン数を過ぎたら入れない
-				if (b > BONE_NUM - 1) {
+				if (b > MAX_BONE_MATRIX_NUM - 1) {
 					break;
 				}
 

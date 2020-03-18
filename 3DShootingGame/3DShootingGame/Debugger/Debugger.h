@@ -12,8 +12,8 @@
 #include"../Lib/3D/IndexBuffer/IndexBuffer.h"
 #include"../Lib/3D/VertexBuffer/VertexBuffer.h"
 #include"../Lib/3D/OBJ/OBJFile.h"
-#include"../Lib/EffectFileShader/DepthShadowEffectFile.h"
-#include"../Lib/EffectFileShader/ZTexture.h"
+#include"../Lib/EffectFileShader/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../Lib/EffectFileShader/ZTexture/ZTexture.h"
 #include"../Lib/3D/FBX/FbxFile/Fbx.h"
 #include<string>
 
@@ -62,11 +62,7 @@ private:
 
 	FPS *fps;
 
-	IndexBuffer *index_buffer;
-
 	int m_total_material_num;
-
-	Sprite2DParameter s2d;
 
 
 	DWORD dwMatNum, dwMatNum_Plate;

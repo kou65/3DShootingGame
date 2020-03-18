@@ -201,21 +201,6 @@
     <ClCompile Include="Lib\3D\SkinCustomVertex\SkinCustomVertex.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\DepthShadowEffectFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\EffectFileBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\VertexBlendEffectFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\ZTexture.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\VertexDeclation.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SceneBase\SceneBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -294,9 +279,6 @@
     <ClCompile Include="ObjectSystem\Object3DInterface\Object3DInterface.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\NormalShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp\Filed\Taile\Taile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -316,6 +298,24 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Manager\ChiefManager\ChiefManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\NormalShader\NormalShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\Declation\VertexDeclation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\ZTexture\ZTexture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -422,21 +422,6 @@
     <ClInclude Include="Lib\3D\SkinCustomVertex\SkinCustomVertex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\DepthShadowEffectFile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\EffectFileBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\VertexBlendEffectFile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\ZTexture.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\VertexDeclation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SceneBase\SceneBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -536,9 +521,6 @@
     <ClInclude Include="ObjectSystem\Object3DInterface\Object3DInterface.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\NormalShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameApp\Filed\Taile\Taile.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -576,6 +558,24 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Manager\ManagerBase\ManagerBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\Declation\VertexDeclation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\ZTexture\ZTexture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

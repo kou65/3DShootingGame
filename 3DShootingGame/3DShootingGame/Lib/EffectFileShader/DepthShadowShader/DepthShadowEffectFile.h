@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include"EffectFileBase.h"
-#include"../EffectFileShader/ZTexture.h"
+#include"../ShaderBase/EffectFileBase.h"
+#include"../ZTexture/ZTexture.h"
 
 
 

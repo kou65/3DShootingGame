@@ -224,7 +224,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\NormalShader.cpp">
+    <ClCompile Include="Lib\EffectFileShader\NormalShader\NormalShader.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -307,11 +307,11 @@
     <ClCompile Include="Lib\3D\Sprite3D\Sprite3D\Sprite3DUser.cpp" />
     <ClCompile Include="Lib\3D\VertexBuffer\VertexBuffer.cpp" />
     <ClCompile Include="Lib\3D\XFile\XFile.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\VertexDeclation.cpp">
+    <ClCompile Include="Lib\EffectFileShader\Declation\VertexDeclation.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\ZTexture.cpp">
+    <ClCompile Include="Lib\EffectFileShader\ZTexture\ZTexture.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -324,15 +324,15 @@
     <ClCompile Include="Lib\DirectInput\DirectInput.cpp" />
     <ClCompile Include="Lib\DirectInput\JoyStick\JoyStick.cpp" />
     <ClCompile Include="Lib\DirectInput\KeyBoard\KeyBoard.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\DepthShadowEffectFile.cpp">
+    <ClCompile Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\VertexBlendEffectFile.cpp">
+    <ClCompile Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\EffectFileBase.cpp">
+    <ClCompile Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -472,27 +472,27 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\NormalShader.h">
+    <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\VertexDeclation.h">
+    <ClInclude Include="Lib\EffectFileShader\Declation\VertexDeclation.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\ZTexture.h">
+    <ClInclude Include="Lib\EffectFileShader\ZTexture\ZTexture.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\DepthShadowEffectFile.h">
+    <ClInclude Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\VertexBlendEffectFile.h">
+    <ClInclude Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\EffectFileBase.h">
+    <ClInclude Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.h">
       <SubType>
       </SubType>
     </ClInclude>

@@ -1,6 +1,6 @@
 #pragma once
-#include"../Graphics/Graphics.h"
-#include"../EffectFileShader/EffectFileBase.h"
+#include"../../Graphics/Graphics.h"
+#include"../ShaderBase/EffectFileBase.h"
 
 
 // Z値を自分で計算するZテクスチャを作成するクラス

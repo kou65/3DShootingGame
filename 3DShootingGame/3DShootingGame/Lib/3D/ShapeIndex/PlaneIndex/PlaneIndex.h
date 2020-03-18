@@ -2,7 +2,7 @@
 #include"../../../3D/IndexBuffer/IndexBuffer.h"
 #include"../../../3D/VertexBuffer/VertexBuffer.h"
 #include"../IndexCustomVertex/IndexCustomVertex.h"
-#include"../../../EffectFileShader/NormalShader.h"
+#include"../../../EffectFileShader/NormalShader/NormalShader.h"
 #include"../IndexShapeParameter/IndexShapeParameter.h"
 
 

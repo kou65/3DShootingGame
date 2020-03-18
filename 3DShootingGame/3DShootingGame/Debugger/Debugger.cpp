@@ -8,7 +8,7 @@
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/Texture/TextureManager/TextureManager.h"
-#include"../Lib/EffectFileShader/VertexDeclation.h"
+#include"../Lib/EffectFileShader/Declation/VertexDeclation.h"
 #include"../GameApp/GameConstant/GameConstant.h"
 
 
@@ -20,36 +20,29 @@ Debugger::Debugger() {
 	// デバイス取得
 	m_p_device = Graphics::GetInstance()->GetDevice();
 
+	// fps生成
 	fps = new FPS(60);
 
-	index_buffer = new IndexBuffer();
-	index_buffer->Create16(16);
-
+	// ライト生成
 	light = new Light(Graphics::GetInstance());
 
+	// データ
 	CameraData data;
 
+	// デバッグモードオン
+	data.is_debug = true;
+
+	// カメラ
 	camera_3d = new Camera3D(Camera3D::FPS,data);
 	camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 
-	light->On();
-
-	s2d.animation_param.division_width = 9;
-	s2d.animation_param.division_height = 6;
-
-	Sprite2DUser::GetInstance()->GraphSizeConvertUvSize(
-		s2d.scale_width,
-	s2d.scale_height,
-		s2d.animation_param.division_width,
-		s2d.animation_param.division_height
-	);
-
+	// シェーダー初期化
 	InitShader();
 
 	// 立方体と板オブジェクトの読み込み
 	ID3DXBuffer *cpMatBuf;
 	
-
+	// xファイル読み込み
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Cube2.x"),
 		D3DXMESH_MANAGED,
@@ -62,7 +55,7 @@ Debugger::Debugger() {
 		return;
 	}
 
-
+	// xファイル読み込み
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Plate.x"),
 		D3DXMESH_MANAGED,
@@ -77,7 +70,7 @@ Debugger::Debugger() {
 	}
 
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	//Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
@@ -112,8 +105,8 @@ void Debugger::Update() {
 	camera_3d->Update();
 
 	// アニメーション更新
-	Fbx::GetInstance()->Animate(5.f);
-	Fbx::GetInstance()->Update();
+	//Fbx::GetInstance()->Animate(5.f);
+	//Fbx::GetInstance()->Update();
 }
 
 
@@ -123,7 +116,7 @@ void Debugger::Draw() {
 	//light->On();
 
 
-	ZTextureDraw();
+	//ZTextureDraw();
 	ShadowDraw();
 
 	fps->DebugDraw(Vec2(256.f, 256.f), 3000);
@@ -134,9 +127,9 @@ void Debugger::Draw() {
 	td.scale_width = 1000.f;
 	td.scale_height = 1000.f;
 	td.polygon_dir = FLOOR;
-	td.pos.y = -5.f;
-	td.ofset.x = 0.0f;
-	td.ofset.y = 1.0f;
+	td.pos.y = -100.f;
+	td.ofset.x = 0.5f;
+	td.ofset.y = 0.5f;
 	
 	Sprite3DUser sprite_3d;
 	
@@ -145,7 +138,7 @@ void Debugger::Draw() {
 	);
 
 	// fbx描画
-		Fbx::GetInstance()->Draw();
+		//Fbx::GetInstance()->Draw();
 
 	}
 
@@ -156,6 +149,7 @@ void Debugger::InitShader() {
 	// 深度とzテクスチャを初期化
 	m_d_effect.Init("Lib/ShaderFile/ZTexture.fx");
 
+	// zテクスチャ初期化
 	m_z_tex_effect.Init(
 		"Lib/ShaderFile/ZTexture.fx",
 		1000,
@@ -168,13 +162,15 @@ void Debugger::InitShader() {
 
 	float LightScale = 1.5f;
 
+	// カメラ射影
 	D3DXMatrixPerspectiveFovLH(&CameraProj,
 		D3DXToRadian(45), 640.0f / 480.0f, 10.0f, 1000.0f);
 
-
+	// ライト射影
 	D3DXMatrixPerspectiveFovLH(&LightProj,
 		D3DXToRadian(40), 1.0f, 40.0f, 300.0f);
 
+	// ライトビュー
 	D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
 		LightScale * 20,
 		LightScale * 100,
@@ -197,11 +193,8 @@ void Debugger::InitShader() {
 
 void Debugger::ShadowDraw() {
 
-	// 木偶レーション
-	//VertexDecl v_d;
-	//v_d.CreateObjFileDecl();
-	//v_d.Set();
 
+	// ワールド行列正規化
 	D3DXMATRIX world_mat;
 	D3DXMatrixIdentity(&world_mat);
 	D3DXMATRIX view, proj;
@@ -214,6 +207,7 @@ void Debugger::ShadowDraw() {
 	m_p_device
 		->GetTransform(D3DTS_PROJECTION, &proj);
 
+	// カメラ行列セット
 	m_d_effect.SetCameraProjMatrix(&proj);
 	m_d_effect.SetCameraViewMatrix(&view);
 
@@ -233,7 +227,7 @@ void Debugger::ShadowDraw() {
 		m_d_effect.EndPass();
 	}
 
-
+	// プレート
 	float PlateScale = 1.0f;
 	D3DXMATRIX Scale;
 	D3DXMATRIX mat;
@@ -254,11 +248,11 @@ void Debugger::ShadowDraw() {
 	// オブジェシェーダー描画
 	ObjParameter param;
 	param.register_obj_file_name = Const::Obj::PLANE;
-	param.pos.y = -10.f;
+	param.pos.y = 10.f;
 
-	m_d_effect.BeginPass();
-	Obj::GetInstance()->ShaderDraw(param);
-	m_d_effect.EndPass();
+	//m_d_effect.BeginPass();
+	//Obj::GetInstance()->ShaderDraw(param);
+	//m_d_effect.EndPass();
 
 	m_d_effect.End();
 }
@@ -315,11 +309,11 @@ void Debugger::ZTextureDraw() {
 
 	ObjParameter param;
 	param.register_obj_file_name = Const::Obj::PLANE;
-	param.pos.y = -20.f;
+	param.pos.y = 10.f;
 
-	m_z_tex_effect.BeginPass();
-	Obj::GetInstance()->ShaderDraw(param);
-	m_z_tex_effect.EndPass();
+	//m_z_tex_effect.BeginPass();
+	//Obj::GetInstance()->ShaderDraw(param);
+	//m_z_tex_effect.EndPass();
 
 	m_z_tex_effect.End();
 }

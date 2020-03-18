@@ -8,15 +8,13 @@
 #include"../../../Graphics/Graphics.h"
 #include"../../../Texture/TextureData2D/TextureData2D.h"
 #include"../../Model/Model.h"
-#include"../../../EffectFileShader/VertexBlendEffectFile.h"
-#include"../../../EffectFileShader/DepthShadowEffectFile.h"
+#include"../../../EffectFileShader/VertexBlendShader/VertexBlendEffectFile.h"
+#include"../../../EffectFileShader/DepthShadowShader/DepthShadowEffectFile.h"
 
 
 #pragma comment(lib,"libfbxsdk.lib")
 #pragma comment(lib,"libfbxsdk-md.lib")
 
-
-const int MAX_BONE_MAT_NUM = 64;
 
 
 struct FbxModuleModel {
@@ -32,12 +30,14 @@ struct FbxModuleModel {
 
 };
 
-const int BONE_NUM = 50;
+
+const int MAX_BONE_MATRIX_NUM = 64;
+
 
 struct Bone {
 
 	// ボーン行列
-	D3DXMATRIX bone_list[BONE_NUM];// 64
+	D3DXMATRIX bone_list[MAX_BONE_MATRIX_NUM];// 64
 };
 
 

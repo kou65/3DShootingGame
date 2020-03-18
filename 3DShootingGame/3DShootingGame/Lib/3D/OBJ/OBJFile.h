@@ -8,7 +8,7 @@
 #include"../../../Utility/Utility.h"
 #include"../Model/Model.h"
 #include"../../Vec3/Vec3.h"
-#include"../../EffectFileShader/NormalShader.h"
+#include"../../EffectFileShader/NormalShader/NormalShader.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
