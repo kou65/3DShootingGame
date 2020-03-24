@@ -3,7 +3,7 @@
 
 
 
-class NormalShader : public EffectFileBase {
+class NormalShader : public ShaderBase {
 public:
 
 	NormalShader() {
@@ -21,7 +21,7 @@ public:
 
 private:
 
-	void UpdateParam();
+	void UpdateMatrix();
 
 private:
 

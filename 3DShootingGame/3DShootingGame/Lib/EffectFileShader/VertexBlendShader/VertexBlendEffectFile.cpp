@@ -2,7 +2,7 @@
 
 
 
-VertexBlendEffectFile::VertexBlendEffectFile() : EffectFileBase(){
+VertexBlendEffectFile::VertexBlendEffectFile() : ShaderBase(){
 
 	m_bone_count = 64;
 
@@ -13,13 +13,17 @@ VertexBlendEffectFile::VertexBlendEffectFile() : EffectFileBase(){
 void VertexBlendEffectFile::Init(){
 
 	// 通常のシェーダー初期化
-	CreateEffectFile();
+	CreateEffectFile(
+		"Lib/ShaderFile/VertexBlend.hlsl",
+		"tech1",
+		VertexDecl::FBX
+	);
 
 	// デクラレーション初期化
-	m_p_decl.CreateFbxFileDecl();
+	m_decl.CreateFbxFileDecl();
 
 	// 頂点フォーマットの設定
-	m_p_decl.Set();
+	m_decl.Set();
 
 	// アニメーション用
 	m_bone_mat_h = 
@@ -36,10 +40,10 @@ void VertexBlendEffectFile::Update() {
 
 
 	// 頂点フォーマットの設定
-	m_p_decl.Set();
+	m_decl.Set();
 	
 	// 現在設定しているカメラを入れる
-	OutDefauleCamera(&m_camera_view_mat,&m_camera_proj_mat);
+	OutCurrentCamera(&m_camera_view_mat,&m_camera_proj_mat);
 
 
 	m_p_effect->SetInt(m_total_index_h,m_max_index);
@@ -76,7 +80,7 @@ void VertexBlendEffectFile::UpdateParam() {
 		SetVector(m_color_h, &m_color);
 
 	// テクニックをセット
-	m_p_effect->SetTechnique(m_tech_h);
+	m_p_effect->SetTechnique(m_h_technique);
 
 	// シェーダー更新
 	CommitShader();

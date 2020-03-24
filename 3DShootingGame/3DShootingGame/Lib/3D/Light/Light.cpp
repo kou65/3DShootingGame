@@ -2,7 +2,7 @@
 
 
 
-Light::Light(
+DefaultLight::DefaultLight(
 	Graphics*graphics,
 	const D3DLIGHT9 &set_light
 ) {
@@ -12,7 +12,7 @@ Light::Light(
 }
 
 
-Light::Light(
+DefaultLight::DefaultLight(
 	Graphics*graphics
 ) {
 
@@ -22,7 +22,7 @@ Light::Light(
 }
 
 
-void Light::DefaultLightMode() {
+void DefaultLight::DefaultLightMode() {
 
 	// メモリをゼロにする
 	ZeroMemory(&m_light, sizeof(D3DLIGHT9));
@@ -59,7 +59,7 @@ void Light::DefaultLightMode() {
 }
 
 
-bool Light::On() {
+bool DefaultLight::On() {
 
 	// デバイスがない場合
 	if (graphics == nullptr) {

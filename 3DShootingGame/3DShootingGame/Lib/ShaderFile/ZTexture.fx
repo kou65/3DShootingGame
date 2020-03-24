@@ -2,7 +2,6 @@ float4x4 matWorld : WORLD;		// ワールド変換行列
 float4x4 matView : VIEW;		// ビュー変換行列
 float4x4 matProj : PROJECTION;		// 射影変換行列
 
-float4 diffuse : COLOR0;
 
 struct VS_OUTPUT
 {

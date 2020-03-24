@@ -10,9 +10,23 @@
 
 Obj::Obj() : Model(){
 
+	// グラフィックス取得
 	m_p_graphics = Graphics::GetInstance();
+
 	m_ns.Init();
+	m_light_shader.Init();
+
+	D3DXVECTOR4 light(0.0f, 0.5f, -1.0f, 0.0f);
+
+	D3DXVec4Normalize(&light,&light);
+
+	// ライト方向セット
+	m_light_shader.SetDirLight(light);
+
+	// パスタイプ
+	m_pass_type = Light::Type::SPECULAR_REFLECTION;
 }
+
 
 
 void Obj::ShaderDraw(
@@ -30,116 +44,80 @@ void Obj::ShaderDraw(
 
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
-	// ワールド座標にセット
-	m_ns.SetWorldMatrix(&total_mat);
+	// ワールド行列セット
+	m_light_shader.SetWorldMatrix(total_mat);
 
-	// シェーダー更新
-	m_ns.Update();
+	// 注視点座標セット
+	m_light_shader.SetEyeDir(
+		D3DXVECTOR4(
+			param.eye_pos.x,
+			param.eye_pos.y,
+			param.eye_pos.z,
+			1.f)
+	);
+
+	m_light_shader.Update();
 
 	// テクスチャが存在するかどうか
 	bool is_texture = false;
 
 	// パス
-	UINT pass;
-
-	// シェーダーの描画開始
-	m_ns.ShaderBegin(pass, 0);
+	UINT total_pass;
+	m_light_shader.ShaderBegin(total_pass, 0);
 
 	// オブジェクトファイルへアクセス
-	ObjFileData* data = m_obj_file_data[param.register_obj_file_name];
-
-
-	if (data == nullptr) {
-		return;
-	}
+	ObjFileData* data = 
+		m_obj_file_data[param.register_obj_file_name];
 
 	// マテリアル数分回す
-	for (unsigned int i = 0;
-		i < data->material_num;
-		i++) {
+	for (unsigned int i = 0;i < data->material_num;i++) {
 
 		// 特定のオブジェクトファイルデータを受け取る
 		ObjFileData *p_obj_file_data =
 			data;
 
-		// ストリームをセット
-		m_p_graphics->GetDevice()->SetStreamSource(
-			0,
-			p_obj_file_data->m_p_vertex_buffer,
-			0,
-			sizeof(MeshCustomVertex)
-		);
-
-		// マテリアル名
-		std::string material_name;
-
 		// マテリアルが存在するなら
-		material_name =
+		// マテリアル名
+		std::string material_name =
 			p_obj_file_data->m_usemtl_name_list[i];
 
 		// マテリアル情報取得
 		MaterialInfo mtl = 
 		p_obj_file_data->m_material_data_list[material_name];
 
-		// テクスチャが存在しているなら
-		if (TextureManager::GetInstance()->FindTexture(
-			mtl.texture_name
-		) == true) {
+		// 代入用
+		std::string texture_name = param.texture_name;
+		// テクスチャの読み込み
+		is_texture = LoadTexture(mtl.texture_name,texture_name);
 
-			// テクスチャ管理者からテクスチャ受け取り
-			TextureData texture_data = TextureManager::GetInstance()
-				->GetTextureData(
-					mtl.texture_name
-				);
-
-			// シェーダーテクスチャセット
-			m_ns.SetTexture(texture_data);
-
-			// テクスチャが存在する
-			is_texture = true;
-		}
-		// テクスチャがない場合
-		else {
-
-			// 外部からテクスチャがあるなら
-			if (param.texture_name.size() != 0) {
-
-				// テクスチャ名代入
-				material_name = param.texture_name;
-
-				// テクスチャ管理者からテクスチャ受け取り
-				TextureData texture_data = TextureManager::GetInstance()
-					->GetTextureData(
-						material_name
-					);
-
-				// シェーダーテクスチャセット
-				m_ns.SetTexture(texture_data);
-
-				// テクスチャが存在する
-				is_texture = true;
-			}
-		}
-
-		// マテリアルをセット
-		m_p_graphics->GetDevice()->SetMaterial(
-			&p_obj_file_data->m_material_data_list[material_name]
-			.material
-		);
-
-		// インデックス番号をデバイスに設定する
-		m_p_graphics->GetDevice()->SetIndices(
-			p_obj_file_data->m_p_index_buffer
+		// インデックス描画設定にする
+		Model::Set3DParameter(
+			Graphics::GetInstance(),
+			p_obj_file_data->m_p_index_buffer,
+			p_obj_file_data->m_p_vertex_buffer,
+			sizeof(MeshCustomVertex),
+			p_obj_file_data->m_material_data_list[material_name].material,
+			FVF_CUSTOM
 		);
 
 		UINT now_pass = 0;
+		// 現在のパス数取得
+		now_pass = GetUserPass(m_pass_type);
 
-		if (is_texture == false){
-			now_pass = 1;
+		// テクスチャ用に変更
+		if (is_texture == true){
+			now_pass++;
 		}
 
+		// 情報受け取り
+		UINT face_start = p_obj_file_data->
+			m_object_sub_set_list[i].face_start;
+
+		UINT face_count = p_obj_file_data->
+			m_object_sub_set_list[i].face_count;
+		
 		// パスの開始
-		m_ns.BeginPass(now_pass);
+		m_light_shader.BeginPass(now_pass);
 
 		// インデックス描画
 		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
@@ -148,26 +126,21 @@ void Obj::ShaderDraw(
 			// 頂点インデックスの一番最初までのオフセット値を指定
 			0,
 			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
-			p_obj_file_data->
-			m_object_sub_set_list[i].face_start,
+			face_start,
 			// 上引数の最小以降の頂点数を指定
-			p_obj_file_data->
-			m_object_sub_set_list[i].face_count * 3,
+			face_count * 3,
 			// 描画を開始する頂点インデックスまでのオフセット値を指定
-			p_obj_file_data->
-			m_object_sub_set_list[i].face_start,
+			face_start,
 			// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
-			p_obj_file_data->
-			m_object_sub_set_list[i].face_count
+			face_count
 		);
 
 		// シェーダーのパス終了
-		m_ns.EndPass();
-		
+		m_light_shader.EndPass();
 	}
 
 	// シェーダの描画終了
-	m_ns.ShaderEnd();
+	m_light_shader.ShaderEnd();
 
 }
 
@@ -278,6 +251,72 @@ void Obj::NormalDraw(
 	}
 }
 
+
+UINT Obj::GetUserPass(const Light::Type&type) {
+
+	switch (type)
+	{
+	case Light::Type::DIRECTIONAL:
+			return 0;
+
+	case Light::Type::DIFFUSE_REFLECTION:
+		return 2;
+
+	case Light::Type::SPECULAR_REFLECTION:
+		return 4;
+
+	default:
+		break;
+	}
+}
+
+
+bool Obj::LoadTexture(
+	std::string&mtl_texture_name,
+	std::string&objparam_file_name
+) {
+
+	bool is_texture = false;
+
+	// テクスチャが存在しているなら
+	if (TextureManager::GetInstance()->FindTexture(
+		mtl_texture_name
+	) == true) {
+
+		// テクスチャ管理者からテクスチャ受け取り
+		TextureData texture_data = TextureManager::GetInstance()
+			->GetTextureData(
+				mtl_texture_name
+			);
+
+		// シェーダーテクスチャセット
+		m_light_shader.SetTexture(texture_data);
+
+		// テクスチャが存在する
+		is_texture = true;
+	}
+	// テクスチャがない場合
+	else {
+
+		// 外部からテクスチャがあるなら
+		if (objparam_file_name.size() != 0) {
+
+			// テクスチャ管理者からテクスチャ受け取り
+			TextureData texture_data = TextureManager::GetInstance()
+				->GetTextureData(
+					objparam_file_name
+				);
+
+			// シェーダーテクスチャセット
+			m_light_shader.SetTexture(texture_data);
+
+			// テクスチャが存在する
+			is_texture = true;
+		}
+	}
+
+	return is_texture;
+}
 
 
 D3DXMATRIX Obj::GetTransformMatrix(const ObjParameter&param) {
@@ -666,7 +705,6 @@ void Obj::InsertFaceList(
 	
 		MeshCustomVertex mesh_vertex;
 
-
 		// 法線がない場合
 		if (face_info_str[i].size() <= 2) {
 			subject_vertex = 3 - face_info_str[i].size();
@@ -773,6 +811,7 @@ bool Obj::MaterialFileLoad(
 	// テクスチャ文字列読み取り用
 	std::string texture_str;
 
+	// カラーの最大値
 	const int COLOR_NUM = 3;
 
 	// カラー情報を保存する

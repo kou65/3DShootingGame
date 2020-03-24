@@ -53,12 +53,12 @@ void LoadTexture() {
 
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/Bullet/bullet.obj",
-		Const::Obj::BULLET
+		Const::Obj::SPEHER
 	);
 
 	Obj::GetInstance()->Load(
 		"Resource/3DModel/Cube.obj",
-		Const::Obj::ENEMY
+		Const::Obj::CUBE
 	);
 
 	Obj::GetInstance()->Load(

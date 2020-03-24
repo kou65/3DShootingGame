@@ -9,6 +9,7 @@
 #include"../Model/Model.h"
 #include"../../Vec3/Vec3.h"
 #include"../../EffectFileShader/NormalShader/NormalShader.h"
+#include"../../EffectFileShader/DirectionalLight/DirectionalLight.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -29,12 +30,24 @@ struct ObjParameter {
 		pos.x = pos.y = pos.z = 0.f;
 		rota = pos;
 		scale.x = scale.y = scale.z = 1.f;
+		color = 0;
 	}
 
+	// 変換用
 	Vec3 pos;
 	Vec3 scale;
 	Vec3 rota;
+
+	// カラー
+	DWORD color;
+
+	// 注視点
+	Vec3 eye_pos;
+
+	// obj登録名
 	std::string register_obj_file_name;
+
+	// テクスチャ名
 	std::string texture_name;
 };
 
@@ -55,7 +68,6 @@ struct ObjFileData {
 	// インデックスバッファ
 	IDirect3DIndexBuffer9 * m_p_index_buffer;
 };
-
 
 
 class Obj : public  Model{
@@ -87,6 +99,19 @@ public:
 	void NormalDraw(
 		const ObjParameter&param
 	);
+
+private:
+
+	// 引数1 テクスチャファイル名
+	// 引数2 外部からきたObjParametarTextureFile名
+	// 戻り値　テクスチャが存在したかどうか
+	bool LoadTexture(
+		std::string&mtl_texture_name,
+		std::string&objparam_file_name
+	);
+
+	// 使うシェーダーパスを選択
+	UINT GetUserPass(const Light::Type&type);
 
 private:
 
@@ -203,6 +228,9 @@ private:
 	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
 
 	NormalShader m_ns;
+
+	Light m_light_shader;
+	Light::Type m_pass_type;
 };
 
 #endif

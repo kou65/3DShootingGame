@@ -6,6 +6,14 @@
 class VertexDecl {
 public:
 
+	enum Type {
+		OBJ,
+		FBX,
+		SHANDER_INDEX,
+	};
+
+public:
+
 	// obj用
 	bool CreateFbxFileDecl();
 

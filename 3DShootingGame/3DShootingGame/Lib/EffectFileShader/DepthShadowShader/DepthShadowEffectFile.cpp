@@ -8,6 +8,7 @@ DepthShadowEffectFile() {
 	m_p_graphics = Graphics::GetInstance();
 }
 
+
 bool DepthShadowEffectFile::
 Init(const char*file_name) {
 

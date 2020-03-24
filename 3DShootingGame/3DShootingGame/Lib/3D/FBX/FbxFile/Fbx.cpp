@@ -249,9 +249,7 @@ bool Fbx::Load(
 
 	// シェーダーの初期化
 	if (m_is_shader == true) {
-		m_effect.SetShaderName("Lib/ShaderFile/VertexBlend.hlsl");
-		m_effect.SetTechnique("tech1");
-
+		
 		m_effect.Init();
 	}
 

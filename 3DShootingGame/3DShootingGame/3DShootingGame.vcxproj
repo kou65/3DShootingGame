@@ -224,7 +224,19 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\DirectionalLight\DirectionalLight.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\EffectFileShader\NormalShader\NormalShader.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\ShaderManager\ShaderManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -472,11 +484,23 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\DirectionalLight\DirectionalLight.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\EffectFileShader\Declation\VertexDeclation.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\ShaderManager\ShaderManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -663,6 +687,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
+    <FxCompile Include="Lib\ShaderFile\DirectionalLight.fx" />
     <FxCompile Include="Lib\ShaderFile\ObjDraw.fx" />
     <FxCompile Include="Lib\ShaderFile\VertexBlend.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>

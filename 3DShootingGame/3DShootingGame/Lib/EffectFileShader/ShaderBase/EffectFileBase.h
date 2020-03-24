@@ -5,26 +5,17 @@
 
 
 
-class EffectFileBase {
+class ShaderBase {
 public:
 
 	// コンストラクタ
-	EffectFileBase();
+	ShaderBase();
 
 	// 初期化
 	virtual void Init();
 
 	// 更新
 	virtual void Update();
-
-
-	// シェーダー名代入
-	void SetShaderName(const std::string&shader_name);
-
-	// テクニック名代入
-	void SetTechnique(const std::string&tech_name);
-
-public:
 
 	// 描画関係
 	
@@ -44,29 +35,40 @@ public:
 
 protected:
 
-	// シェーダー作成(任意のタイミングで生成してください)
-	bool CreateEffectFile();
+	// 継承先で使う用
 
-	// デフォルトのカメラビュー射影変換を行う
-	void OutDefauleCamera(D3DXMATRIX*view, D3DXMATRIX*proj);
+	// シェーダー作成(任意のタイミングで生成してください)
+	bool CreateEffectFile(
+		const std::string&shader_file_path_name,
+		const std::string&tech_name,
+		const VertexDecl::Type&decl_type
+	);
+
+	// デクル更新
+	void UpdateDecl();
 
 	// シェーダーの更新
 	void CommitShader();
 
 protected:
 
+	// 継承先で使わない
+
+	// デクルを選択
+	void SelectDeclCommit(const VertexDecl::Type&decl_type);
+
+	// デフォルトのカメラビュー射影変換を行う
+	void OutCurrentCamera(D3DXMATRIX*view, D3DXMATRIX*proj);
+
+protected:
 
 	// エフェクトシェーダー
 	ID3DXEffect* m_p_effect;
-	// デクル
-	VertexDecl m_p_decl;
+
+	// デクル(必ず設定)
+	VertexDecl m_decl;
+
 	// テクニックハンドル
-	D3DXHANDLE m_tech_h;
-	// テクニック名
-	std::string m_tech_name;
-	// シェーダー名
-	std::string m_shader_name;
-	// グラフィックス
-	Graphics* m_p_graphics;
+	D3DXHANDLE m_h_technique;
 
 };

@@ -3,17 +3,17 @@
 
 
 
-class Light {
+class DefaultLight {
 public:
 
 	// ライト変更用コンストラクタ
-	Light(
+	DefaultLight(
 		Graphics*graphics,
 		const D3DLIGHT9 &set_light
 	);
 
 	// デフォルトライト用コンストラクタ
-	Light(
+	DefaultLight(
 		Graphics*graphics
 	);
 

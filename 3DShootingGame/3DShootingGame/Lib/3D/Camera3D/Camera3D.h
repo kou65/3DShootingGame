@@ -38,6 +38,9 @@ public:
 	// 位置を返す
 	D3DXVECTOR3 GetPos();
 
+	// 注視点情報を返す
+	D3DXVECTOR3 GetEyePos();
+
 	// 位置を加算
 	void AddPos(const D3DXVECTOR3&pos);
 

@@ -35,7 +35,7 @@ protected:
 		Graphics*graphics,
 		IDirect3DIndexBuffer9*p_i_buf,
 		IDirect3DVertexBuffer9*p_v_buf,
-		const UINT &buffer_size,
+		const UINT &stride,
 		const D3DMATERIAL9&material,
 		const DWORD&fvf
 	);

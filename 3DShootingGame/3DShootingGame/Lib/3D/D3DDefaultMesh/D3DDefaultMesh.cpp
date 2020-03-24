@@ -14,7 +14,7 @@ D3DDefaultMesh::D3DDefaultMesh() {
 
 void D3DDefaultMesh::AllDraw() {
 
-	Light light(Graphics::GetInstance());
+	DefaultLight light(Graphics::GetInstance());
 
 	Draw(m_p_teapot, D3DXVECTOR3(-10.f, 0.f, 0.f));
 }

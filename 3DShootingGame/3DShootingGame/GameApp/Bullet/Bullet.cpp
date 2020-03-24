@@ -44,7 +44,7 @@ void Bullet::Update() {
 void Bullet::Draw() {
 
 	ObjParameter param;
-	param.register_obj_file_name = Const::Obj::BULLET;
+	param.register_obj_file_name = Const::Obj::SPEHER;
 	param.pos = m_pos;
 
 	Obj::GetInstance()->ShaderDraw(param);

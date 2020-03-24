@@ -2,43 +2,30 @@
 
 
 
-EffectFileBase::EffectFileBase() {
-
-	m_p_graphics = Graphics::GetInstance();
+ShaderBase::ShaderBase() {
 
 }
 
 
-void EffectFileBase::Init(
+void ShaderBase::Init() {
+
+}
+
+
+void ShaderBase::Update() {
+	UpdateDecl();
+}
+
+
+bool ShaderBase::CreateEffectFile(
+	const std::string&shader_name,
+	const std::string&tech_name,
+	const VertexDecl::Type&decl_type
 ) {
-	
-	// 通常のシェーダー初期化
-	CreateEffectFile();
-}
 
-
-void EffectFileBase::SetShaderName(const std::string&shader_name) {
-	m_shader_name = shader_name;
-}
-
-void EffectFileBase::SetTechnique(const std::string&tech_name) {
-	m_tech_name = tech_name;
-}
-
-
-void EffectFileBase::Update() {
-
-}
-
-
-bool EffectFileBase::CreateEffectFile() {
-
+	SelectDeclCommit(decl_type);
 
 	LPD3DXBUFFER error = nullptr;
-
-	if (m_p_graphics == nullptr){
-		return false;
-	}
 
 	// エフェクトが入っているなら
 	if (m_p_effect != nullptr){
@@ -48,9 +35,9 @@ bool EffectFileBase::CreateEffectFile() {
 	// シェーダーの作成
 	D3DXCreateEffectFromFile(
 		// デバイス
-		m_p_graphics->GetInstance()->GetDevice(),
+		Graphics::GetInstance()->GetDevice(),
 		// シェーダーファイル名
-		TEXT(m_shader_name.c_str()),
+		TEXT(shader_name.c_str()),
 		0,
 		0,
 		// シェーダーコンパイル時のオプション
@@ -63,30 +50,29 @@ bool EffectFileBase::CreateEffectFile() {
 	);
 
 	// エフェクトがないなら
-	if (m_p_effect == nullptr) {
+	if (m_p_effect == nullptr){
 		m_p_effect = nullptr;
 		return false;
 	}
 
 	// テクニックハンドル取得
-	m_tech_h = m_p_effect->GetTechniqueByName(m_tech_name.c_str());
+	m_h_technique = m_p_effect->
+		GetTechniqueByName(tech_name.c_str());
 
 	return true;
 }
 
 
-
-
-void EffectFileBase::OutDefauleCamera(D3DXMATRIX*view,D3DXMATRIX*proj) {
+void ShaderBase::OutCurrentCamera(D3DXMATRIX*view,D3DXMATRIX*proj) {
 
 	// ビュー行列
-	m_p_graphics->
+	Graphics::
 		GetInstance()->
 		GetDevice()
 		->GetTransform(D3DTS_VIEW, view);
 
 	// 射影行列 
-	m_p_graphics->
+	Graphics::
 		GetInstance()->
 		GetDevice()
 		->GetTransform(D3DTS_PROJECTION, proj);
@@ -94,8 +80,12 @@ void EffectFileBase::OutDefauleCamera(D3DXMATRIX*view,D3DXMATRIX*proj) {
 }
 
 
+void ShaderBase::UpdateDecl() {
+	m_decl.Set();
+}
 
-void EffectFileBase::CommitShader() {
+
+void ShaderBase::CommitShader() {
 
 	HRESULT hr = m_p_effect->CommitChanges();
 	
@@ -105,9 +95,29 @@ void EffectFileBase::CommitShader() {
 }
 
 
+void ShaderBase::SelectDeclCommit(const VertexDecl::Type&decl_type) {
+
+	switch (decl_type) {
+
+	case VertexDecl::Type::OBJ:
+		m_decl.CreateObjFileDecl();
+		break;
+
+	case VertexDecl::Type::FBX:
+		m_decl.CreateFbxFileDecl();
+		break;
+
+	case VertexDecl::Type::SHANDER_INDEX:
+		m_decl.CreateShapeIndexDecl();
+		break;
+	}
+
+	// コミット
+	m_decl.Set();
+}
 
 
-void EffectFileBase::ShaderBegin(
+void ShaderBase::ShaderBegin(
 	UINT &total_pass_num,
 	const DWORD &device_state_num
 ) {
@@ -123,7 +133,7 @@ void EffectFileBase::ShaderBegin(
 }
 
 
-void EffectFileBase::BeginPass(const int &pass_num) {
+void ShaderBase::BeginPass(const int &pass_num) {
 
 	// パス起動
 	m_p_effect->BeginPass(
@@ -133,7 +143,7 @@ void EffectFileBase::BeginPass(const int &pass_num) {
 }
 
 
-void EffectFileBase::EndPass() {
+void ShaderBase::EndPass() {
 
 	// パス終了
 	if (m_p_effect->EndPass() != S_OK) {
@@ -142,7 +152,7 @@ void EffectFileBase::EndPass() {
 }
 
 
-void EffectFileBase::ShaderEnd() {
+void ShaderBase::ShaderEnd() {
 
 	// シェーダー終了
 	if (m_p_effect->End() != S_OK) {

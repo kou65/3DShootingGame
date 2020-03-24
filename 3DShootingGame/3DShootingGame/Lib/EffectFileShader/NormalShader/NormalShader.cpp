@@ -4,19 +4,14 @@
 
 void NormalShader::Init() {
 
-	m_shader_name = "Lib/ShaderFile/ObjDraw.fx";
-	m_tech_name = "tech1";
-
 	// シェーダーファイル生成
-	if (CreateEffectFile() == false) {
+	if (CreateEffectFile(
+		"Lib/ShaderFile/ObjDraw.fx", 
+		"tech1",
+		VertexDecl::OBJ
+		) == false) {
 		return;
 	}
-
-	// デクル生成
-	m_p_decl.CreateObjFileDecl();
-
-	// セット
-	m_p_decl.Set();
 
 	// 白
 	SetColor(D3DXVECTOR4(0.f, 0.f, 0.f, 0.f));
@@ -29,13 +24,13 @@ void NormalShader::Init() {
 void NormalShader::Update() {
 
 	// デクルセット
-	m_p_decl.Set();
+	m_decl.Set();
 
 	// デファルトのカメラをセット
-	OutDefauleCamera(&m_camera_view_mat,&m_camera_proj_mat);
+	OutCurrentCamera(&m_camera_view_mat,&m_camera_proj_mat);
 
 	// パラメータ更新
-	UpdateParam();
+	UpdateMatrix();
 
 	// シェーダー更新
 	CommitShader();
@@ -61,7 +56,7 @@ void NormalShader::InitHandle() {
 }
 
 
-void NormalShader::UpdateParam() {
+void NormalShader::UpdateMatrix() {
 
 	m_p_effect->SetMatrix(m_camera_view_mat_h, &m_camera_view_mat);
 	m_p_effect->SetMatrix(m_camera_proj_mat_h, &m_camera_proj_mat);

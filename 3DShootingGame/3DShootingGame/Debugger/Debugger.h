@@ -42,6 +42,8 @@ private:
 
 	void ZTextureDraw();
 
+	void LightDebugDraw();
+
 private:
 
 	Debugger();
@@ -50,24 +52,22 @@ private:
 
 	void CameraRotation();
 
-	bool IsStopUpdate();
-
 private:
 
 	IDirect3DDevice9*m_p_device;
 
-	Light *light;
+	DefaultLight *light;
 
-	Camera3D *camera_3d;
+	Camera3D *m_p_camera;
 
-	FPS *fps;
+	FPS *m_p_fps;
 
 	int m_total_material_num;
 
 
 	DWORD dwMatNum, dwMatNum_Plate;
 	ID3DXMesh *cpMeshCube, *cpMeshPlate;
-	DepthShadowEffectFile m_d_effect;
+	DepthShadowEffectFile m_shadow_effect;
 	ZTexture m_z_tex_effect;
 	IDirect3DTexture9*m_p_shadow_tex;
 };

@@ -127,8 +127,16 @@ void Camera3D::FPSTransform() {
 		&m_data.move_num,
 		&matrix_rotation_y);
 
+
 	// 回転方向を加算した移動加算
 	m_data.pos += m_data.move_num;
+
+
+	// 注視点更新
+	D3DXVec3Normalize(
+		&m_data.look_at_point,
+		&m_data.pos
+	);
 
 	// 初期値
 	D3DXMatrixTranslation(
@@ -511,6 +519,11 @@ void Camera3D::AddRotation(const D3DXVECTOR3&rotation) {
 
 void Camera3D::AddMove(const D3DXVECTOR3&move) {
 	m_data.move_num += move;
+}
+
+
+D3DXVECTOR3 Camera3D::GetEyePos() {
+	return m_data.look_at_point;
 }
 
 

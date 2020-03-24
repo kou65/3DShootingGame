@@ -36,7 +36,6 @@ float2 uv : TEXCOORD0,
 	out float2 get_uv : TEXCOORD0
 )
 {
-
 	// 出力用
 	float4x4 mat;
 
@@ -52,8 +51,23 @@ float2 uv : TEXCOORD0,
 }
 
 
-// ピクセルシェーダ
+
 float4 PS1(
+	float4 color : COLOR0,
+	float2 uv : TEXCOORD0
+) : COLOR0
+{
+	float4 out_put;
+
+// テクスチャ座標 * カラー値
+out_put = color;
+
+return out_put;
+};
+
+
+// ピクセルシェーダ
+float4 PS2(
 	float4 color : COLOR0,
 	float2 uv : TEXCOORD0
 ) : COLOR0
@@ -66,19 +80,6 @@ out_put = tex2D(smp, uv);
 
 // カラー値掛け算
 out_put *= color;
-
-return out_put;
-};
-
-float4 PS2(
-float4 color : COLOR0,
-float2 uv : TEXCOORD0
-) : COLOR0
-{
-	float4 out_put;
-
-// テクスチャ座標 * カラー値
-out_put = color;
 
 return out_put;
 };

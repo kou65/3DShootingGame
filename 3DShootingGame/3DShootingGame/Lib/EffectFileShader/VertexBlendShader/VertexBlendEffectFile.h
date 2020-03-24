@@ -3,7 +3,7 @@
 #include"../ShaderBase/EffectFileBase.h"
 
 
-class VertexBlendEffectFile : public EffectFileBase{
+class VertexBlendEffectFile : public ShaderBase{
 public:
 
 	VertexBlendEffectFile();
