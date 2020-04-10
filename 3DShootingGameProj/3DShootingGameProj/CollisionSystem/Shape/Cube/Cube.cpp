@@ -1,0 +1,2 @@
+﻿#include"../Cube/Cube.h"
+
