@@ -4,7 +4,7 @@
 #include"../../Lib\DirectInput\KeyBoard\KeyBoard.h"
 #include"../../Lib\Sprite2D\Sprite2D\Sprite2DUser.h"
 #include"GameScene.h"
-#include"../../GameApp/Filed/Filed.h"
+#include"../../Manager/MapStructureManager/MapStructureManager.h"
 #include"../../CollisionSystem/CollisionManager/CollisionManager.h"
 
 
@@ -38,6 +38,9 @@ void GameScene::Update(SceneType&scene_type) {
 	// ゲーム終了判定者更新(あとでjugerにする)
 	m_p_game_end_juge_mng->Update(scene_type);
 
+	// 更新
+	m_p_map_object_mng->Update();
+
 	// 最後のタイミングで当たり判定オブジェクトを削除させる
 	CollisionManager::GetInstance()->CheckAndClear();
 }
@@ -60,6 +63,9 @@ void GameScene::Init() {
 
 	// 操作者生成
 	CreateOperator();
+
+	// 管理者生成
+	//CreateManager();
 
 	// オブジェクト生成
 	CreateObject();
@@ -93,57 +99,78 @@ void GameScene::CreateOperator() {
 
 	// ファイル管理者生成
 	m_p_file_obj_mng.reset(
-		new FileObjectDataManager(
-			m_p_obj_factory.get(),
-			m_p_camera.get(),
-			m_p_object_data.get()
+		new FileDataManager(
+			m_p_obj_factory,
+			m_p_camera,
+			m_p_object_data
 		)
 	);
-
-	// ファイルポインタ
-	FILE*p_file = nullptr;
-
-	// ファイル生成
-	Utility::FileOpen(&p_file, "FileObject/ObjectList.txt", "r");
-	m_p_file_obj_mng->Load(p_file);
-	Utility::FileClose(&p_file);
-
 
 	// 敵管理者生成
 	m_p_filed_obj_mng.reset(
-		new FiledObjectManager(
-			m_p_file_obj_mng.get(),
-			m_p_obj_factory.get(),
-			m_p_object_data.get()
+		new MapObjectManager(
+			m_p_file_obj_mng,
+			m_p_obj_factory,
+			m_p_object_data
 		)
 	);
-
 
 	// 終了管理者生成
 	m_p_game_end_juge_mng.reset(
 		new GameEndJugeManager(
-		m_p_object_data.get()
+		m_p_object_data
 		)
 	);
 
+	// マップオブジェクト管理者生成
+	m_p_map_object_mng.reset(
+		new MapStructureManager(
+			m_p_obj_factory,
+			m_p_object_data
+		)
+	);
 }
 
 
 
 void GameScene::CreateObject() {
 
-	// ファイルの情報から自機と敵を生成する
-	m_p_file_obj_mng->CreateObject();
-
 	// UI生成
-	m_p_obj_factory->CreateHPUI(m_p_object_data.get());
-
-	// フィールド生成
-	m_p_obj_factory->CreateFiled(m_p_object_data.get());
-
-	//// 敵生成
-	//m_p_obj_factory->CreateHEnemy(
-	//	Vec3(0.f, 0.f, 200.f),
-	//	m_p_object_data.get()->p_player);
+	m_p_obj_factory->CreateHPUI(m_p_object_data);
 
 }
+
+
+
+/*
+void GameScene::CreateManager() {
+
+	// 生成
+	m_p_mng_factory = std::make_unique<ManagerFactory>();
+	m_p_contorl_ofc = std::make_unique<ManagerControlOffcer>();
+
+	std::shared_ptr<FileObjectDataManager>p_file_mng;
+	std::shared_ptr<MapObjectManager>p_map_mng;
+	std::shared_ptr<MapCharacterManager>p_chara_mng;
+
+	// 管理者生成
+	m_p_mng_factory->CreateFileObjectDataManager(
+		m_p_obj_factory,
+		m_p_camera,
+		m_p_object_data,
+		p_file_mng
+	);
+
+	m_p_mng_factory->CreateMapObjectManager(
+		m_p_obj_factory,
+		m_p_object_data,
+		p_map_mng
+	);
+
+	m_p_mng_factory->CreateMapCharacterManager(
+		p_file_mng,
+		m_p_obj_factory,
+		m_p_object_data,
+		p_chara_mng
+	);
+}*/

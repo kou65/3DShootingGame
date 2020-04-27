@@ -22,7 +22,7 @@ HomingBulletEnemy::HomingBulletEnemy(
 
 	// 衝突に追加
 	CollisionManager::GetInstance()->Entry(
-		CollisionObjectType::ENEMY_BULLET, this
+		CollisionObjectType::ENEMY, this
 	);
 
 	// タグをセット
@@ -50,6 +50,7 @@ void HomingBulletEnemy::Draw() {
 
 	param.pos = m_pos;
 	param.register_obj_file_name = Const::Obj::CUBE;
+	param.color = D3DXVECTOR4(0.f, 1.f, 0.f, 0.f);
 
 	// 敵描画
 	Obj::GetInstance()->ShaderDraw(param);
@@ -66,7 +67,7 @@ void HomingBulletEnemy::HitAction(const CollisionObjectType&type) {
 Sphere HomingBulletEnemy::GetSphere() {
 
 	Sphere s;
-	s.radian = 10.f;
+	s.radian = 20.f;
 	s.vec = m_pos;
 	s.vec /= 2;
 
@@ -115,11 +116,25 @@ void HomingBulletEnemy::Shot(){
 	dir.y = dir.y / l;
 	dir.z = dir.z / l;
 
+	BulletData data;
+	data.trans_data.pos = m_pos;
+	// 反対方向
+	data.speed = Vec3(-BULLET_SPEED, -BULLET_SPEED, -BULLET_SPEED);
+	data.distance_limit = Vec3(200.f, 200.f, 200.f);
+	data.rot_dir = dir;
+
+	ObjParameter param;
+	// 球
+	param.register_obj_file_name = Const::Obj::SPEHER;
+	// 拡縮
+	param.scale = Vec3(0.5f, 0.5f, 0.5f);
+	// 位置
+	param.pos = m_pos;
+
+
 	// 弾を生成
 	m_p_obj_factory->CreateEnemyBullet(
-		m_pos,
-		Vec3(-BULLET_SPEED, -BULLET_SPEED, -BULLET_SPEED),
-		Vec3(200.f, 200.f, 200.f),
-		dir
+		param,
+		data
 	);
 }

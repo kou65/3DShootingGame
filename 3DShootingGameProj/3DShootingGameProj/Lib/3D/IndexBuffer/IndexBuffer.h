@@ -4,26 +4,50 @@
 #include"../VertexBuffer/VertexBuffer.h"
 
 
-
+/**
+* @brief インデックス描画する為のインデックスクラス
+*/
 class IndexBuffer {
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	*/
 	IndexBuffer();
 
-	// 頂点データの数(頂点、法線、色など)
+	/**
+	* @brief 頂点16bitで生成
+	* @return bool 生成できたかどうか
+	*/
 	bool Create16(DWORD polygon_num);
 
-	// バッファを閉じる
+
+	/**
+	* @brief バッファを閉じる
+	*/
 	bool CloseBuffer();
 
-	// インデックスをセット
+
+	/**
+	* @brief インデックスをセット
+	*/
 	void SetIndices();
 
+
+	/**
+	* @brief index自動ポインタ返し
+	* @return IDirect3DIndexBuffer9*
+	*/
 	operator IDirect3DIndexBuffer9*() const {
 		return m_p_index_buffer9;
 	}
 
-	// ポインタ返し
+
+	/**
+	* @brief indexポインタ返し
+	* @return IDirect3DIndexBuffer9*
+	*/
 	IDirect3DIndexBuffer9*GetBufferPtr() {
 		return m_p_index_buffer9;
 	}
@@ -36,9 +60,9 @@ private:
 	// コピーコンストラクタ禁止
 	//IndexBuffer() = default;
 
-	// インデックスバッファ
+	//! インデックスバッファ
 	IDirect3DIndexBuffer9 *m_p_index_buffer9;
 
-	// DirectGraphics
+	//! DirectGraphics
 	Graphics * graphics;
 };

@@ -1,24 +1,42 @@
 ﻿#pragma once
-#include"../../CollisionSystem/CollisionObject3DBase/CollisionObject3DBase.h"
+#include"../Filed/MapObjectBase/MapObjectBase.h"
 
 
 
-class CharacterBase : public CollisionObject3DBase{
+/**
+* @brief 基底キャラクタ
+*/
+class CharacterBase : public MapObjectBase{
 public:
 
+
+	/**
+	* @brief 更新 仮想関数
+	*/
 	void Update()override {};
+
+
+	/**
+	* @brief 描画 仮想関数
+	*/
 	void Draw()override {};
 
 protected:
 
-	// 死亡
+	
+	/**
+	* @brief 死亡
+	*/
 	void Death();
 
-	// ダメージ加算
+
+	/**
+	* @brief ダメージ加算
+	*/
 	void AddDamage(const float&damage);
 
 protected:
 	
-	// 体力
+	//! 体力
 	float m_hp;
 };

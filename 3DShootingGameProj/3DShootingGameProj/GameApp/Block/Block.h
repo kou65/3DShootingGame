@@ -1,36 +1,59 @@
 ﻿#pragma once
-#include"../../CollisionSystem/CollisionObject3DBase/CollisionObject3DBase.h"
+#include"../Filed/MapObjectBase/MapObjectBase.h"
 
 
 
 // 障害物用キューブ
 
 
-
-class Block : public CollisionObject3DBase{
+/**
+* @brief 障害物用キューブ
+*/
+class Block : public MapObjectBase{
 public:
 
+	//! オブジェクトサイズ
 	static constexpr float OBJ_SIZE = 2.f;
 
-	void Destory();
-
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	* @param[in] pos 位置
+	*/
 	Block(const Vec3&pos);
 
-	// 更新
+	/**
+	* @brief 更新 仮想関数
+	*/
 	void Update()override;
 
-	// 描画
+
+	/**
+	* @brief 描画　仮想関数
+	*/
 	void Draw()override;
 
-	// 衝突後
+
+	/**
+	* @brief 衝突後処理 仮想関数
+	* @param[in] type CollisionObjectType 衝突先のオブジェクト名定数
+	*/
 	void HitAction(const CollisionObjectType&type)override;
 
-	// 球を返す
+
+	/**
+	* @brief 設定して球情報を返す 仮想関数
+	* @return Sphere 球構造体
+	*/
 	Sphere GetSphere()override;
 
-	// キューブを返す
+
+	/**
+	* @brief 設定してキューブ情報を返す 仮想関数
+	* @return Cube キューブ構造体
+	*/
 	Cube GetCube()override;
 
 };

@@ -1,28 +1,28 @@
 ﻿#include"Bullet.h"
-#include"../../Lib/3D/OBJ/OBJFile.h"
-#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../../CollisionSystem/CollisionManager/CollisionManager.h"
 
 
 
 Bullet::Bullet(
-	const Vec3&pos,
-	const float&speed,
-	const Vec3&distance_limit
+	const ObjParameter&param,
+	const BulletData&data
 ) {
 
+	// オブジェクトパラメータ
+	m_obj_param = param;
+
 	// 位置
-	m_pos.x = pos.x;
-	m_pos.y = pos.y;
-	m_pos.z = pos.z;
+	m_pos = data.trans_data.pos;
+	m_rotate = data.trans_data.rota;
 
 	// 距離
-	m_len_vec = pos;
+	m_len_vec = m_pos;
 
 	// 移動速度
-	m_speed = speed;
+	m_speed = data.speed;
 
 	// 弾の制限距離
-	m_limit_distance = distance_limit;
+	m_limit_distance = data.distance_limit;
 
 	// 形状
 	m_shape_type = ShapeType::SPHERE;
@@ -38,16 +38,15 @@ void Bullet::Update() {
 	Rotation();
 	AddMove();
 	Limit(m_len_vec);
+
+	// 位置移動
+	m_obj_param.pos = m_pos;
 }
 
 
 void Bullet::Draw() {
 
-	ObjParameter param;
-	param.register_obj_file_name = Const::Obj::SPEHER;
-	param.pos = m_pos;
-
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->ShaderDraw(m_obj_param);
 }
 
 
@@ -64,7 +63,7 @@ Sphere Bullet::GetSphere(){
 
 	s.vec = m_pos;
 	s.vec /= 2;
-	s.radian = 30.f;
+	s.radian = 10.f;
 
 	return s;
 }
@@ -116,8 +115,8 @@ void Bullet::Rotation() {
 	D3DXVec3Normalize(&dir, &dir);
 
 	// 回転
-	D3DXMatrixRotationX(&rot_m_x,D3DXToRadian(m_vec_rot.x));
-	D3DXMatrixRotationY(&rot_m_y,D3DXToRadian(m_vec_rot.y));
+	D3DXMatrixRotationX(&rot_m_x,D3DXToRadian(m_data.trans_data.rota.x));
+	D3DXMatrixRotationY(&rot_m_y,D3DXToRadian(m_data.trans_data.rota.y));
 
 	// 頂点変換
 	D3DXVec3TransformNormal(&dir,&dir,&rot_m_y);
@@ -125,5 +124,4 @@ void Bullet::Rotation() {
 
 	// 移動値
 	m_dir = dir;
-
 }

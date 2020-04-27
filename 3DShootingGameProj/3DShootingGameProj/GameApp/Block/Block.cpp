@@ -9,7 +9,7 @@ Block::Block(const Vec3&pos) {
 	m_pos = pos;
 
 	// タグを追加
-	m_object_tag = Object3DTag::CUBE;
+	m_object_tag = Object3DTag::BLOCK;
 
 	// 衝突に追加
 	CollisionManager::GetInstance()->Entry(
@@ -42,14 +42,15 @@ void Block::Draw() {
 }
 
 
-void Block::Destory() {
-	Exit();
-}
-
-
 void Block::HitAction(const CollisionObjectType&type) {
 
-	//Exit();
+
+	switch (type) {
+		// 破壊弾だったら消す
+	case CollisionObjectType::BREAK_BULLET:
+		Exit();
+		break;
+	}
 }
 
 
@@ -58,7 +59,7 @@ Sphere Block::GetSphere() {
 	Sphere s;
 
 	s.vec = m_pos;
-	s.radian = 30.f;
+	s.radian = 20.f;
 
 	return s;
 }

@@ -7,6 +7,7 @@
 
 namespace Utility {
 
+
 	std::vector<std::string> SplitStr(
 		char cut_base_str,
 		const std::string &string
@@ -146,26 +147,65 @@ namespace Utility {
 	}
 
 
-	void LoadFloatVec3(FILE*p_fp,Vec3&vec3,char break_str) {
+	void LoadFloatVec3(FILE*p_fp, Vec3&out_vec3, char break_str) {
 
 		std::string str;
 
+		// 3つの%fを作る
 		for (int i = 0; i < 2; i++) {
 			str += "%f";
 			str += break_str;
 		}
-
+		// 最後の%f
 		str += "%f";
 
 		// x軸,y軸,z軸を取得
 		fscanf_s(
-			p_fp,str.c_str(),
-			&vec3.x,
-			&vec3.y,
-			&vec3.z);
+			p_fp, str.c_str(),
+			&out_vec3.x,
+			&out_vec3.y,
+			&out_vec3.z);
 	}
 
 
-	//void LoadUntilLineFeed(FILE*p_file,);
+
+	bool LoadIntNum(
+		FILE*p_file,
+		std::vector<int>&out_num_list,
+		const int&load_total_num,
+		const char *break_str
+	) {
+
+		std::string str;
+
+		// 文字列連結
+		str += "%d";
+		str += break_str;
+
+		int num = -1;
+		bool is_load = true;
+		int ret_num = -1;
+
+		for (int i = 0; i < load_total_num; i++) {
+
+			// 値(intかfloatか)を取得
+			ret_num = fscanf_s(
+				p_file,
+				str.c_str(),
+				&num
+			);
+
+			// 加える
+			out_num_list.push_back(num);
+		}
+
+		// 正式に読み込めてなかったら
+		if (ret_num == 0) {
+			is_load = false;
+		}
+
+		return is_load;
+	}
+
 
 }

@@ -1,11 +1,10 @@
-﻿#include"Filed.h"
-#include"../../Lib/Sprite2D/Sprite2D/Sprite2DUser.h"
-#include"../../Lib/3D/Sprite3D/Sprite3D/Sprite3DUser.h"
+﻿#include"MapStructureManager.h"
 
 
-
-
-Filed::Filed(ObjectFactory*m_p_factory) {
+// マップ構造
+MapStructureManager::MapStructureManager(
+	std::shared_ptr<ObjectFactory>m_p_factory
+) {
 
 	this->m_p_factory = m_p_factory;
 
@@ -13,72 +12,30 @@ Filed::Filed(ObjectFactory*m_p_factory) {
 }
 
 
-Filed::Filed(ObjectFactory*m_p_factory, CharacterBase*p_chara) {
+MapStructureManager::MapStructureManager(
+	std::shared_ptr<ObjectFactory>m_p_factory, 
+	std::shared_ptr<ObjectData>p_data
+) {
 
 	this->m_p_factory = m_p_factory;
-	m_p_chara = p_chara;
+	m_p_chara = p_data->p_player;
 
 	Init();
 }
 
 
-void Filed::Update(){
+void MapStructureManager::Update(){
 
 	SerchCreateDeleteTaile();
 }
 
 
-void Filed::Draw() {
-
-	DrawWideTaile();
-
-}
-
-
-void Filed::CreateAxis(CharacterBase*p_chara) {
+void MapStructureManager::CreateAxis(CharacterBase*p_chara) {
 	m_p_chara = p_chara;
 }
 
 
-void Filed::DrawWideTaile() {
-
-	Sprite3DParameter ground(0.f, 0.f, 0.f, "ground");
-
-	ground.scale_width = 10000.f;
-	ground.scale_height = 10000.f;
-	ground.polygon_dir = FLOOR;
-	ground.pos.y = -5.f;
-	ground.ofset.x = 0.5f;
-	ground.ofset.y = 0.5f;
-
-	Sprite3DUser sprite_obj;
-
-
-	sprite_obj.BoardDraw(ground);
-}
-
-
-
-void Filed::CreateRightWall() {
-
-	const int FRONT = 6;
-
-	for (int i = 0; i < FRONT; i++) {
-
-		TransformData3D data;
-		//data.pos.x = ;
-
-		//m_p_factory->CreateRightWall(data);
-	}
-}
-
-
-void Filed::CreateLeftWall() {
-
-}
-
-
-void Filed::Init() {
+void MapStructureManager::Init() {
 
 	if (m_p_chara == nullptr) {
 		return;
@@ -107,7 +64,7 @@ void Filed::Init() {
 }
 
 
-void Filed::SerchCreateDeleteTaile() {
+void MapStructureManager::SerchCreateDeleteTaile() {
 
 
 	// 自分の近くのオブジェクトを走査し、
@@ -149,6 +106,10 @@ void Filed::SerchCreateDeleteTaile() {
 		front_taile = TOTAL_FRONT_OBJ;
 	}
 
+	// 共有ポインタへ変換
+	std::shared_ptr<ObjectFactory>p_factory = 
+		m_p_factory.lock();
+
 	// 生成範囲を厳選
 	for (int i = back_taile;
 		i < front_taile;
@@ -181,7 +142,7 @@ void Filed::SerchCreateDeleteTaile() {
 				case TaileType::TAILE:
 
 					// 床生成,参照受け取り
-					m_p_factory->CreateTaile(
+					p_factory->CreateTaile(
 						data,
 						&m_p_map_obj_list[i][j]);
 					break;
@@ -190,7 +151,7 @@ void Filed::SerchCreateDeleteTaile() {
 				case TaileType::LEFT_WALL:
 
 					// 床生成,参照受け取り
-					m_p_factory->CreateTaile(
+					p_factory->CreateTaile(
 						data,
 						&m_p_map_obj_list[i][j],
 						Taile::Direction::LEFT
@@ -200,7 +161,7 @@ void Filed::SerchCreateDeleteTaile() {
 				case TaileType::RIGHT_WALL:
 
 					// 床生成,参照受け取り
-					m_p_factory->CreateTaile(
+					p_factory->CreateTaile(
 						data,
 						&m_p_map_obj_list[i][j],
 						Taile::Direction::RIGHT
@@ -238,7 +199,7 @@ void Filed::SerchCreateDeleteTaile() {
 			if (m_is_create_list[fb][j] == true){
 
 				// オブジェクトリストから削除
-				m_p_map_obj_list[fb][j]->SetActive(false);
+				m_p_map_obj_list[fb][j]->NotActive();
 
 				m_is_create_list[fb][j] = false;
 			}

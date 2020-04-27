@@ -4,32 +4,64 @@
 
 
 
+/**
+* @brief 敵の弾
+*/
 class EnemyBullet : public BulletBase{
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	* @param[in] pos 位置
+	* @param[in] speed 速度
+	* @param[in] limit_distance 弾の制限距離
+	* @param[in] dir 方向
+	*/
 	EnemyBullet(
-		const Vec3 &pos,
-		const Vec3 &speed,
-		const Vec3 &limit_distance,
-		const Vec3&dir
+		const ObjParameter&param,
+		const BulletData&data
 	);
 
+
+	/**
+	* @brief 更新 仮想関数
+	*/
 	void Update()override;
 
+
+	/**
+	* @brief 描画 仮想関数
+	*/
 	void Draw()override;
+
 
 private:
 
-	// 衝突後の処理
+
+	/**
+	* @brief 衝突後の処理
+	* @param[in] type 相手の衝突種類
+	*/
 	void HitAction(const CollisionObjectType&type)override;
 
-	// 球
+
+	/**
+	* @brief 球を返す
+	*/
 	Sphere GetSphere()override;
 
-	// 方向に弾を飛ばす
+
+	/**
+	* @brief 方向に弾を飛ばす
+	*/
 	void AddDirToPos();
 
 private:
+
+	//! 敵の位置
 	Vec3 m_enemy_pos;
 
+	//! オブジェクトパラメータ
+	ObjParameter m_obj_param;
 };

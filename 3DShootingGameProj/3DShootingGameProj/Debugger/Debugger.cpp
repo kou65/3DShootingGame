@@ -67,7 +67,7 @@ Debugger::Debugger() {
 	}
 
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
@@ -106,8 +106,8 @@ void Debugger::Update() {
 	m_p_camera->Update();
 
 	// アニメーション更新
-	//Fbx::GetInstance()->Animate(5.f);
-	//Fbx::GetInstance()->Update();
+	Fbx::GetInstance()->Animate(5.f);
+	Fbx::GetInstance()->Update();
 }
 
 
@@ -142,7 +142,7 @@ void Debugger::Draw() {
 	ShadowDraw2();
 
 	// fbx描画
-		//Fbx::GetInstance()->Draw();
+		Fbx::GetInstance()->Draw();
 
 }
 

@@ -8,13 +8,15 @@
 #include"../Lib/DirectInput/JoyStick/JoyStick.h"
 #include"../Lib/Lib/Lib.h"
 #include"../Scene/SceneManager/SceneManager.h"
-#include"../Scene/TitleScene/TitleScene.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/3D/ShapeIndex/PlaneIndex/PlaneIndex.h"
 
 
 
 
+/**
+* @brief メインエントリーポイント
+*/
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE, 

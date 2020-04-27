@@ -1,20 +1,25 @@
 ﻿#include"ObjectFactory.h"
-#include"../../GameApp/Bullet/Bullet.h"
+#include"../../GameApp/Bullet/PlayerBullet/Bullet.h"
 #include"../../GameApp/Enemy/Enemy.h"
-#include"../../GameApp/Filed/Filed.h"
+#include"../../Manager/MapStructureManager/MapStructureManager.h"
 #include"../../GameApp/HPUI/HPUI.h"
 #include"../../GameApp/Filed/BackGround/BackGround.h"
 #include"../../GameApp/Enemy/HomingBulletEnemy/HomingBulletEnemy.h"
 #include"../../GameApp/Bullet/EnemyBullet/EnemyBullet.h"
+#include"../../GameApp/Enemy/ShotgunEnemy/ShotgunEnemy.h"
+#include"../../GameApp/GoalObject/GoalObject.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
+#include"../../GameApp/Bullet/BreakBullet/BreakBullet.h"
+#include<memory>
 
 
 
 void ObjectFactory::CreatePlayer(
 	const Vec3&pos,
-	Camera3D*m_p_camera,
-	ObjectData*p_out_player
+	std::shared_ptr<Camera3D>m_p_camera,
+	std::shared_ptr<ObjectData>p_out_player
 ){
+
 
 	// 生成してそれぞれに渡す
 	Player*p = new Player(
@@ -33,9 +38,29 @@ void ObjectFactory::CreatePlayer(
 }
 
 
-// hpui生成
+void ObjectFactory::CreateSharedPlayer(
+	const Vec3&pos,
+	std::weak_ptr <Camera3D> m_p_camera,
+	std::weak_ptr<ObjectData2>p_player_data
+) {
+
+	//// 共有用作成
+	//std::shared_ptr<Player>p_player = std::make_shared<Player>
+	//	(pos,m_p_camera,p_player_data);
+	//
+	//// エントリー
+	//ObjectManager::GetInstance()->SharedEntry(p_player);
+	//
+	//// ロックして共有用に変換
+	//std::shared_ptr<ObjectData2>data = p_player_data.lock();
+	//
+	//data->p_player = p_player;
+}
+
+
+
 void ObjectFactory::CreateHPUI(
-	ObjectData*p_player
+	std::shared_ptr<ObjectData>p_player
 ) {
 
 	if (p_player == nullptr) {
@@ -49,34 +74,40 @@ void ObjectFactory::CreateHPUI(
 
 
 void ObjectFactory::CreateBullet(
-	const Vec3 &pos,
-	const float &speed,
-	const float &distance
+	const ObjParameter&param,
+	const BulletData&data
 ) {
 
 	ObjectManager::GetInstance()->Entry
 	(new Bullet(
-		pos,
-		speed,
-		Vec3(distance + pos.x, distance + pos.y, distance + pos.z)
+		param,
+		data
 	));
 }
 
 
 void ObjectFactory::CreateEnemyBullet(
-	const Vec3 &pos,
-	const Vec3 &speed,
-	const Vec3 &distance,
-	const Vec3&dir
+	const ObjParameter&param,
+	const BulletData&data
 ) {
+
 
 	ObjectManager::GetInstance()->Entry
 	(new EnemyBullet(
-		pos,
-		speed,
-		distance,
-		dir
+		param,
+		data
 	));
+}
+
+
+void ObjectFactory::CreateBreakBullet(
+	const ObjParameter &param,
+	const BulletData&data
+) {
+
+	ObjectManager::GetInstance()->Entry(
+		new BreakBullet(param,data)
+	);
 }
 
 
@@ -116,6 +147,26 @@ void ObjectFactory::CreateHEnemy(
 }
 
 
+void ObjectFactory::CreateShotgunEnemy(
+	const Vec3&pos,
+	CharacterBase*p_data,
+	EnemyBase**p_enemy_base
+) {
+	if (p_data == nullptr) {
+		return;
+	}
+
+	EnemyBase * p_enemy = new ShotgunEnemy(pos, this, p_data);
+
+	// 生成
+	ObjectManager::GetInstance()->Entry(
+		p_enemy
+	);
+
+	// 追加
+	*p_enemy_base = p_enemy;
+}
+
 
 void ObjectFactory::CreateCube(
 	const Vec3&pos,
@@ -132,6 +183,21 @@ void ObjectFactory::CreateCube(
 
 	// 外部にキューブ情報の参照を持たせる
 	*p_out_cube = p_cube;
+}
+
+
+void ObjectFactory::CreateGoalObject(
+	const Vec3&pos,
+	GoalObject**p_obj
+) {
+
+	GoalObject * p_goal = new GoalObject(pos);
+
+	ObjectManager::GetInstance()->Entry(
+		p_goal
+	);
+
+	*p_obj = p_goal;
 }
 
 
@@ -180,14 +246,3 @@ void ObjectFactory::CreateTaile2(
 	p_map_obj = p_taile;
 }
 
-
-void ObjectFactory::CreateFiled(ObjectData*p_chara) {
-
-	if (p_chara == nullptr) {
-		return;
-	}
-
-	ObjectManager::GetInstance()->Entry(
-		new Filed(this,p_chara->p_player)
-	);
-}

@@ -10,7 +10,7 @@
 
 Player::Player(
 	D3DXVECTOR3 pos,
-	Camera3D*camera_3d,
+	std::shared_ptr<Camera3D>camera_3d,
 	ObjectFactory*bullet_factory
 ) {
 
@@ -19,11 +19,13 @@ Player::Player(
 	m_p_camera_3d = camera_3d;
 	m_p_obj_factory = bullet_factory;
 
+	std::shared_ptr<Camera3D>p_camera = m_p_camera_3d.lock();
+
 	// カメラ位置を補正
-	m_p_camera_3d->SetPos(Vec3(
-		m_p_camera_3d->GetPos().x,
-		m_p_camera_3d->GetPos().y,
-		m_p_camera_3d->GetPos().z
+	p_camera->SetPos(Vec3(
+		p_camera->GetPos().x,
+		p_camera->GetPos().y,
+		p_camera->GetPos().z
 	)
 	);
 	
@@ -78,6 +80,9 @@ void Player::Update() {
 
 	// 弾発射
 	ShotBullet();
+
+	// 破壊弾発射
+	ShotBreakBullet();
 
 	// 移動制限
 	MoveLimit();
@@ -178,16 +183,20 @@ void Player::MoveLimit() {
 
 void Player::MoveByKey() {
 
+	// カメラポインタ
+	std::shared_ptr<Camera3D>p_camera =
+		m_p_camera_3d.lock();
+
 	// キーボード操作
 	{
 
 		// 前後移動
 		if (KeyBoard::IsKeyPushing(DIK_V)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
+			p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
 			m_move.z = PLAYER_SPEED;
 		}
 		else if (KeyBoard::IsKeyPushing(DIK_SPACE)) {
-			m_p_camera_3d->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
+			p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
 			m_move.z = -PLAYER_SPEED;
 		}
 
@@ -212,22 +221,25 @@ void Player::MoveByKey() {
 
 void Player::RotationByKey() {
 
+	// カメラポインタ
+	std::shared_ptr<Camera3D>p_camera =
+		m_p_camera_3d.lock();
 
 	// 回転
 	if (KeyBoard::IsKeyPushing(DIK_D)) {
-		m_p_camera_3d->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
+		p_camera->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
 		m_vec_rot.x++;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_A)) {
-		m_p_camera_3d->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
+		p_camera->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
 		m_vec_rot.x--;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_W)) {
-		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
+		p_camera->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
 		m_vec_rot.y--;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_S)) {
-		m_p_camera_3d->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
+		p_camera->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
 		m_vec_rot.y++;
 	}
 }
@@ -241,7 +253,11 @@ void Player::AddMoveToPos() {
 
 void Player::MoveFront() {
 
-	m_p_camera_3d->AddPos(D3DXVECTOR3(0.f, 0.f, FRONT_SPEED));
+	// カメラポインタ
+	std::shared_ptr<Camera3D>p_camera =
+		m_p_camera_3d.lock();
+
+	p_camera->AddPos(D3DXVECTOR3(0.f, 0.f, FRONT_SPEED));
 	m_move.z += FRONT_SPEED;
 }
 
@@ -324,10 +340,21 @@ float Player::GetHp() {
 }
 
 
-void Player::CheckDeath() {
+bool Player::IsDeath() {
 
 	// hpがないなら活動停止
 	if (GetHp() <= 0) {
+		return true;
+	}
+
+	return false;
+}
+
+
+void Player::CheckDeath() {
+
+	// hpがないなら活動停止
+	if (IsDeath() == true) {
 		m_is_active = false;
 	}
 }
@@ -359,6 +386,11 @@ void Player::DamageEffect() {
 }
 
 
+void Player::OutInterface(CharacterInterface&chara_interface) {
+	chara_interface.SetHp(m_hp);
+}
+
+
 void Player::ShotBullet() {
 
 	// Sキーで撃つ
@@ -366,12 +398,23 @@ void Player::ShotBullet() {
 
 		if (m_shot_timer >= SHOT_INTERVAL) {
 
+			// 弾データ
+			BulletData data;
+
+			data.trans_data.pos = m_pos;
+			data.speed = Vec3(BULLET_SPEED,BULLET_SPEED,BULLET_SPEED);
+			data.distance_limit = Vec3(SHOT_DISTANCE, SHOT_DISTANCE, SHOT_DISTANCE);
+
+			// パラメータ
+			ObjParameter param;
+			param.register_obj_file_name = Const::Obj::SPEHER;
+			param.scale = Vec3(0.5f, 0.5f, 0.5f);
+			param.pos = m_pos;
+
+			// 弾を作る
 			m_p_obj_factory->CreateBullet(
-				Vec3(m_pos.x,
-					m_pos.y,
-					m_pos.z),
-				BULLET_SPEED,
-				SHOT_DISTANCE
+				param,
+				data
 			);
 
 			// 時間を0にする
@@ -383,6 +426,54 @@ void Player::ShotBullet() {
 	if (m_shot_timer <= SHOT_INTERVAL) {
 		// 加算
 		m_shot_timer++;
+	}
+
+}
+
+
+void Player::ShotBreakBullet() {
+	// Sキーで撃つ
+	if (KeyBoard::IsKeyPushing(DIK_Z)) {
+
+
+		const float BULLET_DIR_Y[3] = {
+			355.f,
+			0.f,
+			5.f
+		};
+
+
+		// 弾を撃つ間隔
+		if (m_shot_timer >= SHOT_INTERVAL) {
+
+			// 弾の数
+			for (int i = 0; i < 3; i++) {
+
+				// 弾データ
+				BulletData data;
+				data.trans_data.pos = m_pos;
+				data.speed = Vec3(BULLET_SPEED, BULLET_SPEED, BULLET_SPEED);
+				data.distance_limit = Vec3(SHOT_DISTANCE, SHOT_DISTANCE, SHOT_DISTANCE);
+				data.rot_dir.y = BULLET_DIR_Y[i];
+
+				// パラメータ
+				ObjParameter param;
+				param.pos = m_pos;
+				param.scale = Vec3(0.5f, 0.5f, 0.5f);
+				param.register_obj_file_name 
+					= Const::Obj::CUBE;
+
+
+				// 弾を作る
+				m_p_obj_factory->CreateBreakBullet(
+					param,
+					data
+				);
+
+				// 時間を0にする
+				m_shot_timer = 0;
+			}
+		}
 	}
 
 }

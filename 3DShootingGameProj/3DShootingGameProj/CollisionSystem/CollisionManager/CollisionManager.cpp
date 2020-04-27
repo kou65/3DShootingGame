@@ -95,6 +95,10 @@ void CollisionManager::SetCombination() {
 	// 敵とキューブ
 	m_group_list[CollisionObjectType::ENEMY].
 		push_back(CollisionObjectType::BLOCK);
+
+	// 破壊弾とキューブ
+	m_group_list[CollisionObjectType::BREAK_BULLET].
+		push_back(CollisionObjectType::BLOCK);
 }	
 
 void CollisionManager::CollisionGroup(){

@@ -7,13 +7,15 @@
 
 
 
-// 衝突用オブジェクト
-
-
-
+/**
+* @brief 衝突用オブジェクト
+*/
 class CollisionObject3DBase : public Object3D{
 public:
 
+	/**
+	* @brief コンストラクタ
+	*/
 	CollisionObject3DBase() : Object3D(){
 		m_shape_type = ShapeType::NONE;
 	}

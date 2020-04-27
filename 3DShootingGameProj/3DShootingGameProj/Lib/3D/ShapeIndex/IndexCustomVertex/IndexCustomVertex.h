@@ -3,17 +3,20 @@
 
 
 
+/**
+* @brief インデックス用カスタムバーテックス
+*/
 struct IndexCustomVertex {
 
-	// 頂点情報
+	//! 頂点情報
 	D3DXVECTOR3 vertex;
 
-	// 法線情報
+	//! 法線情報
 	D3DXVECTOR3 normal;
 
-	// 頂点カラー
+	//! 頂点カラー
 	DWORD color;
 
-	// テクスチャ座標
+	//! テクスチャ座標
 	D3DXVECTOR2 uv;
 };

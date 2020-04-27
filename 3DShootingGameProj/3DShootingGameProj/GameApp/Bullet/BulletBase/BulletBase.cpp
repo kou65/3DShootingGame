@@ -30,3 +30,12 @@ void BulletBase::Limit(Vec3&vec) {
 		m_is_active = false;
 	}
 }
+
+
+void BulletBase::Direction() {
+
+
+	// Šp“x‚Ì‘Î‚µ‚ÄˆÚ“®‘¬“x‚ğŠ|‚¯‚Äi‚Ü‚¹‚é
+	//m_pos.z += cosf(m_radius) * m_speed;
+	//m_pos.y += sinf(m_radius) * m_speed;
+}

@@ -157,7 +157,11 @@
     <ClCompile Include="CollisionSystem\Shape\Sphere\Sphere.cpp" />
     <ClCompile Include="Debugger\Debugger.cpp" />
     <ClCompile Include="GameApp\Block\Block.cpp" />
-    <ClCompile Include="GameApp\Bullet\Bullet.cpp" />
+    <ClCompile Include="GameApp\Bullet\BreakBullet\BreakBullet.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="GameApp\Bullet\PlayerBullet\Bullet.cpp" />
     <ClCompile Include="GameApp\Bullet\BulletBase\BulletBase.cpp" />
     <ClCompile Include="GameApp\Bullet\EnemyBullet\EnemyBullet.cpp" />
     <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp" />
@@ -165,7 +169,15 @@
     <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
-    <ClCompile Include="GameApp\Filed\Filed.cpp" />
+    <ClCompile Include="Manager\ManagerControlOffcer\ManagerControlOffcer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Manager\ManagerFactory\ManagerFactory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Manager\MapStructureManager\MapStructureManager.cpp" />
     <ClCompile Include="GameApp\Filed\Taile\Taile.cpp" />
     <ClCompile Include="GameApp\GoalObject\GoalObject.cpp" />
     <ClCompile Include="GameApp\HPUI\HPUI.cpp" />
@@ -212,9 +224,8 @@
     <ClCompile Include="Lib\Window\Window.cpp" />
     <ClCompile Include="LoadResource\LoadResource.cpp" />
     <ClCompile Include="Main\Main.cpp" />
-    <ClCompile Include="Manager\ChiefManager\ChiefManager.cpp" />
-    <ClCompile Include="Manager\FiledObjectManager\FiledObjectManager.cpp" />
-    <ClCompile Include="Manager\FileObjectDataManager\FileObjectDataManager.cpp" />
+    <ClCompile Include="Manager\MapObjectManager\MapObjectManager.cpp" />
+    <ClCompile Include="Manager\FileDataManager\FileDataManager.cpp" />
     <ClCompile Include="Manager\GameEndJugeManager\GameEndJugeManager.cpp" />
     <ClCompile Include="ObjectSystem\Object2D\Object2D.cpp" />
     <ClCompile Include="ObjectSystem\Object3DInterface\Object3DInterface.cpp" />
@@ -241,16 +252,44 @@
     <ClInclude Include="CollisionSystem\Shape\Sphere\Sphere.h" />
     <ClInclude Include="Debugger\Debugger.h" />
     <ClInclude Include="GameApp\Block\Block.h" />
-    <ClInclude Include="GameApp\Bullet\Bullet.h" />
+    <ClInclude Include="GameApp\Bullet\BreakBullet\BreakBullet.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\Bullet\PlayerBullet\Bullet.h" />
     <ClInclude Include="GameApp\Bullet\BulletBase\BulletBase.h" />
+    <ClInclude Include="GameApp\Bullet\BulletData\BulletData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameApp\Bullet\EnemyBullet\EnemyBullet.h" />
     <ClInclude Include="GameApp\CharacterBase\CharacterBase.h" />
+    <ClInclude Include="GameApp\CharacterInterface\CharacterInterface.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameApp\Enemy\Enemy.h" />
     <ClInclude Include="GameApp\Enemy\EnemyBase\EnemyBase.h" />
     <ClInclude Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.h" />
     <ClInclude Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.h" />
     <ClInclude Include="GameApp\Filed\BackGround\BackGround.h" />
-    <ClInclude Include="GameApp\Filed\Filed.h" />
+    <ClInclude Include="GameApp\Filed\ClearBlock\ClearBlock.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\MapData\MapData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Manager\ManagerControlOffcer\ManagerControlOffcer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Manager\ManagerFactory\ManagerFactory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Manager\MapStructureManager\MapStructureManager.h" />
     <ClInclude Include="GameApp\Filed\MapObjectBase\MapObjectBase.h" />
     <ClInclude Include="GameApp\Filed\Taile\Taile.h" />
     <ClInclude Include="GameApp\GameConstant\GameConstant.h" />
@@ -282,6 +321,10 @@
     <ClInclude Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.h" />
     <ClInclude Include="Lib\EffectFileShader\DirectionalLight\Light.h" />
     <ClInclude Include="Lib\EffectFileShader\FogShader\FogShader.h" />
+    <ClInclude Include="Lib\EffectFileShader\LightData\LightData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h" />
     <ClInclude Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.h" />
     <ClInclude Include="Lib\EffectFileShader\ShaderManager\ShaderManager.h" />
@@ -309,9 +352,8 @@
     <ClInclude Include="Lib\Vec3\Vec3.h" />
     <ClInclude Include="Lib\Window\Window.h" />
     <ClInclude Include="LoadResource\LoadResource.h" />
-    <ClInclude Include="Manager\ChiefManager\ChiefManager.h" />
-    <ClInclude Include="Manager\FiledObjectManager\FiledObjectManager.h" />
-    <ClInclude Include="Manager\FileObjectDataManager\FileObjectDataManager.h" />
+    <ClInclude Include="Manager\MapObjectManager\MapObjectManager.h" />
+    <ClInclude Include="Manager\FileDataManager\FileDataManager.h" />
     <ClInclude Include="Manager\GameEndJugeManager\GameEndJugeManager.h" />
     <ClInclude Include="Manager\ManagerBase\ManagerBase.h" />
     <ClInclude Include="ObjectSystem\Object2D\Object2D.h" />

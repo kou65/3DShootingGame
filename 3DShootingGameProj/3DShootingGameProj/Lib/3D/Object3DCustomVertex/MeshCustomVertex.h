@@ -13,6 +13,9 @@
 
 */
 
+/**
+* @enum VertexType 頂点の種類
+*/
 enum VertexType {
 	VERTEX,
 	UV,
@@ -31,6 +34,9 @@ enum VertexType {
 #define FVF_CUSTOM (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
+/**
+* @brief メッシュ用頂点
+*/
 struct MeshCustomVertex {
 
 	MeshCustomVertex() {

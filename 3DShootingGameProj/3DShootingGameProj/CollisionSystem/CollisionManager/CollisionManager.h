@@ -12,7 +12,10 @@
 class CollisionManager {
 public:
 
-	// シングルトン
+
+	/**
+	* @brief シングルトン
+	*/
 	static CollisionManager *GetInstance() {
 		static CollisionManager mng;
 		return &mng;
@@ -20,42 +23,78 @@ public:
 
 public:
 
-	// 更新
+
+	/**
+	* @brief 更新
+	*/
 	void Update();
 
-	// 追加
+
+	/**
+	* @brief 追加
+	* @param[in] type 衝突するオブジェクトの種類定数
+	* @param[in] obj 衝突させるオブジェクトを入れる
+	*/
 	bool Entry(
 		const CollisionObjectType&type,
 		CollisionObject3DBase*obj
 	);
 
-	// 調べて配列削除(必ず全ての更新の最後に記述)
+
+	/**
+	* @brief 調べて配列削除(必ず全ての更新の最後に記述) 
+	*/
 	void CheckAndClear();
 
-	// 全ての配列に削除
+
+	/**
+	* @brief 全ての配列を削除 
+	*/
 	void Clear();
 
 private:
 
-	// コンストラクタ
+
+	/**
+	* @brief コンストラクタ
+	*/
 	CollisionManager();
 
-	// コンビネーションを選択
+
+	/**
+	* @brief コンビネーションを選択 
+	*/
 	void SetCombination();
 
-	// 挿入
+
+	/**
+	* @brief 挿入
+	*/
 	void InsertToCollisionList();
 
-	// グループごとに衝突させる
+
+	/**
+	* @brief グループごとに衝突させる 
+	*/
 	void CollisionGroup();
 
-	// 当たり判定
+
+	/**
+	* @brief 当たり判定
+	* @param[in] obj1 衝突させるオブジェクト1
+	* @param[in] obj2 衝突させるオブジェクト2
+	*/
 	void SelectCollider(
 		CollisionObject3DBase * obj1,
 		CollisionObject3DBase * obj2
 	);
 
-	// 組み合わせ同士当たり判定を行う
+
+	/**
+	* @brief 組み合わせ同士当たり判定を行う
+	* @param[in] type1 組み合わせるオブジェクト定数1
+	* @param[in] type2 組み合わせるオブジェクト定数2
+	*/
 	void StartCollisionComb(
 		const CollisionObjectType&type1,
 		const CollisionObjectType&type2
@@ -66,13 +105,22 @@ private:
 
 	// 当たり判定
 
-	// 球と球
+	/**
+	* @brief 球と球
+	* @param[in] o1 衝突オブジェクト1
+	＊@param[in] o2 衝突オブジェクト2
+	*/
 	void ChackSphereAndSphere(
 		CollisionObject3DBase*o1,
 		CollisionObject3DBase*o2
 	);
 
-	// キューブとキューブ
+
+	/**
+	* @brief キューブとキューブ
+	* @param[in] o1 衝突オブジェクト1
+	* @param[in] o2 衝突オブジェクト2
+	*/
 	void ChackCubeAndCube(
 		CollisionObject3DBase*o1,
 		CollisionObject3DBase*o2
@@ -80,19 +128,19 @@ private:
 
 private:
 
-	// 当たり判定オブジェクト
+	//! 当たり判定オブジェクトリスト
 	std::unordered_map<CollisionObjectType,
 		std::vector<CollisionObject3DBase*>>m_p_collision_list;
 
-	// 組み合わせリスト
+	//! 組み合わせリスト
 	std::unordered_map<CollisionObjectType,
 		std::vector<CollisionObjectType>>m_group_list;
 
-	// 代入用配列
+	//! 代入用配列
 	std::vector<CollisionObjectType>m_insert_type_list;
 	std::vector<CollisionObject3DBase*>m_p_insert_collision_list;
 
-	// 現在の衝突物の種類(衝突物の識別の為必要)
+	//! 現在の衝突物の種類(衝突物の識別の為必要)
 	CollisionObjectType m_current_obj_type1;
 	CollisionObjectType m_current_obj_type2;
 };

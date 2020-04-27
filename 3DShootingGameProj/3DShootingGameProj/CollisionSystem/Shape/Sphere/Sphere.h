@@ -3,13 +3,26 @@
 
 
 
+/**
+* @brief 球形状
+*/
 struct Sphere : public Shape3DBase{
 
+
+	/**
+	* @brief コンストラクタ
+	*/
 	Sphere() {};
 
-	// 半径
+	
+	/**
+	* @brief 半径取得
+	*/
 	float GetRadian();
 
-	// 半径
+
+	/**
+	* @brief 半径
+	*/
 	float radian;
 };

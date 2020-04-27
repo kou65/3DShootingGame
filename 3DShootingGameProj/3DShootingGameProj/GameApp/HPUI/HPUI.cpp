@@ -1,5 +1,6 @@
 ﻿#include"HPUI.h"
 #include"../../Lib/Sprite2D/Sprite2D/Sprite2DUser.h"
+#include"../CharacterInterface/CharacterInterface.h"
 #include<math.h>
 
 
@@ -23,8 +24,13 @@ void HPUI::Update() {
 	// 最大hp受け取り
 	float max_hp = Player::MAX_HP;
 
+	CharacterInterface chara_interface;
+
+	// 情報取得
+	m_p_player->OutInterface(chara_interface);
+
 	// 現在のhp受け取り
-	float hp = m_p_player->GetHp();
+	float hp = chara_interface.GetHp();
 
 	// uv最大値から比率割り出し
 	float i =  1.f / max_hp;
@@ -47,4 +53,10 @@ void HPUI::Draw() {
 	m_sprite_param.y = 50.f;
 
 	Sprite2DUser::GetInstance()->BoardDraw(m_sprite_param);
+}
+
+
+
+float HPUI::GetCharaHp(CharacterInterface&chara_interface) {
+	return chara_interface.GetHp();
 }

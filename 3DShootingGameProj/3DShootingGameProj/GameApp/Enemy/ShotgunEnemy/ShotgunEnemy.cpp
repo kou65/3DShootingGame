@@ -35,6 +35,9 @@ ShotgunEnemy::ShotgunEnemy(
 
 void ShotgunEnemy::Update() {
 
+	if (IsShot() == true) {
+		Shot();
+	}
 }
 
 
@@ -70,17 +73,83 @@ Sphere ShotgunEnemy::GetSphere() {
 }
 
 
-
 void ShotgunEnemy::Shot() {
 
 
+	const float BULLET_DIR_Y[3] = {
+		355.f,
+		0.f,
+		5.f
+	};
+
+	// 弾データ
+	BulletData data;
+
+	data.distance_limit = Vec3(200.f, 200.f, 200.f);
+	data.speed = Vec3(-BULLET_SPEED, -BULLET_SPEED, -BULLET_SPEED);
+	data.trans_data.pos = m_pos;
+
+	// パラメータ
+	ObjParameter param;
+	// キューブ
+	param.register_obj_file_name = Const::Obj::SPEHER;
+	// 拡縮
+	param.scale = Vec3(0.5f, 0.5f, 0.5f);
+	// 位置
+	param.pos = m_pos;
+
+	// 行列
+	D3DXMATRIX rot_m_x, rot_m_y;
+	// 移動値
+	Vec3 dir;
+
 	for (int i = 0; i < 3; i++) {
+
+		// 正規化
+		D3DXMatrixIdentity(&rot_m_x);
+		D3DXMatrixIdentity(&rot_m_y);
+
+		data.trans_data.rota.y = BULLET_DIR_Y[i];
+		data.trans_data.rota.x = 0.f;
+
+		dir.x = 0.f;
+		dir.y = 0.f;
+		dir.z = 1.f;
+
+		// 正規化
+		D3DXVec3Normalize(&dir, &dir);
+
+		// 回転
+		D3DXMatrixRotationX(&rot_m_x, D3DXToRadian(data.trans_data.rota.x));
+		D3DXMatrixRotationY(&rot_m_y, D3DXToRadian(data.trans_data.rota.y));
+
+		// 頂点変換
+		D3DXVec3TransformNormal(&dir, &dir, &rot_m_y);
+		D3DXVec3TransformNormal(&dir, &dir, &rot_m_x);
+
+		// データに方向代入
+		data.rot_dir = dir;
+
 		// 弾を生成
-		m_p_obj_factory->CreateBullet(
-			m_pos,
-			BULLET_SPEED,
-			200.f
+		m_p_obj_factory->CreateEnemyBullet(
+			param,
+			data
 		);
 	}
+}
 
+
+
+
+bool ShotgunEnemy::IsShot() {
+
+	if (m_shot_timer > INTERVAL) {
+
+		m_shot_timer = 0.f;
+		return true;
+	}
+
+	m_shot_timer++;
+
+	return false;
 }

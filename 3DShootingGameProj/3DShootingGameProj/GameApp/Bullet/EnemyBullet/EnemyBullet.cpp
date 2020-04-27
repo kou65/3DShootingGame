@@ -4,17 +4,18 @@
 
 
 EnemyBullet::EnemyBullet(
-	const Vec3 &pos,
-	const Vec3 &speed,
-	const Vec3 &limit_distance,
-	const Vec3&dir
+	const ObjParameter&param,
+	const BulletData&data
 ) {
 
-	m_pos = pos;
+	// オブジェクトパラメータ
+	m_obj_param = param;
+
+	m_pos = data.trans_data.pos;
 	m_enemy_pos = m_pos;
-	m_speed = speed;
-	m_dir = dir;
-	m_limit_distance = limit_distance;
+	m_speed = data.speed;
+	m_dir = data.rot_dir;
+	m_limit_distance = data.distance_limit;
 
 
 	CollisionManager::GetInstance()->Entry(
@@ -29,16 +30,15 @@ void EnemyBullet::Update() {
 
 	AddDirToPos();
 	Limit(m_enemy_pos);
+
+	// 位置移動
+	m_obj_param.pos = m_pos;
 }
 
 
 void EnemyBullet::Draw() {
 
-	ObjParameter param;
-	param.register_obj_file_name = Const::Obj::SPEHER;
-	param.pos = m_pos;
-
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->ShaderDraw(m_obj_param);
 }
 
 
@@ -55,7 +55,7 @@ Sphere EnemyBullet::GetSphere() {
 
 	s.vec = m_pos;
 	s.vec /= 2;
-	s.radian = 30.f;
+	s.radian = 10.f;
 
 	return s;
 }

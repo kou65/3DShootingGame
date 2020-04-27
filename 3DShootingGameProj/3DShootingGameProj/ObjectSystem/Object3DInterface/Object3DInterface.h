@@ -1,10 +1,14 @@
-﻿#pragma once
+﻿
+#ifndef OBJECT3D_INTERFACE_H
+#define OBJECT3D_INTERFACE_H
+
 #include"../Object3D/Object3D.h"
 
 
-// オブジェクトを渡す時に間に挟んで隠蔽化を行うクラス
 
-
+/**
+* @brief オブジェクトを渡す時に間に挟んで隠蔽化を行うクラス
+*/
 class Object3DInterface {
 public:
 
@@ -27,3 +31,4 @@ private:
 	//! オブジェクト
 	Object3D * m_p_object;
 };
+#endif

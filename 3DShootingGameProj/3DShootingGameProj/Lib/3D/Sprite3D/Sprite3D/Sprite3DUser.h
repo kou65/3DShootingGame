@@ -4,9 +4,10 @@
 
 
 
-// MEMO 回転順序は固定
 
-
+/**
+* @brief Sprite用カスタムバーテックス
+*/
 struct CustomVertex3D {
 
 	// 頂点情報
@@ -20,21 +21,31 @@ struct CustomVertex3D {
 };
 
 
-// テンプレートFVF3D
+//! テンプレートFVF3D
 #define FVF_3D (D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_DIFFUSE)
 
 
+/**
+* @brief 固定機能3Dスプライト使用者クラス
+*/
 class Sprite3DUser {
 public:
 
-	// 板形状で描画
+	/**
+	* @brief 板形状で描画
+	*/
 	void BoardDraw(
 		Sprite3DParameter texture_format_3d
 	);
 
 private:
 
-	// 板形状
+
+	/**
+	* @brief 板形状形成
+	* @param[out] custom_vertex3D カスタムバーテックス
+	* @param[in] vertex_num 頂点数
+	*/
 	void ShapeBoard(
 		CustomVertex3D * custom_vertex3D,
 		int vertex_num,
@@ -45,14 +56,20 @@ private:
 		DWORD color
 	);
 
-	// 行列演算
+
+	/**
+	* @brief 行列演算
+	*/
 	D3DXMATRIX CalcMatrixTransform(
 		D3DXVECTOR3 pos,
 		D3DXVECTOR3 scale,
 		PolygonDirection dir
 	);
 
-	// 方向回転行列計算
+
+	/**
+	* @brief 方向回転行列計算
+	*/
 	D3DXMATRIX CalcMatrixRotation(
 		PolygonDirection dir
 	);

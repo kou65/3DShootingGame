@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef FBX_H
+#define FBX_H
 
 #include<string>
 #include<vector>
@@ -17,23 +18,29 @@
 
 
 
+/**
+* @brief fbxで使う部品モデル構造体
+*/
 struct FbxModuleModel {
 
-	// SDK全体を管理して各種オブジェクトの生成を行う
+	//! SDK全体を管理して各種オブジェクトの生成を行う
 	FbxManager * mp_manager;
 
-	// シーンの作成
+	//! シーンの作成
 	FbxScene * mp_fbx_scene;
 
-	// インポーター
+	//! インポーター
 	FbxImporter*m_p_importer;
 
 };
 
-
+//! 最大ボーン数
 const int MAX_BONE_MATRIX_NUM = 64;
 
 
+/**
+* @brief ボーン構造体
+*/
 struct Bone {
 
 	// ボーン行列
@@ -83,14 +90,14 @@ struct FbxMeshData {
 	std::vector<FbxMatrix>motion_list;   // モーション配列
 
 	// ボーン行列
-	//std::vector<D3DXMATRIX>d3d_bone_mat_list;
-	//// アニメーション行列
-	//std::vector<D3DXMATRIX>d3d_anim_mat_list;
-	//
-	//// 影響数を保持
-	//std::vector <std::vector<double>>weight_list;
-	//// 影響インデックス
-	//std::vector<std::vector<int>>weight_index_list;
+	std::vector<D3DXMATRIX>d3d_bone_mat_list;
+	// アニメーション行列
+	std::vector<D3DXMATRIX>d3d_anim_mat_list;
+	
+	// 影響数を保持
+	std::vector <std::vector<double>>weight_list;
+	// 影響インデックス
+	std::vector<std::vector<int>>weight_index_list;
 
 };
 
@@ -289,6 +296,16 @@ private:
 		const int &mi
 	);
 
+	void KeySkinning();
+
+	// キーフレームアニメーション
+	void KeyFrameSkinning(
+		FbxMesh* mesh,
+		FbxMeshData& mesh_data,
+		SkinCustomVertex* vertices,
+		const int &mi
+	);
+
 	void LoadWeightVertexPoint(
 		std::vector<FbxMeshData>& p_mesh_data_list,
 		FbxMesh* p_mesh
@@ -366,4 +383,9 @@ private:
 	// アニメーションするかどうか
 	bool m_is_skinning;
 
+	// 現在のアニメーションフレーム数
+	float m_key_frame;
+
 };
+
+#endif

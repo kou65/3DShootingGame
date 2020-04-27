@@ -5,7 +5,6 @@
 
 void ObjectManager::Update() {
 
-
 	// 活動していなかった削除する関数
 	NotActiveAutoDelete();
 
@@ -122,8 +121,37 @@ void ObjectManager::InsertSharedObject() {
 	}
 }
 
+
 void ObjectManager::SharedAutoDelete() {
 
+
+	// 定期的に消す 
+	for (auto itr = m_p_object_list_shared.begin();
+		itr != m_p_object_list_shared.end();) {
+
+		// 活動していないなら
+		if ((*itr).get()->IsActive() == false) {
+
+			ObjectBase * obj = (*itr).get();
+
+			// objにメモリが存在するなら
+			if (obj != nullptr)
+			{
+				// メモリ解放
+				(*itr).reset();
+
+				// nullptr代入
+				(*itr) = nullptr;
+			}
+
+			// 要素解放
+			itr = m_p_object_list_shared.erase(itr);
+			continue;
+		}
+
+		// イテレータ加算
+		itr++;
+	}
 }
 
 
@@ -134,8 +162,11 @@ void ObjectManager::AllDelete() {
 
 		ObjectBase*obj = (*itr).get();
 
-		// メモリ解放
-		itr->reset();
+		if (obj != nullptr) {
+
+			// メモリ解放
+			itr->reset();
+		}
 	}
 
 	// 要素を全て解放

@@ -42,9 +42,6 @@
     <ClCompile Include="GameApp\Bullet\EnemyBullet\EnemyBullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameApp\Bullet\Bullet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -61,9 +58,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\Filed\Taile\Taile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp\Filed\Filed.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\GoalObject\GoalObject.cpp">
@@ -198,15 +192,6 @@
     <ClCompile Include="Main\Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Manager\ChiefManager\ChiefManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager\FiledObjectManager\FiledObjectManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager\FileObjectDataManager\FileObjectDataManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Manager\GameEndJugeManager\GameEndJugeManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -252,6 +237,27 @@
     <ClCompile Include="Lib\3D\FBX\FbxFile\Fbx.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Manager\ManagerControlOffcer\ManagerControlOffcer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\ManagerFactory\ManagerFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Bullet\BreakBullet\BreakBullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Bullet\PlayerBullet\Bullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\MapStructureManager\MapStructureManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\MapObjectManager\MapObjectManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\FileDataManager\FileDataManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionSystem\Collision\Collision.h">
@@ -290,9 +296,6 @@
     <ClInclude Include="GameApp\Bullet\EnemyBullet\EnemyBullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameApp\Bullet\Bullet.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameApp\CharacterBase\CharacterBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -315,9 +318,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\Filed\Taile\Taile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp\Filed\Filed.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\GameConstant\GameConstant.h">
@@ -485,15 +485,6 @@
     <ClInclude Include="LoadResource\LoadResource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Manager\ChiefManager\ChiefManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Manager\FiledObjectManager\FiledObjectManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Manager\FileObjectDataManager\FileObjectDataManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Manager\GameEndJugeManager\GameEndJugeManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -543,6 +534,42 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Lib\3D\FBX\FbxFile\Fbx.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Bullet\BulletData\BulletData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\EffectFileShader\LightData\LightData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\CharacterInterface\CharacterInterface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\ManagerControlOffcer\ManagerControlOffcer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\ManagerFactory\ManagerFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Bullet\BreakBullet\BreakBullet.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Bullet\PlayerBullet\Bullet.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\MapStructureManager\MapStructureManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\MapObjectManager\MapObjectManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\FileDataManager\FileDataManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\ClearBlock\ClearBlock.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Filed\MapData\MapData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

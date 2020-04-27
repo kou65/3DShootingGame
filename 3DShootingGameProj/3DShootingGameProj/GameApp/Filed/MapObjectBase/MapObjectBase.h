@@ -1,34 +1,64 @@
-#pragma once
+
+#ifndef MAP_OBJECT_BASE_H
+#define MAP_OBJECT_BASE_H
+
 #include"../../../ObjectSystem/Object3D/Object3D.h"
 #include"../../../ObjectSystem/Object3DInterface/Object3DInterface.h"
+#include"../../../CollisionSystem/CollisionObject3DBase/CollisionObject3DBase.h"
+#include"../../Filed/MapData/MapData.h"
 
 
 
-class MapObjectBase : public Object3D {
+/**
+* @brief 基底マップオブジェクトクラス
+*/
+class MapObjectBase : public CollisionObject3DBase{
 public:
 
-	MapObjectBase(Object3DInterface*inter) {
+	/**
+	* @brief コンストラクタ
+	* @param[in] inter Interfaceクラス
+	*/
+	MapObjectBase(Object3DInterface*inter) : CollisionObject3DBase(){
 		m_p_interface_obj = inter;
 	}
 
+
+	/**
+	* @brief デフォルトコンストラクタ
+	*/
 	MapObjectBase() {}
 
-	// 前方削除
-	void FrontDelete() {
 
+	/**
+	* @brief 外部から削除する関数
+	*/
+	void Destory() {
+		Exit();
 	}
 
-	// 後方削除
-	void BackDelete() {
 
+	/**
+	* @brief 活動停止
+	*/
+	void NotActive() {
+		m_is_active = false;
 	}
 
-	// 活動関数にアクセス可能
-	void SetActive(bool is_active) {
-		m_is_active = is_active;
+
+	/**
+	* @brief マップタグ外部へ出す
+	*/
+	MapTag GetMapTag() {
+		return m_map_tag;
 	}
 
 protected:
 
+	//! インターフェースクラス
 	Object3DInterface * m_p_interface_obj;
+
+	//! マップナンバー
+	MapTag m_map_tag;
 };
+#endif

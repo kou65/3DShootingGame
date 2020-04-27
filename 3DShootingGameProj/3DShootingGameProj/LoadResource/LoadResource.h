@@ -4,16 +4,26 @@
 #include<string>
 
 
+
+/**
+* @brief 素材を読み込む
+*/
 namespace  LoadResources {
 
-	// 読み込んだファイル名
+
+	/**
+	* @brief 読み込んだファイル名
+	*/
 	namespace Name {
 
-		// クリアロゴ
+		//! クリアロゴ
 		const std::string CLEAR_LOGO = "clear_logo";
 	}
 
-	// リソース読み込み
+
+	/**
+	* @brief リソース読み込み
+	*/
 	void Load();
 
 }

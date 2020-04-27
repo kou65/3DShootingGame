@@ -4,19 +4,33 @@
 #include"../ManagerBase/ManagerBase.h"
 
 
-// ゲーム終了判定管理者
 
 
+/**
+* @brief ゲーム終了判定管理者
+*/
 class GameEndJugeManager{
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	* @param[in] p_data オブジェクトデータ
+	*/
 	GameEndJugeManager(
-		ObjectData*p_data
+		std::shared_ptr<ObjectData>p_data
 	);
 
+
+	/**
+	* @brief 更新
+	* @param[in] scene_type シーンタイプ
+	*/
 	void Update(SceneType&scene_type);
+
 
 private:
 
-	ObjectData*m_p_data;
+	//! オブジェクトデータ
+	std::weak_ptr<ObjectData>m_p_data;
 };

@@ -5,45 +5,84 @@
 
 
 
+/**
+* @brief 自機方向に弾を撃つ敵クラス
+*/
 class HomingBulletEnemy : public EnemyBase{
 public:
 
-	// 撃つ間隔
-	const float INTERVAL = 40.f;
-	const float BULLET_SPEED = 2.f;
+	//! 撃つ間隔
+	const float INTERVAL = 60.f;
+
+	//! 弾の速度
+	const float BULLET_SPEED = 1.f;
 
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	* @param[in] pos 初期位置
+	* @param[in] p_factory 工場ポインタ
+	* @param[in] p_chara キャラクタポインタ
+	*/
 	HomingBulletEnemy(
-		const Vec3&create_pos,
-		ObjectFactory*factory,
-		CharacterBase*player
+		const Vec3&pos,
+		ObjectFactory*p_factory,
+		CharacterBase*p_chara
 	);
 
-	// 更新
+
+	/**
+	* @brief 更新
+	*/
 	void Update()override;
 
-	// 描画
+
+	/**
+	* @brief 描画
+	*/
 	void Draw()override;
 
 	// 衝突後処理
+	/**
+	* @brief 衝突後処理
+	* @param[in] type 衝突オブジェクト種類
+	*/
 	void HitAction(const CollisionObjectType&type)override;
 
-	// 球を返す
+
+	/**
+	* @brief 球を返す
+	* @return Sphere 球を返す
+	*/
 	Sphere GetSphere()override;
 
 private:
 
-	// 間隔の時間を加算する
+	/**
+	* @brief 打てるかどうかを返す
+	* @return bool
+	*/
 	bool IsShot();
 
-	// 方向計算
+
+	/**
+	* @brief 方向計算
+	* @return Vec3 方向計算結果
+	*/
 	Vec3 CalcDirection();
 
-	// 撃つ
+
+	/**
+	* @brief 撃つ
+	*/
 	void Shot();
 
-	// 時間計算
+
+	/**
+	* @brief 時間計算
+	*/
 	void AddShotTimer();
 
 private:

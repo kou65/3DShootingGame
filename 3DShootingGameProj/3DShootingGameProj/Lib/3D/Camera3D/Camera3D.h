@@ -6,10 +6,17 @@
 #include"CameraData.h"
 
 
+
+/**
+* @brief カメラ
+*/
 class Camera3D {
 public:
 
-	// カメラのモード
+	
+	/**
+	* @enum CameraMode カメラの取り方モード
+	*/
 	enum CameraMode {
 		FPS,
 		TPS
@@ -17,82 +24,160 @@ public:
 
 public:
 
-	// コンストラクタ
+
+	/**
+	* @brief コンストラクタ
+	* @param[in] camera_mode カメラの設定モード
+	* @param[in] data カメラデータ
+	*/
 	Camera3D(
 		CameraMode camera_mode,
 		CameraData data
 	);
 
-	// 更新
+
+	/**
+	* @brief 更新
+	*/
 	void Update();
 
-	// カメラをセット
+
+	/**
+	* @brief カメラデータセット
+	* @param[in] camera_data カメラデータ構造体
+	*/
 	void SetCamera(const CameraData&camera_data);
 	
-	// 位置をセット
+
+	/**
+	* @brief 位置をセット
+	* @param[in] pos 位置
+	*/
 	void SetPos(const D3DXVECTOR3 &pos);
 
-	// 軸をセット
+
+	/**
+	* @brief TPSの時の回転軸をセットする
+	* @param[in] axis 回転軸
+	*/
 	void SetAxis(const D3DXVECTOR3&axis);
 
-	// 位置を返す
+
+	/**
+	* @brief 位置を返す
+	*/
 	D3DXVECTOR3 GetPos();
 
-	// 注視点情報を返す
+
+	/**
+	* @brief 注視点情報を返す
+	*/
 	D3DXVECTOR3 GetEyePos();
 
-	// 位置を加算
+	
+	/**
+	* @brief 位置を加算
+	* @brief pos 位置
+	*/
 	void AddPos(const D3DXVECTOR3&pos);
 
-	// 回転値を加算
+
+	/**
+	* @brief 回転値を加算
+	* @param[in] rotation 回転値
+	*/
 	void AddRotation(const D3DXVECTOR3&rotation);
 
-	// 移動値を加算
+
+	/**
+	* @brief 移動値を加算
+	* @param[in] move 移動値
+	*/
 	void AddMove(const D3DXVECTOR3&move);
 
-	// 軸座標加算
+
+	/**
+	* @brief 軸座標加算
+	* @param[in] axis 軸
+	*/
 	void AddAxis(const D3DXVECTOR3&axis);
 
-	// 注視点
+
+	/**
+	* @brief 注視点セット
+	* @param[in] point 注視点位置
+	*/
 	void SetLookAtPoint(const D3DXVECTOR3&point);
 
-	// 注視点加算
+	
+	/**
+	* @brief 注視点加算
+	* @param[in] point 注視点加算
+	*/
 	void AddLookAtPoint(const D3DXVECTOR3&point);
 
-	// デバッグ描画
+
+	/**
+	* @brief デバッグ描画
+	* @param[in] pos_x デバッグ表示位置x
+	* @param[in] pos_y デバッグ表示位置y
+	*/
 	void TransformDraw(float pos_x = 100.f,float pos_y = 100.f);
 
 private:
 
-	// Vec3の初期化
+
+	/**
+	* @brief Vec3の初期化
+	* @param[in] init_vec3 vec3構造体
+	*/
 	void D3DXVec3Init(D3DXVECTOR3&init_vec3);
 
-	// 1人称カメラ変換
+
+	/**
+	* @brief 1人称カメラ変換
+	*/
 	void FPSTransform();
 
-	// 3人称カメラ変換
+
+	/**
+	* @brief 3人称カメラ変換
+	*/
 	void TPSTransform();
 
-	// 注視点行列変換
+
+	/**
+	* @brief 注視点行列変換
+	* @param[in] pout 外部算出
+	* @param[in] p_posカメラ位置 
+	* @param[in] p_look 注視点位置
+	* @param[in] p_up アップベクトル
+	*/
 	D3DXMATRIX CalcLookAtPointMatrix(
 		D3DXMATRIX* pout,
-		D3DXVECTOR3* pPos,
-		D3DXVECTOR3* pLook,
-		D3DXVECTOR3* pUp
+		D3DXVECTOR3* p_pos,
+		D3DXVECTOR3* p_look,
+		D3DXVECTOR3* p_up
 	);
 
-	// Y軸回転による方向ベクトルを返す
+
+	/**
+	* @brief Y軸回転による方向ベクトルを返す
+	*/
 	D3DXVECTOR3 GetYAxisDirectionVector();
 
 	// TODO まだ使えません
 	void TPSQuaternionTransform();
 
+	// TODO まだ使えません
 	void ProjectionTransform();
 
 private:
 
+	//! カメラデータ
 	CameraData m_data;
-	// カメラモード
+
+	//! カメラモード
 	CameraMode m_mode;
 };
 
