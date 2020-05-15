@@ -31,7 +31,8 @@ void PlaneIndex::Draw(const IndexShapeParameter &param) {
 	//m_vertex_buf.SetStream(sizeof(IndexCustomVertex));
 
 	// 頂点バッファの設定
-Graphics::GetInstance()->GetDevice()->SetStreamSource(
+Graphics::GetInstance()->
+GetDevice()->SetStreamSource(
 		0,
 	// オペレーター発動
 		m_vertex_buf,

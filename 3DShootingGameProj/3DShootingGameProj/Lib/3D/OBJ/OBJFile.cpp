@@ -19,19 +19,22 @@ Obj::Obj() : Model(){
 	// 各シェーダー初期化
 	m_ns.Init();
 	m_light_shader.Init();
-	m_z_tex.SetTextureSize(1024, 1024);
-	m_z_tex.Init();
-	m_shadow_shader.Init();
+
+	// シャドウの初期化
+	m_shadow.Init();
 
 	// テクスチャを渡す
-	m_shadow_shader.SetShandowMap(m_z_tex.GetZTexture());
-
+	m_shadow.SetShandowMap(
+		ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		)->GetZTexture()
+	);
 }
 
 
 void Obj::Update(
 	const ObjParameter&param,
-	StandardTransformShader*shader
+	StandardTSShader*shader
 ) {
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
@@ -73,22 +76,29 @@ void Obj::ShaderDraw(
 }
 
 
-void Obj::ZTextureDraw(
+void Obj::ZTextureWrite(
 	const ObjParameter&param
 ) {
 
+	ZTexture *tex =
+		ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		);
 
 	// カメラ情報セット
-	m_z_tex.SetViewMatrix(param.shadow_data.camera_view);
-	m_z_tex.SetProjMatrix(param.shadow_data.camera_proj);
+	tex->SetViewMatrix(param.shadow_data.camera_view);
+	tex->SetProjMatrix(param.shadow_data.camera_proj);
 
-	m_pass_type = ShaderType::NORMAL;
+	m_pass_type = ShaderType::ZTEXTURE;
 
 	// 更新
-	Update(param, &m_z_tex);
+	Update(param, tex);
+
+	// 描画の直前に行う
+	tex->Update();
 
 	// zテクスチャ描画
-	ShaderParameterDraw(param, &m_z_tex);
+	DrawShader(param, tex);
 }
 
 
@@ -96,22 +106,25 @@ void Obj::ShadowDraw(
 	const ObjParameter &param
 ) {
 
+	// zテクスチャに書き込み
+	ZTextureWrite(param);
+
 	// ライトカメラセット
-	m_shadow_shader.SetLightViewMatrix(param.shadow_data.light_view);
-	m_shadow_shader.SetLightProjMatrix(param.shadow_data.light_proj);
+	m_shadow.SetLightViewMatrix(param.shadow_data.light_view);
+	m_shadow.SetLightProjMatrix(param.shadow_data.light_proj);
 
 	// カメラ情報セット
-	m_shadow_shader.SetViewMatrix(param.shadow_data.camera_view);
-	m_shadow_shader.SetProjMatrix(param.shadow_data.camera_proj);
+	m_shadow.SetViewMatrix(param.shadow_data.camera_view);
+	m_shadow.SetProjMatrix(param.shadow_data.camera_proj);
 
 	// 影に変更
-	m_pass_type = ShaderType::NORMAL;
+	m_pass_type = ShaderType::DEPTH_SHADOW;
 
 	// 更新
-	Update(param, &m_shadow_shader);
+	Update(param, &m_shadow);
 
 	// 影描画
-	ShaderParameterDraw(param,&m_shadow_shader);
+	ShaderParameterDraw(param,&m_shadow);
 }
 
 
@@ -127,7 +140,134 @@ void Obj::LightDraw(
 }
 
 
+void Obj::EntryObjParam(
+	const ObjParameter&param,
+	DrawStatus&type
+){
+
+	// パラメータを追加
+	m_param_list[type] = param;
+}
+
+
+void Obj::DrawObjParam()
+{
+
+	// zテクスチャ書き込み
+	for (auto&itr : m_param_list) {
+
+		// Zテクスチャ書き込み
+		ZTextureWrite(itr.second);
+	}
+
+	for (auto&itr : m_param_list) {
+
+		switch (itr.first) {
+
+		case DrawStatus::NORMAL:
+
+			NormalDraw(
+				itr.second
+			);
+
+		case DrawStatus::LIGHT:
+
+			LightDraw(
+				itr.second
+			);
+
+		case DrawStatus::SHADOW:
+
+			ShadowDraw(
+				itr.second
+			);
+		}
+	}
+}
+
+
 void Obj::ShaderParameterDraw(
+	const ObjParameter &param,
+	ShaderBase*shader
+) {
+
+	// パス
+	UINT total_pass;
+
+	// 描画開始
+	shader->Begin(total_pass, 0);
+
+	// パス描画
+	DrawShader(
+		param,
+		shader
+	);
+
+	// 描画終了
+	shader->End();
+}
+
+
+void Obj::DrawSubSet(
+	const ObjParameter&param,
+	const DrawStatus&state,
+	int sub_set_number
+) {
+
+	ShaderBase*p_shader = nullptr;
+
+	// 選んだ描画状態のシェーダーを入れる
+	switch (state) {
+
+	case DrawStatus::NORMAL:
+		p_shader = &m_ns;
+		break;
+
+	case DrawStatus::LIGHT:
+		p_shader = &m_light_shader;
+		break;
+
+	case DrawStatus::SHADOW:
+		p_shader = &m_shadow;
+		break;
+	}
+
+	UINT total_pass;
+
+	// 描画開始
+	p_shader->Begin(total_pass,0);
+
+	DrawShader(
+		param,
+		p_shader
+	);
+
+	// 描画終了
+	p_shader->End();
+}
+
+
+void Obj::DrawSubSet(
+	const ObjParameter&param,
+	ShaderBase*p_shader,
+	int sub_set_number
+) {
+
+
+	UINT total_pass;
+
+	p_shader->Begin(total_pass, 0);
+
+	DrawShader(
+		param,
+		p_shader
+	);
+
+	p_shader->End();
+}
+
+
+void Obj::DrawShader(
 	const ObjParameter &param,
 	ShaderBase*shader
 ) {
@@ -143,47 +283,30 @@ void Obj::ShaderParameterDraw(
 
 	// テクスチャが存在するかどうか
 	bool is_texture = false;
-	// パス
-	UINT total_pass;
-
-
-	shader->Begin(total_pass, 0);
 
 	// オブジェクトファイルへアクセス
-	ObjFileData* data =
+	ObjFileData* p_data =
 		m_obj_file_data[param.register_obj_file_name];
 
 	// マテリアル数分回す
-	for (UINT i = 0; i < data->material_num; i++) {
+	for (UINT i = 0; i < p_data->material_num; i++) {
 
-		// 特定のオブジェクトファイルデータを受け取る
-		ObjFileData *p_obj_file_data =
-			data;
+		// 使用マテリアル名取得
+		std::string usemtl_name =
+			p_data->m_usemtl_name_list[i];
 
 		// マテリアル情報取得
 		MaterialInfo mtl =
-			p_obj_file_data->
-			m_material_data_list
-			[p_obj_file_data->m_usemtl_name_list[i]];
+			p_data->
+			m_material_data_list[usemtl_name];
 
-		// 代入用
-		std::string texture_name = param.texture_name;
-		// テクスチャの読み込み
-		is_texture = LoadTexture(mtl.texture_name, texture_name);
+		// テクスチャが存在しているか確認
+		is_texture = CheckTexture(mtl.texture_name);
+		if (param.texture_name.size() != 0) {
+			is_texture = true;
+		}
 
-		// インデックス描画設定にする
-		Model::Set3DParameter(
-			Graphics::GetInstance(),
-			p_obj_file_data->m_p_index_buffer,
-			p_obj_file_data->m_p_vertex_buffer,
-			sizeof(MeshCustomVertex),
-			// マテリアル名
-			p_obj_file_data->
-			m_material_data_list[p_obj_file_data->
-			m_usemtl_name_list[i]].material,
-			FVF_CUSTOM
-		);
-
+		// パス数
 		UINT now_pass = 0;
 
 		// 現在のパス数取得
@@ -194,36 +317,92 @@ void Obj::ShaderParameterDraw(
 			now_pass++;
 		}
 
-		// 情報受け取り
-		UINT face_start = p_obj_file_data->
-			m_object_sub_set_list[i].face_start;
-		// 面数
-		UINT face_count = p_obj_file_data->
-			m_object_sub_set_list[i].face_count;
-
-		// パスの開始
-		shader->BeginPass(now_pass);
-
-		// インデックス描画
-		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
-			D3DPT_TRIANGLELIST,
-			// 頂点インデックスオフセット値
-			0,
-			// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
-			face_start,
-			// 上引数の最小以降の頂点数を指定
-			face_count * 3,
-			// 描画を開始する頂点インデックスまでのオフセット値を指定
-			face_start,
-			// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
-			face_count
+		// シェーダーをパスごとに描画
+		DrawBeginPassShader(
+			shader,
+			p_data,
+			param,
+			now_pass,
+			i
 		);
-		shader->EndPass();
 	}
-	// 描画終了
-	shader->End();
 }
 
+
+void Obj::DrawBeginPassShader(
+	ShaderBase*p_shader,
+	ObjFileData*p_data,
+	const ObjParameter&param,
+	const UINT&current_pass,
+	int sub_num
+) {
+
+	// テクスチャが存在するかどうか
+	bool is_texture = false;
+
+	// 使用マテリアル名取得
+	std::string usemtl_name =
+		p_data->m_usemtl_name_list[sub_num];
+
+	// マテリアル情報取得
+	MaterialInfo mtl =
+		p_data->
+		m_material_data_list[usemtl_name];
+
+	// 代入用
+	std::string texture_name = param.texture_name;
+
+	// テクスチャの読み込み
+	is_texture = LoadTexture(mtl.texture_name, texture_name);
+
+	// 3D描画に必要なパラメータをセット
+	Model::Set3DParameter(
+		Graphics::GetInstance(),
+		p_data->m_p_index_buffer,
+		p_data->m_p_vertex_buffer,
+		sizeof(MeshCustomVertex),
+		// マテリアル
+		mtl.material,
+		FVF_CUSTOM
+	);
+
+	UINT now_pass = 0;
+
+	// 現在のパス数取得
+	now_pass = GetUsePass(m_pass_type);
+
+	// テクスチャ用に変更
+	if (is_texture == true) {
+		now_pass++;
+	}
+
+	// 情報受け取り
+	UINT face_start = p_data->
+		m_object_sub_set_list[sub_num].face_start;
+	// 面数
+	UINT face_count = p_data->
+		m_object_sub_set_list[sub_num].face_count;
+
+	// パスの開始
+	p_shader->BeginPass(now_pass);
+
+	// インデックス描画
+	m_p_graphics->GetDevice()->DrawIndexedPrimitive(
+		D3DPT_TRIANGLELIST,
+		// 頂点インデックスオフセット値
+		0,
+		// 描画に使用する最小のインデックス番号を指定(多少無駄にしていいなら0)
+		face_start,
+		// 上引数の最小以降の頂点数を指定
+		face_count * 3,
+		// 描画を開始する頂点インデックスまでのオフセット値を指定
+		face_start,
+		// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
+		face_count
+	);
+	p_shader->EndPass();
+
+}
 
 
 UINT Obj::GetUsePass(const ShaderType&type) {
@@ -233,7 +412,13 @@ UINT Obj::GetUsePass(const ShaderType&type) {
 	case ShaderType::NORMAL:
 		return 0;
 
+	case ShaderType::DEPTH_SHADOW:
+		return 0;
+
 	case ShaderType::DIRECTIONAL:
+		return 0;
+
+	case ShaderType::ZTEXTURE:
 		return 0;
 
 	case ShaderType::DIFFUSE_REFLECTION:
@@ -367,6 +552,12 @@ void Obj::NormalDraw(
 }
 
 
+bool Obj::CheckTexture(const std::string &tex) {
+
+	return TextureManager::GetInstance()->FindTexture(tex);
+}
+
+
 bool Obj::LoadTexture(
 	std::string&mtl_texture_name,
 	std::string&objparam_file_name
@@ -375,15 +566,13 @@ bool Obj::LoadTexture(
 	bool is_texture = false;
 
 	// テクスチャが存在しているなら
-	if (TextureManager::GetInstance()->FindTexture(
+	if (CheckTexture(
 		mtl_texture_name
 	) == true) {
 
 		// テクスチャ管理者からテクスチャ受け取り
 		TextureData texture_data = TextureManager::GetInstance()
-			->GetTextureData(
-				mtl_texture_name
-			);
+			->GetTextureData(mtl_texture_name);
 
 		// シェーダーテクスチャセット
 		m_light_shader.SetTexture(texture_data);
@@ -456,7 +645,8 @@ bool Obj::Load(
 
 	// サイズがないならobjファイルがある階層ディレクトリを取ってくる
 	if (texture_file_path.size() <= 0) {
-		split_file_name = Utility::SplitStr('/', obj_file_path);
+		split_file_name = 
+			Utility::Convert::SplitStr('/', obj_file_path);
 	}
 	else {
 		split_file_name.emplace_back(texture_file_path);
@@ -736,7 +926,7 @@ void Obj::FaceInfoLoad(
 	space_split_str.emplace_back();
 
 	// 空白で文字列分割
-	space_split_str = Utility::SplitStr(' ', load_str);
+	space_split_str = Utility::Convert::SplitStr(' ', load_str);
 
 	int face_num = 0;
 
@@ -749,7 +939,8 @@ void Obj::FaceInfoLoad(
 		face_info_str[face_num].emplace_back();
 
 		// /で文字列分割
-		face_info_str[face_num] = Utility::SplitStr('/', str);
+		face_info_str[face_num] = 
+			Utility::Convert::SplitStr('/', str);
 
 		// 面数加算
 		face_num++;
@@ -929,7 +1120,8 @@ bool Obj::MaterialFileLoad(
 	{
 
 		// 文字列分割
-		str_list = Utility::SplitStr(' ', load_str);
+		str_list = 
+			Utility::Convert::SplitStr(' ', load_str);
 
 		// 新しいマテリアル
 		if (strcmp(str_list[0].c_str(),"newmtl ") == 0) {

@@ -123,7 +123,9 @@ bool TextureManager::FindTexture(std::string name) {
 }
 
 
-bool TextureManager::FindMultipleTexture(std::string name) {
+bool TextureManager::FindMultipleTexture(
+	std::string name
+) {
 
 	if (m_texture_data3D_list.count(name.c_str()) == 0) {
 		// ファイルが見つからない
@@ -134,7 +136,9 @@ bool TextureManager::FindMultipleTexture(std::string name) {
 }
 
 
-TextureData &TextureManager::GetTextureData(std::string name) {
+TextureData &TextureManager::GetTextureData(
+	std::string name
+) {
 	return *m_texture_data2D_list[name.c_str()];
 }
 

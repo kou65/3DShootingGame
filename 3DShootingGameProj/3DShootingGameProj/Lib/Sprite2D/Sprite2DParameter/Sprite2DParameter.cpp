@@ -20,19 +20,21 @@ Sprite2DParameter::Sprite2DParameter(
 
 	// それぞれのプロパティに代入
 	this->texture_name = texture_name;
-	this->x = x;
-	this->y = y;
-	this->scale_width = scale_width;
-	this->scale_height = scale_height;
+	this->pos.x = x;
+	this->pos.y = y;
+	this->scale.x = scale_width;
+	this->scale.y = scale_height;
 	this->angle = angle;
-	this->ofset_x = ofset_x;
-	this->ofset_y = ofset_y;
-	this->tu = tu;
-	this->tv = tv;
+	this->offset.x = ofset_x;
+	this->offset.y = ofset_y;
+	this->uv.x = tu;
+	this->uv.y = tv;
 	this->color = color;
 	this->type = state_type;
-
+	this->p_tex = nullptr;
 	this->is_uv_slider = false;
+	this->tex_size.x = 0.f;
+	this->tex_size.y = 0.f;
 	this->max_uv_slider.Initialization();
 	this->min_uv_slider.Initialization();
 }

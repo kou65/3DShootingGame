@@ -117,36 +117,6 @@
     <ClCompile Include="Lib\DirectInput\DirectInput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\Declation\VertexDeclation.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\DirectionalLight\Light.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\FogShader\FogShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\NormalShader\NormalShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\ShaderManager\ShaderManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\EffectFileShader\ZTexture\ZTexture.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\FPS\FPS.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -213,9 +183,6 @@
     <ClCompile Include="ObjectSystem\ObjectManager\ObjectManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="RenderState\RenderState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\EndScene\EndScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -229,9 +196,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Scene\TitleScene\TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\Utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Lib\3D\FBX\FbxFile\Fbx.cpp">
@@ -256,6 +220,48 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Manager\FileDataManager\FileDataManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\RenderState\RenderState.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\Declation\VertexDeclation.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\DepthShadowShader\DepthShadowEffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\DirectionalLight\Light.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\FogShader\FogShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\Utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -392,36 +398,6 @@
     <ClInclude Include="Lib\DirectInput\DirectInput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\Declation\VertexDeclation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\DirectionalLight\Light.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\FogShader\FogShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\ShaderManager\ShaderManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\ZTexture\ZTexture.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\FPS\FPS.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -512,9 +488,6 @@
     <ClInclude Include="ObjectSystem\ObjectManager\ObjectManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="RenderState\RenderState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\EndScene\EndScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -530,16 +503,10 @@
     <ClInclude Include="Scene\TitleScene\TitleScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\Utility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\3D\FBX\FbxFile\Fbx.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\Bullet\BulletData\BulletData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\LightData\LightData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\CharacterInterface\CharacterInterface.h">
@@ -572,5 +539,54 @@
     <ClInclude Include="GameApp\Filed\MapData\MapData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\RenderState\RenderState.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\Declation\VertexDeclation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\DepthShadowShader\DepthShadowEffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\DirectionalLight\Light.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\FogShader\FogShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\LightData\LightData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Utility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\3DModel\Cube2.x" />
+    <None Include="Resource\3DModel\Plate.x" />
   </ItemGroup>
 </Project>

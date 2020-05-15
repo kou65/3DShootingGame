@@ -169,6 +169,14 @@
     <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Manager\ManagerControlOffcer\ManagerControlOffcer.cpp">
       <SubType>
       </SubType>
@@ -199,16 +207,16 @@
     <ClCompile Include="Lib\DirectInput\DirectInput.cpp" />
     <ClCompile Include="Lib\DirectInput\JoyStick\JoyStick.cpp" />
     <ClCompile Include="Lib\DirectInput\KeyBoard\KeyBoard.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\Declation\VertexDeclation.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\DirectionalLight\Light.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\FogShader\FogShader.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\NormalShader\NormalShader.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\ShaderManager\ShaderManager.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.cpp" />
-    <ClCompile Include="Lib\EffectFileShader\ZTexture\ZTexture.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\Declation\VertexDeclation.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\DepthShadowShader\DepthShadowEffectFile.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\DirectionalLight\Light.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\FogShader\FogShader.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.cpp" />
     <ClCompile Include="Lib\FPS\FPS.cpp" />
     <ClCompile Include="Lib\Graphics\Graphics.cpp" />
     <ClCompile Include="Lib\Lib\Lib.cpp" />
@@ -233,13 +241,13 @@
     <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp" />
     <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp" />
     <ClCompile Include="ObjectSystem\ObjectManager\ObjectManager.cpp" />
-    <ClCompile Include="RenderState\RenderState.cpp" />
+    <ClCompile Include="Lib\RenderState\RenderState.cpp" />
     <ClCompile Include="Scene\EndScene\EndScene.cpp" />
     <ClCompile Include="Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneBase\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene\TitleScene.cpp" />
-    <ClCompile Include="Utility\Utility.cpp" />
+    <ClCompile Include="Lib\Utility\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h" />
@@ -281,6 +289,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Manager\ManagerControlOffcer\ManagerControlOffcer.h">
       <SubType>
       </SubType>
@@ -317,20 +333,20 @@
     <ClInclude Include="Lib\DirectInput\DirectInput.h" />
     <ClInclude Include="Lib\DirectInput\JoyStick\JoyStick.h" />
     <ClInclude Include="Lib\DirectInput\KeyBoard\KeyBoard.h" />
-    <ClInclude Include="Lib\EffectFileShader\Declation\VertexDeclation.h" />
-    <ClInclude Include="Lib\EffectFileShader\DepthShadowShader\DepthShadowEffectFile.h" />
-    <ClInclude Include="Lib\EffectFileShader\DirectionalLight\Light.h" />
-    <ClInclude Include="Lib\EffectFileShader\FogShader\FogShader.h" />
-    <ClInclude Include="Lib\EffectFileShader\LightData\LightData.h">
+    <ClInclude Include="Lib\Shader\ShaderFunc\Declation\VertexDeclation.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\DepthShadowShader\DepthShadowEffectFile.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\DirectionalLight\Light.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\FogShader\FogShader.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\LightData\LightData.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\EffectFileShader\NormalShader\NormalShader.h" />
-    <ClInclude Include="Lib\EffectFileShader\ShaderBase\EffectFileBase.h" />
-    <ClInclude Include="Lib\EffectFileShader\ShaderManager\ShaderManager.h" />
-    <ClInclude Include="Lib\EffectFileShader\StandardTransformShader\StandardTransformShader.h" />
-    <ClInclude Include="Lib\EffectFileShader\VertexBlendShader\VertexBlendEffectFile.h" />
-    <ClInclude Include="Lib\EffectFileShader\ZTexture\ZTexture.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.h" />
     <ClInclude Include="Lib\FPS\FPS.h" />
     <ClInclude Include="Lib\Graphics\Graphics.h" />
     <ClInclude Include="Lib\Lib\Lib.h" />
@@ -363,13 +379,17 @@
     <ClInclude Include="ObjectSystem\ObjectData\ObjectData.h" />
     <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h" />
     <ClInclude Include="ObjectSystem\ObjectManager\ObjectManager.h" />
-    <ClInclude Include="RenderState\RenderState.h" />
+    <ClInclude Include="Lib\RenderState\RenderState.h" />
     <ClInclude Include="Scene\EndScene\EndScene.h" />
     <ClInclude Include="Scene\GameScene\GameScene.h" />
     <ClInclude Include="Scene\SceneBase\SceneBase.h" />
     <ClInclude Include="Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene\TitleScene.h" />
-    <ClInclude Include="Utility\Utility.h" />
+    <ClInclude Include="Lib\Utility\Utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\3DModel\Cube2.x" />
+    <None Include="Resource\3DModel\Plate.x" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,7 @@
 #include"../../GameApp/Filed/MapData/MapData.h"
 #include<vector>
 #include<unordered_map>
+#include<map>
 
 
 
@@ -357,7 +358,7 @@ private:
 		std::vector<MapObjectBase*>>>m_map;
 
 	//! ピースリスト
-	std::unordered_map<PieceTag, std::vector<int>>m_piece_list;
+	std::map<PieceTag, std::vector<int>>m_piece_list;
 
 	//! 乱数結果リスト
 	std::vector<int>m_result_rand_list;

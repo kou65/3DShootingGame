@@ -1,7 +1,7 @@
 ﻿#include"FBX.h"
 #include"../../../Window/Window.h"
 #include"../../../Texture/TextureManager/TextureManager.h"
-#include"../../../../Utility/Utility.h"
+#include"../../../../Lib/Utility/Utility.h"
 #include"../../../Graphics/Graphics.h"
 #include"../../VertexBuffer/VertexBuffer.h"
 #include"../../../D3DFont/D3DFont.h"
@@ -903,7 +903,8 @@ bool Fbx::LoadTexture(
 
 		// ファイルパス分割
 		std::vector<std::string>string_list;
-		string_list = Utility::SplitStr('/', p_file_name);
+		string_list =
+			Utility::Convert::SplitStr('/', p_file_name);
 
 		strcpy_s(path, m_root_path.c_str());
 		strcat_s(path, string_list.back().c_str());
@@ -915,7 +916,8 @@ bool Fbx::LoadTexture(
 	if (p_file_name[0] == 'D') {
 		// ファイルパス分割
 		std::vector<std::string>string_list;
-		string_list = Utility::SplitStr('\\', p_file_name);
+		string_list = 
+			Utility::Convert::SplitStr('\\', p_file_name);
 
 		// テクスチャ登録名を保存
 		str_path = 
@@ -1006,12 +1008,12 @@ void Fbx::LoadEntryTexture(
 		if(strstr(file_tex_file_name.c_str(),"\\") !=NULL){
 
 			string_list = 
-				Utility::SplitStr('\\', file_tex_file_name);
+				Utility::Convert::SplitStr('\\', file_tex_file_name);
 		}
 		else if(strstr(file_tex_file_name.c_str(), "/") != NULL) {
 
 			string_list = 
-				Utility::SplitStr('/', file_tex_file_name);
+				Utility::Convert::SplitStr('/', file_tex_file_name);
 		}
 		
 
@@ -1337,7 +1339,7 @@ void Fbx::LoadCurrentPath(const std::string &path_name) {
 
 	// ファイルパス分割
 	std::vector<std::string>string_list;
-	string_list = Utility::SplitStr('/', path_name);
+	string_list = Utility::Convert::SplitStr('/', path_name);
 
 	for (unsigned int i = 0; i < string_list.size() - 1; i++) {
 		m_root_path += string_list[i];

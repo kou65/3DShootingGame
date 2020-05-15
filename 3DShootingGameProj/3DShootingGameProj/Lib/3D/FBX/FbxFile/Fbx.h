@@ -9,8 +9,8 @@
 #include"../../../Graphics/Graphics.h"
 #include"../../../Texture/TextureData2D/TextureData2D.h"
 #include"../../Model/Model.h"
-#include"../../../EffectFileShader/VertexBlendShader/VertexBlendEffectFile.h"
-#include"../../../EffectFileShader/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../../../Shader/ShaderFunc/VertexBlendShader/VertexBlendEffectFile.h"
+#include"../../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
 
 
 #pragma comment(lib,"libfbxsdk.lib")

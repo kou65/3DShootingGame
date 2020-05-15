@@ -490,7 +490,7 @@ void Graphics::UnlockVertexBuffer(
 }
 
 
-D3DXMATRIX Graphics::GetTransformDataMatrix(
+D3DXMATRIX Graphics::GetTSMatrix(
 	const D3DTRANSFORMSTATETYPE&type
 ) {
 

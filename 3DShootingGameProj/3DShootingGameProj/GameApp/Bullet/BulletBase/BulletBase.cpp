@@ -1,5 +1,5 @@
 #include"BulletBase.h"
-#include"../../../Lib/Math/Math.h"
+#include"../../../Lib/Utility/Utility.h"
 
 
 
@@ -19,10 +19,10 @@ void BulletBase::Limit(Vec3&vec) {
 
 	Vec3 d_l;
 
-	d_l = Math::GetVec1ToVec2(vec, m_pos);
+	d_l = Utility::Math::GetVec1ToVec2(vec, m_pos);
 
 	// ‹——£Š„‚èo‚µ
-	float l = Math::GetLength(d_l);
+	float l = Utility::Math::GetLength(d_l);
 
 	if (l >= m_limit_distance.x ||
 		l >= m_limit_distance.y ||

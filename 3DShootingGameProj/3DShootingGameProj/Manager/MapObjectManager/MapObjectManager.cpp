@@ -2,7 +2,7 @@
 #include"../../GameApp/Filed/ClearBlock/ClearBlock.h"
 #include"../../GameApp/Enemy/HomingBulletEnemy/HomingBulletEnemy.h"
 #include"../../GameApp/Enemy/ShotgunEnemy/ShotgunEnemy.h"
-#include"../../Utility/Utility.h"
+#include"../../Lib/Utility/Utility.h"
 
 
 
@@ -418,7 +418,7 @@ PieceTag MapObjectManager::ResultRandomPieceTag() {
 
 	// 第一乱数数値取得
 	int rand_num = 
-		Utility::GetIntRandom(min,max);
+		Utility::Random::GetIntRandom(min,max);
 
 	PieceTag tag;
 

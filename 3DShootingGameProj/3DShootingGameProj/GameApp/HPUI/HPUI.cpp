@@ -49,8 +49,8 @@ void HPUI::Draw() {
 
 
 	m_sprite_param.texture_name = "hp_gauge";
-	m_sprite_param.x = 1500.f;
-	m_sprite_param.y = 50.f;
+	m_sprite_param.pos.x = 1500.f;
+	m_sprite_param.pos.y = 50.f;
 
 	Sprite2DUser::GetInstance()->BoardDraw(m_sprite_param);
 }

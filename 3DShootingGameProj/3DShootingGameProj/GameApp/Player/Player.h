@@ -220,6 +220,9 @@ private:
 	//! ダメージエフェクトモード
 	bool m_is_effect_mode;
 
+	//! デバッグモード
+	bool m_is_debug_mode;
+
 	//! カラー
 	D3DXVECTOR4 m_color;
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"../Sprite2DParameter/Sprite2DParameter.h"
 #include"../../UV/UvSlider/UvSlider.h"
+#include"../../Texture/TextureData2D/TextureData2D.h"
 #include<map>
 #include<memory>
 
@@ -36,6 +37,14 @@ private:
 
 	// デフォルト
 	Sprite2DUser() {};
+
+	// uvセット
+	void SetUv(
+		Sprite2DParameter&data,
+		const TextureData&tex_data,
+		Vec2 &out_graph_size,
+		UvRect&rect
+	);
 
 private:
 

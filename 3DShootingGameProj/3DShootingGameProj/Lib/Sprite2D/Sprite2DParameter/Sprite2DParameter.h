@@ -9,7 +9,6 @@
 // テクスチャのプロパティを設定する構造体
 
 
-
 struct Sprite2DParameter {
 
 
@@ -17,7 +16,7 @@ struct Sprite2DParameter {
 	Sprite2DParameter(
 		float x = 0.f,
 		float y = 0.f,
-		const char * texture_name = NULL,
+		const char * texture_name = "",
 		float scale_width = 1.f,
 		float scale_height = 1.f,
 		float angle = 0.f,
@@ -33,43 +32,31 @@ struct Sprite2DParameter {
 	// 取り出すテクスチャ名(登録時の名前)
 	const char*texture_name;
 
-	// x座標
-	float x;
+	// テクスチャポインタ
+	IDirect3DTexture9*p_tex;
 
-	// y座標
-	float y;
+	// 調整用テクスチャサイズ(初期状態の画像の拡縮,通常は使わない)
+	Vec2 tex_size;
 
-	// 横の拡縮
-	float scale_width;
+	// 座標
+	Vec2 pos;
 
-	// 縦の拡縮
-	float scale_height;
-
-	// 横の画像の大きさ
-	float width_size;
-
-	// 縦の画像の大きさ
-	float height_size;
+	// 拡縮(累乗拡縮)
+	Vec2 scale;
 
 	// 角度
 	float angle;
 
-	// オフセットx(描画頂点をずらす)
-	float ofset_x;
-
-	// オフセットy
-	float ofset_y;
+	// オフセット
+	Vec2 offset;
 
 	// アニメーション用のパラメータ
 	AnimationParamter animation_param;
 
 	bool is_uv_slider;
 
-	// テクスチャ座標のu軸をずらす
-	float tu;
-
-	// テクスチャ座標のv軸をずらす
-	float tv;
+	// uv値(ずらす用)
+	Vec2 uv;
 
 	// スライダー用
 	Vec2 max_uv_slider;

@@ -19,7 +19,8 @@ Player::Player(
 	m_p_camera_3d = camera_3d;
 	m_p_obj_factory = bullet_factory;
 
-	std::shared_ptr<Camera3D>p_camera = m_p_camera_3d.lock();
+	std::shared_ptr<Camera3D>p_camera 
+		= m_p_camera_3d.lock();
 
 	// カメラ位置を補正
 	p_camera->SetPos(Vec3(
@@ -39,6 +40,9 @@ Player::Player(
 
 	// エフェクトモード
 	m_is_effect_mode = false;
+
+	// デバッグモード
+	m_is_debug_mode = false;
 
 	// カラー代入
 	m_color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
@@ -70,7 +74,9 @@ void Player::Update() {
 	MoveByKey();
 
 	// 前へ移動
-	MoveFront();
+	if (m_is_debug_mode == false) {
+		MoveFront();
+	}
 
 	// キー回転
 	RotationByKey();
@@ -119,6 +125,7 @@ void Player::Draw() {
 
 
 void Player::HitAction(const CollisionObjectType&type) {
+
 
 	// 敵の弾なら
 	if (type == CollisionObjectType::ENEMY_BULLET) {
@@ -190,16 +197,6 @@ void Player::MoveByKey() {
 	// キーボード操作
 	{
 
-		// 前後移動
-		if (KeyBoard::IsKeyPushing(DIK_V)) {
-			p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
-			m_move.z = PLAYER_SPEED;
-		}
-		else if (KeyBoard::IsKeyPushing(DIK_SPACE)) {
-			p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
-			m_move.z = -PLAYER_SPEED;
-		}
-
 		// 上下
 		if (KeyBoard::IsKeyPushing(DIK_UP)) {
 			m_move.y = HEIGHT_SPEED;
@@ -216,6 +213,38 @@ void Player::MoveByKey() {
 			m_move.x = -WIDTH_SPEED;
 		}
 
+
+		// デバッグモード
+		if (m_is_debug_mode == true) {
+
+			// 前後移動
+			if (KeyBoard::IsKeyPushing(DIK_V)) {
+				p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, PLAYER_SPEED));
+				m_move.z = PLAYER_SPEED;
+			}
+			else if (KeyBoard::IsKeyPushing(DIK_SPACE)) {
+				p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -PLAYER_SPEED));
+				m_move.z = -PLAYER_SPEED;
+			}
+
+			// 上下
+			if (KeyBoard::IsKeyPushing(DIK_UP)) {
+				p_camera->AddMove(D3DXVECTOR3(0.f, HEIGHT_SPEED,0.f));
+			}
+			else if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
+				p_camera->AddMove(D3DXVECTOR3(0.f, -HEIGHT_SPEED, 0.f));
+			}
+
+			// 左右
+			if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
+				p_camera->AddMove(D3DXVECTOR3(WIDTH_SPEED,0.f, 0.f));
+			}
+			else if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
+				p_camera->AddMove(D3DXVECTOR3(-WIDTH_SPEED,0.f, 0.f));
+				m_move.x = -WIDTH_SPEED;
+			}
+		}
+
 	}
 }
 
@@ -225,22 +254,26 @@ void Player::RotationByKey() {
 	std::shared_ptr<Camera3D>p_camera =
 		m_p_camera_3d.lock();
 
+	Vec3 rot_num;
+
 	// 回転
 	if (KeyBoard::IsKeyPushing(DIK_D)) {
-		p_camera->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
-		m_vec_rot.x++;
+		rot_num.x++;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_A)) {
-		p_camera->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
-		m_vec_rot.x--;
+		rot_num.x--;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_W)) {
-		p_camera->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
-		m_vec_rot.y--;
+		rot_num.y--;
 	}
 	if (KeyBoard::IsKeyPushing(DIK_S)) {
-		p_camera->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
-		m_vec_rot.y++;
+		rot_num.y++;
+	}
+
+	m_vec_rot += rot_num;
+
+	if (m_is_debug_mode == true) {
+		p_camera->AddRotation(rot_num);
 	}
 }
 
@@ -342,6 +375,11 @@ float Player::GetHp() {
 
 bool Player::IsDeath() {
 
+	// デバッグモードなら死なない
+	if (m_is_debug_mode == true) {
+		return false;
+	}
+
 	// hpがないなら活動停止
 	if (GetHp() <= 0) {
 		return true;
@@ -427,7 +465,6 @@ void Player::ShotBullet() {
 		// 加算
 		m_shot_timer++;
 	}
-
 }
 
 
@@ -435,13 +472,12 @@ void Player::ShotBreakBullet() {
 	// Sキーで撃つ
 	if (KeyBoard::IsKeyPushing(DIK_Z)) {
 
-
+		// 3点に撃つ
 		const float BULLET_DIR_Y[3] = {
 			355.f,
 			0.f,
 			5.f
 		};
-
 
 		// 弾を撃つ間隔
 		if (m_shot_timer >= SHOT_INTERVAL) {

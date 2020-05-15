@@ -1,5 +1,5 @@
 ﻿#include"../LoadResource/LoadResource.h"
-#include"../RenderState/RenderState.h"
+#include"../Lib/RenderState/RenderState.h"
 #include"../Debugger/Debugger.h"
 #include"../Lib/DirectInput/DirectInput.h"
 #include"../Lib/Sound/Sound.h"
@@ -10,7 +10,7 @@
 #include"../Scene/SceneManager/SceneManager.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/3D/ShapeIndex/PlaneIndex/PlaneIndex.h"
-
+#include"../Lib/Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
 
 
 
@@ -32,21 +32,28 @@ int WINAPI WinMain(
 	// 背景を青にする
 	Graphics::GetInstance()->SetClearBackGroundColor(0x0000ff);
 
+	// Zテクスチャ読み込み
+	FuncZTexture::Create();
+
 	// リソース読み込み
 	LoadResources::Load();
+	
+	// デバッグ初期化
+	Debugger::GetInstance().Init();
 
 	// DirectX描画状態の設定
 	RenderState::AllOn();
 	RenderState::LightMode(false);
 
 	// ブレンドオン
-	Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
+	Graphics::GetInstance()->
+		GetDevice()->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
 
 	// シーン管理者
 	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
 
 	// デバッグモード
-	bool is_debug_mode = false;
+	bool is_debug_mode = true;
 
 	// ループ
 	while (Window::ProcessMessage() == true) {
@@ -61,6 +68,9 @@ int WINAPI WinMain(
 
 		// キーボード更新
 		KeyBoard::Update();
+
+		// Zテクスチャ管理者更新
+		//ZTextureManager::GetInstance()->Update();
 
 		// デバッグテスト
 		if (is_debug_mode == true) {

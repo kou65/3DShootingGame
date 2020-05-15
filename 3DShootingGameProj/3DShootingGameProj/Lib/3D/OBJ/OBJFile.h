@@ -5,13 +5,14 @@
 #include<vector>
 #include"../Object3DCustomVertex/MeshCustomVertex.h"
 #include<unordered_map>
-#include"../../../Utility/Utility.h"
+#include"../../../Lib/Utility/Utility.h"
 #include"../Model/Model.h"
 #include"../../Vec3/Vec3.h"
-#include"../../EffectFileShader/NormalShader/NormalShader.h"
-#include"../../EffectFileShader/DirectionalLight/Light.h"
-#include"../../EffectFileShader/ZTexture/ZTexture.h"
-#include"../../EffectFileShader/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../../Shader/ShaderFunc/NormalShader/NormalShader.h"
+#include"../../Shader/ShaderFunc/DirectionalLight/Light.h"
+#include"../../Shader/ShaderFunc/ZTexture/ZTexture.h"
+#include"../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../../Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
 
 
 // HACK リファクタリング対象(複数のstructなど)
@@ -68,6 +69,9 @@ struct ObjParameter {
 	//! 影データ
 	ShadowData shadow_data;
 
+	//! zテクスチャを書き込むかどうか
+	bool is_z_tex_write;
+
 	//! obj登録名
 	std::string register_obj_file_name;
 
@@ -100,6 +104,15 @@ struct ObjFileData {
 	IDirect3DIndexBuffer9 * m_p_index_buffer;
 };
 
+
+/**
+* @brief 描画種類
+*/
+enum class DrawStatus {
+	NORMAL,
+	LIGHT,
+	SHADOW,
+};
 
 
 /**
@@ -154,7 +167,7 @@ public:
 	* @brief zテクスチャ描画
 	* @param[in] param objパラメータ構造体
 	*/
-	void ZTextureDraw(
+	void ZTextureWrite(
 		const ObjParameter&param
 	);
 
@@ -185,7 +198,61 @@ public:
 		const ObjParameter &param
 	);
 
+
+	/**
+	* @brief 描画用パラメータを追加
+	*/
+	void EntryObjParam(
+		const ObjParameter&param,
+		DrawStatus&type
+	);
+
+
+	/**
+	* @brief 描画用パラメータ描画開始
+	*/
+	void DrawObjParam();
+
+
+	/**
+	* @brief シェーダーをパスごとに描画する
+	*/
+	void DrawBeginPassShader(
+		ShaderBase*p_shader,
+		ObjFileData*p_data,
+		const ObjParameter&param,
+		const UINT&current_pass,
+		int sub_num
+	);
+
+
+	/**
+	* @brief メッシュごとに描画する描画サブセット内部処理
+	*/
+	void DrawSubSet(
+		const ObjParameter&param,
+		const DrawStatus&state,
+		int sub_set_number
+	);
+
+
+	/**
+	* @brief メッシュごとに描画するサブセット外部シェーダー処理
+	*/
+	void DrawSubSet(
+		const ObjParameter&param,
+		ShaderBase*p_shader,
+		int sub_set_number
+	);
+
 private:
+
+
+	/**
+	* @brief 現在のテクスチャをチェックする
+	* @param[in] チェックするテクスチャ
+	*/
+	bool CheckTexture(const std::string &tex);
 
 
 	/**
@@ -194,6 +261,15 @@ private:
 	* @param[in] shader シェーダーポインタ
 	*/
 	void ShaderParameterDraw(
+		const ObjParameter &param,
+		ShaderBase*p_shader
+	);
+
+
+	/**
+	* @brief beginなしシェーダーパラメータ描画
+	*/
+	void DrawShader(
 		const ObjParameter &param,
 		ShaderBase*shader
 	);
@@ -213,7 +289,7 @@ private:
 	*/
 	void Update(
 		const ObjParameter&param,
-		StandardTransformShader*shader
+		StandardTSShader*shader
 	);
 
 
@@ -425,17 +501,17 @@ private:
 	//! オブジェファイルリスト
 	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
 
+	//! オブジェクトパラメータリストを登録(後で一気に描画する、毎回削除)
+	std::unordered_map<DrawStatus,ObjParameter>m_param_list;
+
 	//! 通常シェーダー
 	NormalShader m_ns;
 
 	//! ライト
 	Light m_light_shader;
 
-	//! z値計算用
-	ZTexture m_z_tex;
-
 	//! 影
-	DepthShadowShader m_shadow_shader;
+	DepthShadowShader m_shadow;
 
 	//! ライトパスタイプ
 	ShaderType m_pass_type;

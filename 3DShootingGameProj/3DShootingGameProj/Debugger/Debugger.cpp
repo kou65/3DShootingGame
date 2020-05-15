@@ -4,15 +4,22 @@
 #include"../Lib/Sprite2D/Sprite2DParameter/Sprite2DParameter.h"
 #include"../Lib/3D/Sprite3D/Sprite3DParameter/Sprite3DParameter.h"
 #include"../Lib/3D/Sprite3D/Sprite3D/Sprite3DUser.h"
-#include"../RenderState/RenderState.h"
+#include"../Lib/RenderState/RenderState.h"
 #include"../Lib/3D/XFile/XFile.h"
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/Texture/TextureManager/TextureManager.h"
 #include"../GameApp/GameConstant/GameConstant.h"
+#include"../Lib/Shader/ShaderFunc/ZTexture/ZTextureManager/ZTextureManager.h"
+#include"../Lib/Math/Math.h"
 
 
 
 Debugger::Debugger() {
+
+}
+
+
+void Debugger::Init() {
 
 	// デバイス取得
 	m_p_device = Graphics::GetInstance()->GetDevice();
@@ -30,15 +37,15 @@ Debugger::Debugger() {
 	data.is_debug = true;
 
 	// カメラ
-	m_p_camera = new Camera3D(Camera3D::FPS,data);
+	m_p_camera = new Camera3D(Camera3D::FPS, data);
 	m_p_camera->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 
 	// シェーダー初期化
-	InitShader();
+	InitXFileShader();
 
 	// 立方体と板オブジェクトの読み込み
 	ID3DXBuffer *cpMatBuf;
-	
+
 	// xファイル読み込み
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Cube2.x"),
@@ -46,8 +53,8 @@ Debugger::Debugger() {
 		m_p_device,
 		NULL,
 		&cpMatBuf,
-		NULL, 
-		&dwMatNum, 
+		NULL,
+		&dwMatNum,
 		&cpMeshCube))) {
 		return;
 	}
@@ -66,6 +73,9 @@ Debugger::Debugger() {
 		return;
 	}
 
+	// スプライト生成
+	CreateSprite();
+
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
@@ -73,10 +83,60 @@ Debugger::Debugger() {
 	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan.fbx");
+}
 
 
-	// 背景を青にする
-	Graphics::GetInstance()->SetClearBackGroundColor(0x0000ff);
+void Debugger::InitXFileShader() {
+
+	/*
+	カメラのセットとライトのセットを行っている
+	シャドウの初期化はほとんど行っている
+	*/
+
+
+	// シャドウの初期化
+	m_p_shadow =
+		new DepthShadowShader();
+
+
+	// ビュー・射影変換行列を初期化して固定情報として登録する
+	D3DXMATRIX CameraView, CameraProj;
+	D3DXMATRIX LightView, LightProj;
+
+	float LightScale = 1.5f;
+
+	// カメラ射影
+	D3DXMatrixPerspectiveFovLH(&CameraProj,
+		D3DXToRadian(45), 640.0f / 480.0f, 10.0f, 1000.0f);
+
+	
+	// デバイスのカメラ情報送信
+	m_p_shadow->CommitDeviceViewProj();
+
+	// zテクスチャのテクスチャをシャドウにセット
+
+	ZTexture *tex =
+		ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		);
+
+	
+
+	m_p_shadow->SetShandowMap(tex->GetZTexture());
+
+	// シャドウ初期化
+	m_p_shadow->Init();
+
+}
+
+
+
+void Debugger::CreateSprite() {
+	// Z値テクスチャ描画用のスプライト生成
+	D3DXCreateSprite(
+		Graphics::GetInstance()->GetDevice(),
+		&cpSprite
+	);
 
 }
 
@@ -113,38 +173,238 @@ void Debugger::Update() {
 
 void Debugger::Draw() {
 
-	// ライトオン
-	//light->On();
+	// Xfile影
+	{
+		// objではない
+	//tex->ResetDecl();
+	//m_p_shadow->ResetDecl();
+		//XFileZTextureWrite();
+		//XFileShadowDraw();
+		
+	}
 
-	// 影
-	//ZTextureDraw();
-	//ShadowDraw();
+	// Obj影
+	{
+		ObjShadowDraw();
+	}
+
+	// OBJライト
+	//LightDebugDraw();
+
+	// fbx描画
+	//Fbx::GetInstance()->Draw();
+
 
 	m_p_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
 	m_p_camera->TransformDraw();
 
+	{
+		// Z値テクスチャ
+		ZTexture *p_tex = ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		);
+
+		// お試し画像
+		TextureData p_tex_data = TextureManager::GetInstance()->GetTextureData("ground");
+
+		// z値描画
+		//{
+		//	
+		//	ZTextureDraw(
+		//		p_tex->GetZTexture(),
+		//		Vec2(1000.f, 200.f)
+		//	);
+		//}
+
+		// スプライトを使った
+		{
+			// 比率
+			float Ratio = 1.f;
+			//////////////////////////////////
+			//■パス3 : Z値テクスチャを描画
+			D3DXMATRIX SpriteScaleMat;
+			D3DXMatrixScaling(&SpriteScaleMat, Ratio / 3, Ratio / 3, 1.0f);
+			cpSprite->SetTransform(&SpriteScaleMat);
+			cpSprite->Begin(0);
+			cpSprite->Draw(p_tex->GetZTexture(), NULL, NULL, NULL, 0xffffffff);
+			cpSprite->End();
+		}
+	}
+
+	
 	// 地面
-	Sprite3DParameter td(0.f, 0.f, 0.f, "ground");
-	td.scale_width = 1000.f;
-	td.scale_height = 1000.f;
-	td.polygon_dir = FLOOR;
-	td.pos.y = -300.f;
-	td.ofset.x = 0.5f;
-	td.ofset.y = 0.5f;
+	{
+		Sprite3DParameter td(0.f, 0.f, 0.f, "ground");
+		td.scale_width = 1000.f;
+		td.scale_height = 1000.f;
+		td.polygon_dir = FLOOR;
+		td.pos.y = -300.f;
+		td.ofset.x = 0.5f;
+		td.ofset.y = 0.5f;
 
-	Sprite3DUser sprite_3d;
+		Sprite3DUser sprite_3d;
 
-	sprite_3d.BoardDraw(
-		td
+		sprite_3d.BoardDraw(
+			td
+		);
+	}
+}
+
+
+// 描画が上書きされてしまうのは多分ビギンをもう一回行っているから
+void Debugger::ObjShadowDraw() {
+
+	// 行列
+	D3DXMATRIX mat_camera_view, mat_c_proj;
+	D3DXMATRIX mat_light_view, mat_light_proj;
+
+	// ライト拡縮
+	float mat_light_scale = 1.5f;
+
+	// カメラ射影
+	D3DXMatrixPerspectiveFovLH(
+		// カメラ射影行列
+		&mat_c_proj,
+		// 画角
+		D3DXToRadian(45),
+		// アスペクト比
+		640.0f / 480.0f,
+		// 視推台の最も近い距離()
+		10.0f,
+		// 視推台の最も遠い距離
+		1000.0f
 	);
 
-	//LightDebugDraw();
-	ShadowDraw2();
+	// ライト射影
+	D3DXMatrixPerspectiveFovLH(
+		// ライト射影行列
+		&mat_light_proj,
+		// 画角
+		D3DXToRadian(45),
+		// アスペクト比
+		1.0f,
+		// 視推台の最も近い距離
+		40.0f,
+		// 視推台の最も遠い距離
+		300.0f
+	);
 
-	// fbx描画
-		Fbx::GetInstance()->Draw();
+
+	D3DXVECTOR3 defa(
+		mat_light_scale * 100,
+		mat_light_scale * 100,
+		mat_light_scale * 100);
+
+	D3DXVECTOR3 vec3(
+		0.f,
+		150.f,
+		0.f
+	);
+
+	D3DXVECTOR3 look(
+		0.f,
+		-20.f,
+		0.f
+	);
+
+	// ライトビュー
+	D3DXMatrixLookAtLH(
+		// ライトビュー行列
+		&mat_light_view,
+		// カメラの位置座標
+		&defa,
+		// 注視点座標ポインタ
+		&look,
+		// アップベクトル
+		&D3DXVECTOR3(0, 1, 0)
+	);
+
+	ObjParameter param;
+	param.pos = vec3;
+	param.register_obj_file_name =
+		Const::Obj::PLAYER;
+
+	// カメラ位置を描画
+	Obj::GetInstance()->ShaderDraw(param);
+
+	param.pos = look;
+	param.register_obj_file_name =
+		Const::Obj::ENEMY_BULLETER;
+
+	// カメラ位置を描画
+	Obj::GetInstance()->ShaderDraw(param);
+
+	D3DXMATRIX mat_c_view;
+
+	// ビュー行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_VIEW, &mat_c_view);
+
+	ObjParameter z_tex_p;
+	UINT pass;
+
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->Begin(pass,0);
+
+	{
+		z_tex_p.register_obj_file_name = Const::Obj::CUBE;
+
+		z_tex_p.pos.y = 60.f;
+		z_tex_p.pos.x = 0.f;
+		z_tex_p.pos.z = 0.f;
+
+		// ライトデータ
+		z_tex_p.light_data = m_light_data;
+
+		// ライト射影
+		z_tex_p.shadow_data.light_proj = mat_light_proj;
+		z_tex_p.shadow_data.light_view = mat_light_view;
+
+		// カメラセット
+		z_tex_p.shadow_data.camera_view = mat_c_view;
+		z_tex_p.shadow_data.camera_proj = mat_c_proj;
+	}
+
+	// 一個目書き込み
+	Obj::GetInstance()->ZTextureWrite(z_tex_p);
+
+	// オブジェパラメータ
+	ObjParameter shadow_p;
+
+	{
+
+		shadow_p.register_obj_file_name = Const::Obj::PLANE;
+		shadow_p.light_data = m_light_data;
+		
+		// ライト
+		shadow_p.shadow_data.light_proj = mat_light_proj;
+		shadow_p.shadow_data.light_view = mat_light_view;
+
+		// カメラセット(変更)
+		shadow_p.shadow_data.camera_proj = mat_c_proj;
+		shadow_p.shadow_data.camera_view = mat_c_view;
+		
+
+		// 位置
+		shadow_p.pos.y = 20.f;
+		shadow_p.scale.x = 30.f;
+		shadow_p.scale.z = 30.f;
+	}
+
+	// 2個目書き込み(データを送るところでやらかしているかも)
+	Obj::GetInstance()->ZTextureWrite(shadow_p);
+
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->End();
+
+
+	Obj::GetInstance()->ShadowDraw(z_tex_p);
+	Obj::GetInstance()->ShadowDraw(shadow_p);
 
 }
+
 
 
 void Debugger::LightDebugDraw() {
@@ -189,255 +449,194 @@ void Debugger::LightDebugDraw() {
 }
 
 
-void Debugger::ShadowDraw2() {
+void Debugger::ZTextureDraw(
+	IDirect3DTexture9*p_tex,
+	Vec2 pos,
+	Vec2 scale
+) {
 
-	D3DXMATRIX CameraView, CameraProj;
-	D3DXMATRIX LightView, LightProj;
+	Sprite2DParameter param;
 
-	float LightScale = 1.5f;
+	param.pos.x = pos.x;
+	param.pos.y = pos.y;
 
-	// カメラ射影
-	D3DXMatrixPerspectiveFovLH(&CameraProj,
-		D3DXToRadian(45), 640.0f / 480.0f, 10.0f, 1000.0f);
+	param.tex_size.x = scale.x;
+	param.tex_size.y = scale.y;
 
-	// ライト射影
-	D3DXMatrixPerspectiveFovLH(&LightProj,
-		D3DXToRadian(40), 1.0f, 40.0f, 300.0f);
+	param.p_tex = p_tex;
 
-	// ライトビュー
-	D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
-		LightScale * 100,
-		LightScale * 55,
-		LightScale * 100),
-		&D3DXVECTOR3(0, -20, 0),
-		&D3DXVECTOR3(0, 1, 0)
+	// Zテクスチャをスプライト表示
+	Sprite2DUser::GetInstance()->BoardDraw(
+		param
 	);
+}
 
 
-	//Graphics::GetInstance()->GetDevice()->SetTransform(
-	//	D3DTS_VIEW,
-	//	&LightView
-	//);
-	//
-	//Graphics::GetInstance()->GetDevice()->SetTransform(
-	//	D3DTS_PROJECTION,
-	//	&LightProj
-	//);
+void Debugger::XFileZTextureWrite() {
 
+	// 初期位置決定
+	m_cube_pos = Vec3(0.f, 40.f, 0.f);
+	m_plate_pos = Vec3(0.f, 10.f, 0.f);
 
-	D3DXMATRIX view, proj;
+	ZTexture*p_z_tex
+		= ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		);
 
-	// ビュー行列
-	Graphics::GetInstance()->GetDevice()
-		->GetTransform(D3DTS_VIEW, &view);
-
-	// 射影行列 
-	Graphics::GetInstance()->GetDevice()
-		->GetTransform(D3DTS_PROJECTION, &proj);
-
-	ObjParameter param1;
+	// デプスと同じライト情報を入れる
 	{
-		param1.register_obj_file_name = Const::Obj::CUBE;
-		param1.pos.y = 60.f;
-		param1.pos.x = 0.f;
-		param1.pos.z = 0.f;
-
-		// ライトデータ
-		param1.light_data = m_light_data;
+		float LightScale = 1.5f;
+		D3DXMATRIX LightProj, LightView;
 
 		// ライト射影
-		param1.shadow_data.light_proj = LightProj;
-		param1.shadow_data.light_view = LightView;
+		D3DXMatrixPerspectiveFovLH(&LightProj,
+			D3DXToRadian(40), 1.0f, 40.0f, 300.0f);
 
-		// カメラセット
-		param1.shadow_data.camera_view = view;
-		param1.shadow_data.camera_proj = CameraProj;
+		// ライトビュー
+		D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
+			LightScale * 100,
+			LightScale * 100,
+			LightScale * 100),
+			&D3DXVECTOR3(0, -60, 0),
+			&D3DXVECTOR3(0, 1, 0)
+		);
+
+		// 現在のカメラ情報セット
+		p_z_tex->SetViewMatrix(
+			LightView
+		);
+
+		p_z_tex->SetProjMatrix(
+			LightProj
+		);
+
 	}
-
-	// 描画
-	Obj::GetInstance()->ZTextureDraw(param1);
-
-
-	ObjParameter param2;
-	{
-		float f = 0.20f;
-
-		param2.register_obj_file_name = Const::Obj::PLANE;
-		
-		param2.shadow_data.camera_view = view;
-		param2.shadow_data.light_proj = LightProj;
-		param2.shadow_data.light_view = LightView;
-		param2.pos.y = 20.f;
-		param2.scale.x = 20.f;
-		param2.scale.z = 20.f;
-
-		// カメラセット
-		param2.shadow_data.camera_view = view;
-		param2.shadow_data.camera_proj = CameraProj;
-	}
-
-	Obj::GetInstance()->ZTextureDraw(param2);
-
-	Obj::GetInstance()->ShadowDraw(param1);
-	Obj::GetInstance()->ShadowDraw(param2);
-
-}
-
-
-void Debugger::InitShader() {
-
-
-	m_z_tex_effect.SetTextureSize(1024, 1024);
-
-	// zテクスチャ初期化
-	m_z_tex_effect.Init(
-	);
-
-	// ビュー・射影変換行列を初期化して固定情報として登録する
-	D3DXMATRIX CameraView, CameraProj;
-	D3DXMATRIX LightView, LightProj;
-
-	float LightScale = 1.5f;
-
-	// カメラ射影
-	D3DXMatrixPerspectiveFovLH(&CameraProj,
-		D3DXToRadian(45), 640.0f / 480.0f, 10.0f, 1000.0f);
-
-	// ライト射影
-	D3DXMatrixPerspectiveFovLH(&LightProj,
-		D3DXToRadian(40), 1.0f, 40.0f, 300.0f);
-
-	// ライトビュー
-	D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
-		LightScale * 20,
-		LightScale * 100,
-		LightScale * 0),
-		&D3DXVECTOR3(0, -60, 0),
-		&D3DXVECTOR3(0, 1, 0)
-	);
-
-	float f = 0.20f;
-
-	// 深度シャドウセット
-	m_shadow_effect.SetLightViewMatrix(LightView);
-	m_shadow_effect.SetLightProjMatrix(LightProj);
-
-	// zテクスチャのテクスチャをシャドウにセット
-	m_p_shadow_tex = m_z_tex_effect.GetZTexture();
-	m_shadow_effect.SetShandowMap(m_p_shadow_tex);
-
-}
-
-
-// 板のワールド変換行列生成
-void GetPlateWorldMatrix(D3DXMATRIX *PlateWorld)
-{
-	float PlateScale = 1.0f;
-	D3DXMATRIX Scale;
-	D3DXMatrixIdentity(PlateWorld);
-	D3DXMatrixScaling(&Scale, PlateScale, 1.0f, PlateScale);
-	*PlateWorld *= Scale;
-	PlateWorld->_42 = -60.0f;
-}
-
-// 立方体のワールド変換行列生成
-void GetCubeWorldMatrix(float f, int x, int z, D3DXMATRIX *mat)
-{
-	D3DXMATRIX RotY, RotZ;
-	D3DXMatrixIdentity(mat);
-	D3DXMatrixRotationY(&RotY, D3DXToRadian(f));
-	D3DXMatrixRotationZ(&RotZ, D3DXToRadian(f*2.353f));
-	*mat *= RotY * RotZ;
-	mat->_41 = x * 20.0f;  mat->_43 = z * 20.0f; mat->_42 = sin(f / 10) * 40;
-}
-
-
-void Debugger::ZTextureDraw() {
-
 
 	D3DXMATRIX world_mat;
 
 	D3DXMatrixIdentity(&world_mat);
 
 	UINT pass = 0;
-	m_z_tex_effect.Begin(pass,0);
+	p_z_tex->Begin(pass,0);
 	
-	// ワールド座標変換
-	GetCubeWorldMatrix(20,1,0,&world_mat);
-	m_z_tex_effect.SetWorldMatrix(world_mat);
+	world_mat = Utility::Math::GetTransformMatrix(
+		m_cube_pos,
+		D3DXVECTOR3(1.f, 1.f, 1.f)
+	);
+
+	// ワールド座標セット
+	p_z_tex->SetWorldMatrix(world_mat);
+
 
 	// キューブ描画
 	for (UINT i = 0; i < dwMatNum; i++) {
 
-		m_z_tex_effect.Update();
+		p_z_tex->Update();
 
-		m_z_tex_effect.BeginPass();
+		p_z_tex->BeginPass();
 		cpMeshCube->DrawSubset(i);
-		m_z_tex_effect.EndPass();
+		p_z_tex->EndPass();
 	}
 
 
-	GetPlateWorldMatrix(&world_mat);
-	m_z_tex_effect.SetWorldMatrix(world_mat);
+	world_mat = Utility::Math::GetTransformMatrix(
+		m_plate_pos,
+		D3DXVECTOR3(1.f, 1.f, 1.f)
+	);
+
+	p_z_tex->SetWorldMatrix(world_mat);
 
 	// プレート描画
 	for (UINT i = 0; i < dwMatNum_Plate;i++) {
 		
-		m_z_tex_effect.Update();
+		p_z_tex->Update();
 	
-		m_z_tex_effect.BeginPass();
+		p_z_tex->BeginPass();
 		cpMeshPlate->DrawSubset(i);
-		m_z_tex_effect.EndPass();
+		p_z_tex->EndPass();
 	}
 
-	m_z_tex_effect.End();
+	p_z_tex->End();
 }
 
 
-void Debugger::ShadowDraw() {
+
+void Debugger::XFileShadowDraw() {
 
 
-	// ワールド行列正規化
-	D3DXMATRIX world_mat;
-	D3DXMatrixIdentity(&world_mat);
-	
-	UINT pass = 0;
+	// 現在のカメラ情報セット
+	m_p_shadow->SetViewMatrix(
+		Graphics::GetInstance()->GetTSMatrix(D3DTS_VIEW)
+	);
+	m_p_shadow->SetProjMatrix(
+		Graphics::GetInstance()->GetTSMatrix(D3DTS_PROJECTION)
+	);
 
-	// 開始
-	m_shadow_effect.Begin(pass,0);
+	float LightScale = 1.5f;
+	D3DXMATRIX LightProj,LightView;
+	// ライト射影
+	D3DXMatrixPerspectiveFovLH(&LightProj,
+		D3DXToRadian(40), 1.0f, 40.0f, 300.0f);
 
-	GetCubeWorldMatrix(0, 0, 0, &world_mat);
-	m_shadow_effect.SetWorldMatrix(world_mat);
-	m_shadow_effect.Update();
+	// ライトビュー
+	D3DXMatrixLookAtLH(&LightView, &D3DXVECTOR3(
+		LightScale * 100,
+		LightScale * 100,
+		LightScale * 100),
+		&D3DXVECTOR3(0, -60, 0),
+		&D3DXVECTOR3(0, 1, 0)
+	);
 
-	// xファイルキューブ
-	for (UINT i = 0; i < dwMatNum; i++) {
+	// 深度シャドウセット
+	m_p_shadow->SetLightViewMatrix(LightView);
+	m_p_shadow->SetLightProjMatrix(LightProj);
 
-		m_shadow_effect.BeginPass();
-		cpMeshCube->DrawSubset(i);
-		m_shadow_effect.EndPass();
+	{
+		// ワールド行列正規化
+		D3DXMATRIX world_mat;
+		D3DXMatrixIdentity(&world_mat);
+
+		world_mat = Utility::Math::GetTransformMatrix(
+			m_cube_pos,
+			D3DXVECTOR3(1.f, 1.f, 1.f)
+		);
+
+		// ワールド位置セット
+		m_p_shadow->SetWorldMatrix(world_mat);
+
+
+		UINT pass = 0;
+		// 開始
+		m_p_shadow->Begin(pass, 0);
+
+		// xファイルキューブ
+		for (UINT i = 0; i < dwMatNum; i++) {
+
+			m_p_shadow->Update();
+			m_p_shadow->BeginPass();
+			cpMeshCube->DrawSubset(i);
+			m_p_shadow->EndPass();
+		}
+
+		// プレート
+		world_mat = Utility::Math::GetTransformMatrix(
+			m_plate_pos,
+			D3DXVECTOR3(1.f, 1.f, 1.f)
+		);
+
+		m_p_shadow->SetWorldMatrix(world_mat);
+
+		// xファイルプレート
+		for (UINT i = 0; i < dwMatNum_Plate; i++) {
+
+			m_p_shadow->Update();
+			m_p_shadow->BeginPass();
+			cpMeshPlate->DrawSubset(i);
+			m_p_shadow->EndPass();
+		}
+
+		m_p_shadow->End();
 	}
-
-	// プレート
-	float PlateScale = 1.0f;
-	D3DXMATRIX Scale;
-	D3DXMATRIX mat;
-	D3DXMatrixIdentity(&mat);
-	D3DXMatrixScaling(&Scale, PlateScale, 1.0f, PlateScale);
-	mat *= Scale;
-	mat._42 = -60.0f;
-
-	m_shadow_effect.SetWorldMatrix(mat);
-	m_shadow_effect.Update();
-
-	// xファイルプレート
-	for (UINT i = 0; i < dwMatNum_Plate; i++) {
-
-		m_shadow_effect.BeginPass();
-		cpMeshPlate->DrawSubset(i);
-	}
-
-	m_shadow_effect.End();
 }
 
 

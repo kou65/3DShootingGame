@@ -12,10 +12,10 @@
 #include"../Lib/3D/IndexBuffer/IndexBuffer.h"
 #include"../Lib/3D/VertexBuffer/VertexBuffer.h"
 #include"../Lib/3D/OBJ/OBJFile.h"
-#include"../Lib/EffectFileShader/DepthShadowShader/DepthShadowEffectFile.h"
-#include"../Lib/EffectFileShader/ZTexture/ZTexture.h"
+#include"../Lib/Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../Lib/Shader/ShaderFunc/ZTexture/ZTexture.h"
 #include"../Lib/3D/FBX/FbxFile/Fbx.h"
-#include"../Lib/EffectFileShader/Declation/VertexDeclation.h"
+#include"../Lib/Shader/ShaderFunc/Declation/VertexDeclation.h"
 #include<string>
 
 
@@ -24,6 +24,12 @@
 // シングルトンデバッグモード
 class Debugger{
 public:
+
+
+	/**
+	* @brief 初期化
+	*/
+	void Init();
 
 
 	/**
@@ -62,19 +68,35 @@ private:
 	/**
 	* @brief 初期シェーダー
 	*/
-	void InitShader();
+	void InitXFileShader();
+
+
+	/**
+	* @brief 固定スプライト生成
+	*/
+	void CreateSprite();
 
 
 	/**
 	* @brief シャドウ描画
 	*/
-	void ShadowDraw();
+	void XFileShadowDraw();
+
+
+	/**
+	* @brief Zテクスチャ書き込み
+	*/
+	void XFileZTextureWrite();
 
 
 	/**
 	* @brief Zテクスチャ描画
 	*/
-	void ZTextureDraw();
+	void ZTextureDraw(
+		IDirect3DTexture9*p_tex,
+		Vec2 pos = Vec2(0.f,0.f),
+		Vec2 scale = Vec2(1000.f,1000.f)
+	);
 
 
 	/**
@@ -86,7 +108,7 @@ private:
 	/**
 	* @brief シャドウ描画2
 	*/
-	void ShadowDraw2();
+	void ObjShadowDraw();
 
 private:
 
@@ -129,12 +151,17 @@ private:
 	//! ライトデータ
 	LightData m_light_data;
 
+	//! 固定スプライト
+	ID3DXSprite* cpSprite;
+
+	//! ワールドXFile位置
+	Vec3 m_cube_pos;
+	Vec3 m_plate_pos;
+
 	//! 影関連
 	DWORD dwMatNum, dwMatNum_Plate;
 	ID3DXMesh *cpMeshCube, *cpMeshPlate;
-	DepthShadowShader m_shadow_effect;
-	ZTexture m_z_tex_effect;
-	IDirect3DTexture9*m_p_shadow_tex;
+	DepthShadowShader *m_p_shadow;
 };
 
 #endif

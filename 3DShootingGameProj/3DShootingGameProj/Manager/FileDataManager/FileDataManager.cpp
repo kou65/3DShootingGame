@@ -1,5 +1,5 @@
 ﻿#include"FileDataManager.h"
-#include"../../Utility/Utility.h"
+#include"../../Lib/Utility/Utility.h"
 #include <algorithm>
 
 
@@ -24,16 +24,16 @@ FileDataManager::FileDataManager(
 	FILE*p_file = nullptr;
 
 	// ファイル生成
-	Utility::FileOpen(&p_file, "ExternalFile/ObjectList.txt", "r");
+	Utility::File::Open(&p_file, "ExternalFile/ObjectList.txt", "r");
 	LoadVec3(p_file);
-	Utility::FileClose(&p_file);
+	Utility::File::Close(&p_file);
 
 	p_file = nullptr;
 
 	// ファイル生成
-	Utility::FileOpen(&p_file, "ExternalFile/MapObjectPiece.txt", "r");
+	Utility::File::Open(&p_file, "ExternalFile/MapObjectPiece.txt", "r");
 	LoadRandomPosNum(p_file);
-	Utility::FileClose(&p_file);
+	Utility::File::Close(&p_file);
 
 	// ファイルの情報から自機と敵を生成する
 	CreateObject();
@@ -57,12 +57,12 @@ void FileDataManager::LoadVec3(FILE*p_file) {
 		fscanf_s(p_file, "%s", (char*)load_str,LOAD_BUFFER_SIZE);
 
 		// コメントなら
-		if (Utility::IsStrInclude(load_str, "#") == true) {
+		if (Utility::Convert::IsStrInclude(load_str, "#") == true) {
 			continue;
 		}
 
 		// リソースが存在するなら
-		if (Utility::IsStrInclude(load_str,"res") == true) {
+		if (Utility::Convert::IsStrInclude(load_str,"res") == true) {
 
 			// リソース番号を代入
 			res_num_str = load_str;
@@ -70,12 +70,12 @@ void FileDataManager::LoadVec3(FILE*p_file) {
 		
 
 		// オブジェクト読み込み
-		if (Utility::IsStrInclude(load_str, "o") == true) {
+		if (Utility::Convert::IsStrInclude(load_str, "o") == true) {
 
 			Vec3 v;
 
 			// 位置を読み込み
-			Utility::LoadFloatVec3(p_file, v, ' ');
+			Utility::File::LoadFloatVec3(p_file, v, ' ');
 
 			// リソース番号付きで位置を代入
 			m_obj_pos_list[res_num_str].emplace_back(v);
@@ -102,13 +102,13 @@ void FileDataManager::LoadRandomPosNum(FILE*p_file) {
 		fscanf_s(p_file, "%s", (char*)load_str, LOAD_BUFFER_SIZE);
 
 		// コメントなら
-		if (Utility::IsStrInclude(load_str, "#") == true) {
+		if (Utility::Convert::IsStrInclude(load_str, "#") == true) {
 			continue;
 		}
 
 
 		// 指定文字列が存在するなら
-		if (Utility::IsStrInclude(load_str, "P") == true) {
+		if (Utility::Convert::IsStrInclude(load_str, "P") == true) {
 
 			// リソース番号を代入
 			res_num_str = load_str;
@@ -123,7 +123,7 @@ void FileDataManager::LoadRandomPosNum(FILE*p_file) {
 			std::vector<int>out_num_list;
 
 			// カンマ区切りを3行で読み込み
-			if (Utility::LoadIntNum(p_file, out_num_list,3,",")
+			if (Utility::File::LoadIntNum(p_file, out_num_list,3,",")
 				== false) {
 				continue;
 			}
