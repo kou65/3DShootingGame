@@ -38,7 +38,7 @@ void EnemyBullet::Update() {
 
 void EnemyBullet::Draw() {
 
-	Obj::GetInstance()->ShaderDraw(m_obj_param);
+	Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
 }
 
 

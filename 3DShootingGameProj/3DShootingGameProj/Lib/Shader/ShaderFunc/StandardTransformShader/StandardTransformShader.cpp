@@ -29,16 +29,16 @@ const std::string& proj_mat_name
 
 
 	// ワールドハンドル取得
-	m_h_world = m_p_effect->
+	m_h_world = mp_effect->
 		GetParameterByName(
 			NULL,m_world_mat_name.c_str());
 
 	// ビューハンドル取得
-	m_h_view_mat = m_p_effect->
+	m_h_view_mat = mp_effect->
 		GetParameterByName(NULL, m_view_mat_name.c_str());
 
 	// 射影ハンドル取得
-	m_h_proj_mat = m_p_effect->
+	m_h_proj_mat = mp_effect->
 		GetParameterByName(NULL, m_proj_mat_name.c_str());
 }
 
@@ -47,12 +47,12 @@ void StandardTSShader::UpdateTransfromMatrix(
 ) {
 
 	// マトリックスセット
-	m_p_effect->SetMatrix(m_h_world, &m_mat_world);
-	m_p_effect->SetMatrix(m_h_view_mat, &m_mat_view);
-	m_p_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
+	mp_effect->SetMatrix(m_h_world, &m_mat_world);
+	mp_effect->SetMatrix(m_h_view_mat, &m_mat_view);
+	mp_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
 
 	// パラメータ更新
-	//m_p_effect->CommitChanges();
+	//mp_effect->CommitChanges();
 }
 
 

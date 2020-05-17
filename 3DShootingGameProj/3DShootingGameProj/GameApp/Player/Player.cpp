@@ -16,11 +16,11 @@ Player::Player(
 
 	// 各オブジェクト代入
 	m_pos = pos;
-	m_p_camera_3d = camera_3d;
-	m_p_obj_factory = bullet_factory;
+	mp_camera_3d = camera_3d;
+	mp_obj_factory = bullet_factory;
 
 	std::shared_ptr<Camera3D>p_camera 
-		= m_p_camera_3d.lock();
+		= mp_camera_3d.lock();
 
 	// カメラ位置を補正
 	p_camera->SetPos(Vec3(
@@ -103,7 +103,7 @@ void Player::Update() {
 
 void Player::Draw() {
 
-	ObjParameter param;
+	ObjParameter param(DrawStatus::NORMAL,true);
 
 	param.pos.z = 0.f;
 	param.pos = m_pos;
@@ -114,7 +114,7 @@ void Player::Draw() {
 	param.color = m_color;
 
 	// 描画
-	Obj::GetInstance()->ShaderDraw(
+	Obj::GetInstance()->DrawObjByNormalShader(
 		param
 	);
 
@@ -192,7 +192,7 @@ void Player::MoveByKey() {
 
 	// カメラポインタ
 	std::shared_ptr<Camera3D>p_camera =
-		m_p_camera_3d.lock();
+		mp_camera_3d.lock();
 
 	// キーボード操作
 	{
@@ -252,7 +252,7 @@ void Player::RotationByKey() {
 
 	// カメラポインタ
 	std::shared_ptr<Camera3D>p_camera =
-		m_p_camera_3d.lock();
+		mp_camera_3d.lock();
 
 	Vec3 rot_num;
 
@@ -288,7 +288,7 @@ void Player::MoveFront() {
 
 	// カメラポインタ
 	std::shared_ptr<Camera3D>p_camera =
-		m_p_camera_3d.lock();
+		mp_camera_3d.lock();
 
 	p_camera->AddPos(D3DXVECTOR3(0.f, 0.f, FRONT_SPEED));
 	m_move.z += FRONT_SPEED;
@@ -444,13 +444,13 @@ void Player::ShotBullet() {
 			data.distance_limit = Vec3(SHOT_DISTANCE, SHOT_DISTANCE, SHOT_DISTANCE);
 
 			// パラメータ
-			ObjParameter param;
+			ObjParameter param(DrawStatus::NORMAL,true);
 			param.register_obj_file_name = Const::Obj::SPEHER;
 			param.scale = Vec3(0.5f, 0.5f, 0.5f);
 			param.pos = m_pos;
 
 			// 弾を作る
-			m_p_obj_factory->CreateBullet(
+			mp_obj_factory->CreateBullet(
 				param,
 				data
 			);
@@ -493,7 +493,7 @@ void Player::ShotBreakBullet() {
 				data.rot_dir.y = BULLET_DIR_Y[i];
 
 				// パラメータ
-				ObjParameter param;
+				ObjParameter param(DrawStatus::NORMAL,true);
 				param.pos = m_pos;
 				param.scale = Vec3(0.5f, 0.5f, 0.5f);
 				param.register_obj_file_name 
@@ -501,7 +501,7 @@ void Player::ShotBreakBullet() {
 
 
 				// 弾を作る
-				m_p_obj_factory->CreateBreakBullet(
+				mp_obj_factory->CreateBreakBullet(
 					param,
 					data
 				);

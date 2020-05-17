@@ -134,16 +134,16 @@ private:
 private:
 
 	//! デバイス
-	IDirect3DDevice9*m_p_device;
+	IDirect3DDevice9*mp_device;
 
 	//! 標準ライト
 	DefaultLight *light;
 
 	//! カメラ
-	Camera3D *m_p_camera;
+	Camera3D *mp_camera;
 
 	//! FPS
-	FPS *m_p_fps;
+	FPS *mp_fps;
 
 	//! 総合マテリアル数
 	int m_total_material_num;
@@ -161,7 +161,7 @@ private:
 	//! 影関連
 	DWORD dwMatNum, dwMatNum_Plate;
 	ID3DXMesh *cpMeshCube, *cpMeshPlate;
-	DepthShadowShader *m_p_shadow;
+	DepthShadowShader *mp_shadow;
 };
 
 #endif

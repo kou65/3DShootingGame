@@ -54,7 +54,7 @@ void Light::Init() {
 	m_light_data.direction = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
 	m_light_data.point_light_pos = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
 
-	m_p_tex = nullptr;
+	mp_tex = nullptr;
 }
 
 
@@ -80,27 +80,27 @@ void Light::InitHandle() {
 
 	// ハンドル取得
 	m_h_dir_light =
-		m_p_effect->GetParameterByName(NULL,m_dir_light_name.c_str());
+		mp_effect->GetParameterByName(NULL,m_dir_light_name.c_str());
 	m_h_point_light_pos = 
-		m_p_effect->GetParameterByName(NULL, m_point_light_pos_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_point_light_pos_name.c_str());
 	m_h_light_color =
-		m_p_effect->GetParameterByName(NULL, m_light_color_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_light_color_name.c_str());
 	m_h_eye_dir = 
-		m_p_effect->GetParameterByName(NULL, m_eye_dir_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_eye_dir_name.c_str());
 
 	// ライトビュー
 	m_h_light_view = 
-		m_p_effect->GetParameterByName(NULL, m_light_view_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_light_view_name.c_str());
 
 	// ライト射影
 	m_h_light_proj = 
-		m_p_effect->GetParameterByName(NULL, m_light_proj_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_light_proj_name.c_str());
 
 	// テクスチャとカラー
 	m_h_tex =
-		m_p_effect->GetParameterByName(NULL, m_tex_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_tex_name.c_str());
 	m_h_color =
-		m_p_effect->GetParameterByName(NULL, m_color_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_color_name.c_str());
 }
 
 
@@ -109,21 +109,21 @@ void Light::UpdateLight() {
 	// ライトに情報を送る
 
 	// 方向ライト
-	m_p_effect->SetVector(m_h_dir_light, &m_light_data.direction);
+	mp_effect->SetVector(m_h_dir_light, &m_light_data.direction);
 
 	// ライトカラー
-	m_p_effect->SetVector(m_h_light_color, &m_light_data.light_color);
+	mp_effect->SetVector(m_h_light_color, &m_light_data.light_color);
 
 	// 点光源ライト
-	m_p_effect->SetVector(m_h_point_light_pos, &m_light_data.point_light_pos);
+	mp_effect->SetVector(m_h_point_light_pos, &m_light_data.point_light_pos);
 
 	// 注視点座標
-	m_p_effect->SetVector(m_h_eye_dir,&m_light_data.eye_dir);
+	mp_effect->SetVector(m_h_eye_dir,&m_light_data.eye_dir);
 
 	// ディフューズカラー
-	m_p_effect->SetVector(m_h_color, &m_color);
+	mp_effect->SetVector(m_h_color, &m_color);
 	// テクスチャ
-	m_p_effect->SetTexture(m_h_tex, m_p_tex);	
+	mp_effect->SetTexture(m_h_tex, mp_tex);	
 }
 
 
@@ -144,7 +144,7 @@ void Light::SetLightProj(const D3DXMATRIX&light_proj) {
 
 
 void Light::SetTexture(IDirect3DTexture9*tex) {
-	m_p_tex = tex;
+	mp_tex = tex;
 }
 
 
@@ -154,7 +154,7 @@ void Light::SetColor(const D3DXVECTOR4 &color) {
 
 
 void Light::SetShadowTexture(IDirect3DTexture9*tex) {
-	m_p_shadow_map_tex = tex;
+	mp_shadow_map_tex = tex;
 }
 
 

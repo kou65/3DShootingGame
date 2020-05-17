@@ -40,29 +40,29 @@ void NormalShader::Update() {
 void NormalShader::InitHandle() {
 
 	// ビューハンドル取得
-	m_camera_view_mat_h = m_p_effect->GetParameterByName(NULL,"g_view_mat");
+	m_camera_view_mat_h = mp_effect->GetParameterByName(NULL,"g_view_mat");
 
 	// 射影ハンドル取得
-	m_camera_proj_mat_h = m_p_effect->GetParameterByName(NULL,"g_proj_mat");
+	m_camera_proj_mat_h = mp_effect->GetParameterByName(NULL,"g_proj_mat");
 
 	// ワールドハンドル取得
-	m_world_mat_h = m_p_effect->GetParameterByName(NULL, "g_world_mat");
+	m_world_mat_h = mp_effect->GetParameterByName(NULL, "g_world_mat");
 
 	// テクスチャハンドル取得
-	m_texture_h = m_p_effect->GetParameterByName(NULL, "g_tex");
+	m_texture_h = mp_effect->GetParameterByName(NULL, "g_tex");
 
 	// カラーハンドル取得
-	m_color_h = m_p_effect->GetParameterByName(NULL, "g_color");
+	m_color_h = mp_effect->GetParameterByName(NULL, "g_color");
 }
 
 
 void NormalShader::UpdateMatrix() {
 
-	m_p_effect->SetMatrix(m_camera_view_mat_h, &m_view_mat);
-	m_p_effect->SetMatrix(m_camera_proj_mat_h, &m_proj_mat);
-	m_p_effect->SetMatrix(m_world_mat_h, &m_world_mat);
+	mp_effect->SetMatrix(m_camera_view_mat_h, &m_view_mat);
+	mp_effect->SetMatrix(m_camera_proj_mat_h, &m_proj_mat);
+	mp_effect->SetMatrix(m_world_mat_h, &m_world_mat);
 
-	m_p_effect->SetVector(m_color_h, &m_color);
+	mp_effect->SetVector(m_color_h, &m_color);
 }
 
 
@@ -75,7 +75,7 @@ void NormalShader::SetTexture(
 	IDirect3DTexture9* p_tex
 ) {
 
-	HRESULT hr = m_p_effect->SetTexture(m_texture_h, p_tex);
+	HRESULT hr = mp_effect->SetTexture(m_texture_h, p_tex);
 
 	if (hr != S_OK) {
 		// 失敗

@@ -29,7 +29,7 @@ void Block::Update() {
 void Block::Draw() {
 
 
-	ObjParameter param;
+	ObjParameter param(DrawStatus::NORMAL,true);
 
 	param.register_obj_file_name = Const::Obj::CUBE;
 	param.pos = m_pos;
@@ -38,7 +38,7 @@ void Block::Draw() {
 	param.scale.y = OBJ_SIZE;
 	param.scale.z = OBJ_SIZE;
 
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->DrawObjByNormalShader(param);
 }
 
 

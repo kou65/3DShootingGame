@@ -24,7 +24,7 @@ GameScene::~GameScene() {
 void GameScene::Update(SceneType&scene_type) {
 
 	// カメラ更新
-	m_p_camera->Update();
+	mp_camera->Update();
 
 	// オブジェクト更新
 	ObjectManager::GetInstance()->Update();
@@ -33,13 +33,13 @@ void GameScene::Update(SceneType&scene_type) {
 	CollisionManager::GetInstance()->Update();
 
 	// 管理更新
-	m_p_filed_obj_mng->Update();
+	mp_filed_obj_mng->Update();
 
 	// ゲーム終了判定者更新(あとでjugerにする)
-	m_p_game_end_juge_mng->Update(scene_type);
+	mp_game_end_juge_mng->Update(scene_type);
 
 	// 更新
-	m_p_map_object_mng->Update();
+	mp_map_object_mng->Update();
 
 	// 最後のタイミングで当たり判定オブジェクトを削除させる
 	CollisionManager::GetInstance()->CheckAndClear();
@@ -52,7 +52,7 @@ void GameScene::Draw() {
 	m_fps.DebugDraw(Vec2(0.f,0.f),200);
 
 	// カメラデバッグ描画
-	m_p_camera->TransformDraw();
+	mp_camera->TransformDraw();
 
 	// オブジェクト描画
 	ObjectManager::GetInstance()->Draw();
@@ -75,10 +75,10 @@ void GameScene::Init() {
 void GameScene::CreateOperator() {
 
 	// ファクトリー生成
-	m_p_obj_factory.reset(new ObjectFactory);
+	mp_obj_factory.reset(new ObjectFactory);
 
 	// オブジェクトデータ生成
-	m_p_object_data.reset(new ObjectData);
+	mp_object_data.reset(new ObjectData);
 
 	// カメラのデータ
 	CameraData set_data;
@@ -91,42 +91,42 @@ void GameScene::CreateOperator() {
 
 	set_data.is_debug = false;
 
-	m_p_camera.reset(
+	mp_camera.reset(
 		new Camera3D(
 			Camera3D::FPS,
 			set_data
 		));
 
 	// ファイル管理者生成
-	m_p_file_obj_mng.reset(
+	mp_file_obj_mng.reset(
 		new FileDataManager(
-			m_p_obj_factory,
-			m_p_camera,
-			m_p_object_data
+			mp_obj_factory,
+			mp_camera,
+			mp_object_data
 		)
 	);
 
 	// 敵管理者生成
-	m_p_filed_obj_mng.reset(
+	mp_filed_obj_mng.reset(
 		new MapObjectManager(
-			m_p_file_obj_mng,
-			m_p_obj_factory,
-			m_p_object_data
+			mp_file_obj_mng,
+			mp_obj_factory,
+			mp_object_data
 		)
 	);
 
 	// 終了管理者生成
-	m_p_game_end_juge_mng.reset(
+	mp_game_end_juge_mng.reset(
 		new GameEndJugeManager(
-		m_p_object_data
+		mp_object_data
 		)
 	);
 
 	// マップオブジェクト管理者生成
-	m_p_map_object_mng.reset(
+	mp_map_object_mng.reset(
 		new MapStructureManager(
-			m_p_obj_factory,
-			m_p_object_data
+			mp_obj_factory,
+			mp_object_data
 		)
 	);
 }
@@ -136,7 +136,7 @@ void GameScene::CreateOperator() {
 void GameScene::CreateObject() {
 
 	// UI生成
-	m_p_obj_factory->CreateHPUI(m_p_object_data);
+	mp_obj_factory->CreateHPUI(mp_object_data);
 
 }
 
@@ -146,31 +146,31 @@ void GameScene::CreateObject() {
 void GameScene::CreateManager() {
 
 	// 生成
-	m_p_mng_factory = std::make_unique<ManagerFactory>();
-	m_p_contorl_ofc = std::make_unique<ManagerControlOffcer>();
+	mp_mng_factory = std::make_unique<ManagerFactory>();
+	mp_contorl_ofc = std::make_unique<ManagerControlOffcer>();
 
 	std::shared_ptr<FileObjectDataManager>p_file_mng;
 	std::shared_ptr<MapObjectManager>p_map_mng;
 	std::shared_ptr<MapCharacterManager>p_chara_mng;
 
 	// 管理者生成
-	m_p_mng_factory->CreateFileObjectDataManager(
-		m_p_obj_factory,
-		m_p_camera,
-		m_p_object_data,
+	mp_mng_factory->CreateFileObjectDataManager(
+		mp_obj_factory,
+		mp_camera,
+		mp_object_data,
 		p_file_mng
 	);
 
-	m_p_mng_factory->CreateMapObjectManager(
-		m_p_obj_factory,
-		m_p_object_data,
+	mp_mng_factory->CreateMapObjectManager(
+		mp_obj_factory,
+		mp_object_data,
 		p_map_mng
 	);
 
-	m_p_mng_factory->CreateMapCharacterManager(
+	mp_mng_factory->CreateMapCharacterManager(
 		p_file_mng,
-		m_p_obj_factory,
-		m_p_object_data,
+		mp_obj_factory,
+		mp_object_data,
 		p_chara_mng
 	);
 }*/

@@ -14,9 +14,9 @@ ShotgunEnemy::ShotgunEnemy(
 	m_pos = create_pos;
 
 	// オブジェクト代入
-	m_p_obj_factory = factory;
+	mp_obj_factory = factory;
 
-	m_p_player = player;
+	mp_player = player;
 
 	m_shot_timer = 0.f;
 
@@ -50,7 +50,7 @@ void ShotgunEnemy::Draw() {
 	param.register_obj_file_name = Const::Obj::CUBE;
 
 	// 敵描画
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->DrawObjByNormalShader(param);
 }
 
 
@@ -90,7 +90,7 @@ void ShotgunEnemy::Shot() {
 	data.trans_data.pos = m_pos;
 
 	// パラメータ
-	ObjParameter param;
+	ObjParameter param(DrawStatus::NORMAL,true);
 	// キューブ
 	param.register_obj_file_name = Const::Obj::SPEHER;
 	// 拡縮
@@ -131,7 +131,7 @@ void ShotgunEnemy::Shot() {
 		data.rot_dir = dir;
 
 		// 弾を生成
-		m_p_obj_factory->CreateEnemyBullet(
+		mp_obj_factory->CreateEnemyBullet(
 			param,
 			data
 		);

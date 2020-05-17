@@ -6,14 +6,14 @@ GameEndJugeManager::GameEndJugeManager(
 	std::shared_ptr<ObjectData>p_data
 ) {
 
-	m_p_data = p_data;
+	mp_data = p_data;
 }
 
 
 void GameEndJugeManager::Update(SceneType&scene_type) {
 
 
-	std::shared_ptr<ObjectData>p_data = m_p_data.lock();
+	std::shared_ptr<ObjectData>p_data = mp_data.lock();
 
 	if (p_data->p_player == nullptr) {
 		return;

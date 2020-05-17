@@ -47,8 +47,8 @@ private:
 
 private:
 
-	Graphics*m_p_graphics;
-	IDirect3DTexture9*m_p_shadow_map_tex;
+	Graphics*mp_graphics;
+	IDirect3DTexture9*mp_shadow_map_tex;
 
 	D3DXMATRIX m_mat_light_view;
 	D3DXMATRIX m_mat_light_proj;

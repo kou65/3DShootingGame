@@ -15,7 +15,7 @@ void GoalObject::Update() {
 
 void GoalObject::Draw() {
 
-	ObjParameter param;
+	ObjParameter param(DrawStatus::NORMAL,true);
 
 	// 板
 	param.register_obj_file_name = Const::Obj::PLANE;
@@ -35,7 +35,7 @@ void GoalObject::Draw() {
 	param.color.y = 1.f;
 
 	// obj描画
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->DrawObjByNormalShader(param);
 }
 
 

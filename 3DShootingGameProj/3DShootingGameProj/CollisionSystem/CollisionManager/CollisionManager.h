@@ -130,7 +130,7 @@ private:
 
 	//! 当たり判定オブジェクトリスト
 	std::unordered_map<CollisionObjectType,
-		std::vector<CollisionObject3DBase*>>m_p_collision_list;
+		std::vector<CollisionObject3DBase*>>mp_collision_list;
 
 	//! 組み合わせリスト
 	std::unordered_map<CollisionObjectType,
@@ -138,7 +138,7 @@ private:
 
 	//! 代入用配列
 	std::vector<CollisionObjectType>m_insert_type_list;
-	std::vector<CollisionObject3DBase*>m_p_insert_collision_list;
+	std::vector<CollisionObject3DBase*>mp_insert_collision_list;
 
 	//! 現在の衝突物の種類(衝突物の識別の為必要)
 	CollisionObjectType m_current_obj_type1;

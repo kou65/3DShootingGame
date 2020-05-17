@@ -20,7 +20,7 @@ void Taile::Update() {
 
 void Taile::Draw() {
 
-	Obj::GetInstance()->ShaderDraw(m_data);
+	Obj::GetInstance()->DrawObjByNormalShader(m_data);
 }
 
 

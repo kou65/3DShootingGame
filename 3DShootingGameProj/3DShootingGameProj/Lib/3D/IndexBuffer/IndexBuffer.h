@@ -40,7 +40,7 @@ public:
 	* @return IDirect3DIndexBuffer9*
 	*/
 	operator IDirect3DIndexBuffer9*() const {
-		return m_p_index_buffer9;
+		return mp_index_buffer9;
 	}
 
 
@@ -49,7 +49,7 @@ public:
 	* @return IDirect3DIndexBuffer9*
 	*/
 	IDirect3DIndexBuffer9*GetBufferPtr() {
-		return m_p_index_buffer9;
+		return mp_index_buffer9;
 	}
 
 	// バッファを開ける
@@ -61,7 +61,7 @@ private:
 	//IndexBuffer() = default;
 
 	//! インデックスバッファ
-	IDirect3DIndexBuffer9 *m_p_index_buffer9;
+	IDirect3DIndexBuffer9 *mp_index_buffer9;
 
 	//! DirectGraphics
 	Graphics * graphics;

@@ -30,7 +30,7 @@ struct FbxModuleModel {
 	FbxScene * mp_fbx_scene;
 
 	//! インポーター
-	FbxImporter*m_p_importer;
+	FbxImporter*mp_importer;
 
 };
 
@@ -354,7 +354,7 @@ private:
 	std::string m_root_path;
 
 	// 変更用頂点配列
-	std::vector<SkinCustomVertex*>m_p_vertics;
+	std::vector<SkinCustomVertex*>mp_vertics;
 
 	// シェーダー
 	VertexBlendEffectFile m_effect;

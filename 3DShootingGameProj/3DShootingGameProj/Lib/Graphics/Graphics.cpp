@@ -3,7 +3,7 @@
 
 
 LPDIRECT3DDEVICE9 Graphics::GetDevice() {
-	return m_p_d3d_device9;
+	return mp_d3d_device9;
 }
 
 
@@ -35,10 +35,10 @@ bool Graphics::Init(
 	HWND h_wnd = Window::GetWindowHandle();
 
 	// LPDIRECT3D9は生成した後ほとんど使用しない
-	m_p_direct3d9 = Direct3DCreate9(D3D_SDK_VERSION);
+	mp_direct3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
 	// DIRECT3D9のnullチェック
-	if (m_p_direct3d9 == NULL) {
+	if (mp_direct3d9 == NULL) {
 
 		// IDirect3D9の生成に失敗
 		MessageBoxA(0, "IDirect3D9Create...Error/Place...Graphics>Init", TEXT("MessageBoxA"), MB_OK);
@@ -82,7 +82,7 @@ bool Graphics::Init(
 	m_d3d_pp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
 	// デバイスの作成
-	m_p_direct3d9->CreateDevice(
+	mp_direct3d9->CreateDevice(
 		// ディスプレイアダプターの種類
 		D3DADAPTER_DEFAULT,
 		// デバイスの種類を設定
@@ -94,12 +94,12 @@ bool Graphics::Init(
 		// デバイスを設定するためのD3DPRESENT_PARAMETERS構造体のアドレスを渡す
 		&m_d3d_pp,
 		// LPDIRECT3DDEVICE9のアドレスを渡す
-		&m_p_d3d_device9
+		&mp_d3d_device9
 	);
 
 
 	// D3Dデバイスのnullチェック
-	if (m_p_d3d_device9 == NULL) {
+	if (mp_d3d_device9 == NULL) {
 
 		// デバイスの生成に失敗 
 		MessageBoxA(0, "d3d_device9Create...Error/Place...Graphics>Init", TEXT("MessageBoxA"), MB_OK);
@@ -109,7 +109,7 @@ bool Graphics::Init(
 	}
 
 	// 深度バッファ変更
-	//m_p_d3d_device9->SetDepthStencilSurface();
+	//mp_d3d_device9->SetDepthStencilSurface();
 
 	// 正常終了
 	return true;
@@ -167,7 +167,7 @@ void Graphics::PresentParametersConfig(
 bool Graphics::DrawStart()
 {
 	// シーンのクリア
-	m_p_d3d_device9->Clear(
+	mp_d3d_device9->Clear(
 		// D3DRECT*の矩形の数
 		0,
 		// ビューポート全体をクリア
@@ -183,7 +183,7 @@ bool Graphics::DrawStart()
 	);
 
 	// シーン描画を開始する
-	if (D3D_OK == m_p_d3d_device9->BeginScene())
+	if (D3D_OK == mp_d3d_device9->BeginScene())
 	{
 		// 正常終了
 		return true;
@@ -197,9 +197,9 @@ bool Graphics::DrawStart()
 void Graphics::DrawEnd()
 {
 	// シーン描画終了
-	m_p_d3d_device9->EndScene();
+	mp_d3d_device9->EndScene();
 	// バッファ転送(バックバッファに描画してあるものをフロントバッファに送る)
-	m_p_d3d_device9->Present(
+	mp_d3d_device9->Present(
 		NULL       // 転送元矩形
 		, NULL	   // 転送先矩形
 		, NULL	   // ウィンドウハンドル
@@ -213,7 +213,7 @@ void Graphics::SetScreenMode(BOOL is_screen_mode) {
 	m_d3d_pp.Windowed = is_screen_mode;
 
 	// デバイスの設定を変更する
-	m_p_d3d_device9->Reset(&m_d3d_pp);
+	mp_d3d_device9->Reset(&m_d3d_pp);
 }
 
 
@@ -224,7 +224,7 @@ void Graphics::BackBufferReSize(const int&width_size, const int&height_size) {
 	m_d3d_pp.BackBufferHeight = height_size;
 
 	// デバイスの設定を変更する
-	m_p_d3d_device9->Reset(&m_d3d_pp);
+	mp_d3d_device9->Reset(&m_d3d_pp);
 }
 
 
@@ -232,8 +232,8 @@ void Graphics::BackBufferReSize(const int&width_size, const int&height_size) {
 void Graphics::Release() {
 
 	// 生成した時と逆の順番で解放
-	m_p_d3d_device9->Release();
-	m_p_direct3d9->Release();
+	mp_d3d_device9->Release();
+	mp_direct3d9->Release();
 }
 
 /* GetViewPortやSetViewPortなどもある*/
@@ -258,7 +258,7 @@ void Graphics::SetUpViewPort(DWORD x, DWORD y, DWORD width, DWORD height, FLOAT 
 void Graphics::SetViewPort(D3DVIEWPORT9 view_port) {
 
 	// ビューポートをデバイスにセットできなかったとき
-	if (m_p_d3d_device9->SetViewport(&view_port) != D3D_OK) {
+	if (mp_d3d_device9->SetViewport(&view_port) != D3D_OK) {
 		MessageBoxA(0, "SetViewPort...Error/Place...Graphics>SetViewPort", TEXT("MessageBoxA"), MB_OK);
 	}
 }
@@ -267,7 +267,7 @@ void Graphics::SetViewPort(D3DVIEWPORT9 view_port) {
 bool Graphics::GetViewPort(D3DVIEWPORT9 *d3d_view_port9) {
 
 	// ビューポートのパラメータを受け取る
-	HRESULT view_port_parameter = m_p_d3d_device9->GetViewport(d3d_view_port9);
+	HRESULT view_port_parameter = mp_d3d_device9->GetViewport(d3d_view_port9);
 
 	// 受け取れなかった場合
 	if (view_port_parameter != D3D_OK) {
@@ -282,40 +282,40 @@ bool Graphics::GetViewPort(D3DVIEWPORT9 *d3d_view_port9) {
 void Graphics::SamplerStateUMirror() {
 
 	// 描画Uを反転させる
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
 }
 
 
 void Graphics::SamplerStateVMirror() {
 	// 描画Vを反転させる
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
 }
 
 
 void Graphics::SamplerStateClamp() {
 
 	// 描画UVループテクスチャ描画なし
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 }
 
 
 void Graphics::SamplerStateWrap() {
 
 	// 描画UVループテクスチャ描画あり
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
 
 void Graphics::SamplerStateBorderColor() {
-	m_p_d3d_device9->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0xffffff);
+	mp_d3d_device9->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0xffffff);
 }
 
 
 bool Graphics::GetSamplerState(DWORD sampler_stage_index, D3DSAMPLERSTATETYPE member_type, DWORD *get_state) {
 
-	if (m_p_d3d_device9->GetSamplerState(sampler_stage_index, member_type, get_state) != MB_OK) {
+	if (mp_d3d_device9->GetSamplerState(sampler_stage_index, member_type, get_state) != MB_OK) {
 		return false;
 	}
 
@@ -496,7 +496,7 @@ D3DXMATRIX Graphics::GetTSMatrix(
 
 	D3DXMATRIX mat;
 
-	HRESULT hr = m_p_d3d_device9
+	HRESULT hr = mp_d3d_device9
 		->GetTransform(type, &mat);
 
 	if (hr != S_OK) {

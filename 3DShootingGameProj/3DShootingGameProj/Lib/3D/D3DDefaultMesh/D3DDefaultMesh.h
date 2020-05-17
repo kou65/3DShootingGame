@@ -55,13 +55,13 @@ private:
 private:
 
 	//! メッシュ1
-	LPD3DXMESH m_p_teapot;
+	LPD3DXMESH mp_teapot;
 
 	//! メッシュ2
-	LPD3DXMESH m_p_tours;
+	LPD3DXMESH mp_tours;
 
 	//! メッシュ3
-	LPD3DXMESH m_p_cone;
+	LPD3DXMESH mp_cone;
 };
 
 #endif

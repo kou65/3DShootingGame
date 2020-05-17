@@ -31,7 +31,7 @@ public:
 	void Reset();
 
 	operator IDirect3DVertexDeclaration9*()const {
-		return m_p_decl;
+		return mp_decl;
 	};
 
 private:
@@ -43,5 +43,5 @@ private:
 
 private:
 
-	IDirect3DVertexDeclaration9*m_p_decl;
+	IDirect3DVertexDeclaration9*mp_decl;
 };

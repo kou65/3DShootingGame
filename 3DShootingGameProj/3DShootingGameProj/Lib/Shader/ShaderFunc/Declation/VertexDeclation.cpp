@@ -194,7 +194,7 @@
 			GetDevice()->
 			CreateVertexDeclaration(
 				elem,
-				&m_p_decl
+				&mp_decl
 			);
 
 		if (hr != S_OK) {
@@ -208,7 +208,7 @@
 
 	void VertexDecl::Set() {
 
-		if (m_p_decl == nullptr) {
+		if (mp_decl == nullptr) {
 			return;
 		}
 
@@ -216,7 +216,7 @@
 			GetInstance()->
 			GetDevice()->
 			SetVertexDeclaration(
-				m_p_decl
+				mp_decl
 			);
 
 		if (hr != S_OK) {
@@ -234,7 +234,7 @@
 			);
 
 		// null代入
-		m_p_decl = nullptr;
+		mp_decl = nullptr;
 
 		if (hr != S_OK) {
 			return;

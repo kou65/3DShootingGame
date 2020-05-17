@@ -227,10 +227,10 @@ private:
 	D3DXVECTOR4 m_color;
 
 	//! カメラの参照
-	std::weak_ptr<Camera3D>m_p_camera_3d;
+	std::weak_ptr<Camera3D>mp_camera_3d;
 
 	//! 弾の生成
-	ObjectFactory *m_p_obj_factory;
+	ObjectFactory *mp_obj_factory;
 };
 
 #endif

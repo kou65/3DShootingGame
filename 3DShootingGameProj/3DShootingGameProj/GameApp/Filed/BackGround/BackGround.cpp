@@ -28,7 +28,7 @@ void BackGround::Update() {
 
 void BackGround::Draw() {
 
-	Obj::GetInstance()->ShaderDraw(m_param);
+	Obj::GetInstance()->DrawObjByNormalShader(m_param);
 	DrawWideTaile();
 }
 

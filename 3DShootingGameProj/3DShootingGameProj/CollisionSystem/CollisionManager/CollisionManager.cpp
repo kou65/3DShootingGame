@@ -27,7 +27,7 @@ bool CollisionManager::Entry(
 	}
 
 	// 追加
-	m_p_collision_list[type].emplace_back(obj);
+	mp_collision_list[type].emplace_back(obj);
 
 	return true;
 }
@@ -36,7 +36,7 @@ bool CollisionManager::Entry(
 void CollisionManager::Clear() {
 
 	// ポインタは削除せず、配列だけ消す
-	m_p_collision_list.clear();
+	mp_collision_list.clear();
 }
 
 
@@ -46,10 +46,10 @@ void CollisionManager::InsertToCollisionList() {
 	for (auto&shape : m_insert_type_list) {
 		
 		// 衝突物代入
-		for (auto &i_obj : m_p_insert_collision_list) {
+		for (auto &i_obj : mp_insert_collision_list) {
 
 			// オブジェクトポインタをコピー
-			m_p_collision_list[shape].emplace_back(i_obj);
+			mp_collision_list[shape].emplace_back(i_obj);
 		}
 	}
 	
@@ -59,8 +59,8 @@ void CollisionManager::InsertToCollisionList() {
 			m_insert_type_list.clear();
 		}
 
-		if (m_p_insert_collision_list.size() > 0) {
-			m_p_insert_collision_list.clear();
+		if (mp_insert_collision_list.size() > 0) {
+			mp_insert_collision_list.clear();
 		}
 	}
 }
@@ -108,7 +108,7 @@ void CollisionManager::CollisionGroup(){
 	for (auto obj1 : m_group_list) {
 
 		// objキーが存在するか
-		if (m_p_collision_list.count(obj1.first) == 0) {
+		if (mp_collision_list.count(obj1.first) == 0) {
 			continue;
 		}
 
@@ -116,7 +116,7 @@ void CollisionManager::CollisionGroup(){
 		for (auto obj2 : m_group_list[obj1.first]) {
 
 			// 衝突物が入っているかどうか
-			if (m_p_collision_list.count(obj2) == 0) {
+			if (mp_collision_list.count(obj2) == 0) {
 				continue;
 			}
 
@@ -140,9 +140,9 @@ void CollisionManager::StartCollisionComb(
 	const CollisionObjectType&type2
 ) {
 
-	for (auto obj1 : m_p_collision_list[type1])
+	for (auto obj1 : mp_collision_list[type1])
 	{
-		for (auto obj2 : m_p_collision_list[type2]) {
+		for (auto obj2 : mp_collision_list[type2]) {
 
 			// 組み合わせで当たり判定を行う
 			SelectCollider(obj1, obj2);
@@ -250,16 +250,16 @@ void CollisionManager::CheckAndClear() {
 	// コンビネーションの削除とポインタ配列の削除
 
 	// 削除
-	for (auto get : m_p_collision_list) {
+	for (auto get : mp_collision_list) {
 
-		for (auto it = m_p_collision_list[get.first].begin();
-			it != m_p_collision_list[get.first].end();) {
+		for (auto it = mp_collision_list[get.first].begin();
+			it != mp_collision_list[get.first].end();) {
 
 			// 活動していないなら
 			if ((*it)->IsActive() == false) {
 
 				// 要素削除、次の要素受け取り
-				it = m_p_collision_list[get.first].erase(it);
+				it = mp_collision_list[get.first].erase(it);
 			}
 			else
 			{

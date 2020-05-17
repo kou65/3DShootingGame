@@ -6,7 +6,7 @@
 
 HPUI::HPUI(Player*p) {
 
-	m_p_player = p;
+	mp_player = p;
 
 	m_sprite_param.is_uv_slider = true;
 
@@ -27,7 +27,7 @@ void HPUI::Update() {
 	CharacterInterface chara_interface;
 
 	// 情報取得
-	m_p_player->OutInterface(chara_interface);
+	mp_player->OutInterface(chara_interface);
 
 	// 現在のhp受け取り
 	float hp = chara_interface.GetHp();

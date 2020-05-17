@@ -12,7 +12,7 @@ void ManagerControlOffcer::EntryShared(
 	std::shared_ptr<ManagerBase>p_mng
 ) {
 
-	m_p_shared_mng_list.emplace_back(p_mng);
+	mp_shared_mng_list.emplace_back(p_mng);
 }
 
 
@@ -21,17 +21,17 @@ void ManagerControlOffcer::EntryUnique(
 ) {
 
 	// 所有権を委譲
-	m_p_unique_mng_list.emplace_back(std::move(p_mng));
+	mp_unique_mng_list.emplace_back(std::move(p_mng));
 }
 
 
 void ManagerControlOffcer::Update() {
 
-	for (auto&mng : m_p_shared_mng_list) {
+	for (auto&mng : mp_shared_mng_list) {
 		mng->Update();
 	}
 
-	for (auto&mng : m_p_unique_mng_list) {
+	for (auto&mng : mp_unique_mng_list) {
 		mng->Update();
 	}
 }
@@ -41,8 +41,8 @@ void ManagerControlOffcer::AllRelease() {
 
 
 	// 共有用
-	for (auto itr = m_p_shared_mng_list.begin();
-		itr != m_p_shared_mng_list.end(); itr++) {
+	for (auto itr = mp_shared_mng_list.begin();
+		itr != mp_shared_mng_list.end(); itr++) {
 
 		if ((*itr) != nullptr) {
 			// メモリ解放
@@ -51,11 +51,11 @@ void ManagerControlOffcer::AllRelease() {
 	}
 
 	// 要素を全て解放
-	m_p_shared_mng_list.clear();
+	mp_shared_mng_list.clear();
 
 	// ユニーク
-	for (auto itr = m_p_unique_mng_list.begin();
-		itr != m_p_unique_mng_list.end(); itr++) {
+	for (auto itr = mp_unique_mng_list.begin();
+		itr != mp_unique_mng_list.end(); itr++) {
 
 		ManagerBase*mng = (*itr).get();
 
@@ -66,5 +66,5 @@ void ManagerControlOffcer::AllRelease() {
 	}
 
 	// 要素を全て解放
-	m_p_unique_mng_list.clear();
+	mp_unique_mng_list.clear();
 }

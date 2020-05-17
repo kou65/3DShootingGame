@@ -24,7 +24,7 @@ void VertexBuffer::Create(const UINT &buffer_size) {
 		// 頂点バッファをどの種類のメモリに置くか
 		D3DPOOL_MANAGED,
 		// 頂点バッファ
-		&m_p_vertex_buffer9,
+		&mp_vertex_buffer9,
 		// phandleは現在使用されていない
 		NULL
 	);
@@ -35,7 +35,7 @@ void VertexBuffer::Create(const UINT &buffer_size) {
 
 bool VertexBuffer::CloseBuffer() {
 
-	m_p_vertex_buffer9->Unlock();
+	mp_vertex_buffer9->Unlock();
 
 	return true;
 }
@@ -49,7 +49,7 @@ void VertexBuffer::SetStream(
 	// 頂点処理の流れに頂点バッファを実際にセットできる
 	graphics->GetDevice()->SetStreamSource(
 		stream_number,
-		m_p_vertex_buffer9,
+		mp_vertex_buffer9,
 		0,
 		size
 	);
@@ -58,7 +58,7 @@ void VertexBuffer::SetStream(
 
 void VertexBuffer::Draw() {
 
-	if (m_p_vertex_buffer9 == nullptr) {
+	if (mp_vertex_buffer9 == nullptr) {
 		return;
 	}
 
@@ -77,7 +77,7 @@ void VertexBuffer::Draw() {
 //) {
 //
 //	// ロックして読み込み可能にさせる
-//	HRESULT hr = m_p_vertex_buffer9->Lock(
+//	HRESULT hr = mp_vertex_buffer9->Lock(
 //		0,
 //		buffer_size,
 //		(void**)&p_custom_vertex,
@@ -122,7 +122,7 @@ bool VertexBuffer::Load() {
 		// 頂点バッファをどの種類のメモリに置くか
 		D3DPOOL_MANAGED,
 		// 頂点バッファ
-		&m_p_vertex_buffer9,
+		&mp_vertex_buffer9,
 		// phandleは現在使用されていない
 		NULL
 	);
@@ -135,7 +135,7 @@ bool VertexBuffer::Load() {
 	void *p_data;
 
 	// バッファデータをロック
-	result = m_p_vertex_buffer9->Lock(
+	result = mp_vertex_buffer9->Lock(
 		0,
 		sizeof(CustomVertex) * VERTEX_NUM,
 		(void**)&p_data,
@@ -155,7 +155,7 @@ bool VertexBuffer::Load() {
 	//);
 
 	// ロック解除して使えるようにする
-	m_p_vertex_buffer9->Unlock();
+	mp_vertex_buffer9->Unlock();
 
 	return true;
 }

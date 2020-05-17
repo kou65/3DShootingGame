@@ -73,32 +73,32 @@ private:
 private:
 
 	//! オブジェクトデータ
-	std::shared_ptr<ObjectData>m_p_object_data;
+	std::shared_ptr<ObjectData>mp_object_data;
 
 	//! ファイルオブジェクト管理者
-	std::shared_ptr<FileDataManager>m_p_file_obj_mng;
+	std::shared_ptr<FileDataManager>mp_file_obj_mng;
 
 	//! カメラ
-	std::shared_ptr<Camera3D>m_p_camera;
+	std::shared_ptr<Camera3D>mp_camera;
 
 	//! ファクトリー
-	std::shared_ptr<ObjectFactory>m_p_obj_factory;
+	std::shared_ptr<ObjectFactory>mp_obj_factory;
 
 	//! フィールドobj管理者
-	std::unique_ptr<MapObjectManager>m_p_filed_obj_mng;
+	std::unique_ptr<MapObjectManager>mp_filed_obj_mng;
 
 	//! ゲーム終了判定管理者
-	std::unique_ptr<GameEndJugeManager>m_p_game_end_juge_mng;
+	std::unique_ptr<GameEndJugeManager>mp_game_end_juge_mng;
 
 	//! マップ管理者
-	std::shared_ptr<MapStructureManager>m_p_map_object_mng;
+	std::shared_ptr<MapStructureManager>mp_map_object_mng;
 
-	//std::unique_ptr<ManagerFactory>m_p_mng_factory;
-	//std::unique_ptr<ManagerControlOffcer>m_p_contorl_ofc;
+	//std::unique_ptr<ManagerFactory>mp_mng_factory;
+	//std::unique_ptr<ManagerControlOffcer>mp_contorl_ofc;
 
 
 	//! 一時的にシーンタイプを保存する用
-	SceneType*m_p_scene_type;
+	SceneType*mp_scene_type;
 
 	//! fps計測クラス
 	FPS m_fps;

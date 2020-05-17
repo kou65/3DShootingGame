@@ -13,106 +13,9 @@
 #include"../../Shader/ShaderFunc/ZTexture/ZTexture.h"
 #include"../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
 #include"../../Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
+#include"ObjFileData/ObjFileData.h"
 
 
-// HACK リファクタリング対象(複数のstructなど)
-
-
-/**
-* @brief Drawサブセット用構造体
-*/
-struct ObjectSubset {
-
-	//! インデックス
-	unsigned int material_index;
-
-	//! 始めの面の位置
-	unsigned int face_start;
-
-	//! 総面数
-	unsigned int face_count;
-};
-
-
-// オブジェクトパラメータ
-struct ObjParameter {
-
-
-	/**
-	* @brief コンストラクタ
-	*/
-	ObjParameter() {
-
-		pos.x = pos.y = pos.z = 0.f;
-		rota = pos;
-		scale.x = scale.y = scale.z = 1.f;
-
-		// カラー代入
-		color = D3DXVECTOR4(1.f,1.f,1.f,1.f);
-	}
-
-	//! 位置
-	Vec3 pos;
-
-	//! 拡縮
-	Vec3 scale;
-
-	//! 回転値
-	Vec3 rota;
-
-	//! カラー
-	D3DXVECTOR4 color;
-
-	//! ライト情報
-	LightData light_data;
-
-	//! 影データ
-	ShadowData shadow_data;
-
-	//! zテクスチャを書き込むかどうか
-	bool is_z_tex_write;
-
-	//! obj登録名
-	std::string register_obj_file_name;
-
-	//! テクスチャ名
-	std::string texture_name;
-};
-
-
-/**
-* @brief オブジェファイルで保存するデータ
-*/
-struct ObjFileData {
-
-	//! マテリアル数
-	unsigned int material_num;
-
-	//! Objの方のマテリアル名配列
-	std::vector<std::string>m_usemtl_name_list;
-
-	//! 描画を入れ替えるサブセット
-	std::vector<ObjectSubset>m_object_sub_set_list;
-
-	//! マテリアルデータ配列(マテリアル名,マテリアルデータ)
-	std::unordered_map<std::string, MaterialInfo>m_material_data_list;
-
-	//! バーテックスバッファ
-	IDirect3DVertexBuffer9 * m_p_vertex_buffer;
-
-	//! インデックスバッファ
-	IDirect3DIndexBuffer9 * m_p_index_buffer;
-};
-
-
-/**
-* @brief 描画種類
-*/
-enum class DrawStatus {
-	NORMAL,
-	LIGHT,
-	SHADOW,
-};
 
 
 /**
@@ -153,22 +56,23 @@ public:
 		const std::string &mtl_file_path = ""
 	);
 
+	/**
+	* @brief objを描画
+	* @param[in] state どの状態で描画するか
+	* @param[in] param オブジェクトパラメータ
+	*/
+	void Draw(
+		const DrawStatus&state,
+		const ObjParameter&param
+	);
+
 	
 	/**
 	* @brief GPUシェーダー描画
 	* @param[in] param objパラメータ構造体
 	*/
-	void ShaderDraw(
+	void DrawObjByNormalShader(
 		const ObjParameter &param
-	);
-
-
-	/**
-	* @brief zテクスチャ描画
-	* @param[in] param objパラメータ構造体
-	*/
-	void ZTextureWrite(
-		const ObjParameter&param
 	);
 
 
@@ -176,7 +80,7 @@ public:
 	* @brief 影とライト付き描画
 	* @param[in] param objパラメータ構造体
 	*/
-	void ShadowDraw(
+	void DrawShadowObj(
 		const ObjParameter &param
 	);
 
@@ -185,7 +89,7 @@ public:
 	* @brief 固定機能描画
 	* @param[in] param objパラメータ構造体
 	*/
-	void NormalDraw(
+	void DrawNormal(
 		const ObjParameter&param
 	);
 
@@ -194,7 +98,7 @@ public:
 	* @brief ライト付きで描画
 	* @param[in] param objパラメータ構造体
 	*/
-	void LightDraw(
+	void DrawLightObj(
 		const ObjParameter &param
 	);
 
@@ -203,15 +107,14 @@ public:
 	* @brief 描画用パラメータを追加
 	*/
 	void EntryObjParam(
-		const ObjParameter&param,
-		DrawStatus&type
+		const ObjParameter&param
 	);
 
 
 	/**
-	* @brief 描画用パラメータ描画開始
+	* @brief 保存されてたパラメータ描画開始
 	*/
-	void DrawObjParam();
+	void DrawSavedObj();
 
 
 	/**
@@ -246,6 +149,41 @@ public:
 	);
 
 private:
+
+
+	/**
+	* @brief ライトや影などのデータを代入
+	*/
+	void SetGrapicData(
+		const LightData&data1,
+		const ShadowData&data2
+	);
+
+
+	/**
+	* @brief zテクスチャ書き込み
+	* @param[in] param objパラメータ構造体
+	* @param[in] ZTexture* zテクスチャポインタ
+	*/
+	void WriteZTexture(
+		const ObjParameter&param,
+		ZTexture*p_tex
+	);
+
+
+	/**
+	* @brief zテクスチャを名前付きでパラメータを書き込み
+	* @param[in] z_tex_name ZTexで保存した名前を入れる
+	*/
+	void ParamWriteZTextureByName(
+		const std::string &z_tex_name
+	);
+
+
+	/**
+	* @brief パラメータ
+	*/
+	void ResetParamList();
 
 
 	/**
@@ -502,19 +440,29 @@ private:
 	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
 
 	//! オブジェクトパラメータリストを登録(後で一気に描画する、毎回削除)
-	std::unordered_map<DrawStatus,ObjParameter>m_param_list;
+	std::vector<ObjParameter>m_param_list;
 
 	//! 通常シェーダー
 	NormalShader m_ns;
 
 	//! ライト
-	Light m_light_shader;
+	LightShader m_light_shader;
 
 	//! 影
 	DepthShadowShader m_shadow;
 
 	//! ライトパスタイプ
 	ShaderType m_pass_type;
+
+	//! 影データ
+	ShadowData m_shadow_data;
+
+	//! ライトデータ
+	LightData m_light_data;
+
+	//! 唯一ひとつのライトを使うかどうか
+	bool m_is_world_light;
+
 };
 
 #endif

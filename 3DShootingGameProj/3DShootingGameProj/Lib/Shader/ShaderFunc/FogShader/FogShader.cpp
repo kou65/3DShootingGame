@@ -41,19 +41,19 @@ void FogShader::InitHandle() {
 
 	// ハンドル取得
 	m_h_light_dir =
-		m_p_effect->GetParameterByName(NULL,m_light_dir_name.c_str());
+		mp_effect->GetParameterByName(NULL,m_light_dir_name.c_str());
 	m_h_color =
-		m_p_effect->GetParameterByName(NULL, m_color_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_color_name.c_str());
 	m_h_ambient = 
-		m_p_effect->GetParameterByName(NULL, m_ambient_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_ambient_name.c_str());
 	m_h_texture = 
-		m_p_effect->GetParameterByName(NULL, m_texture_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_texture_name.c_str());
 	m_h_near =
-		m_p_effect->GetParameterByName(NULL, m_near_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_near_name.c_str());
 	m_h_far =
-		m_p_effect->GetParameterByName(NULL, m_far_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_far_name.c_str());
 	m_h_eye_pos =
-		m_p_effect->GetParameterByName(NULL, m_eye_pos_name.c_str());
+		mp_effect->GetParameterByName(NULL, m_eye_pos_name.c_str());
 }
 
 
@@ -78,22 +78,22 @@ void FogShader::UpdateFog() {
 
 
 	// 方向ライト
-	m_p_effect->SetVector(m_h_light_dir, &m_light_data.direction);
+	mp_effect->SetVector(m_h_light_dir, &m_light_data.direction);
 
 	// カラー
-	m_p_effect->SetVector(m_h_color, &m_color);
+	mp_effect->SetVector(m_h_color, &m_color);
 
 	// 注視点座標
-	m_p_effect->SetVector(m_h_eye_pos, &m_light_data.eye_pos);
+	mp_effect->SetVector(m_h_eye_pos, &m_light_data.eye_pos);
 
 	// 環境カラー
-	m_p_effect->SetVector(m_h_ambient, &m_light_data.ambient_color);
+	mp_effect->SetVector(m_h_ambient, &m_light_data.ambient_color);
 
 	// テクスチャ
-	m_p_effect->SetTexture(m_h_texture, m_p_tex);
+	mp_effect->SetTexture(m_h_texture, mp_tex);
 
-	m_p_effect->SetFloat(m_h_far, m_far);
-	m_p_effect->SetFloat(m_h_near, m_near);
+	mp_effect->SetFloat(m_h_far, m_far);
+	mp_effect->SetFloat(m_h_near, m_near);
 }
 
 
@@ -104,8 +104,8 @@ void FogShader::SetColor(const D3DXVECTOR4 &color) {
 
 void FogShader::SetTexture(IDirect3DTexture9* p_tex) {
 	// テクスチャセット
-	HRESULT hr = m_p_effect->SetTexture(m_h_texture, p_tex);
-	m_p_tex = p_tex;
+	HRESULT hr = mp_effect->SetTexture(m_h_texture, p_tex);
+	mp_tex = p_tex;
 }
 
 

@@ -16,7 +16,7 @@
 
 void ObjectFactory::CreatePlayer(
 	const Vec3&pos,
-	std::shared_ptr<Camera3D>m_p_camera,
+	std::shared_ptr<Camera3D>mp_camera,
 	std::shared_ptr<ObjectData>p_out_player
 ){
 
@@ -24,7 +24,7 @@ void ObjectFactory::CreatePlayer(
 	// 生成してそれぞれに渡す
 	Player*p = new Player(
 		pos,
-		m_p_camera,
+		mp_camera,
 		this
 	);
 
@@ -40,13 +40,13 @@ void ObjectFactory::CreatePlayer(
 
 void ObjectFactory::CreateSharedPlayer(
 	const Vec3&pos,
-	std::weak_ptr <Camera3D> m_p_camera,
+	std::weak_ptr <Camera3D> mp_camera,
 	std::weak_ptr<ObjectData2>p_player_data
 ) {
 
 	//// 共有用作成
 	//std::shared_ptr<Player>p_player = std::make_shared<Player>
-	//	(pos,m_p_camera,p_player_data);
+	//	(pos,mp_camera,p_player_data);
 	//
 	//// エントリー
 	//ObjectManager::GetInstance()->SharedEntry(p_player);

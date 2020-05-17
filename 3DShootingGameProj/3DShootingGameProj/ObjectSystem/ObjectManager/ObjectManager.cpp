@@ -12,7 +12,7 @@ void ObjectManager::Update() {
 	InsertObject();
 
 	// オブジェクトを回す
-	for (auto &object : m_p_object_list) {
+	for (auto &object : mp_object_list) {
 
 		// 更新
 		object.get()->Update();
@@ -24,7 +24,7 @@ void ObjectManager::Update() {
 void ObjectManager::Draw() {
 
 	// オブジェクトを描画
-	for (auto &object : m_p_object_list) {
+	for (auto &object : mp_object_list) {
 
 		// 活動していないなら
 		if (object.get()->IsActive() != true) {
@@ -46,32 +46,32 @@ void ObjectManager::InsertObject() {
 
 
 	// 配列に溜めていたオブジェクトを代入
-	for (auto &i_obj : m_p_insert_obj) {
+	for (auto &i_obj : mp_insert_obj) {
 
 		// オブジェクトポインタを委譲
-		m_p_object_list.emplace_back(std::move(i_obj));
+		mp_object_list.emplace_back(std::move(i_obj));
 	}
 
 	// オブジェクトが存在するなら
-	if (m_p_insert_obj.size() > 0) {
-		m_p_insert_obj.clear();
+	if (mp_insert_obj.size() > 0) {
+		mp_insert_obj.clear();
 	}
 
-	for (auto &obj : m_p_insert_obj_shared) {
+	for (auto &obj : mp_insert_obj_shared) {
 
-		m_p_object_list_shared.emplace_back(std::move(obj));
+		mp_object_list_shared.emplace_back(std::move(obj));
 	}
 
-	if (m_p_insert_obj_shared.size() > 0) {
-		m_p_insert_obj_shared.clear();
+	if (mp_insert_obj_shared.size() > 0) {
+		mp_insert_obj_shared.clear();
 	}
 }
 
 
 void ObjectManager::NotActiveAutoDelete() {
 
-	for (auto itr = m_p_object_list.begin();
-		itr != m_p_object_list.end();) {
+	for (auto itr = mp_object_list.begin();
+		itr != mp_object_list.end();) {
 
 		// 活動していないなら
 		if ((*itr).get()->IsActive() == false) {
@@ -89,7 +89,7 @@ void ObjectManager::NotActiveAutoDelete() {
 			}
 
 			// 要素解放
-			itr = m_p_object_list.erase(itr);
+			itr = mp_object_list.erase(itr);
 			continue;
 		}
 
@@ -101,7 +101,7 @@ void ObjectManager::NotActiveAutoDelete() {
 
 void ObjectManager::SharedEntry(std::shared_ptr<ObjectBase>obj) {
 
-	m_p_insert_obj_shared.emplace_back(obj);
+	mp_insert_obj_shared.emplace_back(obj);
 }
 
 
@@ -109,15 +109,15 @@ void ObjectManager::InsertSharedObject() {
 
 
 	// 配列に溜めていたオブジェクトを代入
-	for (auto &i_obj : m_p_insert_obj) {
+	for (auto &i_obj : mp_insert_obj) {
 
 		// オブジェクトポインタを委譲
-		m_p_object_list_shared.emplace_back(std::move(i_obj));
+		mp_object_list_shared.emplace_back(std::move(i_obj));
 	}
 
 	// オブジェクトが存在するなら
-	if (m_p_insert_obj.size() > 0) {
-		m_p_insert_obj.clear();
+	if (mp_insert_obj.size() > 0) {
+		mp_insert_obj.clear();
 	}
 }
 
@@ -126,8 +126,8 @@ void ObjectManager::SharedAutoDelete() {
 
 
 	// 定期的に消す 
-	for (auto itr = m_p_object_list_shared.begin();
-		itr != m_p_object_list_shared.end();) {
+	for (auto itr = mp_object_list_shared.begin();
+		itr != mp_object_list_shared.end();) {
 
 		// 活動していないなら
 		if ((*itr).get()->IsActive() == false) {
@@ -145,7 +145,7 @@ void ObjectManager::SharedAutoDelete() {
 			}
 
 			// 要素解放
-			itr = m_p_object_list_shared.erase(itr);
+			itr = mp_object_list_shared.erase(itr);
 			continue;
 		}
 
@@ -157,8 +157,8 @@ void ObjectManager::SharedAutoDelete() {
 
 void ObjectManager::AllDelete() {
 
-	for (auto itr = m_p_object_list.begin();
-		itr != m_p_object_list.end(); itr++) {
+	for (auto itr = mp_object_list.begin();
+		itr != mp_object_list.end(); itr++) {
 
 		ObjectBase*obj = (*itr).get();
 
@@ -170,17 +170,17 @@ void ObjectManager::AllDelete() {
 	}
 
 	// 要素を全て解放
-	m_p_object_list.clear();
+	mp_object_list.clear();
 }
 
 
 void ObjectManager::EmplaceBack(ObjectBase*object) {
 
-	m_p_object_list.emplace_back(object);
+	mp_object_list.emplace_back(object);
 }
 
 
 void ObjectManager::Entry(ObjectBase*object) {
-	m_p_insert_obj.emplace_back(object);
+	mp_insert_obj.emplace_back(object);
 }
 

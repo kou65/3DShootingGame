@@ -103,14 +103,14 @@ private:
 private:
 
 	//! ファクトリー
-	std::weak_ptr<ObjectFactory>m_p_factory;
+	std::weak_ptr<ObjectFactory>mp_factory;
 
 	//! キャラクターを中心に描画
-	CharacterBase*m_p_chara;
+	CharacterBase*mp_chara;
 
 	//! マップオブジェクトの参照()
-	//std::vector<std::vector<std::weak_ptr<MapObjectBase>>>m_p_map_obj_list;
-	std::vector<std::vector<MapObjectBase*>>m_p_map_obj_list;
+	//std::vector<std::vector<std::weak_ptr<MapObjectBase>>>mp_map_obj_list;
+	std::vector<std::vector<MapObjectBase*>>mp_map_obj_list;
 
 	//! 生成されたかどうかの状態
 	std::vector<std::vector<bool>>m_is_create_list;

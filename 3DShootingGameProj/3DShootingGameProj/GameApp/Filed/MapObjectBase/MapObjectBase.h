@@ -20,7 +20,7 @@ public:
 	* @param[in] inter Interfaceクラス
 	*/
 	MapObjectBase(Object3DInterface*inter) : CollisionObject3DBase(){
-		m_p_interface_obj = inter;
+		mp_interface_obj = inter;
 	}
 
 
@@ -56,7 +56,7 @@ public:
 protected:
 
 	//! インターフェースクラス
-	Object3DInterface * m_p_interface_obj;
+	Object3DInterface * mp_interface_obj;
 
 	//! マップナンバー
 	MapTag m_map_tag;

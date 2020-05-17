@@ -112,13 +112,13 @@ private:
 private:
 
 	//! カメラ
-	std::weak_ptr<Camera3D>m_p_camera;
+	std::weak_ptr<Camera3D>mp_camera;
 
 	//! オブジェクト工場
-	std::weak_ptr<ObjectFactory>m_p_mng;
+	std::weak_ptr<ObjectFactory>mp_mng;
 
 	//! オブジェクトデータ
-	std::weak_ptr<ObjectData>m_p_object_data;
+	std::weak_ptr<ObjectData>mp_object_data;
 
 	//! オブジェクトのパラメータを入れて後で生成する用
 	//! 位置で比較し、位置が近いオブジェクトだけ生成する

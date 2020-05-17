@@ -46,6 +46,6 @@ private:
 	// カラー値
 	D3DXVECTOR4 m_color;
 	// テクスチャポインタ
-	IDirect3DTexture9*m_p_tex;
+	IDirect3DTexture9*mp_tex;
 
 };

@@ -1,19 +1,8 @@
 ﻿#pragma once
 #include"../StandardTransformShader/StandardTransformShader.h"
 #include"../LightData/LightData.h"
+#include"../ShadowData/ShadowData.h"
 
-
-
-struct ShadowData {
-
-	// ライト用
-	D3DXMATRIX light_view;
-	D3DXMATRIX light_proj;
-
-	// カメラ用
-	D3DXMATRIX camera_view;
-	D3DXMATRIX camera_proj;
-};
 
 
 enum class ShaderType {
@@ -117,10 +106,10 @@ private:
 	D3DXVECTOR4 m_color;
 
 	// テクスチャポインタ
-	IDirect3DTexture9*m_p_tex;
+	IDirect3DTexture9*mp_tex;
 
 	// シャドウマップ用zテクスチャ
-	IDirect3DTexture9*m_p_shadow_map_tex;
+	IDirect3DTexture9*mp_shadow_map_tex;
 
 	// ライトビュー
 	D3DXMATRIX m_light_view_mat;

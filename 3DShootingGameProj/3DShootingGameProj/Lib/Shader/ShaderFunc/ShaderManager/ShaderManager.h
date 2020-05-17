@@ -16,7 +16,7 @@ public:
 	* @brief シェーダークラス挿入
 	*/
 	void Entry(const char*register_file_name,ShaderBase*base) {
-		m_p_shader_list[register_file_name] = base;
+		mp_shader_list[register_file_name] = base;
 	}
 
 
@@ -31,5 +31,5 @@ public:
 private:
 
 	//! 管理者
-	std::map<std::string, ShaderBase*>m_p_shader_list;
+	std::map<std::string, ShaderBase*>mp_shader_list;
 };

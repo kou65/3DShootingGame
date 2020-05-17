@@ -63,23 +63,23 @@ private:
 	D3DFORMAT m_z_tex_format;
 
 	// z値テクスチャ
-	IDirect3DTexture9* m_p_tex;
+	IDirect3DTexture9* mp_tex;
 
 	// z値テクスチャサーフェイス
-	IDirect3DSurface9* m_p_tex_suf;
+	IDirect3DSurface9* mp_tex_suf;
 
 	// 深度バッファ
-	IDirect3DSurface9* m_p_depth_buffer;
+	IDirect3DSurface9* mp_depth_buffer;
 
 	// デバイスバックバッファ
-	IDirect3DSurface9* m_p_device_buffer;
+	IDirect3DSurface9* mp_device_buffer;
 
 	// デバイス深度バッファ
-	IDirect3DSurface9* m_p_device_depth;
+	IDirect3DSurface9* mp_device_depth;
 
 	// スタートパス数
 	int m_start_pass_num;
 
 	// デバイス
-	IDirect3DDevice9 *m_p_device;
+	IDirect3DDevice9 *mp_device;
 };

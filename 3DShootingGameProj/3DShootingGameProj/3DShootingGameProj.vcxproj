@@ -289,6 +289,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShadowData\ShadowData.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.h">
       <SubType>
       </SubType>

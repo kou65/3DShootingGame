@@ -11,13 +11,15 @@
 Obj::Obj() : Model(){
 
 	// グラフィックス取得
-	m_p_graphics = Graphics::GetInstance();
+	mp_graphics = Graphics::GetInstance();
 
 	// 初期パスタイプ
 	m_pass_type = ShaderType::PHONE_REFLECTION;
 
 	// 各シェーダー初期化
 	m_ns.Init();
+
+	// ライトシェーダー初期化
 	m_light_shader.Init();
 
 	// シャドウの初期化
@@ -29,6 +31,9 @@ Obj::Obj() : Model(){
 			FuncZTexture::Const::Z_TEX_1024
 		)->GetZTexture()
 	);
+
+	// 世界ライトを使用する
+	m_is_world_light = true;
 }
 
 
@@ -45,6 +50,48 @@ void Obj::Update(
 }
 
 
+void Obj::Draw(
+	const DrawStatus&state,
+	const ObjParameter&param
+) {
+
+	// 各書き込み
+	switch (state) {
+
+	case DrawStatus::NORMAL:
+
+		// 通常描画
+		DrawNormal(
+			param
+		);
+
+	case DrawStatus::LIGHT:
+
+		// ライト描画
+		DrawLightObj(
+			param
+		);
+
+	case DrawStatus::SHADOW:
+
+		// 影描画
+		DrawShadowObj(
+			param
+		);
+	}
+}
+
+
+void Obj::SetGrapicData(
+	const LightData&data1,
+	const ShadowData&data2
+) {
+	// データセット
+	m_light_data = data1;
+	m_shadow_data = data2;
+}
+
+
 void Obj::UpdateLight(const ObjParameter&param) {
 
 	// ライトセット
@@ -57,7 +104,7 @@ void Obj::UpdateLight(const ObjParameter&param) {
 }
 
 
-void Obj::ShaderDraw(
+void Obj::DrawObjByNormalShader(
 	const ObjParameter &param
 	){
 
@@ -76,38 +123,10 @@ void Obj::ShaderDraw(
 }
 
 
-void Obj::ZTextureWrite(
-	const ObjParameter&param
-) {
 
-	ZTexture *tex =
-		ZTextureManager::GetInstance()->GetZTexturePtr(
-			FuncZTexture::Const::Z_TEX_1024
-		);
-
-	// カメラ情報セット
-	tex->SetViewMatrix(param.shadow_data.camera_view);
-	tex->SetProjMatrix(param.shadow_data.camera_proj);
-
-	m_pass_type = ShaderType::ZTEXTURE;
-
-	// 更新
-	Update(param, tex);
-
-	// 描画の直前に行う
-	tex->Update();
-
-	// zテクスチャ描画
-	DrawShader(param, tex);
-}
-
-
-void Obj::ShadowDraw(
+void Obj::DrawShadowObj(
 	const ObjParameter &param
 ) {
-
-	// zテクスチャに書き込み
-	ZTextureWrite(param);
 
 	// ライトカメラセット
 	m_shadow.SetLightViewMatrix(param.shadow_data.light_view);
@@ -128,7 +147,7 @@ void Obj::ShadowDraw(
 }
 
 
-void Obj::LightDraw(
+void Obj::DrawLightObj(
 	const ObjParameter &param
 ) {
 
@@ -140,49 +159,87 @@ void Obj::LightDraw(
 }
 
 
-void Obj::EntryObjParam(
-	const ObjParameter&param,
-	DrawStatus&type
-){
+void Obj::ParamWriteZTextureByName(
+	const std::string &z_tex_name
+) {
 
-	// パラメータを追加
-	m_param_list[type] = param;
+	// zテクスチャ
+	ZTexture*p_tex
+		= ZTextureManager::GetInstance()->GetZTexturePtr(z_tex_name);
+
+	UINT i;
+
+	// 描画開始
+	p_tex->Begin(i, 0);
+
+	// パラメータリスト
+	for (auto&itr : m_param_list) {
+
+		// 書き込み
+		if (itr.is_z_tex_write == true) {
+
+			// Zテクスチャ書き込み
+			WriteZTexture(itr, p_tex);
+		}
+	}
+
+	p_tex->End();
 }
 
 
-void Obj::DrawObjParam()
+void Obj::WriteZTexture(
+	const ObjParameter&param,
+	ZTexture*p_tex
+) {
+
+	// カメラ情報セット
+	p_tex->SetViewMatrix(param.shadow_data.camera_view);
+	p_tex->SetProjMatrix(param.shadow_data.camera_proj);
+
+	// パス
+	m_pass_type = ShaderType::ZTEXTURE;
+
+	// 更新
+	Update(param, p_tex);
+
+	// 描画の直前に行う
+	p_tex->Update();
+
+	// zテクスチャ描画
+	DrawShader(param, p_tex);
+}
+
+
+void Obj::EntryObjParam(
+	const ObjParameter&param
+){
+
+	// パラメータを追加
+	m_param_list.emplace_back(param);
+}
+
+
+void Obj::DrawSavedObj()
 {
 
 	// zテクスチャ書き込み
+	ParamWriteZTextureByName(FuncZTexture::Const::Z_TEX_1024);
+
+	// 本編書き込み
 	for (auto&itr : m_param_list) {
 
-		// Zテクスチャ書き込み
-		ZTextureWrite(itr.second);
+		// 描画
+		Draw(itr.draw_status, itr);
 	}
 
-	for (auto&itr : m_param_list) {
+	// パラメータリセット
+	ResetParamList();
+}
 
-		switch (itr.first) {
 
-		case DrawStatus::NORMAL:
+void Obj::ResetParamList() {
 
-			NormalDraw(
-				itr.second
-			);
-
-		case DrawStatus::LIGHT:
-
-			LightDraw(
-				itr.second
-			);
-
-		case DrawStatus::SHADOW:
-
-			ShadowDraw(
-				itr.second
-			);
-		}
-	}
+	m_param_list.clear();
 }
 
 
@@ -358,8 +415,8 @@ void Obj::DrawBeginPassShader(
 	// 3D描画に必要なパラメータをセット
 	Model::Set3DParameter(
 		Graphics::GetInstance(),
-		p_data->m_p_index_buffer,
-		p_data->m_p_vertex_buffer,
+		p_data->mp_index_buffer,
+		p_data->mp_vertex_buffer,
 		sizeof(MeshCustomVertex),
 		// マテリアル
 		mtl.material,
@@ -387,7 +444,7 @@ void Obj::DrawBeginPassShader(
 	p_shader->BeginPass(now_pass);
 
 	// インデックス描画
-	m_p_graphics->GetDevice()->DrawIndexedPrimitive(
+	mp_graphics->GetDevice()->DrawIndexedPrimitive(
 		D3DPT_TRIANGLELIST,
 		// 頂点インデックスオフセット値
 		0,
@@ -445,7 +502,7 @@ UINT Obj::GetUsePass(const ShaderType&type) {
 
 
 
-void Obj::NormalDraw(
+void Obj::DrawNormal(
 	const ObjParameter&param
 ) {
 
@@ -472,14 +529,14 @@ void Obj::NormalDraw(
 		ObjFileData *p_obj_file_data =
 			m_obj_file_data[param.register_obj_file_name];
 
-		if (p_obj_file_data->m_p_vertex_buffer == nullptr) {
+		if (p_obj_file_data->mp_vertex_buffer == nullptr) {
 			return;
 		}
 
 		// ストリームをセット
-		m_p_graphics->GetDevice()->SetStreamSource(
+		mp_graphics->GetDevice()->SetStreamSource(
 			0,
-			p_obj_file_data->m_p_vertex_buffer,
+			p_obj_file_data->mp_vertex_buffer,
 			0,
 			sizeof(MeshCustomVertex)
 		);
@@ -501,29 +558,29 @@ void Obj::NormalDraw(
 				);
 
 			// テクスチャセット
-			m_p_graphics->GetDevice()->
+			mp_graphics->GetDevice()->
 				SetTexture(0,texture_data);
 		}
 
 		// マテリアルをセット
-		m_p_graphics->GetDevice()->SetMaterial(
+		mp_graphics->GetDevice()->SetMaterial(
 			&p_obj_file_data->m_material_data_list[material_name]
 			.material
 		);
 
 		// インデックス番号をデバイスに設定する
-		m_p_graphics->GetDevice()->SetIndices(
-			p_obj_file_data->m_p_index_buffer
+		mp_graphics->GetDevice()->SetIndices(
+			p_obj_file_data->mp_index_buffer
 		);
 
 		// どの情報を伝えるか
-		m_p_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
+		mp_graphics->GetDevice()->SetFVF(FVF_CUSTOM);
 
-		m_p_graphics->GetInstance()->GetDevice()
+		mp_graphics->GetInstance()->GetDevice()
 			->SetTransform(D3DTS_WORLD, &total_mat);
 
 		// インデックス描画
-		m_p_graphics->GetDevice()->DrawIndexedPrimitive(
+		mp_graphics->GetDevice()->DrawIndexedPrimitive(
 			// 頂点のつなぎ方
 			D3DPT_TRIANGLELIST,
 			// 頂点インデックスの一番最初までのオフセット値を指定
@@ -543,7 +600,7 @@ void Obj::NormalDraw(
 		);
 
 		// セットテクスチャリセット
-		m_p_graphics->GetDevice()->SetTexture(
+		mp_graphics->GetDevice()->SetTexture(
 			0,
 			NULL
 		);
@@ -1344,7 +1401,7 @@ void Obj::VertexBufferCreate(
 	ObjFileData*p_obj_file_data = m_obj_file_data[register_name];
 
 	// 頂点バッファ作成
-	m_p_graphics->GetDevice()->CreateVertexBuffer(
+	mp_graphics->GetDevice()->CreateVertexBuffer(
 		// 頂点バッファサイズ(CustomVertex * 頂点数)
 		(sizeof(MeshCustomVertex) * vertex_num),
 		// リソースの使用法
@@ -1354,7 +1411,7 @@ void Obj::VertexBufferCreate(
 		// 頂点バッファをどの種類のメモリに置くか
 		D3DPOOL_MANAGED,
 		// 頂点バッファ
-		&p_obj_file_data->m_p_vertex_buffer,
+		&p_obj_file_data->mp_vertex_buffer,
 		// phandleは現在使用されていない
 		NULL
 	);
@@ -1363,7 +1420,7 @@ void Obj::VertexBufferCreate(
 	MeshCustomVertex *custom_vertex_list;
 
 	// ロック
-	p_obj_file_data->m_p_vertex_buffer->Lock(
+	p_obj_file_data->mp_vertex_buffer->Lock(
 		0,
 		vertex_num * sizeof(MeshCustomVertex),
 		(void**)&custom_vertex_list,
@@ -1381,7 +1438,7 @@ void Obj::VertexBufferCreate(
 	}
 
 	// アンロック
-	p_obj_file_data->m_p_vertex_buffer->Unlock();
+	p_obj_file_data->mp_vertex_buffer->Unlock();
 }
 
 
@@ -1405,14 +1462,14 @@ bool Obj::IndexBufferCreateFaceBase(
 		int * index_buffer;
 
 		// 32bitサイズのインデックスバッファを作成
-		m_p_graphics->CreateIndexBuffer32BitSize(
-			&p_obj_file_data->m_p_index_buffer,
+		mp_graphics->CreateIndexBuffer32BitSize(
+			&p_obj_file_data->mp_index_buffer,
 			(face_num * sizeof(int))
 		);
 
 		// ロック
-		index_buffer = m_p_graphics->LockIndexBuffer32BitSize(
-			&p_obj_file_data->m_p_index_buffer
+		index_buffer = mp_graphics->LockIndexBuffer32BitSize(
+			&p_obj_file_data->mp_index_buffer
 		);
 
 		// nullチェック
@@ -1432,14 +1489,14 @@ bool Obj::IndexBufferCreateFaceBase(
 		WORD * index_buffer;
 
 		// 32bitサイズのインデックスバッファを作成
-		m_p_graphics->CreateIndexBuffer16BitSize(
-			&p_obj_file_data->m_p_index_buffer,
+		mp_graphics->CreateIndexBuffer16BitSize(
+			&p_obj_file_data->mp_index_buffer,
 			(face_num * sizeof(WORD))
 		);
 
 		// ロック
-		index_buffer = m_p_graphics->LockIndexBuffer16BitSize(
-			&p_obj_file_data->m_p_index_buffer
+		index_buffer = mp_graphics->LockIndexBuffer16BitSize(
+			&p_obj_file_data->mp_index_buffer
 		);
 
 		// nullチェック
@@ -1454,13 +1511,13 @@ bool Obj::IndexBufferCreateFaceBase(
 	}
 
 	// nullチェック
-	if (p_obj_file_data->m_p_index_buffer == nullptr) {
+	if (p_obj_file_data->mp_index_buffer == nullptr) {
 		return false;
 	}
 
 	// アンロック
-	m_p_graphics->UnlockIndexBuffer(
-		&p_obj_file_data->m_p_index_buffer
+	mp_graphics->UnlockIndexBuffer(
+		&p_obj_file_data->mp_index_buffer
 	);
 
 	return true;

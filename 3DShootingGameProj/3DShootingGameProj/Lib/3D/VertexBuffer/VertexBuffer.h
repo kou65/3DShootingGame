@@ -40,18 +40,18 @@ public:
 
 
 	operator IDirect3DVertexBuffer9*() const {
-		return m_p_vertex_buffer9;
+		return mp_vertex_buffer9;
 	}
 
 	IDirect3DVertexBuffer9*GetBufferPtr() {
-		return m_p_vertex_buffer9;
+		return mp_vertex_buffer9;
 	}
 
 
 private:
 
 	// バーテックスバッファ
-	IDirect3DVertexBuffer9 * m_p_vertex_buffer9;
+	IDirect3DVertexBuffer9 * mp_vertex_buffer9;
 
 	// DirectGraphics
 	Graphics * graphics;

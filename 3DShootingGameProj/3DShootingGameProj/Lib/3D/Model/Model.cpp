@@ -4,7 +4,7 @@
 
 
 Model::Model() {
-	m_p_graphics = Graphics::GetInstance();
+	mp_graphics = Graphics::GetInstance();
 }
 
 
@@ -307,7 +307,7 @@ void Model::DrawPrimitive(
 ){
 
 	// 描画
-	m_p_graphics->GetDevice()->DrawIndexedPrimitive(
+	mp_graphics->GetDevice()->DrawIndexedPrimitive(
 		D3DPT_TRIANGLELIST,
 		0,
 		0,

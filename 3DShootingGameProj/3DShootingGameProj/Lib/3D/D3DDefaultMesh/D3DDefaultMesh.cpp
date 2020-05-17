@@ -16,7 +16,7 @@ void D3DDefaultMesh::AllDraw() {
 
 	DefaultLight light(Graphics::GetInstance());
 
-	Draw(m_p_teapot, D3DXVECTOR3(-10.f, 0.f, 0.f));
+	Draw(mp_teapot, D3DXVECTOR3(-10.f, 0.f, 0.f));
 }
 
 
@@ -61,7 +61,7 @@ void D3DDefaultMesh::CreateTeapot() {
 
 	D3DXCreateTeapot(
 		Graphics::GetInstance()->GetDevice(),
-		&m_p_teapot,
+		&mp_teapot,
 		NULL
 	);
 }
@@ -74,7 +74,7 @@ void D3DDefaultMesh::CreateTorus() {
 		0.8f,
 		32,
 		32,
-		&m_p_tours,
+		&mp_tours,
 		NULL
 	);
 }
@@ -88,6 +88,6 @@ void D3DDefaultMesh::CreateCone() {
 		1.5f,
 		30,
 		30,
-		&m_p_cone,
+		&mp_cone,
 		NULL);
 }

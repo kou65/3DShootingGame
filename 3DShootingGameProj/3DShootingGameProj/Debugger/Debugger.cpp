@@ -22,10 +22,10 @@ Debugger::Debugger() {
 void Debugger::Init() {
 
 	// デバイス取得
-	m_p_device = Graphics::GetInstance()->GetDevice();
+	mp_device = Graphics::GetInstance()->GetDevice();
 
 	// fps生成
-	m_p_fps = new FPS(60);
+	mp_fps = new FPS(60);
 
 	// ライト生成
 	light = new DefaultLight(Graphics::GetInstance());
@@ -37,8 +37,8 @@ void Debugger::Init() {
 	data.is_debug = true;
 
 	// カメラ
-	m_p_camera = new Camera3D(Camera3D::FPS, data);
-	m_p_camera->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
+	mp_camera = new Camera3D(Camera3D::FPS, data);
+	mp_camera->AddPos(D3DXVECTOR3(0.f, 0.f, -30.f));
 
 	// シェーダー初期化
 	InitXFileShader();
@@ -50,7 +50,7 @@ void Debugger::Init() {
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Cube2.x"),
 		D3DXMESH_MANAGED,
-		m_p_device,
+		mp_device,
 		NULL,
 		&cpMatBuf,
 		NULL,
@@ -63,7 +63,7 @@ void Debugger::Init() {
 	if (FAILED(D3DXLoadMeshFromX(
 		TEXT("Resource/3DModel/Plate.x"),
 		D3DXMESH_MANAGED,
-		m_p_device,
+		mp_device,
 		NULL,
 		&cpMatBuf,
 		NULL,
@@ -95,7 +95,7 @@ void Debugger::InitXFileShader() {
 
 
 	// シャドウの初期化
-	m_p_shadow =
+	mp_shadow =
 		new DepthShadowShader();
 
 
@@ -111,7 +111,7 @@ void Debugger::InitXFileShader() {
 
 	
 	// デバイスのカメラ情報送信
-	m_p_shadow->CommitDeviceViewProj();
+	mp_shadow->CommitDeviceViewProj();
 
 	// zテクスチャのテクスチャをシャドウにセット
 
@@ -122,10 +122,10 @@ void Debugger::InitXFileShader() {
 
 	
 
-	m_p_shadow->SetShandowMap(tex->GetZTexture());
+	mp_shadow->SetShandowMap(tex->GetZTexture());
 
 	// シャドウ初期化
-	m_p_shadow->Init();
+	mp_shadow->Init();
 
 }
 
@@ -163,7 +163,7 @@ void Debugger::Update() {
 
 	CameraMove();
 
-	m_p_camera->Update();
+	mp_camera->Update();
 
 	// アニメーション更新
 	Fbx::GetInstance()->Animate(5.f);
@@ -177,7 +177,7 @@ void Debugger::Draw() {
 	{
 		// objではない
 	//tex->ResetDecl();
-	//m_p_shadow->ResetDecl();
+	//mp_shadow->ResetDecl();
 		//XFileZTextureWrite();
 		//XFileShadowDraw();
 		
@@ -195,8 +195,8 @@ void Debugger::Draw() {
 	//Fbx::GetInstance()->Draw();
 
 
-	m_p_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
-	m_p_camera->TransformDraw();
+	mp_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
+	mp_camera->TransformDraw();
 
 	{
 		// Z値テクスチャ
@@ -319,20 +319,20 @@ void Debugger::ObjShadowDraw() {
 		&D3DXVECTOR3(0, 1, 0)
 	);
 
-	ObjParameter param;
+	ObjParameter param(DrawStatus::NORMAL,true);
 	param.pos = vec3;
 	param.register_obj_file_name =
 		Const::Obj::PLAYER;
 
 	// カメラ位置を描画
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->EntryObjParam(param);
 
 	param.pos = look;
 	param.register_obj_file_name =
 		Const::Obj::ENEMY_BULLETER;
 
 	// カメラ位置を描画
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->EntryObjParam(param);
 
 	D3DXMATRIX mat_c_view;
 
@@ -340,16 +340,14 @@ void Debugger::ObjShadowDraw() {
 	Graphics::GetInstance()->GetDevice()
 		->GetTransform(D3DTS_VIEW, &mat_c_view);
 
-	ObjParameter z_tex_p;
-	UINT pass;
-
-	ZTextureManager::GetInstance()->GetZTexturePtr(
-		FuncZTexture::Const::Z_TEX_1024
-	)->Begin(pass,0);
+	// zテクスチャ
+	ObjParameter z_tex_p(DrawStatus::SHADOW,true);
 
 	{
+		// キューブ
 		z_tex_p.register_obj_file_name = Const::Obj::CUBE;
 
+		// 位置
 		z_tex_p.pos.y = 60.f;
 		z_tex_p.pos.x = 0.f;
 		z_tex_p.pos.z = 0.f;
@@ -366,18 +364,18 @@ void Debugger::ObjShadowDraw() {
 		z_tex_p.shadow_data.camera_proj = mat_c_proj;
 	}
 
-	// 一個目書き込み
-	Obj::GetInstance()->ZTextureWrite(z_tex_p);
-
 	// オブジェパラメータ
-	ObjParameter shadow_p;
+	ObjParameter shadow_p(DrawStatus::SHADOW,true);
 
 	{
 
+		// 板文字
 		shadow_p.register_obj_file_name = Const::Obj::PLANE;
+
+		// ライトデータ
 		shadow_p.light_data = m_light_data;
 		
-		// ライト
+		// ライト行列
 		shadow_p.shadow_data.light_proj = mat_light_proj;
 		shadow_p.shadow_data.light_view = mat_light_view;
 
@@ -385,24 +383,18 @@ void Debugger::ObjShadowDraw() {
 		shadow_p.shadow_data.camera_proj = mat_c_proj;
 		shadow_p.shadow_data.camera_view = mat_c_view;
 		
-
 		// 位置
 		shadow_p.pos.y = 20.f;
 		shadow_p.scale.x = 30.f;
 		shadow_p.scale.z = 30.f;
 	}
 
-	// 2個目書き込み(データを送るところでやらかしているかも)
-	Obj::GetInstance()->ZTextureWrite(shadow_p);
+	// エントリーオブジェパラメータ
+	Obj::GetInstance()->EntryObjParam(z_tex_p);
+	Obj::GetInstance()->EntryObjParam(shadow_p);
 
-	ZTextureManager::GetInstance()->GetZTexturePtr(
-		FuncZTexture::Const::Z_TEX_1024
-	)->End();
-
-
-	Obj::GetInstance()->ShadowDraw(z_tex_p);
-	Obj::GetInstance()->ShadowDraw(shadow_p);
-
+	// オブジェクトを一気に描画する
+	Obj::GetInstance()->DrawSavedObj();
 }
 
 
@@ -410,14 +402,14 @@ void Debugger::ObjShadowDraw() {
 void Debugger::LightDebugDraw() {
 
 	// オブジェシェーダー描画
-	ObjParameter param;
+	ObjParameter param(DrawStatus::LIGHT,true);
 	param.register_obj_file_name = Const::Obj::SPEHER;
 
 	D3DXVECTOR3 eye_dir;
 
 	D3DXVec3Normalize(
 		&eye_dir,
-		&m_p_camera->GetEyePos());
+		&mp_camera->GetEyePos());
 
 	D3DXVECTOR4 light_dir(0.0f, 0.5f, -1.0f, 0.0f);
 	D3DXVec4Normalize(&light_dir, &light_dir);
@@ -445,7 +437,7 @@ void Debugger::LightDebugDraw() {
 
 	param.light_data = m_light_data;
 
-	Obj::GetInstance()->ShadowDraw(param);
+	Obj::GetInstance()->DrawShadowObj(param);
 }
 
 
@@ -565,10 +557,10 @@ void Debugger::XFileShadowDraw() {
 
 
 	// 現在のカメラ情報セット
-	m_p_shadow->SetViewMatrix(
+	mp_shadow->SetViewMatrix(
 		Graphics::GetInstance()->GetTSMatrix(D3DTS_VIEW)
 	);
-	m_p_shadow->SetProjMatrix(
+	mp_shadow->SetProjMatrix(
 		Graphics::GetInstance()->GetTSMatrix(D3DTS_PROJECTION)
 	);
 
@@ -588,8 +580,8 @@ void Debugger::XFileShadowDraw() {
 	);
 
 	// 深度シャドウセット
-	m_p_shadow->SetLightViewMatrix(LightView);
-	m_p_shadow->SetLightProjMatrix(LightProj);
+	mp_shadow->SetLightViewMatrix(LightView);
+	mp_shadow->SetLightProjMatrix(LightProj);
 
 	{
 		// ワールド行列正規化
@@ -602,20 +594,20 @@ void Debugger::XFileShadowDraw() {
 		);
 
 		// ワールド位置セット
-		m_p_shadow->SetWorldMatrix(world_mat);
+		mp_shadow->SetWorldMatrix(world_mat);
 
 
 		UINT pass = 0;
 		// 開始
-		m_p_shadow->Begin(pass, 0);
+		mp_shadow->Begin(pass, 0);
 
 		// xファイルキューブ
 		for (UINT i = 0; i < dwMatNum; i++) {
 
-			m_p_shadow->Update();
-			m_p_shadow->BeginPass();
+			mp_shadow->Update();
+			mp_shadow->BeginPass();
 			cpMeshCube->DrawSubset(i);
-			m_p_shadow->EndPass();
+			mp_shadow->EndPass();
 		}
 
 		// プレート
@@ -624,18 +616,18 @@ void Debugger::XFileShadowDraw() {
 			D3DXVECTOR3(1.f, 1.f, 1.f)
 		);
 
-		m_p_shadow->SetWorldMatrix(world_mat);
+		mp_shadow->SetWorldMatrix(world_mat);
 
 		// xファイルプレート
 		for (UINT i = 0; i < dwMatNum_Plate; i++) {
 
-			m_p_shadow->Update();
-			m_p_shadow->BeginPass();
+			mp_shadow->Update();
+			mp_shadow->BeginPass();
 			cpMeshPlate->DrawSubset(i);
-			m_p_shadow->EndPass();
+			mp_shadow->EndPass();
 		}
 
-		m_p_shadow->End();
+		mp_shadow->End();
 	}
 }
 
@@ -647,32 +639,32 @@ void Debugger::CameraMove() {
 	// キーボード操作
 	{
 		if (KeyBoard::IsKeyPushing(DIK_UP)) {
-			m_p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
+			mp_camera->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
 		}
 		if (KeyBoard::IsKeyPushing(DIK_DOWN)) {
-			m_p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
+			mp_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
 		}
 		if (KeyBoard::IsKeyPushing(DIK_RIGHT)) {
-			m_p_camera->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
+			mp_camera->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
 		}
 		if (KeyBoard::IsKeyPushing(DIK_LEFT)) {
-			m_p_camera->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
+			mp_camera->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
 		}
 	}
 
 	// ジョイスティック操作
 	{
 		if (JoyStick::IsBottomPushing(0)) {
-			m_p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
+			mp_camera->AddMove(D3DXVECTOR3(0.f, 0.f, 1.f));
 		}
 		if (JoyStick::IsBottomPushing(2)) {
-			m_p_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
+			mp_camera->AddMove(D3DXVECTOR3(0.f, 0.f, -1.f));
 		}
 		if (JoyStick::IsBottomPushing(1)) {
-			m_p_camera->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
+			mp_camera->AddMove(D3DXVECTOR3(1.f, 0.f, 0.f));
 		}
 		if (JoyStick::IsBottomPushing(3)) {
-			m_p_camera->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
+			mp_camera->AddMove(D3DXVECTOR3(-1.f, 0.f, 0.f));
 		}
 	}
 }
@@ -681,16 +673,16 @@ void Debugger::CameraMove() {
 void Debugger::CameraRotation() {
 
 	if (KeyBoard::IsKeyPushing(DIK_D)) {
-		m_p_camera->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
+		mp_camera->AddRotation(D3DXVECTOR3(1.f, 0.f, 0.f));
 	}
 	if (KeyBoard::IsKeyPushing(DIK_A)) {
-		m_p_camera->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
+		mp_camera->AddRotation(D3DXVECTOR3(-1.f, 0.f, 0.f));
 	}
 	if (KeyBoard::IsKeyPushing(DIK_W)) {
-		m_p_camera->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
+		mp_camera->AddRotation(D3DXVECTOR3(0.f, -1.f, 0.f));
 	}
 	if (KeyBoard::IsKeyPushing(DIK_S)) {
-		m_p_camera->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
+		mp_camera->AddRotation(D3DXVECTOR3(0.f, 1.f, 0.f));
 	}
 }
 

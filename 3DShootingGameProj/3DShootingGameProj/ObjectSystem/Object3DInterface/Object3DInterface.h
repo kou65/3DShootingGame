@@ -29,6 +29,6 @@ public:
 private:
 
 	//! オブジェクト
-	Object3D * m_p_object;
+	Object3D * mp_object;
 };
 #endif

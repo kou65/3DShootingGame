@@ -32,10 +32,10 @@ MapObjectManager::MapObjectManager(
 	);
 
 	// ファクトリー
-	m_p_factory = p_factory;
+	mp_factory = p_factory;
 
 	// キャラ代入
-	m_p_chara = p_player;
+	mp_chara = p_player;
 }
 
 
@@ -111,7 +111,7 @@ void MapObjectManager::InsertPosFileData(
 
 	if (m_world_pos_list[Object3DTag::BULLET_ENEMY].size() != 0) {
 		// 撃つ敵リスト
-		m_p_h_enemy_list.resize(
+		mp_h_enemy_list.resize(
 			m_world_pos_list[Object3DTag::BULLET_ENEMY].size()
 		);
 	}
@@ -126,7 +126,7 @@ void MapObjectManager::InsertPosFileData(
 
 	if (m_world_pos_list[Object3DTag::BLOCK].size() != 0) {
 		// キューブ
-		m_p_cube_list.resize(
+		mp_cube_list.resize(
 			m_world_pos_list[Object3DTag::BLOCK].size()
 		);
 	}
@@ -141,7 +141,7 @@ void MapObjectManager::InsertPosFileData(
 
 	if (m_world_pos_list[Object3DTag::SHOTGUN_ENEMY].size() != 0) {
 		// キューブ
-		m_p_shotgun_enemy.resize(
+		mp_shotgun_enemy.resize(
 			m_world_pos_list[Object3DTag::SHOTGUN_ENEMY].size()
 		);
 	}
@@ -229,7 +229,7 @@ void MapObjectManager::CreateWorldObject() {
 	int array_num = 0;
 
 	std::shared_ptr<ObjectData>p_data =
-		m_p_chara.lock();
+		mp_chara.lock();
 
 	// キャラクターを代入
 	CharacterBase m_chara = *p_data->p_player;
@@ -284,7 +284,7 @@ void MapObjectManager::DestoryWorldObject(
 	int array_num = 0;
 
 	std::shared_ptr<ObjectData>p_data = 
-		m_p_chara.lock();
+		mp_chara.lock();
 
 	// キャラクターを代入
 	CharacterBase m_chara = *p_data->p_player;
@@ -338,8 +338,8 @@ void MapObjectManager::FileObjCreate(
 	int& array_num
 ) {
 
-	std::shared_ptr<ObjectData>p_data = m_p_chara.lock();
-	std::shared_ptr<ObjectFactory>p_factory = m_p_factory.lock();
+	std::shared_ptr<ObjectData>p_data = mp_chara.lock();
+	std::shared_ptr<ObjectFactory>p_factory = mp_factory.lock();
 
 	// タグによって生成するものを入れ替える
 	switch (tag) {
@@ -350,7 +350,7 @@ void MapObjectManager::FileObjCreate(
 		p_factory->CreateHEnemy(
 			pos,
 			p_data->p_player,
-			&m_p_h_enemy_list[array_num]
+			&mp_h_enemy_list[array_num]
 		);
 
 		break;
@@ -360,7 +360,7 @@ void MapObjectManager::FileObjCreate(
 		// キューブオブジェクト生成
 		p_factory->CreateCube(
 			pos, 
-			&m_p_cube_list[array_num]
+			&mp_cube_list[array_num]
 		);
 
 		break;
@@ -371,7 +371,7 @@ void MapObjectManager::FileObjCreate(
 		p_factory->CreateShotgunEnemy(
 			pos,
 			p_data->p_player,
-			&m_p_shotgun_enemy[array_num]
+			&mp_shotgun_enemy[array_num]
 		);
 		break;
 	}
@@ -390,19 +390,19 @@ void MapObjectManager::FileObjDestory(
 	case Object3DTag::BULLET_ENEMY:
 
 		// 敵オブジェクト削除
-		m_p_h_enemy_list[array_num]->Destory();
+		mp_h_enemy_list[array_num]->Destory();
 		break;
 
 	case Object3DTag::BLOCK:
 
 		// キューブオブジェクト削除
-		m_p_cube_list[array_num]->Destory();
+		mp_cube_list[array_num]->Destory();
 
 		break;
 
 	case Object3DTag::SHOTGUN_ENEMY:
 
-		m_p_shotgun_enemy[array_num]->Destory();
+		mp_shotgun_enemy[array_num]->Destory();
 
 		break;
 	}
@@ -591,7 +591,7 @@ void MapObjectManager::SerchPastResultRandom(
 void MapObjectManager::CalcCurrentBlock() {
 
 	std::shared_ptr<ObjectData>p_data =
-		m_p_chara.lock();
+		mp_chara.lock();
 
 	// キャラクターを代入
 	CharacterBase m_chara = *p_data->p_player;
@@ -807,10 +807,10 @@ void MapObjectManager::CreateHomingEnemy(
 	) {
 
 	std::shared_ptr<ObjectData>d
-		= m_p_chara.lock();
+		= mp_chara.lock();
 
 	std::shared_ptr<ObjectFactory>fac
-		= m_p_factory.lock();
+		= mp_factory.lock();
 
 
 	HomingBulletEnemy *he =
@@ -841,10 +841,10 @@ void MapObjectManager::CreateShotgunEnemy(
 ) {
 
 	std::shared_ptr<ObjectData>d
-		= m_p_chara.lock();
+		= mp_chara.lock();
 
 	std::shared_ptr<ObjectFactory>fac
-		= m_p_factory.lock();
+		= mp_factory.lock();
 
 	ShotgunEnemy *he =
 		new ShotgunEnemy(

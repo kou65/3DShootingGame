@@ -6,7 +6,7 @@
 ZTexture::ZTexture(const VertexDecl::Type &type) {
 
 	// デバイスの取得
-	m_p_device = 
+	mp_device = 
 		Graphics::GetInstance()->GetDevice();
 
 	// 各パラメータ初期化
@@ -68,7 +68,7 @@ bool ZTexture::CreateTexture(
 	// 与えたサイズではない2のべき乗のテクスチャで返すことがある
 	if (FAILED(
 		D3DXCreateTexture(
-			m_p_device,
+			mp_device,
 			z_tex_width,
 			z_tex_height,
 			1,
@@ -76,14 +76,14 @@ bool ZTexture::CreateTexture(
 			z_tex_format,
 			D3DPOOL_DEFAULT,
 			// 作成した空のテクスチャが返る
-			&m_p_tex
+			&mp_tex
 		))
 		) {
 		return false;
 	}
 
 	// 深度バッファサーフェイスレベル取得
-	m_p_tex->GetSurfaceLevel(0, &m_p_tex_suf);
+	mp_tex->GetSurfaceLevel(0, &mp_tex_suf);
 }
 
 
@@ -97,7 +97,7 @@ bool ZTexture::InitZTexture() {
 	IDirect3DSurface9 * p_sur;
 
 	// 深度ステンシルサーフェイス取得
-	m_p_device->GetDepthStencilSurface(&p_sur);
+	mp_device->GetDepthStencilSurface(&p_sur);
 
 	// サーフェイスのサイズを取得
 	D3DSURFACE_DESC desc;
@@ -108,14 +108,14 @@ bool ZTexture::InitZTexture() {
 	// ステンシルバッファ作成(深度バッファ)
 	// 深度バッファはテクスチャとして作成できない、
 	// Zテクスチャと同じ大きさを持つ深度バッファを新規に作成する
-	HRESULT hr = m_p_device->CreateDepthStencilSurface(
+	HRESULT hr = mp_device->CreateDepthStencilSurface(
 		m_z_tex_width,
 		m_z_tex_height,
 		desc.Format,
 		desc.MultiSampleType,
 		desc.MultiSampleQuality,
 		FALSE,
-		&m_p_depth_buffer,// 深度バッファ
+		&mp_depth_buffer,// 深度バッファ
 		NULL
 	);
 
@@ -134,9 +134,9 @@ void ZTexture::Update() {
 
 	m_decl.Set();
 
-	m_p_effect->SetMatrix(m_h_world, &m_mat_world);
-	m_p_effect->SetMatrix(m_h_view_mat, &m_mat_view);
-	m_p_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
+	mp_effect->SetMatrix(m_h_world, &m_mat_world);
+	mp_effect->SetMatrix(m_h_view_mat, &m_mat_view);
+	mp_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
 }
 
 
@@ -155,15 +155,15 @@ void ZTexture::Begin(
 	UINT &total_pass_num,
 	const DWORD &device_state_num) {
 
-	if (m_p_effect == nullptr) {
+	if (mp_effect == nullptr) {
 		return;
 	}
 
-	if (m_p_depth_buffer == nullptr) {
+	if (mp_depth_buffer == nullptr) {
 		return;
 	}
 
-	if (m_p_tex == nullptr) {
+	if (mp_tex == nullptr) {
 		return;
 	}
 
@@ -171,21 +171,21 @@ void ZTexture::Begin(
 
 	// 元のバックバッファをレンダリングターゲットを変更する前に取得
 	// 現在デバイスが持っているバッファを一時保存
-	m_p_device->
-		GetRenderTarget(0, &m_p_device_buffer);
+	mp_device->
+		GetRenderTarget(0, &mp_device_buffer);
 
 	// 深度バッファ用サーフェイスを取得
-	m_p_device->
-		GetDepthStencilSurface(&m_p_device_depth);
+	mp_device->
+		GetDepthStencilSurface(&mp_device_depth);
 	
 	// デバイスにzテクスチャをレンダーターゲットに設定する
-	m_p_device->
-		SetRenderTarget(0, m_p_tex_suf);
-	m_p_device->
-		SetDepthStencilSurface(m_p_depth_buffer);
+	mp_device->
+		SetRenderTarget(0, mp_tex_suf);
+	mp_device->
+		SetDepthStencilSurface(mp_depth_buffer);
 
 	// テクスチャサーフェイスのクリア
-	m_p_device->Clear(0, NULL, D3DCLEAR_TARGET | 
+	mp_device->Clear(0, NULL, D3DCLEAR_TARGET | 
 		D3DCLEAR_ZBUFFER, 
 		// 背景色も変更
 		D3DCOLOR_ARGB(255, 255, 255, 255),
@@ -193,9 +193,9 @@ void ZTexture::Begin(
 		0
 	);
 
-	m_p_effect->SetTechnique(m_h_technique);
+	mp_effect->SetTechnique(m_h_technique);
 
-	HRESULT hr = m_p_effect->Begin(
+	HRESULT hr = mp_effect->Begin(
 		&total_pass_num, 
 		device_state_num
 	);
@@ -212,26 +212,26 @@ void ZTexture::End() {
 	// 後始末
 	// ちゃんと後始末しないとカウンタが狂って解放されない
 
-	HRESULT hr = m_p_effect->End();
+	HRESULT hr = mp_effect->End();
 
 	// 追加(テクスチャサーフェイス受け取り)
-	//m_p_device->
-	//	GetRenderTarget(0, &m_p_tex_suf);
-	//m_p_device->
-	//	GetDepthStencilSurface(&m_p_depth_buffer);
+	//mp_device->
+	//	GetRenderTarget(0, &mp_tex_suf);
+	//mp_device->
+	//	GetDepthStencilSurface(&mp_depth_buffer);
 
 	// 深度バッファを元に戻す
 	// デバイスに元のサーフェイスを戻す
-	m_p_device->SetRenderTarget(0, m_p_device_buffer);
-	m_p_device->SetDepthStencilSurface(m_p_device_depth);
+	mp_device->SetRenderTarget(0, mp_device_buffer);
+	mp_device->SetDepthStencilSurface(mp_device_depth);
 
 	// 初期化
-	m_p_device_buffer = NULL;
-	m_p_device_depth = NULL;
+	mp_device_buffer = NULL;
+	mp_device_depth = NULL;
 	
 	// GetSurfaceLevelで内部カウンタが+1されているのでReleaseして内部カウンタを減らす
-	m_p_device->SetVertexShader(NULL);
-	m_p_device->SetPixelShader(NULL);
+	mp_device->SetVertexShader(NULL);
+	mp_device->SetPixelShader(NULL);
 
 
 	if (hr != S_OK) {
@@ -259,5 +259,5 @@ bool ZTexture::GetSurfaceWH(IDirect3DSurface9* pSurf, UINT& uiWidth, UINT& uiHei
 
 IDirect3DTexture9 *ZTexture::GetZTexture() {
 
-	return m_p_tex;
+	return mp_tex;
 }

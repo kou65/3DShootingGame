@@ -33,7 +33,7 @@ void Enemy::Draw(){
 	param.register_obj_file_name = Const::Obj::CUBE;
 	param.pos = m_pos;
 
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->DrawObjByNormalShader(param);
 
 }
 

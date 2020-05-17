@@ -42,7 +42,7 @@ private:
 	Sprite2DParameter m_sprite_param;
 
 	//! プレイヤーポインタ
-	Player*m_p_player;
+	Player*mp_player;
 };
 
 #endif

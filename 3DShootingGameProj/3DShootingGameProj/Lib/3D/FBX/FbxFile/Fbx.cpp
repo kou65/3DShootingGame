@@ -25,7 +25,7 @@ Fbx::Fbx() : Model()
 	m_current_motion_name = "default";
 
 	// グラフィックス受け取り
-	m_p_graphics = Graphics::GetInstance();
+	mp_graphics = Graphics::GetInstance();
 
 	// fbxマネージャオブジェクトの生成
 	m_fbx_module.mp_manager = FbxManager::Create();
@@ -165,7 +165,7 @@ void Fbx::Draw(TextureData* td) {
 		
 		// パラメータセット
 		Set3DParameter(
-			m_p_graphics,
+			mp_graphics,
 			p_mesh_data->p_index_buffer,
 			p_mesh_data->p_vertex_buffer,
 			sizeof(SkinCustomVertex),
@@ -209,7 +209,7 @@ void Fbx::NormalDraw(
 	D3DXMATRIX&world_mat
 ) {
 
-	m_p_graphics->GetInstance()->GetDevice()
+	mp_graphics->GetInstance()->GetDevice()
 		->SetTransform(D3DTS_WORLD, &world_mat);
 
 	DrawPrimitive(vertex_num,polygon_num);
@@ -265,23 +265,23 @@ bool Fbx::Load(
 	LoadCurrentPath(fbx_file_path);
 
 	// fbxインポータの作成
-	m_fbx_module.m_p_importer = FbxImporter::Create
+	m_fbx_module.mp_importer = FbxImporter::Create
 	(m_fbx_module.mp_manager, "");
 
 	// nullチェック
-	if (m_fbx_module.m_p_importer == NULL) {
+	if (m_fbx_module.mp_importer == NULL) {
 		Window::TextMessageBox("FBXImporterの生成に失敗しました");
 	}
 
 	// インポータの初期化
-	if (!m_fbx_module.m_p_importer->Initialize(fbx_file_path.c_str())) {
+	if (!m_fbx_module.mp_importer->Initialize(fbx_file_path.c_str())) {
 
 		Window::TextMessageBox("FBXimporter初期化失敗");
 		return false;
 	}
 
 	// ファイルからシーンを読み込む
-	if (!m_fbx_module.m_p_importer->Import(m_fbx_module.mp_fbx_scene)) {
+	if (!m_fbx_module.mp_importer->Import(m_fbx_module.mp_fbx_scene)) {
 
 		Window::TextMessageBox("シーン読み込みに失敗");
 		return false;
@@ -396,10 +396,10 @@ void Fbx::LoadMesh() {
 		0,size,(void**)&p_vertics,0);
 
 		// 頂点追加
-		m_p_vertics.emplace_back(new SkinCustomVertex[size]);
+		mp_vertics.emplace_back(new SkinCustomVertex[size]);
 
 		// メモリコピー
-		memcpy(m_p_vertics[i], p_vertics, size);
+		memcpy(mp_vertics[i], p_vertics, size);
 
 		if (p_vertics == nullptr) {
 			return;
@@ -1110,7 +1110,7 @@ bool Fbx::SelectAnimation(
 	int select_anim_num
 ) {
 
-	int anim_num = m_fbx_module.m_p_importer->
+	int anim_num = m_fbx_module.mp_importer->
 		GetAnimStackCount();
 
 	// 総アニメーション数よりも大きいなら
@@ -1398,7 +1398,7 @@ void Fbx::Release() {
 	// インポータはファイルを開いてシーンクラスとの橋渡し
 	// をしてくれるだけなので、ここで破棄してもいい
 	// インポータの明示的な破棄
-	m_fbx_module.m_p_importer->Destroy();
+	m_fbx_module.mp_importer->Destroy();
 }
 
 
@@ -1644,7 +1644,7 @@ void Fbx::WeightSkinning(
 		v++) {
 
 		D3DXVECTOR4 vec4 =
-			m_p_vertics[mi][v].vertex;
+			mp_vertics[mi][v].vertex;
 
 		// 一旦初期化
 		vertices[v].vertex.x = 0.f;
@@ -1804,7 +1804,7 @@ void Fbx::KeyFrameSkinning(
 		v++) {
 
 		D3DXVECTOR4 vec4 =
-			m_p_vertics[mi][v].vertex;
+			mp_vertics[mi][v].vertex;
 
 		// 一旦初期化
 		vertices[v].vertex.x = 0.f;
@@ -2138,7 +2138,7 @@ void Fbx::AttitudeSkinning() {
 
 		// 頂点データ受け取り
 		AnimationCustomVertex* p_src_vertics =
-			m_p_vertics[mesh_index];
+			mp_vertics[mesh_index];
 
 		// 頂点バッファのサイズ作成
 		UINT size =
@@ -2271,7 +2271,7 @@ void Fbx::AnimationSkinning() {
 
 		// 頂点データ受け取り
 		AnimationCustomVertex* p_src_vertics =
-			m_p_vertics[mi];
+			mp_vertics[mi];
 
 		// 頂点バッファのサイズ作成
 		UINT size =

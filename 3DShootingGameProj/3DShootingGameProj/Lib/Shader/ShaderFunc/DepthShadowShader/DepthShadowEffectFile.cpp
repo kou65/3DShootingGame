@@ -6,7 +6,7 @@ DepthShadowShader::DepthShadowShader(
 const VertexDecl::Type&type
 ) {
 
-	m_p_graphics = Graphics::GetInstance();
+	mp_graphics = Graphics::GetInstance();
 
 
 	// エフェクトファイル作成
@@ -30,11 +30,11 @@ void DepthShadowShader::Init() {
 
 	// ハンドル名取得
 	m_h_light_view = 
-		m_p_effect->GetParameterByName(NULL, "g_light_view");
+		mp_effect->GetParameterByName(NULL, "g_light_view");
 	m_h_light_proj = 
-		m_p_effect->GetParameterByName(NULL, "g_light_proj");
+		mp_effect->GetParameterByName(NULL, "g_light_proj");
 	m_h_shadow_map_tex = 
-		m_p_effect->GetParameterByName(NULL, "g_shadow_tex");
+		mp_effect->GetParameterByName(NULL, "g_shadow_tex");
 	
 	// ハンドル
 	if (!m_h_light_view || !m_h_light_proj || !m_h_shadow_map_tex) {
@@ -50,7 +50,7 @@ bool DepthShadowShader::SetShandowMap(
 	IDirect3DTexture9*shadow_map) {
 
 	// テクスチャ
-	m_p_shadow_map_tex = shadow_map;
+	mp_shadow_map_tex = shadow_map;
 
 	return true;
 }
@@ -80,7 +80,7 @@ void DepthShadowShader::Update() {
 	SetParamToEffect();
 
 	// コミット
-	//m_p_effect->CommitChanges();
+	//mp_effect->CommitChanges();
 }
 
 
@@ -93,34 +93,34 @@ void DepthShadowShader::Begin(
 //	| D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255,255,255,255),
 //	1.0f, 0 );
 
-	m_p_effect->SetTechnique(m_h_technique);
+	mp_effect->SetTechnique(m_h_technique);
 
-	m_p_effect->Begin(&total_pass_num, device_state_num);
+	mp_effect->Begin(&total_pass_num, device_state_num);
 }
 
 
 void DepthShadowShader::End() {
 
-	m_p_effect->End();
+	mp_effect->End();
 
 	// 固定機能に戻す
-	m_p_graphics->GetInstance()->GetDevice()->SetVertexShader(NULL);
-	m_p_graphics->GetInstance()->GetDevice()->SetPixelShader(NULL);
+	mp_graphics->GetInstance()->GetDevice()->SetVertexShader(NULL);
+	mp_graphics->GetInstance()->GetDevice()->SetPixelShader(NULL);
 }
 
 
 bool DepthShadowShader::SetParamToEffect() {
 
 	// パラメータセット
-	m_p_effect->SetMatrix(m_h_world, &m_mat_world);
-	m_p_effect->SetMatrix(m_h_light_view, &m_mat_light_view);
-	m_p_effect->SetMatrix(m_h_light_proj, &m_mat_light_proj);
-	m_p_effect->SetMatrix(m_h_view_mat, &m_mat_view);
-	m_p_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
+	mp_effect->SetMatrix(m_h_world, &m_mat_world);
+	mp_effect->SetMatrix(m_h_light_view, &m_mat_light_view);
+	mp_effect->SetMatrix(m_h_light_proj, &m_mat_light_proj);
+	mp_effect->SetMatrix(m_h_view_mat, &m_mat_view);
+	mp_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
 	
 
-	HRESULT hr = m_p_effect->
-		SetTexture(m_h_shadow_map_tex, m_p_shadow_map_tex);
+	HRESULT hr = mp_effect->
+		SetTexture(m_h_shadow_map_tex, mp_shadow_map_tex);
 
 	return true;
 }

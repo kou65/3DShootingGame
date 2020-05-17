@@ -333,19 +333,19 @@ private:
 
 	// 各配列(filedobject数と同じのサイズにする必要がある)
 	//! ホーミング敵リスト
-	std::vector<EnemyBase*>m_p_h_enemy_list;
+	std::vector<EnemyBase*>mp_h_enemy_list;
 
 	//! ショットガン敵リスト
-	std::vector<EnemyBase*>m_p_shotgun_enemy;
+	std::vector<EnemyBase*>mp_shotgun_enemy;
 
 	//! ブロックリスト
-	std::vector<Block*>m_p_cube_list;
+	std::vector<Block*>mp_cube_list;
 
 	//! オブジェクトデータ
-	std::weak_ptr<ObjectData>m_p_chara;
+	std::weak_ptr<ObjectData>mp_chara;
 
 	//! 工場
-	std::weak_ptr<ObjectFactory>m_p_factory;
+	std::weak_ptr<ObjectFactory>mp_factory;
 
 	//! 世界に直接設置する位置リスト
 	std::unordered_map<

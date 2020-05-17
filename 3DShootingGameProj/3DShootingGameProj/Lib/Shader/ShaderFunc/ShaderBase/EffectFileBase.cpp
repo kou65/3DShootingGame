@@ -29,10 +29,10 @@ bool ShaderBase::CreateEffectFile(
 	LPD3DXBUFFER error = nullptr;
 
 	// nullを入れて初期化
-	m_p_effect = nullptr;
+	mp_effect = nullptr;
 
 	// エフェクトが入っているなら
-	if (m_p_effect != nullptr){
+	if (mp_effect != nullptr){
 		return false;
 	}
 
@@ -48,23 +48,23 @@ bool ShaderBase::CreateEffectFile(
 		D3DXSHADER_DEBUG,
 		0,
 		// 作成されたシェーダーデータを格納するeffect
-		&m_p_effect,
+		&mp_effect,
 		// エラーデータ
 		&error
 	);
 
 	// エフェクトがないなら
-	if (m_p_effect == nullptr){
-		m_p_effect = nullptr;
+	if (mp_effect == nullptr){
+		mp_effect = nullptr;
 		return false;
 	}
 
 	// テクニックハンドル取得
-	m_h_technique = m_p_effect->
+	m_h_technique = mp_effect->
 		GetTechniqueByName(tech_name.c_str());
 
 	// テクニック設定
-	m_p_effect->SetTechnique(m_h_technique);
+	mp_effect->SetTechnique(m_h_technique);
 
 	return true;
 }
@@ -99,13 +99,13 @@ void ShaderBase::ResetDecl() {
 
 void ShaderBase::CommitTechnique() {
 
-	m_p_effect->SetTechnique(m_h_technique);
+	mp_effect->SetTechnique(m_h_technique);
 }
 
 
 void ShaderBase::CommitShader() {
 
-	HRESULT hr = m_p_effect->CommitChanges();
+	HRESULT hr = mp_effect->CommitChanges();
 	
 	if (hr != S_OK) {
 		hr = S_FALSE;
@@ -145,7 +145,7 @@ void ShaderBase::Begin(
 ) {
 
 	// シェーダー起動
-	m_p_effect->Begin(
+	mp_effect->Begin(
 		// 起動したシェーダーのパスの数
 		&total_pass_num,
 		// デバイスステートの保存設定フラグ 
@@ -158,7 +158,7 @@ void ShaderBase::Begin(
 void ShaderBase::BeginPass(const int &pass_num) {
 
 	// パス起動
-	m_p_effect->BeginPass(
+	mp_effect->BeginPass(
 		// 起動したシェーダーのパスの数
 		pass_num
 	);
@@ -168,7 +168,7 @@ void ShaderBase::BeginPass(const int &pass_num) {
 void ShaderBase::EndPass() {
 
 	// パス終了
-	if (m_p_effect->EndPass() != S_OK) {
+	if (mp_effect->EndPass() != S_OK) {
 
 	}
 }
@@ -177,7 +177,7 @@ void ShaderBase::EndPass() {
 void ShaderBase::End() {
 
 	// シェーダー終了
-	if (m_p_effect->End() != S_OK) {
+	if (mp_effect->End() != S_OK) {
 
 	}
 }

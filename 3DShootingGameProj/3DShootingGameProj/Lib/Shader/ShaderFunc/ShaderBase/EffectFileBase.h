@@ -22,7 +22,7 @@ public:
 	// シェーダーの開始
 	virtual void Begin(
 		UINT &total_pass_num,
-		const DWORD &device_state_num
+		const DWORD &device_state_num = 0
 	);
 
 
@@ -72,7 +72,7 @@ protected:
 protected:
 
 	// エフェクトシェーダー
-	ID3DXEffect* m_p_effect;
+	ID3DXEffect* mp_effect;
 
 	// デクル(必ず設定)
 	VertexDecl m_decl;

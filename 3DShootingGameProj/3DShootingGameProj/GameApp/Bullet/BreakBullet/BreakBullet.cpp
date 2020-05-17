@@ -50,7 +50,7 @@ void BreakBullet::Update() {
 void BreakBullet::Draw() {
 
 	// 敵描画
-	Obj::GetInstance()->ShaderDraw(m_obj_param);
+	Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
 }
 
 

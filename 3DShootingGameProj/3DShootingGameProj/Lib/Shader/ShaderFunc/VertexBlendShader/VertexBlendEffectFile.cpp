@@ -27,12 +27,12 @@ void VertexBlendEffectFile::Init(){
 
 	// アニメーション用
 	m_bone_mat_h = 
-		m_p_effect->
+		mp_effect->
 		GetParameterByName(NULL, "g_bone_mat");
 
 	// インデックス用
 	m_total_index_h =
-		m_p_effect->GetParameterByName(NULL, "g_max_blend_idx");
+		mp_effect->GetParameterByName(NULL, "g_max_blend_idx");
 }
 
 
@@ -46,13 +46,13 @@ void VertexBlendEffectFile::Update() {
 	OutMatrixGrapicsCamera(&m_camera_view_mat,&m_camera_proj_mat);
 
 
-	m_p_effect->SetInt(m_total_index_h,m_max_index);
+	mp_effect->SetInt(m_total_index_h,m_max_index);
 
 	// シェーダーの更新
 	//SetBaseParam();
 
 	//// ボーン姿勢行列セット
-	//m_p_effect->SetMatrixTransposeArray(
+	//mp_effect->SetMatrixTransposeArray(
 	//	m_bone_mat_h,
 	//	m_bone_mat_list,
 	//	64
@@ -70,17 +70,17 @@ void VertexBlendEffectFile::Update() {
 void VertexBlendEffectFile::UpdateParam() {
 
 	// パラメータセット
-	m_p_effect->
+	mp_effect->
 		SetMatrixTranspose(m_camera_view_mat_h, &m_camera_view_mat);
-	m_p_effect->
+	mp_effect->
 		SetMatrixTranspose(m_camera_proj_mat_h, &m_camera_proj_mat);
-	m_p_effect->
+	mp_effect->
 		SetMatrixTranspose(m_world_mat_h, &m_world_mat);
-	m_p_effect->
+	mp_effect->
 		SetVector(m_color_h, &m_color);
 
 	// テクニックをセット
-	m_p_effect->SetTechnique(m_h_technique);
+	mp_effect->SetTechnique(m_h_technique);
 
 	// シェーダー更新
 	CommitShader();
@@ -107,7 +107,7 @@ void VertexBlendEffectFile::SetBoneMatrixArray(
 
 	// 行列配列をセット
 	HRESULT hr 
-		= m_p_effect->SetMatrixPointerArray(
+		= mp_effect->SetMatrixPointerArray(
 			handle,
 			(const D3DXMATRIX**)&mat,
 			array_num
@@ -140,7 +140,7 @@ void VertexBlendEffectFile::SetTexture(
 	IDirect3DTexture9* p_tex
 ) {
 
-	HRESULT hr = m_p_effect->SetTexture(m_texture_h, p_tex);
+	HRESULT hr = mp_effect->SetTexture(m_texture_h, p_tex);
 
 	if (hr != S_OK) {
 		// 失敗

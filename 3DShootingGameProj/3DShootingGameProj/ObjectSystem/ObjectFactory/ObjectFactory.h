@@ -47,7 +47,7 @@ public:
 	// 自機共有用
 	void CreateSharedPlayer(
 		const Vec3&pos,
-		std::weak_ptr<Camera3D>m_p_camera,
+		std::weak_ptr<Camera3D>mp_camera,
 		std::weak_ptr<ObjectData2>p_player_data
 	);
 

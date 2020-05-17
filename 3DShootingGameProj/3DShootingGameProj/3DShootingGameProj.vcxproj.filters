@@ -584,6 +584,12 @@
     <ClInclude Include="Lib\Utility\Utility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ShadowData\ShadowData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\3DModel\Cube2.x" />

@@ -33,8 +33,8 @@ public:
 private:
 
 	//! 共有用
-	std::vector<std::shared_ptr<ManagerBase>>m_p_shared_mng_list;
+	std::vector<std::shared_ptr<ManagerBase>>mp_shared_mng_list;
 
 	//! ユニーク用
-	std::vector<std::unique_ptr<ManagerBase>>m_p_unique_mng_list;
+	std::vector<std::unique_ptr<ManagerBase>>mp_unique_mng_list;
 };

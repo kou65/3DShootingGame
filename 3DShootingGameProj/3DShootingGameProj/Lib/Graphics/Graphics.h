@@ -293,17 +293,17 @@ private:
 
 	// 自動検出してゲッターを行う
 	operator IDirect3DDevice9*() const {
-		return m_p_d3d_device9;
+		return mp_d3d_device9;
 	}
 
 
 private:
 
 	//! グラフィック関連のデバイスを管理
-	IDirect3DDevice9 *m_p_d3d_device9;     
+	IDirect3DDevice9 *mp_d3d_device9;     
 
 	//! 環境を設定するためのインターフェース
-	IDirect3D9 *m_p_direct3d9;	     
+	IDirect3D9 *mp_direct3d9;	     
 
 	//! グラフィックス設定用
 	D3DPRESENT_PARAMETERS m_d3d_pp = {};   

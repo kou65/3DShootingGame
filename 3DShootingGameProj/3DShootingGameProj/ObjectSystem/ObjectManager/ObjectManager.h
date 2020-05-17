@@ -96,16 +96,16 @@ private:
 private:
 
 	//! 共有代入用
-	std::vector<std::shared_ptr<ObjectBase>>m_p_insert_obj_shared;
+	std::vector<std::shared_ptr<ObjectBase>>mp_insert_obj_shared;
 
 	//! 共有用
-	std::vector<std::shared_ptr<ObjectBase>>m_p_object_list_shared;
+	std::vector<std::shared_ptr<ObjectBase>>mp_object_list_shared;
 
 	//! 代入用
-	std::vector<std::unique_ptr<ObjectBase>>m_p_insert_obj;
+	std::vector<std::unique_ptr<ObjectBase>>mp_insert_obj;
 
 	//! オブジェクトリスト
-	std::vector<std::unique_ptr<ObjectBase>>m_p_object_list;
+	std::vector<std::unique_ptr<ObjectBase>>mp_object_list;
 };
 
 

@@ -135,6 +135,6 @@ protected:
 protected:
 
 	//! グラフィックス
-	Graphics*m_p_graphics;
+	Graphics*mp_graphics;
 };
 #endif

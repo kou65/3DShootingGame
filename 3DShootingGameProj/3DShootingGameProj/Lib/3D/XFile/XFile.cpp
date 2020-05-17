@@ -58,10 +58,10 @@ bool XFile::Load(
 	m_mesh_list[mesh_name] = mesh;
 
 	// サイズ生成
-	//m_p_material_info_list = new D3DMATERIAL9[material_num];
+	//mp_material_info_list = new D3DMATERIAL9[material_num];
 
 	// メッシュに使用されているテクスチャ用の配列を用意する
-	//m_p_texture_list = new LPDIRECT3DTEXTURE9[material_num];
+	//mp_texture_list = new LPDIRECT3DTEXTURE9[material_num];
 
 	D3DXMATERIAL *p_material_list = 
 		(D3DXMATERIAL*)material_info->GetBufferPointer();

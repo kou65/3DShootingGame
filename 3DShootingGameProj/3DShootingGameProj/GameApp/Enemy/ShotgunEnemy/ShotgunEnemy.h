@@ -71,10 +71,10 @@ private:
 private:
 
 	// !弾生成工場
-	ObjectFactory*m_p_obj_factory;
+	ObjectFactory*mp_obj_factory;
 
 	// !プレイヤー
-	CharacterBase*m_p_player;
+	CharacterBase*mp_player;
 
 	// !打ち出す時間
 	float m_shot_timer;

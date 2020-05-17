@@ -14,9 +14,9 @@ HomingBulletEnemy::HomingBulletEnemy(
 	m_pos = create_pos;
 
 	// オブジェクト代入
-	m_p_obj_factory = factory;
+	mp_obj_factory = factory;
 
-	m_p_player = player;
+	mp_player = player;
 
 	m_shot_timer = 0.f;
 
@@ -53,7 +53,7 @@ void HomingBulletEnemy::Draw() {
 	param.color = D3DXVECTOR4(0.f, 1.f, 0.f, 0.f);
 
 	// 敵描画
-	Obj::GetInstance()->ShaderDraw(param);
+	Obj::GetInstance()->DrawObjByNormalShader(param);
 }
 
 
@@ -96,9 +96,9 @@ Vec3 HomingBulletEnemy::CalcDirection() {
 
 	Vec3 dir;
 
-	dir.x = m_pos.x - m_p_player->GetPos().x;
-	dir.y = m_pos.y - m_p_player->GetPos().y;
-	dir.z = m_pos.z - m_p_player->GetPos().z;
+	dir.x = m_pos.x - mp_player->GetPos().x;
+	dir.y = m_pos.y - mp_player->GetPos().y;
+	dir.z = m_pos.z - mp_player->GetPos().z;
 
 	return dir;
 }
@@ -133,7 +133,7 @@ void HomingBulletEnemy::Shot(){
 
 
 	// 弾を生成
-	m_p_obj_factory->CreateEnemyBullet(
+	mp_obj_factory->CreateEnemyBullet(
 		param,
 		data
 	);

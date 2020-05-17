@@ -32,5 +32,5 @@ public:
 private:
 
 	//! オブジェクトデータ
-	std::weak_ptr<ObjectData>m_p_data;
+	std::weak_ptr<ObjectData>mp_data;
 };
