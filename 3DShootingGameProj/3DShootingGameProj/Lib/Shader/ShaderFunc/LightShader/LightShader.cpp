@@ -2,19 +2,6 @@
 
 
 
-LightShader::LightShader(
-	const VertexDecl::Type&type
-) {
-
-	CreateEffectFile(
-		"Lib/Shader/EffectFile/DepthShadow.fx",
-		"DepthBufferShadowTec",
-		type
-	)
-}
-
-
-
 LightShader::LightShader() {
 
 }
@@ -25,8 +12,15 @@ void LightShader::Update() {
 }
 
 
-void LightShader::Init() {
+void LightShader::Init(
+	const VertexDecl::Type&type
+) {
 
+	CreateEffectFile(
+		"Lib/Shader/EffectFile/DepthShadow.fx",
+		"DepthBufferShadowTec",
+		type
+	);
 }
 
 

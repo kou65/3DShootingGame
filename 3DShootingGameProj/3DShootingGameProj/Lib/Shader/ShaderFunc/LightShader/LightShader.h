@@ -28,7 +28,9 @@ protected:
 	/**
 	* @breif 初期化
 	*/
-	void Init();
+	void Init(
+		const VertexDecl::Type&type
+	);
 
 
 	/**
@@ -75,6 +77,14 @@ protected:
 		const std::string&mt_ambient,
 		const std::string&mt_diffuse,
 		const std::string&mt_specular
+	);
+
+
+	/**
+	* @brief 減衰ハンドル
+	*/
+	void InitAttenuate(
+		const std::string&attenuate_name
 	);
 
 
