@@ -8,7 +8,7 @@
 
 
 /**
-* @brief カメラ
+* @brief 3Dで使うカメラクラス
 */
 class Camera3D {
 public:
@@ -73,6 +73,18 @@ public:
 	* @brief 注視点情報を返す
 	*/
 	D3DXVECTOR3 GetEyePos();
+
+
+	/**
+	* @brief 変換済み位置を返す
+	*/
+	D3DXVECTOR3 GetTransInversPos();
+
+
+	/**
+	* @brief fps変換済み逆行列を返す
+	*/
+	D3DXMATRIX GetFpsTransInversMatrix();
 
 	
 	/**
@@ -179,6 +191,9 @@ private:
 
 	//! カメラモード
 	CameraMode m_mode;
+
+	//! FPS変換済み逆行列変換済み行列
+	D3DXMATRIX m_fps_trans_inverse_mat;
 };
 
 #endif 

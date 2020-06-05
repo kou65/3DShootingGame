@@ -51,7 +51,6 @@ float2 uv : TEXCOORD0,
 }
 
 
-
 float4 PS1(
 	float4 color : COLOR0,
 	float2 uv : TEXCOORD0
@@ -102,7 +101,6 @@ technique tech1 {
 		SrcBlend = SRCALPHA;
 		DestBlend = INVSRCALPHA;
 
-
 		VertexShader = compile vs_2_0 VS();
 		PixelShader = compile ps_2_0 PS1();
 		
@@ -117,11 +115,9 @@ technique tech1 {
 		SrcBlend = SRCALPHA;
 		DestBlend = INVSRCALPHA;
 
-
 		VertexShader = compile vs_2_0 VS();
 		PixelShader = compile ps_2_0 PS2();
 
 	}
 
-	
 }

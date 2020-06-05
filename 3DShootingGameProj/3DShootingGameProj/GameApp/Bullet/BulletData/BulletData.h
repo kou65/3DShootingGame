@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../../../Lib/Vec3/Vec3.h"
-#include"../../../Lib/TransformData/TransformData.h"
+#include"../../../Lib/TransformData/TransformData3D.h"
 
 
 

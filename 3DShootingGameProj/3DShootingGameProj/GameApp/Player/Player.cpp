@@ -47,6 +47,7 @@ Player::Player(
 	// カラー代入
 	m_color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
 
+	// 当たり判定にエントリー
 	CollisionManager::GetInstance()->Entry(
 		CollisionObjectType::PLAYER, this
 	);
@@ -103,7 +104,7 @@ void Player::Update() {
 
 void Player::Draw() {
 
-	ObjParameter param(DrawStatus::NORMAL,true);
+	ObjParameter param(DrawStatus::NORMAL);
 
 	param.pos.z = 0.f;
 	param.pos = m_pos;
@@ -444,7 +445,7 @@ void Player::ShotBullet() {
 			data.distance_limit = Vec3(SHOT_DISTANCE, SHOT_DISTANCE, SHOT_DISTANCE);
 
 			// パラメータ
-			ObjParameter param(DrawStatus::NORMAL,true);
+			ObjParameter param(DrawStatus::NORMAL);
 			param.register_obj_file_name = Const::Obj::SPEHER;
 			param.scale = Vec3(0.5f, 0.5f, 0.5f);
 			param.pos = m_pos;
@@ -493,7 +494,7 @@ void Player::ShotBreakBullet() {
 				data.rot_dir.y = BULLET_DIR_Y[i];
 
 				// パラメータ
-				ObjParameter param(DrawStatus::NORMAL,true);
+				ObjParameter param(DrawStatus::NORMAL);
 				param.pos = m_pos;
 				param.scale = Vec3(0.5f, 0.5f, 0.5f);
 				param.register_obj_file_name 

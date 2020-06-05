@@ -65,7 +65,7 @@ void FogShader::Update() {
 
 	// 更新
 	StandardTSShader::UpdateStandardCamera();
-	StandardTSShader::UpdateTransfromMatrix();
+	StandardTSShader::Update();
 
 
 

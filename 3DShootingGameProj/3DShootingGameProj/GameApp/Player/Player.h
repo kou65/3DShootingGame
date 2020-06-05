@@ -19,6 +19,8 @@ public:
 	static constexpr float MAX_HP = 4.f;
 	//! hpなし
 	static constexpr float NONE_HP = 0.f;
+	//! 自機速度
+	static constexpr float PLAYER_SPEED = 1.f;
 
 public:
 
@@ -71,8 +73,6 @@ public:
 
 private:
 
-	//! 自機速度
-	const float PLAYER_SPEED = 1.f;
 	//! 弾速度
 	const float BULLET_SPEED = 5.f;
 	//! 弾が消える距離

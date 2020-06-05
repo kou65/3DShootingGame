@@ -37,6 +37,12 @@ public:
 
 
 	/**
+	* @brief zテクスチャ描画 仮想関数
+	*/
+	void Block::DrawZTexture()override;
+
+
+	/**
 	* @brief 衝突後処理 仮想関数
 	* @param[in] type CollisionObjectType 衝突先のオブジェクト名定数
 	*/

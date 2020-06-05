@@ -1,4 +1,5 @@
 ﻿#include"ObjectManager.h"
+#include"../../Lib/3D/OBJ/OBJFile.h"
 
 
 
@@ -17,11 +18,40 @@ void ObjectManager::Update() {
 		// 更新
 		object.get()->Update();
 	}
+
 }
 
 
 
 void ObjectManager::Draw() {
+
+	UINT i;
+
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->Begin(i, 0);
+
+	// オブジェクトをzテクスチャに書き込み
+	for (auto &object : mp_object_list) {
+
+		// 活動していないなら
+		if (object.get()->IsActive() != true) {
+			continue;
+		}
+
+		// 描画できないなら
+		if (object.get()->CanDraw() != true) {
+			continue;
+		}
+
+		// 描画
+		object.get()->DrawZTexture();
+	}
+
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->End();
+
 
 	// オブジェクトを描画
 	for (auto &object : mp_object_list) {

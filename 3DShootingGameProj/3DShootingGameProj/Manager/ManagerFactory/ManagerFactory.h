@@ -5,10 +5,17 @@
 #include<memory>
 
 
+
+/**
+* @brief 管理者生成クラス
+*/
 class ManagerFactory {
 public:
 
 
+	/**
+	* @brief ファイルオブジェクトデータ管理者生成
+	*/
 	void CreateFileObjectDataManager(
 		std::shared_ptr<ObjectFactory>object_factory,
 		std::shared_ptr<Camera3D>camera,
@@ -17,6 +24,9 @@ public:
 	);
 
 
+	/**
+	* @brief マップキャラクター管理者生成
+	*/
 	void CreateMapCharacterManager(
 		std::shared_ptr<FileDataManager>p_manager,
 		std::shared_ptr<ObjectFactory>p_factory,
@@ -25,6 +35,9 @@ public:
 	);
 
 
+	/**
+	* @brief マップオブジェクト管理者生成
+	*/
 	void CreateMapObjectManager(
 		std::shared_ptr<ObjectFactory>p_factory,
 		std::shared_ptr<ObjectData>p_data,

@@ -6,12 +6,18 @@
 #include"../../Lib/Vec2/Vec2.h"
 
 
-//! 2Dオブジェクトタイプ
+/**
+* @enum Object2DType 2Dオブジェクトの種類
+*/
 enum class Object2DType {
 	UI
 };
 
 
+/**
+* @brief オブジェクト2Dクラス
+* @brief 2Dオブジェクトなら継承して使う
+*/
 class Object2D : public ObjectBase{
 public:
 

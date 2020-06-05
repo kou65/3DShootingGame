@@ -2,6 +2,7 @@
 #include<d3dx9.h>
 #include<math.h>
 #include"../Vec3/Vec3.h"
+#include"../Vec2/Vec2.h"
 
 
 namespace Utility {
@@ -45,5 +46,40 @@ namespace Utility {
 
 		Vec3 GetVec1ToVec2(const Vec3&vec1, const Vec3&vec2);
 
+
+		/**
+		* @brief 単位ベクトルを返す(長さが1の状態)
+		*/
+		Vec3 CalcNormalize(const Vec3&vec1);
+
+
+		/**
+		* @brief 正規化方向を返す(単位ベクトル)
+		*/
+		Vec3 CalcDirNormalize(const Vec3&vec1, const Vec3&vec2);
+
+
+		/**
+		* @brief 内積を返す(cosを取りたい場合は単位ベクトル化する,スカラー積)
+		*/
+		float Vec3Dot(const Vec3&vec1, const Vec3&vec2);
+
+
+		/**
+		* @brief 外積を返す(ベクトル積,垂直なベクトルを出せる)
+		*/
+		Vec3 Vec3Cross(const Vec3&vec1, const Vec3&vec2);
+
+
+		/**
+		* @brief 2D回転
+		*/
+		Vec2 Vec2Rota(const Vec2&vec1,const float&rad);
+
+
+		/**
+		* @brief 2D拡縮
+		*/
+		Vec2 Vec2Scale(const Vec2&vec1, const float&scale_value);
 	}
 }

@@ -9,6 +9,10 @@
 
 
 
+
+/**
+* @brief 当たり判定管理者クラス
+*/
 class CollisionManager {
 public:
 

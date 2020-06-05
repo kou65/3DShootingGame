@@ -159,6 +159,9 @@ void Camera3D::FPSTransform() {
 
 	// 移動を初期化
 	D3DXVec3Init(m_data.move_num);
+
+	// 変換済みに代入
+	m_fps_trans_inverse_mat = matrix_view;
 }
 
 
@@ -529,4 +532,19 @@ D3DXVECTOR3 Camera3D::GetEyePos() {
 
 D3DXVECTOR3 Camera3D::GetPos() {
 	return m_data.pos;
+}
+
+
+D3DXMATRIX Camera3D::GetFpsTransInversMatrix() {
+	return m_fps_trans_inverse_mat;
+}
+
+D3DXVECTOR3 Camera3D::GetTransInversPos() {
+
+	D3DXVECTOR3 vec3(1.f,1.f,1.f);
+
+	// 頂点変換
+	D3DXVec3TransformCoord(&vec3, &vec3, &m_fps_trans_inverse_mat);
+
+	return vec3;
 }

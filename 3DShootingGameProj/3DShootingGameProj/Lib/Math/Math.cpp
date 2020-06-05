@@ -5,8 +5,6 @@ namespace Utility {
 
 	namespace Math {
 
-
-
 		void OutTransformMatrix(
 			D3DXMATRIX&total_mat,
 			D3DXVECTOR3&pos,
@@ -14,9 +12,8 @@ namespace Utility {
 			D3DXVECTOR3&rota
 		) {
 
-
 			// ワールド座標初期化
-			D3DXMATRIX rota_mat, scale_mat, move_mat;
+			D3DXMATRIX rota_mat, scale_mat, trans_mat;
 			D3DXMatrixIdentity(&total_mat);
 
 			D3DXMATRIX rota_x, rota_y, rota_z;
@@ -35,9 +32,9 @@ namespace Utility {
 
 			// 移動
 			D3DXMatrixTranslation(
-				&move_mat, pos.x, pos.y, pos.z);
+				&trans_mat, pos.x, pos.y, pos.z);
 
-			total_mat = (scale_mat * rota_mat * move_mat);
+			total_mat = (scale_mat * rota_mat * trans_mat);
 		}
 
 
@@ -153,5 +150,81 @@ namespace Utility {
 			return out_vec;
 		}
 
+
+		Vec3 CalcNormalize(const Vec3&vec1) {
+
+				Vec3 vec3;
+
+				// 単位ベクトル化(1)にし、回転値など受け取る
+				vec3.x = vec1.x / GetLength(vec1);
+				vec3.y = vec1.y / GetLength(vec1);
+				vec3.z = vec1.z / GetLength(vec1);
+
+				return vec3;
+		}
+
+
+		Vec3 CalcDirNormalize(const Vec3&vec1, const Vec3&vec2) {
+
+			Vec3 vec1_to_vec2 = GetVec1ToVec2(vec1, vec2);
+
+			float len = GetLength(vec1_to_vec2);
+
+			// 大きさから長さで割る
+			Vec3 dir;
+			dir.x = vec1_to_vec2.x / len;
+			dir.y = vec1_to_vec2.y / len;
+			dir.z = vec1_to_vec2.z / len;
+
+			// 方向を返す
+			return dir;
+		}
+
+	
+		float Vec3Dot(const Vec3&vec1, const Vec3&vec2) {
+
+			// 内積の計算
+			return (vec1.x * vec2.x + 
+				vec1.y * vec2.y + 
+				vec1.z * vec2.z);
+		}
+
+
+		Vec3 Vec3Cross(const Vec3&vec1, const Vec3&vec2) {
+
+			Vec3 result;
+
+			// 外積の計算
+			result.x = vec1.y * vec2.z - vec1.z * vec2.y;
+			result.y = vec1.z * vec2.x - vec1.x * vec2.z;
+			result.z = vec1.x * vec2.y - vec1.y * vec2.x;
+
+			return result;
+		}
+
+
+		Vec2 Vec2Rota(
+			const Vec2&vec1,
+			const float &rad
+		) {
+
+			Vec2 result;
+
+			result.x = vec1.x * cosf(rad) - vec1.y * sinf(rad);
+			result.y = vec1.x * sinf(rad) + vec1.y * cosf(rad);
+
+			return result;
+		}
+
+
+		Vec2 Vec2Scale(const Vec2&vec1, const float&scale_value) {
+
+			Vec2 result;
+
+			result.x = vec1.x * scale_value;
+			result.y = vec1.y * scale_value;
+
+			return result;
+		}
 	}
 }

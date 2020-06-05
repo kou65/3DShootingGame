@@ -11,7 +11,7 @@
 #include"../Lib/3D/Fbx/FbxFile/Fbx.h"
 #include"../Lib/3D/ShapeIndex/PlaneIndex/PlaneIndex.h"
 #include"../Lib/Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
-
+#include"../User/ZTextureUser/ZTextureUser.h"
 
 
 /**
@@ -49,12 +49,18 @@ int WINAPI WinMain(
 	Graphics::GetInstance()->
 		GetDevice()->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
 
-	// シーン管理者
+	// シーン管理者(タイトルから)
 	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
 
-	// デバッグモード
-	bool is_debug_mode = true;
+	// グラフィックデータ初期化
+	Obj::GetInstance()->InitGrapicData();
 
+	// デバッグモード
+	bool is_debug_mode = false;
+
+	// zテクスチャ使用者
+	ZTextureUser user;
+	
 	// ループ
 	while (Window::ProcessMessage() == true) {
 
@@ -68,9 +74,6 @@ int WINAPI WinMain(
 
 		// キーボード更新
 		KeyBoard::Update();
-
-		// Zテクスチャ管理者更新
-		//ZTextureManager::GetInstance()->Update();
 
 		// デバッグテスト
 		if (is_debug_mode == true) {
@@ -95,9 +98,9 @@ int WINAPI WinMain(
 
 				// デバッグの描画
 				Debugger::GetInstance().Draw();
-
 			}
 			else {
+
 				// シーンの描画
 				scene_manager.Draw();
 			}

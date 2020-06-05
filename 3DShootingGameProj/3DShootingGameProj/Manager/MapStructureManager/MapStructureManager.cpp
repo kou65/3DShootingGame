@@ -71,7 +71,7 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 	// 生成するものはnullptrでチェックし、生成
 	// 削除するものはnullptrでチェックし、削除
 
-	ObjParameter data(DrawStatus::NORMAL,true);
+	ObjParameter data(DrawStatus::NORMAL);
 	Vec3 scale;
 
 	// 拡縮

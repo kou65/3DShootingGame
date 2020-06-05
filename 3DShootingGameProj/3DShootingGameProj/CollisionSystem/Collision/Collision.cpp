@@ -1,4 +1,5 @@
 ﻿#include"Collision.h"
+#include"../../Lib/Utility/Utility.h"
 
 
 namespace Collision {
@@ -142,6 +143,58 @@ namespace Collision {
 		return false;
 	};
 
+
+	bool IsHitFanAndPoint(const Fan&fan, const Point&point){
+
+		Vec3 point_to_fan_dir;
+
+		// 扇と点のベクトルを求める
+		point_to_fan_dir =
+			Utility::Math::GetVec1ToVec2(point.pos, fan.center_pos);
+
+		// 扇と点の長さ
+		float fan_to_point_len =
+			Utility::Math::GetLength(point_to_fan_dir);
+
+		// 長さを比較する
+		if (point_to_fan_dir.x > fan.range_len ||
+			point_to_fan_dir.y > fan.range_len ||
+			point_to_fan_dir.z > fan.range_len) {
+
+			// 範囲内ではない
+			return false;
+		}
+
+		// 範囲内
+
+		// 次に扇の方向ベクトルを出す
+		D3DXMATRIX yaw, pitch, roll,total_rota;
+		D3DXMATRIX trans;
+		D3DXMATRIX scale;
+		D3DXMATRIX total;
+
+		// 回転させる
+		D3DXMatrixRotationY(&yaw, fan.rota.y);
+		D3DXMatrixRotationX(&pitch, fan.rota.x);
+		D3DXMatrixRotationZ(&roll, fan.rota.z);
+
+		// 回転行列合成
+		total_rota = yaw * pitch * roll;
+
+
+		Vec3 result_vec(1.f, 1.f, 1.f);
+
+		// 移動値
+		D3DXMatrixTranslation(&trans, fan.pos.x, fan.pos.y, fan.pos.z);
+
+		// 回転 * 移動
+		total = total_rota * trans;
+
+		// 回転値を頂点に変換
+		D3DXVec3TransformCoord(&result_vec, &result_vec, &total_rota);
+
+		return true;
+	}
 
 
 	bool IsHitRayAndPoint(

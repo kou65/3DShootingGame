@@ -25,6 +25,7 @@ enum class Object3DTag {
 
 /**
 * @brief 3Dオブジェクトクラス
+* @brief 3Dオブジェクトなら継承して使う
 */
 class Object3D : public ObjectBase{
 public:
@@ -33,6 +34,7 @@ public:
 	* @brief コンストラクタ
 	*/
 	Object3D();
+
 
 	/**
 	* @brief 位置を取得

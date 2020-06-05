@@ -52,4 +52,11 @@ technique ZValuePlotTec
 		VertexShader = compile vs_2_0 ZBufferCalc_VS();
 		PixelShader = compile ps_2_0 ZBufferPlot_PS();
 	}
+
+	// テクスチャパス認識用
+	pass P1
+	{
+		VertexShader = compile vs_2_0 ZBufferCalc_VS();
+		PixelShader = compile ps_2_0 ZBufferPlot_PS();
+	}
 }

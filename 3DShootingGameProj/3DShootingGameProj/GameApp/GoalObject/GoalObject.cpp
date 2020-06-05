@@ -15,7 +15,7 @@ void GoalObject::Update() {
 
 void GoalObject::Draw() {
 
-	ObjParameter param(DrawStatus::NORMAL,true);
+	ObjParameter param(DrawStatus::NORMAL);
 
 	// 板
 	param.register_obj_file_name = Const::Obj::PLANE;

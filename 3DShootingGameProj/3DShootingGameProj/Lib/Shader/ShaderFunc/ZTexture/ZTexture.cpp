@@ -71,7 +71,7 @@ bool ZTexture::CreateTexture(
 			mp_device,
 			z_tex_width,
 			z_tex_height,
-			1,
+			1, // ミップマップではない
 			D3DUSAGE_RENDERTARGET,
 			z_tex_format,
 			D3DPOOL_DEFAULT,
@@ -130,7 +130,7 @@ bool ZTexture::InitZTexture() {
 void ZTexture::Update() {
 	
 	// 登録されているパラメータ情報をエフェクトにセット
-	StandardTSShader::UpdateTransfromMatrix();
+	StandardTSShader::Update();
 
 	m_decl.Set();
 

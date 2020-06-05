@@ -81,9 +81,14 @@ struct FbxMeshData {
 	// マテリアル配列
 	MaterialInfo material_info;
 
-	UINT polygon_num;	 // ポリゴン数
-	UINT vertex_num;	 // 頂点数
-	UINT bone_num;       // ボーン数
+	// ポリゴン数
+	UINT polygon_num;	 
+
+	// 頂点数
+	UINT vertex_num;	 
+
+	// ボーン数
+	UINT bone_num;       
 	
 
 	std::vector<FbxMatrix>bone_list;      // ボーン配列

@@ -54,5 +54,6 @@ struct CameraData {
 
 	//! デバッグモードか
 	bool is_debug;
+
 };
 #endif

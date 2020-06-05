@@ -12,7 +12,9 @@
 class ManagerControlOffcer {
 public:
 
-	// アクセス権
+	/**
+	* @brief アクセス権
+	*/
 	static ManagerControlOffcer*GetInstance() {
 		static ManagerControlOffcer mng;
 		return &mng;
@@ -20,14 +22,34 @@ public:
 
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	*/
 	ManagerControlOffcer();
 	
+
+	/**
+	* @brief 共有ポインタ用追加
+	*/
 	void EntryShared(std::shared_ptr<ManagerBase>p_mng);
+
+
+	/**
+	* @brief ユニークポインタ追加
+	*/
 	void EntryUnique(std::unique_ptr<ManagerBase>p_mng);
 
+
+	/**
+	* @brief 更新
+	*/
 	void Update();
 
-	// 全て解放
+
+	/**
+	* @brief 全て解放
+	*/
 	void AllRelease();
 
 private:

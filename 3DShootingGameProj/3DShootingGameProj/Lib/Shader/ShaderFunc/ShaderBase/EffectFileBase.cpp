@@ -7,11 +7,6 @@ ShaderBase::ShaderBase() {
 }
 
 
-void ShaderBase::Init() {
-
-}
-
-
 void ShaderBase::Update() {
 	UpdateDecl();
 }

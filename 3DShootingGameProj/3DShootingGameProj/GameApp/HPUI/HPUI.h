@@ -34,6 +34,11 @@ public:
 
 private:
 
+
+	/**
+	* @brief キャラクタhp
+	* @param[in] chara_interface 
+	*/
 	float GetCharaHp(CharacterInterface&chara_interface);
 
 private:

@@ -114,13 +114,10 @@ void Debugger::InitXFileShader() {
 	mp_shadow->CommitDeviceViewProj();
 
 	// zテクスチャのテクスチャをシャドウにセット
-
 	ZTexture *tex =
 		ZTextureManager::GetInstance()->GetZTexturePtr(
 			FuncZTexture::Const::Z_TEX_1024
 		);
-
-	
 
 	mp_shadow->SetShandowMap(tex->GetZTexture());
 
@@ -205,7 +202,8 @@ void Debugger::Draw() {
 		);
 
 		// お試し画像
-		TextureData p_tex_data = TextureManager::GetInstance()->GetTextureData("ground");
+		TextureData p_tex_data = TextureManager::GetInstance()->
+			GetTextureData("ground");
 
 		// z値描画
 		//{
@@ -255,25 +253,96 @@ void Debugger::Draw() {
 void Debugger::ObjShadowDraw() {
 
 	// 行列
-	D3DXMATRIX mat_camera_view, mat_c_proj;
-	D3DXMATRIX mat_light_view, mat_light_proj;
+	D3DXMATRIX mat_camera_view;
+	D3DXMATRIX mat_light_view;
 
-	// ライト拡縮
-	float mat_light_scale = 1.5f;
+	Vec3 light_pos(
+		0,
+		100,
+		0);
 
-	// カメラ射影
-	D3DXMatrixPerspectiveFovLH(
-		// カメラ射影行列
-		&mat_c_proj,
-		// 画角
-		D3DXToRadian(45),
-		// アスペクト比
-		640.0f / 480.0f,
-		// 視推台の最も近い距離()
-		10.0f,
-		// 視推台の最も遠い距離
-		1000.0f
+	// パラメータ
+	ObjParameter param(DrawStatus::NORMAL);
+
+	// 影のライトとカメラの位置を描画
+	{
+		//// カメラオブジェクト
+		//param.register_obj_file_name = 
+		//	Const::Obj::PLAYER;
+		//
+		//// カメラ位置を描画
+		//Obj::GetInstance()->EntryObjParam(param);
+		//
+		// ライトデータ代入
+		param.pos = light_pos;
+
+		// ライトオブジェクト
+		param.register_obj_file_name =
+			Const::Obj::PLAYER;
+		
+		// ライト位置を描画
+		Obj::GetInstance()->EntryObjParam(param);
+	}
+
+	// zテクスチャ
+	ObjParameter cube_p(DrawStatus::NORMAL);
+	// オブジェパラメータ
+	ObjParameter taile_p(DrawStatus::SHADOW);
+
+	// キューブ
+	{
+		// キューブ文字
+		cube_p.register_obj_file_name = Const::Obj::CUBE;
+
+		// 位置
+		cube_p.pos.y = 60.f;
+		cube_p.pos.x = 0.f;
+		cube_p.pos.z = 0.f;
+
+		cube_p.texture_name = Const::Graph::TAILE;
+
+		// エントリーオブジェパラメータ
+		Obj::GetInstance()->EntryObjParam(cube_p);
+	}
+
+	// 板
+	{
+		// 板文字
+		taile_p.register_obj_file_name = Const::Obj::PLANE;
+
+		// 位置
+		taile_p.pos.y = 20.f;
+		taile_p.scale.x = 30.f;
+		taile_p.scale.z = 30.f;
+
+		// テクスチャ代入
+		taile_p.texture_name = Const::Graph::BACK_GROUND;
+
+		// オブジェクト代入
+		Obj::GetInstance()->EntryObjParam(taile_p);
+	}
+
+	// 視点
+	Vec3 look(
+		0.f,
+		-20.f,
+		0.f
 	);
+
+	// ライトビュー
+	D3DXMatrixLookAtLH(
+		// ライトビュー行列
+		&mat_light_view,
+		// カメラの位置座標
+		&light_pos,
+		// 注視点座標ポインタ
+		&look,
+		// アップベクトル
+		&D3DXVECTOR3(0, 1, 0)
+	);
+
+	// 射影
+	D3DXMATRIX mat_light_proj;
 
 	// ライト射影
 	D3DXMatrixPerspectiveFovLH(
@@ -289,112 +358,95 @@ void Debugger::ObjShadowDraw() {
 		300.0f
 	);
 
-
-	D3DXVECTOR3 defa(
-		mat_light_scale * 100,
-		mat_light_scale * 100,
-		mat_light_scale * 100);
-
-	D3DXVECTOR3 vec3(
-		0.f,
-		150.f,
-		0.f
-	);
-
-	D3DXVECTOR3 look(
-		0.f,
-		-20.f,
-		0.f
-	);
-
-	// ライトビュー
-	D3DXMatrixLookAtLH(
-		// ライトビュー行列
-		&mat_light_view,
-		// カメラの位置座標
-		&defa,
-		// 注視点座標ポインタ
-		&look,
-		// アップベクトル
-		&D3DXVECTOR3(0, 1, 0)
-	);
-
-	ObjParameter param(DrawStatus::NORMAL,true);
-	param.pos = vec3;
-	param.register_obj_file_name =
-		Const::Obj::PLAYER;
-
-	// カメラ位置を描画
-	Obj::GetInstance()->EntryObjParam(param);
-
-	param.pos = look;
-	param.register_obj_file_name =
-		Const::Obj::ENEMY_BULLETER;
-
-	// カメラ位置を描画
-	Obj::GetInstance()->EntryObjParam(param);
-
-	D3DXMATRIX mat_c_view;
+	// 現在の行列の場合
+	// 行列
+	D3DXMATRIX mat_c_view, mat_c_proj;
 
 	// ビュー行列
-	Graphics::GetInstance()->GetDevice()
-		->GetTransform(D3DTS_VIEW, &mat_c_view);
+	mat_c_view =
+		Graphics::GetInstance()->GetTSMatrix(D3DTS_VIEW);
+	// 射影行列
+	mat_c_proj =
+		Graphics::GetInstance()->GetTSMatrix(D3DTS_PROJECTION);
 
-	// zテクスチャ
-	ObjParameter z_tex_p(DrawStatus::SHADOW,true);
+	// こちらを変える(本体)
+	D3DXMATRIX const_view = 
+		mat_c_view;
+	D3DXMATRIX const_proj =
+		mat_light_proj;
 
+	// 光情報代入(影とは関係ない)
 	{
-		// キューブ
-		z_tex_p.register_obj_file_name = Const::Obj::CUBE;
 
-		// 位置
-		z_tex_p.pos.y = 60.f;
-		z_tex_p.pos.x = 0.f;
-		z_tex_p.pos.z = 0.f;
+		LightData light_data;
+
+		light_data.eye_pos.x = light_pos.x;
+		light_data.eye_pos.y = light_pos.y;
+		light_data.eye_pos.z = light_pos.z;
+
+		// 影のデータ
+		light_data.material.specular = D3DXVECTOR4(1.f,1.5f,1.f,1.f);
+
+		// 視点方向
+		D3DXVECTOR3 eye_dir;
+
+		D3DXVec3Normalize(
+			&eye_dir,
+			&mp_camera->GetEyePos());
+
+		// ライト方向
+		D3DXVECTOR4 light_dir(0.0f, -2.f, -1.0f, 0.0f);
+		D3DXVec4Normalize(&light_dir, &light_dir);
+
+		// ライトの平行方向代入
+		light_data.direction = light_dir;
+
+		// 視点座標
+		light_data.eye_direction = D3DXVECTOR4(
+			eye_dir.x,
+			eye_dir.y,
+			eye_dir.z,
+			1.f
+		);
 
 		// ライトデータ
-		z_tex_p.light_data = m_light_data;
-
-		// ライト射影
-		z_tex_p.shadow_data.light_proj = mat_light_proj;
-		z_tex_p.shadow_data.light_view = mat_light_view;
-
-		// カメラセット
-		z_tex_p.shadow_data.camera_view = mat_c_view;
-		z_tex_p.shadow_data.camera_proj = mat_c_proj;
+		Obj::GetInstance()->SetLightData(
+			light_data
+		);
 	}
 
-	// オブジェパラメータ
-	ObjParameter shadow_p(DrawStatus::SHADOW,true);
-
+	// 影データ代入
 	{
+		// 影データ
+		ShadowData shadow_data;
 
-		// 板文字
-		shadow_p.register_obj_file_name = Const::Obj::PLANE;
-
-		// ライトデータ
-		shadow_p.light_data = m_light_data;
-		
 		// ライト行列
-		shadow_p.shadow_data.light_proj = mat_light_proj;
-		shadow_p.shadow_data.light_view = mat_light_view;
+		shadow_data.light_view = const_view;
+		shadow_data.light_proj = const_proj;
 
-		// カメラセット(変更)
-		shadow_p.shadow_data.camera_proj = mat_c_proj;
-		shadow_p.shadow_data.camera_view = mat_c_view;
-		
-		// 位置
-		shadow_p.pos.y = 20.f;
-		shadow_p.scale.x = 30.f;
-		shadow_p.scale.z = 30.f;
+		// 現在のデバイスカメラセット(変更)
+		shadow_data.camera_proj = mat_c_proj;
+		shadow_data.camera_view = mat_c_view;
+
+
+		// グラフィックデータ(影、光)
+		Obj::GetInstance()->SetShadowData(
+			shadow_data
+		);
 	}
 
-	// エントリーオブジェパラメータ
-	Obj::GetInstance()->EntryObjParam(z_tex_p);
-	Obj::GetInstance()->EntryObjParam(shadow_p);
+	// 現在のカメラ情報を入れる
+	ZTextureData z_data;
+
+	z_data.mat_camera_view = const_view;
+	z_data.mat_camera_proj = const_proj;
+
+	// zテクスチャにセット
+	ZTextureManager::GetInstance()->SetViewMatrix(z_data);
+	ZTextureManager::GetInstance()->SetProjMatrix(z_data);
 
 	// オブジェクトを一気に描画する
-	Obj::GetInstance()->DrawSavedObj();
+	Obj::GetInstance()->DrawParamList();
 }
 
 
@@ -402,7 +454,7 @@ void Debugger::ObjShadowDraw() {
 void Debugger::LightDebugDraw() {
 
 	// オブジェシェーダー描画
-	ObjParameter param(DrawStatus::LIGHT,true);
+	ObjParameter param(DrawStatus::LIGHT);
 	param.register_obj_file_name = Const::Obj::SPEHER;
 
 	D3DXVECTOR3 eye_dir;
@@ -411,14 +463,14 @@ void Debugger::LightDebugDraw() {
 		&eye_dir,
 		&mp_camera->GetEyePos());
 
-	D3DXVECTOR4 light_dir(0.0f, 0.5f, -1.0f, 0.0f);
+	D3DXVECTOR4 light_dir(0.0f, -2.f, -1.0f, 0.0f);
 	D3DXVec4Normalize(&light_dir, &light_dir);
 
 	// ライトの平行方向代入
 	m_light_data.direction = light_dir;
 
 	// 視点座標代入
-	m_light_data.eye_dir = D3DXVECTOR4(
+	m_light_data.eye_direction = D3DXVECTOR4(
 		eye_dir.x,
 		eye_dir.y,
 		eye_dir.z,
@@ -426,18 +478,25 @@ void Debugger::LightDebugDraw() {
 	);
 
 	// 点ライト座標代入
-	m_light_data.point_light_pos = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
+	m_light_data.point_light.pos = D3DXVECTOR4(10.f, 20.f, 0.f, 0.f);
 
 	// 減衰パラメータ
 	m_light_data.attenuation = D3DXVECTOR4(1.0f, 0.0f, 0.2f, 0.0f);
 
+	// アンビエントカラー
+	m_light_data.material.ambient = D3DXVECTOR4(0.f, 0.f, 0.f, 0.f);
+
+	// スペキュラー
+	m_light_data.material.specular = D3DXVECTOR4(1.f, 1.5f, 1.f, 1.f);
+
+	// 位置
 	param.pos.y = 0.f;
 	param.pos.x = 0.f;
 	param.pos.z = 0.f;
 
-	param.light_data = m_light_data;
+	param.color = D3DXVECTOR4(0.f, 0.f, 0.f, 0.f);
 
-	Obj::GetInstance()->DrawShadowObj(param);
+	Obj::GetInstance()->DrawLightObj(param);
 }
 
 
@@ -631,6 +690,11 @@ void Debugger::XFileShadowDraw() {
 	}
 }
 
+
+
+void Debugger::CollisionFan() {
+
+}
 
 
 

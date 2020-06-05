@@ -29,7 +29,7 @@ void Block::Update() {
 void Block::Draw() {
 
 
-	ObjParameter param(DrawStatus::NORMAL,true);
+	ObjParameter param(DrawStatus::SHADOW);
 
 	param.register_obj_file_name = Const::Obj::CUBE;
 	param.pos = m_pos;
@@ -38,7 +38,28 @@ void Block::Draw() {
 	param.scale.y = OBJ_SIZE;
 	param.scale.z = OBJ_SIZE;
 
+	// 一旦コメント
 	Obj::GetInstance()->DrawObjByNormalShader(param);
+}
+
+
+void Block::DrawZTexture() {
+
+	ObjParameter param(DrawStatus::SHADOW);
+
+	param.register_obj_file_name = Const::Obj::CUBE;
+	param.pos = m_pos;
+
+	// 拡縮
+	param.scale.x = OBJ_SIZE;
+	param.scale.y = OBJ_SIZE;
+	param.scale.z = OBJ_SIZE;
+
+	// zテクスチャ描画
+	Obj::GetInstance()->WriteZTexture(
+		param,
+		FuncZTexture::Const::Z_TEX_1024
+	);
 }
 
 

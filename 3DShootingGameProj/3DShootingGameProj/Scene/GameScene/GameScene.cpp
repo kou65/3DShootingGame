@@ -26,6 +26,9 @@ void GameScene::Update(SceneType&scene_type) {
 	// カメラ更新
 	mp_camera->Update();
 
+	// 更新
+	m_z_tex_user.Update();
+
 	// オブジェクト更新
 	ObjectManager::GetInstance()->Update();
 
@@ -54,6 +57,9 @@ void GameScene::Draw() {
 	// カメラデバッグ描画
 	mp_camera->TransformDraw();
 
+	// zテクスチャ使用者
+	m_z_tex_user.Draw();
+
 	// オブジェクト描画
 	ObjectManager::GetInstance()->Draw();
 }
@@ -69,6 +75,7 @@ void GameScene::Init() {
 
 	// オブジェクト生成
 	CreateObject();
+
 }
 
 

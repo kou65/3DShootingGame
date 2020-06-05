@@ -6,6 +6,9 @@
 // 標準変換用継承シェーダー
 
 
+/**
+* @brief 標準変換シェーダー(継承しても良い)
+*/
 class StandardTSShader : public ShaderBase{
 public:
 
@@ -18,24 +21,19 @@ public:
 protected:
 
 	// 各ハンドル初期化
-	void InitTransformHandle(
-		const std::string& world_mat_name = "",
-		const std::string& view_mat_name = "",
-		const std::string& proj_mat_name = ""
+	void InitTSShader(
+		const std::string& world_mat_name,
+		const std::string& view_mat_name,
+		const std::string& proj_mat_name
 	);
 
 	// 各パラメータを更新
-	void UpdateTransfromMatrix();
+	void Update()override;
 
 	// 標準カメラ更新
 	void UpdateStandardCamera();
 
 protected:
-
-	// シェーダーに登録されている名前を入れる
-	std::string m_world_mat_name;
-	std::string m_view_mat_name;
-	std::string m_proj_mat_name;
 
 	// 変換ハンドル
 	D3DXHANDLE m_h_world;

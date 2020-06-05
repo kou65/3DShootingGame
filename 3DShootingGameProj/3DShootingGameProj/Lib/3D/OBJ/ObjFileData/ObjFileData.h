@@ -39,8 +39,7 @@ struct ObjParameter {
 	* @param is_z_tex_write zテクスチャ書き込み
 	*/
 	ObjParameter(
-		const DrawStatus &state = DrawStatus::NORMAL,
-		bool is_z_tex_write = false
+		const DrawStatus &state = DrawStatus::NORMAL
 	) {
 
 		pos.x = pos.y = pos.z = 0.f;
@@ -49,8 +48,9 @@ struct ObjParameter {
 
 		// 描画状態
 		draw_status = state;
-		this->is_z_tex_write = is_z_tex_write;
 
+		texture_name = "";
+	
 		// カラー代入
 		color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
 	}
@@ -66,15 +66,6 @@ struct ObjParameter {
 
 	//! カラー
 	D3DXVECTOR4 color;
-
-	//! ライト情報
-	LightData light_data;
-
-	//! 影データ
-	ShadowData shadow_data;
-
-	//! zテクスチャを書き込むかどうか
-	bool is_z_tex_write;
 
 	//! 描画状態
 	DrawStatus draw_status;

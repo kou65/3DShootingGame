@@ -14,6 +14,7 @@
 #include"../../Manager/MapStructureManager/MapStructureManager.h"
 #include"../../Manager/ManagerFactory/ManagerFactory.h"
 #include"../../Manager/ManagerControlOffcer/ManagerControlOffcer.h"
+#include"../../User/ZTextureUser/ZTextureUser.h"
 #include<memory>
 
 
@@ -96,6 +97,7 @@ private:
 	//std::unique_ptr<ManagerFactory>mp_mng_factory;
 	//std::unique_ptr<ManagerControlOffcer>mp_contorl_ofc;
 
+	ZTextureUser m_z_tex_user;
 
 	//! 一時的にシーンタイプを保存する用
 	SceneType*mp_scene_type;

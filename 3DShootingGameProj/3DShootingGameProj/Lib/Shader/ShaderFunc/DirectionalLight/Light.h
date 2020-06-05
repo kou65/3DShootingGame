@@ -15,20 +15,23 @@ enum class ShaderType {
 	SPECULAR_REFLECTION,// 鏡面反射
 	POINT_LIGHT,        // 点光源
 	PHONE_REFLECTION,   // フォン反射
-	SHADOW,             // 光と影
+	PHONE_SHADER,       // フォンシェーダー
 };
 
 
-class Light : public StandardTSShader{
+
+class LightShader : public StandardTSShader{
 public:
 
-	Light() : StandardTSShader() {};
+	LightShader() : StandardTSShader() {};
 
 	// 初期化
 	void Init()override;
 
 	// 更新
 	void Update()override;
+
+	/* 以下セッター */
 
 	// テクスチャセット
 	void SetTexture(IDirect3DTexture9*tex);
@@ -47,7 +50,6 @@ public:
 
 	// シャドウテクスチャ
 	void SetShadowTexture(IDirect3DTexture9*tex);
-
 
 private:
 
@@ -73,6 +75,13 @@ private:
 	// カメラ座標
 	std::string m_eye_pos_name;
 
+	// 鏡面名
+	std::string m_specular_name;
+	// 鏡面力名
+	std::string m_specular_power_name;
+	// 環境名
+	std::string m_ambient_name;
+
 	// ライトカメラ
 	std::string m_light_view_name;
 	// ライト射影
@@ -94,6 +103,13 @@ private:
 	D3DXHANDLE m_h_eye_dir;
 	D3DXHANDLE m_h_eye_pos;
 	D3DXHANDLE m_h_attenuation;
+
+	// 鏡面指数ハンドル
+	D3DXHANDLE m_h_specular;
+	D3DXHANDLE m_h_specular_power;
+
+	// 環境ハンドル
+	D3DXHANDLE m_h_ambient;
 
 	// ライトビューハンドル
 	D3DXHANDLE m_h_light_view;
@@ -119,5 +135,4 @@ private:
 
 	// ライトデータ
 	LightData m_light_data;
-	
 };

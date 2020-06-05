@@ -3,7 +3,7 @@
 #define TAILE_H
 
 #include"../MapObjectBase/MapObjectBase.h"
-#include"../../../Lib/TransformData/TransformData.h"
+#include"../../../Lib/TransformData/TransformData3D.h"
 #include"../../../Lib/3D/OBJ/OBJFile.h"
 
 
@@ -52,6 +52,7 @@ public:
 	* @brief 描画 仮想関数
 	*/
 	void Draw()override;
+
 
 private:
 

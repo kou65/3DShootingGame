@@ -32,7 +32,7 @@ Obj::Obj() : Model(){
 		)->GetZTexture()
 	);
 
-	// 世界ライトを使用する
+	// 初期は世界ライトを使用する
 	m_is_world_light = true;
 }
 
@@ -41,11 +41,13 @@ void Obj::Update(
 	const ObjParameter&param,
 	StandardTSShader*shader
 ) {
+
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
 	// ワールド行列セット
 	shader->SetWorldMatrix(total_mat);
 
+	// 更新
 	shader->Update();
 }
 
@@ -61,9 +63,12 @@ void Obj::Draw(
 	case DrawStatus::NORMAL:
 
 		// 通常描画
-		DrawNormal(
-			param
+		DrawShader(
+			param,
+			&m_ns
 		);
+
+		break;
 
 	case DrawStatus::LIGHT:
 
@@ -71,6 +76,7 @@ void Obj::Draw(
 		DrawLightObj(
 			param
 		);
+		break;
 
 	case DrawStatus::SHADOW:
 
@@ -78,17 +84,140 @@ void Obj::Draw(
 		DrawShadowObj(
 			param
 		);
+		break;
 	}
 }
 
 
-void Obj::SetGrapicData(
-	const LightData&data1,
-	const ShadowData&data2
+void Obj::InitGrapicData() {
+
+	// 行列
+	D3DXMATRIX mat_camera_view;
+	D3DXMATRIX mat_camera_proj;
+	D3DXMATRIX mat_light_view;
+	D3DXMATRIX mat_light_proj;
+	D3DXMATRIX mat_current_view;
+	D3DXMATRIX mat_current_proj;
+
+	// カメラ射影
+	D3DXMatrixPerspectiveFovLH(
+		// カメラ射影行列
+		&mat_camera_proj,
+		// 画角
+		D3DXToRadian(45),
+		// アスペクト比
+		640.0f / 480.0f,
+		// 視推台の最も近い距離()
+		10.0f,
+		// 視推台の最も遠い距離
+		1000.0f
+	);
+
+	float light_scale = 1.5f;
+
+	// デフォルト
+	D3DXVECTOR3 defa(
+		light_scale * 100,
+		light_scale * 100,
+		light_scale * 100);
+
+	// 視点
+	D3DXVECTOR3 look(
+		0.f,
+		-20.f,
+		0.f
+	);
+
+	// ライトビュー
+	D3DXMatrixLookAtLH(
+		// ライトビュー行列
+		&mat_light_view,
+		// カメラの位置座標
+		&defa,
+		// 注視点座標ポインタ
+		&look,
+		// アップベクトル
+		&D3DXVECTOR3(0, 1, 0)
+	);
+
+	LightData light_data;
+	ShadowData shadow_data;
+
+	// ビュー行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_VIEW, &mat_current_view);
+
+	// プロジェクション行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_PROJECTION, &mat_current_proj);
+
+	// データ代入
+	shadow_data.camera_view = mat_current_view;
+	shadow_data.camera_proj = mat_current_proj;
+
+	// データ取得
+	ZTextureData data
+		= ZTextureManager::GetInstance()->GetZTexData();
+
+	// z値からのカメラ情報を入れる
+	shadow_data.light_view = data.mat_camera_view;
+	shadow_data.light_proj = data.mat_camera_proj;
+
+	// グラフィックデータ代入
+	Obj::GetInstance()->SetLightData(
+		light_data
+	);
+
+	Obj::GetInstance()->SetShadowData(
+		shadow_data
+	);
+}
+
+
+void Obj::UpdateShadowCamera() {
+
+	// 行列
+	D3DXMATRIX mat_current_view;
+	D3DXMATRIX mat_current_proj;
+
+	// シャドウデータ
+	ShadowData shadow_data;
+
+	// ビュー行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_VIEW, &mat_current_view);
+
+	// プロジェクション行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_PROJECTION, &mat_current_proj);
+
+	// データ代入
+	shadow_data.camera_view = mat_current_view;
+	shadow_data.camera_proj = mat_current_proj;
+
+	// データ取得
+	ZTextureData data
+		= ZTextureManager::GetInstance()->GetZTexData();
+
+	// z値からのカメラ情報を入れる
+	shadow_data.light_view = data.mat_camera_view;
+	shadow_data.light_proj = data.mat_camera_proj;
+
+	m_shadow_data = shadow_data;
+}
+
+
+void Obj::SetShadowData(
+	ShadowData&data
 ) {
-	// データセット
-	m_light_data = data1;
-	m_shadow_data = data2;
+	m_shadow_data = data;
+}
+
+
+void Obj::SetLightData(
+	LightData&data
+) {
+	m_light_data = data;
 }
 
 
@@ -96,7 +225,7 @@ void Obj::UpdateLight(const ObjParameter&param) {
 
 	// ライトセット
 	m_light_shader.SetLightData(
-		param.light_data
+		m_light_data
 	);
 
 	// 通常更新
@@ -110,6 +239,7 @@ void Obj::DrawObjByNormalShader(
 
 	m_pass_type = ShaderType::NORMAL;
 
+	// 行列を返す
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
 	// ワールド行列セット
@@ -123,24 +253,32 @@ void Obj::DrawObjByNormalShader(
 }
 
 
-
 void Obj::DrawShadowObj(
 	const ObjParameter &param
 ) {
 
+	// 更新シャドウカメラ
+	UpdateShadowCamera();
+
 	// ライトカメラセット
-	m_shadow.SetLightViewMatrix(param.shadow_data.light_view);
-	m_shadow.SetLightProjMatrix(param.shadow_data.light_proj);
+	m_shadow.SetLightViewMatrix(m_shadow_data.light_view);
+	m_shadow.SetLightProjMatrix(m_shadow_data.light_proj);
 
 	// カメラ情報セット
-	m_shadow.SetViewMatrix(param.shadow_data.camera_view);
-	m_shadow.SetProjMatrix(param.shadow_data.camera_proj);
+	m_shadow.SetViewMatrix(m_shadow_data.camera_view);
+	m_shadow.SetProjMatrix(m_shadow_data.camera_proj);
 
+	// ライトデータ挿入
+	m_shadow.SetLightData(m_light_data);
+	
 	// 影に変更
 	m_pass_type = ShaderType::DEPTH_SHADOW;
 
 	// 更新
 	Update(param, &m_shadow);
+
+	// シャドウ更新
+	m_shadow.Update();
 
 	// 影描画
 	ShaderParameterDraw(param,&m_shadow);
@@ -151,39 +289,33 @@ void Obj::DrawLightObj(
 	const ObjParameter &param
 ) {
 
-	m_pass_type = ShaderType::PHONE_REFLECTION;
+	m_pass_type = ShaderType::PHONE_SHADER;
 
+	// カラー情報セット
+	m_light_shader.SetColor(param.color);
+
+	// ライト更新
 	UpdateLight(param);
 
+	// シェーダーパラメータ描画
 	ShaderParameterDraw(param, &m_light_shader);
 }
 
 
-void Obj::ParamWriteZTextureByName(
-	const std::string &z_tex_name
+void Obj::WriteZTexture(
+	const ObjParameter&param,
+	const std::string &register_name
 ) {
 
 	// zテクスチャ
 	ZTexture*p_tex
-		= ZTextureManager::GetInstance()->GetZTexturePtr(z_tex_name);
+		= ZTextureManager::GetInstance()->GetZTexturePtr(register_name);
 
-	UINT i;
-
-	// 描画開始
-	p_tex->Begin(i, 0);
-
-	// パラメータリスト
-	for (auto&itr : m_param_list) {
-
-		// 書き込み
-		if (itr.is_z_tex_write == true) {
-
-			// Zテクスチャ書き込み
-			WriteZTexture(itr, p_tex);
-		}
-	}
-
-	p_tex->End();
+	// zテクスチャを書き込む
+	WriteZTexture(
+		param,
+		p_tex
+	);
 }
 
 
@@ -192,9 +324,13 @@ void Obj::WriteZTexture(
 	ZTexture*p_tex
 ) {
 
+	// 取得
+	ZTextureData data = 
+		ZTextureManager::GetInstance()->GetZTexData();
+
 	// カメラ情報セット
-	p_tex->SetViewMatrix(param.shadow_data.camera_view);
-	p_tex->SetProjMatrix(param.shadow_data.camera_proj);
+	p_tex->SetViewMatrix(data.mat_camera_view);
+	p_tex->SetProjMatrix(data.mat_camera_proj);
 
 	// パス
 	m_pass_type = ShaderType::ZTEXTURE;
@@ -210,6 +346,31 @@ void Obj::WriteZTexture(
 }
 
 
+void Obj::WriteZTexByParam(
+	const std::string &z_tex_name
+) {
+
+	// zテクスチャ
+	ZTexture*p_tex
+		= ZTextureManager::GetInstance()->
+		GetZTexturePtr(z_tex_name);
+
+	UINT i;
+
+	// 描画開始
+	p_tex->Begin(i, 0);
+
+	// 書き込み
+	for (auto&itr : m_param_list){
+		
+		// Zテクスチャ書き込み
+		WriteZTexture(itr, p_tex);
+	}
+
+	p_tex->End();
+}
+
+
 void Obj::EntryObjParam(
 	const ObjParameter&param
 ){
@@ -219,11 +380,11 @@ void Obj::EntryObjParam(
 }
 
 
-void Obj::DrawSavedObj()
+void Obj::DrawParamList()
 {
 
 	// zテクスチャ書き込み
-	ParamWriteZTextureByName(FuncZTexture::Const::Z_TEX_1024);
+	WriteZTexByParam(FuncZTexture::Const::Z_TEX_1024);
 
 	// 本編書き込み
 	for (auto&itr : m_param_list) {
@@ -234,6 +395,11 @@ void Obj::DrawSavedObj()
 
 	// パラメータリセット
 	ResetParamList();
+}
+
+
+void Obj::UpdateLightData() {
+
 }
 
 
@@ -344,6 +510,7 @@ void Obj::DrawShader(
 	// オブジェクトファイルへアクセス
 	ObjFileData* p_data =
 		m_obj_file_data[param.register_obj_file_name];
+
 
 	// マテリアル数分回す
 	for (UINT i = 0; i < p_data->material_num; i++) {
@@ -490,7 +657,7 @@ UINT Obj::GetUsePass(const ShaderType&type) {
 	case ShaderType::PHONE_REFLECTION:
 		return 8;
 
-	case ShaderType::SHADOW:
+	case ShaderType::PHONE_SHADER:
 		return 9;
 
 	default:
@@ -516,9 +683,7 @@ void Obj::DrawNormal(
 		return;
 	}
 
-
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
-
 
 	// マテリアル数分回す
 	for (unsigned int i = 0;
@@ -652,6 +817,7 @@ bool Obj::LoadTexture(
 			// シェーダーテクスチャセット
 			m_light_shader.SetTexture(texture_data);
 			m_ns.SetTexture(texture_data);
+			m_shadow.SetTexture(texture_data);
 
 			// テクスチャが存在する
 			is_texture = true;
@@ -947,7 +1113,6 @@ void Obj::VertexInfoLoad(
 		out_uv_list.push_back(vec2);
 	}
 }
-
 
 
 void Obj::FaceInfoLoad(

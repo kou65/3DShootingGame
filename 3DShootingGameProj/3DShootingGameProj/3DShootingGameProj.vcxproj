@@ -156,6 +156,10 @@
     <ClCompile Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.cpp" />
     <ClCompile Include="CollisionSystem\Shape\Sphere\Sphere.cpp" />
     <ClCompile Include="Debugger\Debugger.cpp" />
+    <ClCompile Include="Debugger\ZTexSpriteCreater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="GameApp\Block\Block.cpp" />
     <ClCompile Include="GameApp\Bullet\BreakBullet\BreakBullet.cpp">
       <SubType>
@@ -169,6 +173,14 @@
     <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
+    <ClCompile Include="Lib\Shader\ShaderFunc\ColorShader\ColorShader.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\LightShader\LightShader.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.cpp">
       <SubType>
       </SubType>
@@ -248,6 +260,10 @@
     <ClCompile Include="Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Lib\Utility\Utility.cpp" />
+    <ClCompile Include="User\ZTextureUser\ZTextureUser.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h" />
@@ -259,6 +275,10 @@
     <ClInclude Include="CollisionSystem\Shape\ShapeData\ShapeData.h" />
     <ClInclude Include="CollisionSystem\Shape\Sphere\Sphere.h" />
     <ClInclude Include="Debugger\Debugger.h" />
+    <ClInclude Include="Debugger\ZTexSpriteCreater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameApp\Block\Block.h" />
     <ClInclude Include="GameApp\Bullet\BreakBullet\BreakBullet.h">
       <SubType>
@@ -290,12 +310,28 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\ColorShader\ColorShader.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\LightShader\LightShader.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ShadowData\ShadowData.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.h">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureData\ZTextureData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\TransformData\TransformData2D.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -360,7 +396,7 @@
     <ClInclude Include="Lib\Texture\TextureData2D\TextureData2D.h" />
     <ClInclude Include="Lib\Texture\TextureData3D\TextureData3D.h" />
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h" />
-    <ClInclude Include="Lib\TransformData\TransformData.h" />
+    <ClInclude Include="Lib\TransformData\TransformData3D.h" />
     <ClInclude Include="Lib\UV\AnimationParameter\AnimationParameter.h" />
     <ClInclude Include="Lib\UV\UvAnimation\UvAnimation.h" />
     <ClInclude Include="Lib\UV\UvBase\UvBase.h" />
@@ -388,10 +424,46 @@
     <ClInclude Include="Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Lib\Utility\Utility.h" />
+    <ClInclude Include="User\ZTextureUser\ZTextureUser.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\3DModel\Cube2.x" />
     <None Include="Resource\3DModel\Plate.x" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Lib\Shader\EffectFile\DepthShadow.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Lib\Shader\EffectFile\Light.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Lib\Shader\EffectFile\ZTexture.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

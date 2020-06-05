@@ -131,6 +131,12 @@ private:
 	void CameraRotation();
 
 
+	/**
+	* @brief ファンの当たり判定
+	*/
+	void CollisionFan();
+
+
 private:
 
 	//! デバイス

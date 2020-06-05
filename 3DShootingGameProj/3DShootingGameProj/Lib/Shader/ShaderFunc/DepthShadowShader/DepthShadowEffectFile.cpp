@@ -33,11 +33,27 @@ void DepthShadowShader::Init() {
 		mp_effect->GetParameterByName(NULL, "g_light_view");
 	m_h_light_proj = 
 		mp_effect->GetParameterByName(NULL, "g_light_proj");
-	m_h_shadow_map_tex = 
+	m_h_shadow_map = 
 		mp_effect->GetParameterByName(NULL, "g_shadow_tex");
+	m_h_tex =
+		mp_effect->GetParameterByName(NULL, "g_tex");
+
+
+	m_h_light_dir =
+		mp_effect->GetParameterByName(NULL, "g_dir_light");
+	m_h_specular =
+		mp_effect->GetParameterByName(NULL, "g_specular");
+	m_h_specular_power =
+		mp_effect->GetParameterByName(NULL, "g_specular_power");
+	m_h_ambient =
+		mp_effect->GetParameterByName(NULL, "g_ambient");
+	m_h_eye_dir =
+		mp_effect->GetParameterByName(NULL, "g_eye_dir");
+	m_h_eye_pos =
+		mp_effect->GetParameterByName(NULL, "g_eye_pos");
 	
 	// ハンドル
-	if (!m_h_light_view || !m_h_light_proj || !m_h_shadow_map_tex) {
+	if (!m_h_light_view || !m_h_light_proj || !m_h_shadow_map) {
 		return;
 	}
 
@@ -50,24 +66,24 @@ bool DepthShadowShader::SetShandowMap(
 	IDirect3DTexture9*shadow_map) {
 
 	// テクスチャ
-	mp_shadow_map_tex = shadow_map;
+	mp_shadow_map = shadow_map;
 
 	return true;
 }
 
 
+bool DepthShadowShader::SetTexture(IDirect3DTexture9*p_tex) {
+
+	if (mp_effect->SetTexture(m_h_tex, p_tex) == S_OK) {
+		return true;
+	}
+
+	return false;
+}
+
+
 void DepthShadowShader::CommitDeviceViewProj() {
 	StandardTSShader::UpdateStandardCamera();
-}
-
-
-void DepthShadowShader::SetLightViewMatrix(const D3DXMATRIX&mat) {
-	m_mat_light_view = mat;
-}
-
-
-void DepthShadowShader::SetLightProjMatrix(const D3DXMATRIX&mat) {
-	m_mat_light_proj = mat;
 }
 
 
@@ -80,7 +96,7 @@ void DepthShadowShader::Update() {
 	SetParamToEffect();
 
 	// コミット
-	//mp_effect->CommitChanges();
+	mp_effect->CommitChanges();
 }
 
 
@@ -117,10 +133,54 @@ bool DepthShadowShader::SetParamToEffect() {
 	mp_effect->SetMatrix(m_h_light_proj, &m_mat_light_proj);
 	mp_effect->SetMatrix(m_h_view_mat, &m_mat_view);
 	mp_effect->SetMatrix(m_h_proj_mat, &m_mat_proj);
-	
 
+	// テクスチャ
 	HRESULT hr = mp_effect->
-		SetTexture(m_h_shadow_map_tex, mp_shadow_map_tex);
+		SetTexture(m_h_shadow_map, mp_shadow_map);
+
+	// ライトパラメータセット
+	mp_effect->SetVector(m_h_ambient,
+		&m_light_data.ambient_color
+	);
+
+	mp_effect->SetVector(m_h_eye_dir,
+		&m_light_data.eye_direction
+	);
+
+	mp_effect->SetVector(m_h_eye_pos,
+		&m_light_data.eye_pos
+	);
+
+	mp_effect->SetFloat(
+		m_h_specular,
+		m_light_data.specular
+	);
+
+	mp_effect->SetFloat(
+		m_h_specular_power,
+		m_light_data.specular_power
+	);
+
+	mp_effect->SetVector(
+		m_h_light_dir,
+		&m_light_dir
+	);
+
 
 	return true;
+}
+
+
+void DepthShadowShader::SetLightViewMatrix(const D3DXMATRIX&mat) {
+	m_mat_light_view = mat;
+}
+
+
+void DepthShadowShader::SetLightProjMatrix(const D3DXMATRIX&mat) {
+	m_mat_light_proj = mat;
+}
+
+
+void DepthShadowShader::SetLightData(const LightData&data) {
+	m_light_data = data;
 }

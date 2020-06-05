@@ -26,15 +26,21 @@ public:
 
 
 	/**
-	* @brief 更新用 仮想関数
+	* @brief 更新用 純粋仮想関数
 	*/
 	virtual void Update() = 0;
 
 
 	/**
-	* @brief 描画 仮想関数
+	* @brief 描画 純粋仮想関数
 	*/
 	virtual void Draw() = 0;
+
+
+	/**
+	* @brief zテクスチャを書き込む用の仮想関数
+	*/
+	virtual void DrawZTexture() {};
 
 
 	/**

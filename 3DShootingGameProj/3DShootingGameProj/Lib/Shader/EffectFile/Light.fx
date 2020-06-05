@@ -10,11 +10,18 @@ float4x4 g_view : VIEW;
 // ライト方向
 float4 g_dir_light;
 
-// 点光源
+// 点光源(ライト座標)
 float4 g_point_light_pos;
 
 // 明るさ減衰調整パラメータ
 float4 g_attenuation;
+
+// 環境光
+float4 g_ambient;
+// スペキュラーの範囲
+float g_specular;
+// スペキュラーの強度
+float g_specular_power;
 
 // ライトカラー
 float4 g_light_color;
@@ -39,7 +46,6 @@ texture g_tex;
 
 // シャドウマップ
 texture g_shadow_tex;
-
 
 
 // サンプラブロック
@@ -185,7 +191,8 @@ VS_OUT SpecularReflectionVS(VS_IN In) {
 	normal_nor = normalize(In.normal);
 
 	// 反射ベクトル
-	ref_vec = 2.0f * normal_nor * dot(normal_nor, dir_light_nor) - dir_light_nor;
+	ref_vec = 2.0f * normal_nor * dot(normal_nor, dir_light_nor)
+		- dir_light_nor;
 
 	// 視点座標からピクセル位置の単位ベクトル取得
 	view_point = normalize(g_eye_dir.xyzw - In.pos.xyzw);
@@ -382,68 +389,75 @@ float4 PhongReflectionPS(VS_OUT_WORLD In) : COLOR0 {
 
 
 
-// 頂点シェーダー
-VS_OUT_SHADOW DepthBufferShadowVS(
+/* フォンシェーディング */
+struct VS_OUT_L {
+	float4 pos : POSITION;
+	float4 col : COLOR0;
+	float2 tex : TEXCOORD0;
+	float3 n : TEXCOORD1;// オブジェクトの法線ベクトル
+	float3 l : TEXCOORD2;// 頂点からライト位置へのベクトル
+	float3 e : TEXCOORD3;// 頂点から視点へのベクトル
+};
+
+
+
+VS_OUT_L PhoneVS2(
 	float4 pos : POSITION,
-	float3 normal : NORMAL
-) {
+float4 normal : NORMAL,
+float2 tex : TEXCOORD0
+)
+{
 
-	VS_OUT_SHADOW Out = (VS_OUT_SHADOW)0;
+	VS_OUT_L Out;
 
-	// カメラ目線のワールドビュー射影変換
 	float4x4 mat;
 
+	// 変換
 	mat = mul(g_world, g_view);
 	mat = mul(mat, g_proj);
 	Out.pos = mul(pos, mat);
 
-	// ライト目線によるワールドビュー射影変換
-	mat = mul(g_world, g_light_view);
-	mat = mul(mat, g_light_proj);
-	Out.z_calc_tex = mul(pos, mat);
+	// テクスチャ頂点
+	Out.tex = tex;
 
-	// 法線とライトの方向から頂点の色を決定
-	float3 n = normalize(mul(float4(normal, 1.f), g_world));
+	// ライト方向で入力されるので、頂点からライト位置とするために逆向きに変換する
+	// 正規化を必ず行う
+	Out.l = -g_dir_light.xyz;
 
-	// 拡縮を正規化
-	float3 light_direct = normalize(float3(
-		g_light_view._13,
-		g_light_view._23,
-		g_light_view._33
-		));
+	// 法線代入
+	Out.n = normal.xyz;
 
-	Out.color = float4(0.f, 0.6f, 1.f, 1.f) *
-		(0.3 + dot(n, -light_direct)*(1 - 0.3f));
+	// ライトベクトルと法線ベクトルの内積を計算し、
+	// 計算結果の色の最低値を環境光(Ambient)に制限する
+	Out.col = min(max(g_ambient,dot(Out.n,Out.l)),1.f);
+
+	// 頂点から視点へのベクトル計算
+	Out.e = g_eye_pos.xyz - pos.xyz;
 
 	return Out;
 }
 
 
-float4 DepthBufferShadowPS
-(float4 col : COLOR, float4 z_calc_tex : TEXCOORD2) : COLOR
+
+float4 PhonePS2(VS_OUT_L In) : COLOR0
 {
 
-	// ライト目線によるz値の再算出
-	float z_value = z_calc_tex.z / z_calc_tex.w;
+	float4 Out;
 
-// テクスチャ座標に変換
-float2 trans_tex_coord;
+// 法線ベクトルを正規化する
+float3 n = normalize(In.n);
 
-// テクスチャ計算(射影空間からテクスチャに変換)
-trans_tex_coord.x = (1.f + z_calc_tex.x / z_calc_tex.w) * 0.5f;
-trans_tex_coord.y = (1.f - z_calc_tex.y / z_calc_tex.w) * 0.5f;
+// 頂点からライト位置ベクトル + 頂点から視点ベクトル
+float3 h = normalize(In.l + normalize(In.e));
 
-// 同じ座標のz値を抽出
-float sm_z = tex2D(smp, trans_tex_coord).x;
+// スペキュラーカラーを計算する
+float s = pow(max(0.0f,dot(n,h)),g_specular) * g_specular_power;
 
-// 算出点がシャドウマップのz値よりも大きければ影と判断
-if (z_value > sm_z + 0.005f) {
+// スペキュラーカラーを加算する
+//Out = In.col * tex2D(smp,In.tex) + s;
+Out = In.col + s;
 
-	// 色変更
-	col.rgb = col.rgb * 0.5f;
-}
-
-return col;
+return Out;
 }
 
 
@@ -514,18 +528,17 @@ technique tech1 {
 
 
 	// フォン反射
-	pass FhoneRef {
+	pass PhoneRef {
 
 		VertexShader = compile vs_2_0 PhongReflectionVS();
 		PixelShader = compile ps_2_0 PhongReflectionPS();
 	}
 	
-
-	// 影
-	pass Shade {
-
-		VertexShader = compile vs_2_0 DepthBufferShadowVS();
-		PixelShader = compile ps_2_0 DepthBufferShadowPS();
+	// フォン反射2
+	pass PhoneRef2 {
+		VertexShader = compile vs_2_0 PhoneVS2();
+		PixelShader = compile ps_2_0 PhonePS2();
 	}
+
 
 }

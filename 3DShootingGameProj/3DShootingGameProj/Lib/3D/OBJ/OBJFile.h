@@ -42,7 +42,7 @@ public:
 	*/
 	void Release() {};
 
-	// 読み込み
+
 	/**
 	* @brief 読み込み
 	* @param[in] obj_file_path 読み込むobjファイル名
@@ -56,6 +56,7 @@ public:
 		const std::string &mtl_file_path = ""
 	);
 
+
 	/**
 	* @brief objを描画
 	* @param[in] state どの状態で描画するか
@@ -64,6 +65,40 @@ public:
 	void Draw(
 		const DrawStatus&state,
 		const ObjParameter&param
+	);
+
+
+	/**
+	* @brief シャドウカメラ更新
+	*/
+	void UpdateShadowCamera();
+
+
+	/**
+	* @brief ライトデータ更新
+	*/
+	void UpdateLightData();
+
+
+	/**
+	* @brief グラフィックデータの初期化
+	*/
+	void InitGrapicData();
+
+
+	/**
+	* @brief 影データセット
+	*/
+	void SetShadowData(
+		ShadowData&data
+	);
+
+
+	/**
+	* @brief ライトデータ
+	*/
+	void SetLightData(
+		LightData&data
 	);
 
 	
@@ -114,7 +149,7 @@ public:
 	/**
 	* @brief 保存されてたパラメータ描画開始
 	*/
-	void DrawSavedObj();
+	void DrawParamList();
 
 
 	/**
@@ -148,16 +183,15 @@ public:
 		int sub_set_number
 	);
 
-private:
-
-
 	/**
-	* @brief ライトや影などのデータを代入
+	* @brief 1024サイズのzテクスチャを書き込む
 	*/
-	void SetGrapicData(
-		const LightData&data1,
-		const ShadowData&data2
+	void WriteZTexture(
+		const ObjParameter&param,
+		const std::string &register_name
 	);
+
+private:
 
 
 	/**
@@ -175,7 +209,7 @@ private:
 	* @brief zテクスチャを名前付きでパラメータを書き込み
 	* @param[in] z_tex_name ZTexで保存した名前を入れる
 	*/
-	void ParamWriteZTextureByName(
+	void WriteZTexByParam(
 		const std::string &z_tex_name
 	);
 

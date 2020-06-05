@@ -2,6 +2,10 @@
 #include"../../Lib/Vec3/Vec3.h"
 
 
+
+/**
+* @brief 矩形3Dデータ
+*/
 struct Rect3D {
 	float x;
 	float y;
@@ -14,6 +18,41 @@ struct Rect3D {
 };
 
 
+struct Fan {
+
+	Fan() {
+		rad = 0.f;
+		range_len = 0.f;
+	}
+
+	// 中心点座標
+	Vec3 center_pos;
+
+	// 扇の範囲(角度)
+	float rad;
+
+	// 扇の範囲(長さ)
+	float range_len;
+
+	// 扇の回転角度
+	Vec3 rota;
+
+	// 位置
+	Vec3 pos;
+};
+
+
+/**
+* @brief 点
+*/
+struct Point {
+	Vec3 pos;
+};
+
+
+/**
+* @brief 衝突系関数ネームスペース
+*/
 namespace Collision {
 
 	/* 引数の説明
@@ -36,7 +75,6 @@ namespace Collision {
 	);
 
 
-
 	// レイと球の衝突判定
 
 	// lx, ly, lz : レイの始点
@@ -56,11 +94,18 @@ namespace Collision {
 	);
 
 
-	/* 正方形と正方形の当たり判定 */
+	/**
+	* 正方形と正方形の当たり判定 
+	*/
 	bool IsHitCubeAndCube(
 		const Rect3D&rect1,
 		const Rect3D&rect2
 	);
+
+	/**
+	* @brief 扇とポイントの当たり判定
+	*/
+	bool IsHitFanAndPoint(const Fan&fan,const Point&point);
 
 	/*
 	bool IsHitRayAndPoint(

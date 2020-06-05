@@ -90,7 +90,7 @@ void ShotgunEnemy::Shot() {
 	data.trans_data.pos = m_pos;
 
 	// パラメータ
-	ObjParameter param(DrawStatus::NORMAL,true);
+	ObjParameter param(DrawStatus::NORMAL);
 	// キューブ
 	param.register_obj_file_name = Const::Obj::SPEHER;
 	// 拡縮

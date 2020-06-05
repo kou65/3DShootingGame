@@ -20,7 +20,9 @@ void Taile::Update() {
 
 void Taile::Draw() {
 
-	Obj::GetInstance()->DrawObjByNormalShader(m_data);
+	// 描画
+	Obj::GetInstance()->Draw(DrawStatus::SHADOW, m_data);
+	//Obj::GetInstance()->DrawObjByNormalShader(m_data);
 }
 
 
@@ -30,7 +32,6 @@ void Taile::SetDirection(const Direction&dir) {
 
 	case Direction::LEFT:
 
-
 		m_data.rota.z = -90.f;
 		m_data.rota.x = -90.f;
 
@@ -38,7 +39,6 @@ void Taile::SetDirection(const Direction&dir) {
 		m_data.pos.y += m_data.scale.z;
 		m_data.pos.x += 4;
 	
-
 		break;
 
 	case Direction::RIGHT:

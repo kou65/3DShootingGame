@@ -264,6 +264,18 @@
     <ClCompile Include="Lib\Utility\Utility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Debugger\ZTexSpriteCreater.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="User\ZTextureUser\ZTextureUser.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\LightShader\LightShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\ColorShader\ColorShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionSystem\Collision\Collision.h">
@@ -431,9 +443,6 @@
     <ClInclude Include="Lib\Texture\TextureManager\TextureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\TransformData\TransformData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\UV\AnimationParameter\AnimationParameter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -590,9 +599,35 @@
     <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureData\ZTextureData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\TransformData\TransformData2D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\TransformData\TransformData3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger\ZTexSpriteCreater.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="User\ZTextureUser\ZTextureUser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\LightShader\LightShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\ColorShader\ColorShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\3DModel\Cube2.x" />
     <None Include="Resource\3DModel\Plate.x" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Lib\Shader\EffectFile\DepthShadow.fx" />
+    <FxCompile Include="Lib\Shader\EffectFile\ZTexture.fx" />
+    <FxCompile Include="Lib\Shader\EffectFile\Light.fx" />
   </ItemGroup>
 </Project>
