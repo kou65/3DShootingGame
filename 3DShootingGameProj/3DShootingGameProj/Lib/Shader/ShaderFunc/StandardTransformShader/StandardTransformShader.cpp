@@ -10,7 +10,7 @@ StandardTSShader::StandardTSShader() : ShaderBase() {
 }
 
 
-void StandardTSShader::InitTSShader(
+void StandardTSShader::InitTSHandle(
 const std::string& world_mat_name,
 const std::string& view_mat_name,
 const std::string& proj_mat_name
@@ -31,7 +31,7 @@ const std::string& proj_mat_name
 }
 
 
-void StandardTSShader::Update(
+void StandardTSShader::UpdateTS(
 ) {
 
 	// マトリックスセット

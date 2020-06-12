@@ -17,7 +17,7 @@ void FogShader::Init() {
 	SetColor(D3DXVECTOR4(1.f, 1.f, 1.f, 1.f));
 
 	// トランスフォームハンドル取得
-	StandardTSShader::InitTransformHandle(
+	StandardTSShader::InitTSHandle(
 		"g_world",
 		"g_view",
 		"g_proj"
@@ -87,7 +87,7 @@ void FogShader::UpdateFog() {
 	mp_effect->SetVector(m_h_eye_pos, &m_light_data.eye_pos);
 
 	// 環境カラー
-	mp_effect->SetVector(m_h_ambient, &m_light_data.ambient_color);
+	mp_effect->SetVector(m_h_ambient, &m_light_data.material.ambient);
 
 	// テクスチャ
 	mp_effect->SetTexture(m_h_texture, mp_tex);

@@ -14,6 +14,7 @@
 #include"../User/ZTextureUser/ZTextureUser.h"
 
 
+
 /**
 * @brief メインエントリーポイント
 */
@@ -56,7 +57,7 @@ int WINAPI WinMain(
 	Obj::GetInstance()->InitGrapicData();
 
 	// デバッグモード
-	bool is_debug_mode = false;
+	bool is_debug_mode = true;
 
 	// zテクスチャ使用者
 	ZTextureUser user;
@@ -78,12 +79,16 @@ int WINAPI WinMain(
 		// デバッグテスト
 		if (is_debug_mode == true) {
 
+			// デバッガー更新
 			Debugger::GetInstance().Update();
 		}
 		else {
 
 			// シーンの更新
 			scene_manager.Update();
+
+			// zテクスチャ使用者の更新
+			user.Update();
 
 			// シーンが終了したならプログラム終了
 			if (scene_manager.IsEnd() == true) {

@@ -14,7 +14,8 @@
 #include"../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
 #include"../../Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
 #include"ObjFileData/ObjFileData.h"
-
+#include"../../Shader/ShaderFunc/LightShadowShader/LightShadowShader.h"
+#include<map>
 
 
 
@@ -35,12 +36,6 @@ public:
 	}
 
 public:
-
-
-	/**
-	* @brief 解放処理
-	*/
-	void Release() {};
 
 
 	/**
@@ -71,13 +66,7 @@ public:
 	/**
 	* @brief シャドウカメラ更新
 	*/
-	void UpdateShadowCamera();
-
-
-	/**
-	* @brief ライトデータ更新
-	*/
-	void UpdateLightData();
+	void UpdateCameraDataInShadow();
 
 
 	/**
@@ -142,6 +131,7 @@ public:
 	* @brief 描画用パラメータを追加
 	*/
 	void EntryObjParam(
+		const std::string&param_name,
 		const ObjParameter&param
 	);
 
@@ -149,7 +139,7 @@ public:
 	/**
 	* @brief 保存されてたパラメータ描画開始
 	*/
-	void DrawParamList();
+	void DrawShadowParamList();
 
 
 	/**
@@ -183,6 +173,7 @@ public:
 		int sub_set_number
 	);
 
+
 	/**
 	* @brief 1024サイズのzテクスチャを書き込む
 	*/
@@ -190,6 +181,12 @@ public:
 		const ObjParameter&param,
 		const std::string &register_name
 	);
+
+
+	/**
+	* @brief 解放処理
+	*/
+	void Release() {};
 
 private:
 
@@ -215,9 +212,19 @@ private:
 
 
 	/**
-	* @brief パラメータ
+	* @brief パラメータ初期化
 	*/
 	void ResetParamList();
+
+
+	/**
+	* @brief ライトと影描画
+	*/
+	void LightShadowDraw(
+		const ObjParameter&param,
+		const LightData&light_data,
+		const ShadowData&shadow_data
+	);
 
 
 	/**
@@ -234,7 +241,8 @@ private:
 	*/
 	void ShaderParameterDraw(
 		const ObjParameter &param,
-		ShaderBase*p_shader
+		ShaderBase*p_shader,
+		UINT pass = -1
 	);
 
 
@@ -243,17 +251,20 @@ private:
 	*/
 	void DrawShader(
 		const ObjParameter &param,
-		ShaderBase*shader
+		ShaderBase*shader,
+		UINT pass = -1
 	);
 
 
 	/**
-	* @brief ライト用の更新
-	* @param[in] param objパラメータ構造体
+	* @brief フォンシェーダーライト
+	* @param[in] param
 	*/
-	void UpdateLight(const ObjParameter&param);
+	void DrawFhoneLight(
+		const ObjParameter&param
+	);
 
-	
+
 	/**
 	* @brief 通常更新
 	* @param[in] param objパラメータ構造体
@@ -474,7 +485,7 @@ private:
 	std::unordered_map<std::string, ObjFileData*>m_obj_file_data;
 
 	//! オブジェクトパラメータリストを登録(後で一気に描画する、毎回削除)
-	std::vector<ObjParameter>m_param_list;
+	std::map<std::string,ObjParameter>m_shadow_param_list;
 
 	//! 通常シェーダー
 	NormalShader m_ns;
@@ -485,6 +496,9 @@ private:
 	//! 影
 	DepthShadowShader m_shadow;
 
+	//! ライトと影
+	LightShadowShader m_light_shadow;
+
 	//! ライトパスタイプ
 	ShaderType m_pass_type;
 
@@ -493,9 +507,6 @@ private:
 
 	//! ライトデータ
 	LightData m_light_data;
-
-	//! 唯一ひとつのライトを使うかどうか
-	bool m_is_world_light;
 
 };
 

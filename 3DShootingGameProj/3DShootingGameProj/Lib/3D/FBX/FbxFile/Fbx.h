@@ -1,123 +1,27 @@
 ﻿#ifndef FBX_H
 #define FBX_H
 
-#include<string>
-#include<vector>
-#include<fbxsdk.h>
-#include<map>
+
 #include"../../SkinCustomVertex/SkinCustomVertex.h"
-#include"../../../Graphics/Graphics.h"
 #include"../../../Texture/TextureData2D/TextureData2D.h"
 #include"../../Model/Model.h"
 #include"../../../Shader/ShaderFunc/VertexBlendShader/VertexBlendEffectFile.h"
 #include"../../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../FbxData/FbxData.h"
 
-
-#pragma comment(lib,"libfbxsdk.lib")
-#pragma comment(lib,"libfbxsdk-md.lib")
 
 
 
 /**
-* @brief fbxで使う部品モデル構造体
+* @brief fbxモデルを形成するクラス
 */
-struct FbxModuleModel {
-
-	//! SDK全体を管理して各種オブジェクトの生成を行う
-	FbxManager * mp_manager;
-
-	//! シーンの作成
-	FbxScene * mp_fbx_scene;
-
-	//! インポーター
-	FbxImporter*mp_importer;
-
-};
-
-//! 最大ボーン数
-const int MAX_BONE_MATRIX_NUM = 64;
-
-
-/**
-* @brief ボーン構造体
-*/
-struct Bone {
-
-	// ボーン行列
-	D3DXMATRIX bone_list[MAX_BONE_MATRIX_NUM];// 64
-};
-
-
-struct MotionData {
-
-	// フレーム数
-	UINT frame_num;
-
-	// キーフレーム
-	// フレーム数 > ボーン数
-	std::vector<std::vector<FbxMatrix>>animation_matrix;
-
-	// d3d用(GPUスキニングにする場合はこちらにする)
-	std::vector<Bone>d3d_animation_mat;
-};
-
-
-struct FbxMeshData {
-
-	FbxMeshData() {
-		
-		polygon_num = 0;
-		vertex_num = 0;
-		p_index_buffer = nullptr;
-		p_vertex_buffer = nullptr;
-	}
-	
-	// インデックスバッファ
-	IDirect3DIndexBuffer9 * p_index_buffer;
-
-	// バーテックスバッファ
-	IDirect3DVertexBuffer9 * p_vertex_buffer;
-
-	// マテリアル配列
-	MaterialInfo material_info;
-
-	// ポリゴン数
-	UINT polygon_num;	 
-
-	// 頂点数
-	UINT vertex_num;	 
-
-	// ボーン数
-	UINT bone_num;       
-	
-
-	std::vector<FbxMatrix>bone_list;      // ボーン配列
-	std::vector<FbxMatrix>motion_list;   // モーション配列
-
-	// ボーン行列
-	std::vector<D3DXMATRIX>d3d_bone_mat_list;
-	// アニメーション行列
-	std::vector<D3DXMATRIX>d3d_anim_mat_list;
-	
-	// 影響数を保持
-	std::vector <std::vector<double>>weight_list;
-	// 影響インデックス
-	std::vector<std::vector<int>>weight_index_list;
-
-};
-
-
 class Fbx : public Model{
 public:
 
-	enum class NodeType {
-		NONE,
-		MESH,
-		TOTAL,
-	};
 
-public:
-
+	/**
+	* @brief インスタンスを返す
+	*/
 	static Fbx *GetInstance() {
 		static Fbx fbx;
 		return &fbx;
@@ -125,43 +29,91 @@ public:
 
 public:
 
+
+	/**
+	* @brief コンストラクタ
+	*/
 	Fbx();
 
+
+	/**
+	* @brief デストラクタ
+	*/
 	~Fbx() {
 
 		// マネージャの破壊
 		m_fbx_module.mp_manager->Destroy();
 	}
 	
-	// 読み込み
+
+	/**
+	* @brief 読み込み 
+	* @param[in] fbx_file_path fbxのファイルパス
+	* @return bool
+	*/
 	bool Load(const std::string &fbx_file_path);
 
-	// 更新
+
+	/**
+	* @brief 更新
+	*/
 	void Update();
 
-	// 描画(デフォルトで画像を入れれるようにする)
+
+	/**
+	* @brief 描画
+	*/
 	void Draw(TextureData*td = nullptr);
 
-	// アニメーション更新
+
+	/**
+	* @brief アニメーション更新
+	* @param[in] frame 回すフレーム数
+	*/
 	void Animate(
 		const float &frame = 20.f
 	);
 
-	// モーション情報をセットする
+
+	/**
+	* @brief モーション情報をセットする
+	* @param[in] name モーション名
+	*/
 	void SetMotion(std::string name = "default");
 
-	// モーション読み込み
+
+	/**
+	* @brief モーション読み込み
+	* @param[in] name モーション名
+	* @param[in] ファイル名
+	*/
 	void LoadFileMotion(
 		std::string name,
 		const char* pFilename);
 
-	// FBX関連削除
+
+	/**
+	* @brief 解放
+	*/
 	void Release();
 
 private:
 
+
+	/**
+	* @brief ワールド変換行列を返す
+	* @param[in] mesh_index
+	* @return D3DXMATRIX 行列を返す
+	*/
 	D3DXMATRIX GetFbxWorldD3DMatrix(int mesh_index);
 
+
+	/**
+	* @brief 通常描画
+	* @param[in] vertex_num 頂点数
+	* @param[in] polygon_num ポリゴン数
+	* @param[in] world_mat ワールド行列
+	*/
 	void NormalDraw(
 		const int&vertex_num,
 		const int&polygon_num,
@@ -169,6 +121,14 @@ private:
 	);
 
 
+	/**
+	* @brief エフェクト描画
+	* @param[in] vertex_num 頂点数
+	* @param[in] polygon_num ポリゴン数
+	* @param[in] world_mat ワールド行列
+	* @param[in] bone_mat_list ボーン行列
+	* @param[in] max_bone_index 最大ボーンインデックス数
+	*/
 	void EffectDraw(
 		const int&vertex_num,
 		const int&polygon_num,
@@ -179,36 +139,63 @@ private:
 
 private:
 
-	// メッシュ //
 
-	// メッシュ読み込み
+	/**
+	* @brief メッシュ読み込み
+	*/
 	void LoadMesh();
 
-	// インデックス読み込み
+
+	/**
+	* @brief インデックス読み込み
+	* @param[in] p_vertex_data_list
+	* @p_mesh[in] p_mesh
+	*/
 	void LoadIndeces(
-		std::vector<FbxMeshData>&mp_vertex_data_list,
+		std::vector<FbxMeshData>&p_vertex_data_list,
 		FbxMesh*p_mesh
 	);
 
-	// 頂点の初期化
+	/**
+	* @brief 頂点情報初期化
+	* @param[in] p_mesh メッシュ
+	* @param[in] mesh_data メッシュデータ
+	* @param[in] size サイズ
+	*/
 	void InitVertexInfo(
 		FbxMesh*p_mesh,
 		FbxMeshData*mesh_data,
 		const UINT &size
 	);
 
-	// 頂点読み込み
+
+	/**
+	* @brief 頂点読み込み
+	* @param[out] p_mesh メッシュデータ
+	* @param[in] mesh_data_list メッシュデータ配列
+	*/
 	void LoadVertexInfo(
 		FbxMesh*p_mesh,
 		std::vector<FbxMeshData>&mesh_data_list
 	);
 
-	// UV読み込み
-	void LoadUvInfo(
-		std::vector<FbxMeshData>&p_vertex_data_list,
-		FbxMesh*p_mesh);
 
-	// 法線読み込み
+	/**
+	* @brief uv読み込み
+	* @param[in] p_mesh_data_list メッシュデータ配列
+	* @param[in] p_mesh Fbxメッシュ 
+	*/
+	void LoadUvInfo(
+		std::vector<FbxMeshData>&p_mesh_data_list,
+		FbxMesh*p_mesh
+	);
+
+
+	/**
+	* @brief 法線読み込み
+	* @param[in] p_mesh_data_list メッシュデータ配列
+	* @param[in] p_mesh fbxメッシュ
+	*/
 	void LoadNormal(
 		std::vector<FbxMeshData>&p_mesh_data_list,
 		FbxMesh*p_mesh
@@ -216,27 +203,47 @@ private:
 
 private:
 
-	// マテリアル関係 //
 
-	// マテリアル読み込み
+
+	/**
+	* @brief マテリアル読み込み
+	* @param[in] p_mesh_data_list fbxメッシュデータ
+	* @param[out] p_mesh メッシュ
+	*/
 	void LoadMaterial(
-		std::vector<FbxMeshData>&p_vertex_data_list,
+		std::vector<FbxMeshData>&p_mesh_data_list,
 		FbxMesh*p_mesh
 	);
 
 
+	/**
+	* @brief テクスチャ読み込み
+	* @param[in] p_mesh fbxメッシュ
+	* @param[in] p_material_info マテリアル情報
+	* @return bool
+	*/
 	bool LoadTexture(
 		FbxMesh*p_mesh,
 		MaterialInfo*p_material_info
 	);
 
-	// カラー読み込み
+
+	/**
+	* @brief カラー読み込み
+	* @param[in] fbxメッシュデータ
+	* @param[in] p_mesh メッシュ
+	*/
 	bool LoadColor(
-		std::vector<FbxMeshData>&p_vertex_data_list,
+		std::vector<FbxMeshData>&p_mesh_data_list,
 		FbxMesh*p_mesh
 	);
 
-	// エントリのマテリアルテクスチャを読み込む
+
+	/**
+	* @brief エントリー済みのマテリアルテクスチャを読み込む
+	* @param[in] p_mesh メッシュ
+	* @param[out] p_material_info マテリアル情報
+	*/
 	void LoadEntryTexture(
 		FbxMesh*p_mesh,
 		MaterialInfo*p_material_info
@@ -244,20 +251,38 @@ private:
 
 private:
 
-	// アニメーション関係
 
-	// アニメーションを選択
+	/**
+	* @brief アニメーションを選択
+	* @param[in] select_anim_num
+	* @return bool アニメーションbool型を返す
+	*/
 	bool SelectAnimation(
 		int select_anim_num
 	);
 
-	// モーションの読み込み
+
+	/**
+	* @brief モーションの読み込み
+	* @param[in] name モーション名
+	* @param[in] select_morion_num モーション番号
+	*/
 	void LoadMotion(
 		const std::string& name,
 		const int &select_motion_num
 	);
 
-	// アニメーション行列読み込み
+
+	/**
+	* @brief アニメーション行列読み込み
+	* @param[out] mesh メッシュポインタ
+	* @param[in] motion_name モーション名
+	* @param[in] bone_mat_list ボーン行列配列
+	* @param[in] bone_num ボーン数
+	* @param[in] start 最初の時間
+	* @param[in] stop 最後の時間
+	* @param[in] frame_count フレーム数
+	*/
 	void LoadKeyFrame(
 		FbxMesh* mesh,
 		const std::string& motion_name,
@@ -268,7 +293,14 @@ private:
 		const FbxTime& frame_count
 	);
 
-	// アニメーション関連をセットする
+
+	/**
+	* @brief アニメーション関連をセットする
+	* @param[in] start 最初
+	* @param[in] stop 最後
+	* @param[in] frame_time フレーム時間
+	* @param[in] anim_num アニメーション数
+	*/
 	void SetAnimation(
 		FbxTime&start,
 		FbxTime&stop,
@@ -276,13 +308,25 @@ private:
 		const int&anim_num
 	);
 
-	// モデル情報読み込み
+
+	/**
+	* @brief モデル情報読み込み
+	* @param[in] p_mesh_data_list メッシュデータ
+	* @param[in] p_mesh メッシュ
+	*/
 	void LoadModelInfo(
-		std::vector<FbxMeshData>& p_vertex_data_list,
+		std::vector<FbxMeshData>& p_mesh_data_list,
 		FbxMesh* p_mesh
 	);
 
-	// 現在のアニメーションを受け取る
+
+	/**
+	* @brief 現在のアニメーションを受け取る
+	* @param[in] mesh メッシュ
+	* @param[in] count fbx時間
+	* @param[in] deformer_num デフォーム数
+	* @param[in] cluster_num クラスター数
+	*/
 	FbxMatrix GetAnimationMatrix(
 		FbxMesh* mesh,
 		FbxTime&count,
@@ -290,10 +334,16 @@ private:
 		int cluster_num
 	);
 
-	// CPUのスキニング
+
+	/**
+	* @brief CPUのスキニング
+	*/
 	void CPUSkinning();
 
-	// 最新バージョン
+
+	/**
+	* @brief 重みのスキニングを行う 最新バージョン
+	*/
 	void WeightSkinning(
 		FbxMesh* mesh,
 		FbxMeshData& mesh_data,
@@ -301,9 +351,20 @@ private:
 		const int &mi
 	);
 
+
+	/**
+	* @brief キースキニング
+	*/
 	void KeySkinning();
 
-	// キーフレームアニメーション
+
+	/**
+	* @brief キーフレームアニメーション
+	* @param[in] mesh メッシュ
+	* @param[in] mesh_data メッシュデータ
+	* @param[in] vertices カスタムバーテックスポインタ
+	* @param[in] mi メッシュインデックス
+	*/
 	void KeyFrameSkinning(
 		FbxMesh* mesh,
 		FbxMeshData& mesh_data,
@@ -311,6 +372,12 @@ private:
 		const int &mi
 	);
 
+
+	/**
+	* @brief 重み頂点読み込み
+	* @param[in] p_mesh_data_list メッシュデータ配列
+	* @param[in] p_mesh メッシュ
+	*/
 	void LoadWeightVertexPoint(
 		std::vector<FbxMeshData>& p_mesh_data_list,
 		FbxMesh* p_mesh

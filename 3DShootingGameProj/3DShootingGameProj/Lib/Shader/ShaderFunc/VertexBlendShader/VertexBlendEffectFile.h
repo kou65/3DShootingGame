@@ -9,7 +9,7 @@ public:
 	VertexBlendEffectFile();
 
 	// ‰Šú‰»
-	void Init()override;
+	void Init();
 
 	// XV
 	void Update()override;

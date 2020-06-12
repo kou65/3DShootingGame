@@ -23,6 +23,9 @@ texture g_shadow_tex;
 // テクスチャ
 texture g_tex;
 
+// カラー
+float4 g_color;
+
 
 /*--- ライト系 ---*/
 
@@ -76,7 +79,7 @@ struct VS_OUT {
 
 	// ライト用
 	float4 nor_w : TEXCOORD2;// ワールド法線ベクトル
-	float4 pos_w : POSITION;// ワールド座標
+	float4 pos_w : TEXCOORD3;// ワールド座標
 };
 
 
@@ -88,8 +91,9 @@ struct PS_OUT {
 };
 
 
-float4 FhoneShader(VS_OUT In) {
+float4 FhoneShaderPS(VS_OUT In) : COLOR0{
 
+	// 法線
 	float n;
 	float v;
 	float l;
@@ -101,27 +105,78 @@ float4 FhoneShader(VS_OUT In) {
 	float3 dif;
 	float3 spe;
 
+	// ワールド法線正規化
 	n = normalize(In.nor_w.xyz);
+
+	// そのオブジェクト間の方向を出す
 	v = normalize(g_eye_pos.xyz - In.pos_w.xyz);
+
+	// 点光源からワールド位置まで
 	l = g_pl_pos.xyz - In.pos_w.xyz;
+
+	// 距離を出す
 	d = length(l);
+
+	// plからwまで方向を出す
 	l = normalize(l);
+
 	// 鏡面反射計算
 	r = 2.0f * n * dot(n, l) - l;
+
+	// 鏡面計算
 	a = saturate(1.0f / (g_pl_attenuate.x + g_pl_attenuate.y * d +
 		g_pl_attenuate.z * d * d));
 
+	// 環境光
 	amb = g_mt_ambient.xyz * g_ambient.xyz;
-	dif = g_mt_dif.xyz * g_pl_dif.xyz;
-	spe = pow(saturate(dot(r, v)), g_mt_specular.w) *
-		g_specular.xyz * g_pl_specular.xyz * a;
+
+	// 拡散光
+	dif = saturate(dot(l,n)) * g_mt_diffuse.xyz * g_pl_diffuse.xyz;
+
+	// 反射光
+	spe = pow(saturate(dot(r, v)), g_mt_specular.w) * 
+		g_mt_specular.xyz * g_pl_specular.xyz * a;
 
 	// 総合計して返す
 	return float4(saturate(amb + dif + spe), 1.0f);
 }
 
 
-// 頂点シェーダー
+VS_OUT FhoneShaderVS(
+	float4 pos : POSITION,
+	float4 color : COLOR0,
+	float3 normal : NORMAL,
+	float2 uv : TEXCOORD
+) {
+
+	VS_OUT Out = (VS_OUT)0;
+
+	// ワールド、射影、ビュー座標変換
+	Out.pos = mul(pos, g_world);
+	Out.pos = mul(Out.pos, g_view);
+	Out.pos = mul(Out.pos, g_proj);
+
+
+	Out.uv = uv;
+	Out.pos_w = pos;
+	Out.nor_w = float4(normal.x,normal.y,normal.z,1.0f);
+
+	// 色乗算
+	Out.col = color;
+	Out.col *= FhoneShaderPS(Out);
+	
+
+	return Out;
+}
+
+
+float4 FhoneShaderPS2(VS_OUT In) : COLOR0{
+
+	return In.col;
+}
+
+
+// バーテックス
 VS_OUT DepthBufferShadowVS(
 	float4 pos : POSITION,
 	float4 color : COLOR0,
@@ -129,6 +184,7 @@ VS_OUT DepthBufferShadowVS(
 	float2 uv : TEXCOORD
 ) {
 
+	// 初期化
 	VS_OUT Out = (VS_OUT)0;
 
 	// カメラ目線のワールドビュー射影変換
@@ -155,35 +211,30 @@ VS_OUT DepthBufferShadowVS(
 	Out.col = float4(0.f, 0.6f, 1.f, 1.f) * 
 		(0.3f + dot(n, -light_direct)*(1 - 0.3f));
 
+	Out.nor_w = float4(normal.x,normal.y,normal.z,1.f);
+	Out.pos_w = float4(pos.x,pos.y,pos.z,1.f);
+
 	// テクスチャ座標代入
 	Out.uv = uv;
 
-	// ライト変換
-	{
-		// ライト方向で入力されるので、頂点からライト位置とするために逆向きに変換する
-		// 正規化を必ず行う
-		Out.l = -g_dir_light.xyz;
+	// 色乗算
+	Out.col = color;
 
-		// 法線代入
-		Out.n = normal.xyz;
-
-		// ライトベクトルと法線ベクトルの内積を計算し、
-		// 計算結果の色の最低値を環境光(Ambient)に制限する
-		Out.col = min(max(g_ambient, dot(Out.n, Out.l)), 1.f);
-
-		// 頂点から視点へのベクトル計算
-		Out.e = g_eye_pos.xyz - pos.xyz;
-	}
+	// ライトデータを取ってくる
+	Out.col *= FhoneShaderPS(Out);
 
 	return Out;
 }
 
 
+// ピクセル
 float4 DepthBufferShadowPS(
 	VS_OUT In
 ) : COLOR0
 {
 
+	// カラーを返す
+	float4 recolor = 0.f;
 	// ライト目線によるz値の再算出
 	float z_value = In.z_calc_tex.z / In.z_calc_tex.w;
 
@@ -197,49 +248,50 @@ trans_tex_coord.y = (1.f - In.z_calc_tex.y / In.z_calc_tex.w) * 0.5f;
 // 同じ座標のz値を抽出
 float sm_z = tex2D(smp, trans_tex_coord).x;
 
-FhoneShader(In);
-
+// バイアスを掛ける
 float bias = 0.005f;
+
+// カラー値加算
+recolor = In.col;
 
 // 算出点がシャドウマップのz値よりも大きければ影と判断
 if (z_value > sm_z + bias) {
 
 	// 色変更
-	In.col.rgb = In.col.rgb * 0.5f;
+	recolor.rgb = In.col.rgb * 0.5f;
 }
 
-return In.col;
+return recolor;
 }
 
 
 float4 TextureDepthBufferShadowPS(
-	float4 col : COLOR0,
-	float4 z_calc_tex : TEXCOORD0,
-	float2 uv : TEXCOORD1,
-	float3 n : TEXCOORD2,// オブジェクトの法線ベクトル
-	float3 l : TEXCOORD3,// 頂点からライト位置へのベクトル
-	float3 e : TEXCOORD4// 頂点から視点へのベクトル
+	VS_OUT Out
 ) : COLOR0
 {
+	float4 recolor = 0;
 
 	// ライト目線によるz値の再算出
-	float z_value = z_calc_tex.z / z_calc_tex.w;
+	float z_value = Out.z_calc_tex.z / Out.z_calc_tex.w;
 
 // テクスチャ座標に変換
 float2 trans_tex_coord;
 
-// テクスチャ計算
-trans_tex_coord.x = (1.f + z_calc_tex.x / z_calc_tex.w) * 0.5f;
-trans_tex_coord.y = (1.f - z_calc_tex.y / z_calc_tex.w) * 0.5f;
+// テクスチャ座標変換計算
+trans_tex_coord.x = (1.f + Out.z_calc_tex.x / Out.z_calc_tex.w) * 0.5f;
+trans_tex_coord.y = (1.f - Out.z_calc_tex.y / Out.z_calc_tex.w) * 0.5f;
 
 // 同じ座標のz値を抽出
 float sm_z = tex2D(smp,trans_tex_coord).x;
 
 // テクスチャ値計算
-float4 tex = tex2D(tex_smp, uv);
+float4 tex = tex2D(tex_smp, Out.uv);
 
-// テクスチャ値代入
-col = tex;
+// カラー値加算
+recolor = Out.col;
+
+// テクスチャ値加算
+recolor += tex;
 
 // バイアスを掛ける
 float bias = 0.005f;
@@ -248,14 +300,23 @@ float bias = 0.005f;
 if (z_value > sm_z + bias) {
 
 	// 色変更
-	col.rgb = col.rgb * 0.5f;
+	recolor.rgb = Out.col.rgb * 0.5f;
 }
 
-return col;
+return recolor;
 
 }
 
 
+// シャドウマップをソフトシャドウに変換
+float4 SoftShadowVS(
+	float4 pos : POSITION,
+float4 NORMAL : NORMAL,
+float2 tex : TEXCOORD0
+) {
+
+	
+}
 
 
 // テクニック
@@ -273,5 +334,18 @@ technique DepthBufferShadowTec {
 	{
 		VertexShader = compile vs_2_0 DepthBufferShadowVS();
 		PixelShader = compile ps_2_0 TextureDepthBufferShadowPS();
+	}
+
+	// フォンシェーダー
+	pass P2
+	{
+		VertexShader = compile vs_2_0 FhoneShaderVS();
+		PixelShader = compile ps_2_0 FhoneShaderPS();
+	}
+
+	pass P3
+	{
+		VertexShader = compile vs_2_0 FhoneShaderVS();
+		PixelShader = compile ps_2_0 FhoneShaderPS2();
 	}
 }

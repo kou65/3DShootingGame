@@ -1,10 +1,13 @@
 ﻿#include"ZTextureUser.h"
 #include"../../Lib/Math/Math.h"
+#include"../../Lib/Shader/ShaderFunc/ShadowData/ShadowData.h"
+#include"../../Lib/3D/OBJ/OBJFile.h"
 
 
 
 ZTextureUser::ZTextureUser() {
 
+	// 初期化
 	Init();
 }
 
@@ -23,6 +26,7 @@ void ZTextureUser::Update() {
 
 	D3DXMATRIX view, proj;
 
+	// ビュー行列を返す
 	view = Graphics::GetInstance()->GetTSMatrix(D3DTS_VIEW);
 
 	// ライト射影
@@ -52,6 +56,7 @@ void ZTextureUser::Update() {
 	// 逆行列変換
 	D3DXMatrixInverse(&total, NULL, &total);
 
+	// zテクスチャデータ
 	ZTextureData data;
 	data.mat_camera_view = total;
 	data.mat_camera_proj = proj;
@@ -62,7 +67,45 @@ void ZTextureUser::Update() {
 
 	// Zテクスチャ管理者更新
 	ZTextureManager::GetInstance()->Update();
+
+	// シャドウデータ
+	UpdateShadowData();
 }
+
+
+void ZTextureUser::UpdateShadowData() {
+
+	// 行列
+	D3DXMATRIX mat_current_view;
+	D3DXMATRIX mat_current_proj;
+
+	// シャドウデータ
+	ShadowData shadow_data;
+
+	// ビュー行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_VIEW, &mat_current_view);
+
+	// プロジェクション行列
+	Graphics::GetInstance()->GetDevice()
+		->GetTransform(D3DTS_PROJECTION, &mat_current_proj);
+
+	// データ代入
+	shadow_data.camera_view_mat = mat_current_view;
+	shadow_data.camera_proj_mat = mat_current_proj;
+
+	// データ取得
+	ZTextureData data
+		= ZTextureManager::GetInstance()->GetZTexData();
+
+	// z値からのカメラ情報を入れる
+	shadow_data.light_view_mat = data.mat_camera_view;
+	shadow_data.light_proj_mat = data.mat_camera_proj;
+
+	// 影データセット
+	Obj::GetInstance()->SetShadowData(shadow_data);
+}
+
 
 
 void ZTextureUser::Draw() {

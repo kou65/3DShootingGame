@@ -19,21 +19,26 @@ Obj::Obj() : Model(){
 	// 各シェーダー初期化
 	m_ns.Init();
 
-	// ライトシェーダー初期化
-	m_light_shader.Init();
+	// ライト影シェーダー初期化
+	m_light_shadow.Init(VertexDecl::Type::OBJ);
 
 	// シャドウの初期化
 	m_shadow.Init();
 
-	// テクスチャを渡す
+	// シャドウマップを渡す
 	m_shadow.SetShandowMap(
 		ZTextureManager::GetInstance()->GetZTexturePtr(
 			FuncZTexture::Const::Z_TEX_1024
 		)->GetZTexture()
 	);
 
-	// 初期は世界ライトを使用する
-	m_is_world_light = true;
+	// シャドウマップを渡す
+	m_light_shadow.SetShadowMap(
+		ZTextureManager::GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		)->GetZTexture()
+	);
+
 }
 
 
@@ -85,6 +90,15 @@ void Obj::Draw(
 			param
 		);
 		break;
+
+	case DrawStatus::LIGHT_SHADOW:
+
+		// ライトと影描画
+		LightShadowDraw(
+			param,
+			m_light_data,
+			m_shadow_data
+		);
 	}
 }
 
@@ -140,6 +154,7 @@ void Obj::InitGrapicData() {
 		&D3DXVECTOR3(0, 1, 0)
 	);
 
+	// グラフィックデータ
 	LightData light_data;
 	ShadowData shadow_data;
 
@@ -152,29 +167,29 @@ void Obj::InitGrapicData() {
 		->GetTransform(D3DTS_PROJECTION, &mat_current_proj);
 
 	// データ代入
-	shadow_data.camera_view = mat_current_view;
-	shadow_data.camera_proj = mat_current_proj;
+	shadow_data.camera_view_mat = mat_current_view;
+	shadow_data.camera_proj_mat = mat_current_proj;
 
 	// データ取得
 	ZTextureData data
 		= ZTextureManager::GetInstance()->GetZTexData();
 
 	// z値からのカメラ情報を入れる
-	shadow_data.light_view = data.mat_camera_view;
-	shadow_data.light_proj = data.mat_camera_proj;
+	shadow_data.light_view_mat = data.mat_camera_view;
+	shadow_data.light_proj_mat = data.mat_camera_proj;
 
-	// グラフィックデータ代入
+	// ライトデータ代入
 	Obj::GetInstance()->SetLightData(
 		light_data
 	);
-
+	// 影データ代入
 	Obj::GetInstance()->SetShadowData(
 		shadow_data
 	);
 }
 
 
-void Obj::UpdateShadowCamera() {
+void Obj::UpdateCameraDataInShadow() {
 
 	// 行列
 	D3DXMATRIX mat_current_view;
@@ -192,18 +207,50 @@ void Obj::UpdateShadowCamera() {
 		->GetTransform(D3DTS_PROJECTION, &mat_current_proj);
 
 	// データ代入
-	shadow_data.camera_view = mat_current_view;
-	shadow_data.camera_proj = mat_current_proj;
+	shadow_data.camera_view_mat = mat_current_view;
+	shadow_data.camera_proj_mat = mat_current_proj;
 
 	// データ取得
 	ZTextureData data
 		= ZTextureManager::GetInstance()->GetZTexData();
 
 	// z値からのカメラ情報を入れる
-	shadow_data.light_view = data.mat_camera_view;
-	shadow_data.light_proj = data.mat_camera_proj;
+	shadow_data.light_view_mat = data.mat_camera_view;
+	shadow_data.light_proj_mat = data.mat_camera_proj;
 
 	m_shadow_data = shadow_data;
+}
+
+
+void Obj::DrawFhoneLight(
+	const ObjParameter&param
+) {
+
+	// ライトカメラセット
+	m_shadow.SetLightViewMatrix(m_shadow_data.light_view_mat);
+	m_shadow.SetLightProjMatrix(m_shadow_data.light_proj_mat);
+
+	// カメラ情報セット
+	m_shadow.SetViewMatrix(m_shadow_data.camera_view_mat);
+	m_shadow.SetProjMatrix(m_shadow_data.camera_proj_mat);
+
+	// ライトデータ挿入
+	m_shadow.SetLightData(m_light_data);
+
+	// 影に変更
+	m_pass_type = ShaderType::DEPTH_SHADOW;
+
+	// 更新
+	Update(param, &m_shadow);
+
+	// シャドウ更新
+	m_shadow.Update();
+
+	// ライト描画
+	ShaderParameterDraw(param, &m_shadow,2);
+
+	// 影描画
+	ShaderParameterDraw(param, &m_shadow, 0);
 }
 
 
@@ -218,18 +265,6 @@ void Obj::SetLightData(
 	LightData&data
 ) {
 	m_light_data = data;
-}
-
-
-void Obj::UpdateLight(const ObjParameter&param) {
-
-	// ライトセット
-	m_light_shader.SetLightData(
-		m_light_data
-	);
-
-	// 通常更新
-	Update(param, &m_light_shader);
 }
 
 
@@ -257,16 +292,13 @@ void Obj::DrawShadowObj(
 	const ObjParameter &param
 ) {
 
-	// 更新シャドウカメラ
-	UpdateShadowCamera();
-
 	// ライトカメラセット
-	m_shadow.SetLightViewMatrix(m_shadow_data.light_view);
-	m_shadow.SetLightProjMatrix(m_shadow_data.light_proj);
+	m_shadow.SetLightViewMatrix(m_shadow_data.light_view_mat);
+	m_shadow.SetLightProjMatrix(m_shadow_data.light_proj_mat);
 
 	// カメラ情報セット
-	m_shadow.SetViewMatrix(m_shadow_data.camera_view);
-	m_shadow.SetProjMatrix(m_shadow_data.camera_proj);
+	m_shadow.SetViewMatrix(m_shadow_data.camera_view_mat);
+	m_shadow.SetProjMatrix(m_shadow_data.camera_proj_mat);
 
 	// ライトデータ挿入
 	m_shadow.SetLightData(m_light_data);
@@ -294,11 +326,54 @@ void Obj::DrawLightObj(
 	// カラー情報セット
 	m_light_shader.SetColor(param.color);
 
-	// ライト更新
-	UpdateLight(param);
+
+	// ライトセット
+	m_light_shader.SetLightData(
+		m_light_data
+	);
+
+	// 通常更新
+	Update(param, &m_light_shader);
 
 	// シェーダーパラメータ描画
 	ShaderParameterDraw(param, &m_light_shader);
+}
+
+
+
+void Obj::LightShadowDraw(
+	const ObjParameter&param,
+	const LightData&light_data,
+	const ShadowData&shadow_data
+) {
+
+	// 影データ挿入
+	{
+	
+		// カメラ情報セット
+		m_light_shadow.SetViewMatrix(shadow_data.camera_view_mat);
+		m_light_shadow.SetProjMatrix(shadow_data.camera_proj_mat);
+
+
+		// ライトデータ挿入
+		m_light_shadow.SetLightData(light_data);
+
+		// 影データ挿入
+		m_light_shadow.SetShadowData(shadow_data);
+
+		// 影に変更
+		m_pass_type = ShaderType::DEPTH_SHADOW;
+
+		// 更新
+		Update(param, &m_light_shadow);
+
+		// シャドウ更新
+		m_light_shadow.Update();
+
+		// シャドウ描画
+		ShaderParameterDraw(param, &m_light_shadow,0);
+	}
+
 }
 
 
@@ -361,10 +436,10 @@ void Obj::WriteZTexByParam(
 	p_tex->Begin(i, 0);
 
 	// 書き込み
-	for (auto&itr : m_param_list){
+	for (auto&itr : m_shadow_param_list){
 		
 		// Zテクスチャ書き込み
-		WriteZTexture(itr, p_tex);
+		WriteZTexture(itr.second, p_tex);
 	}
 
 	p_tex->End();
@@ -372,46 +447,40 @@ void Obj::WriteZTexByParam(
 
 
 void Obj::EntryObjParam(
+	const std::string&param_name,
 	const ObjParameter&param
 ){
 
 	// パラメータを追加
-	m_param_list.emplace_back(param);
+	m_shadow_param_list[param_name] = param;
 }
 
 
-void Obj::DrawParamList()
+void Obj::DrawShadowParamList()
 {
 
 	// zテクスチャ書き込み
 	WriteZTexByParam(FuncZTexture::Const::Z_TEX_1024);
 
 	// 本編書き込み
-	for (auto&itr : m_param_list) {
+	for (auto&itr1 : m_shadow_param_list) {
 
 		// 描画
-		Draw(itr.draw_status, itr);
+		Draw(itr1.second.draw_status, itr1.second);
 	}
-
-	// パラメータリセット
-	ResetParamList();
-}
-
-
-void Obj::UpdateLightData() {
-
 }
 
 
 void Obj::ResetParamList() {
 
-	m_param_list.clear();
+	m_shadow_param_list.clear();
 }
 
 
 void Obj::ShaderParameterDraw(
 	const ObjParameter &param,
-	ShaderBase*shader
+	ShaderBase*shader,
+	UINT pass
 ) {
 
 	// パス
@@ -423,7 +492,8 @@ void Obj::ShaderParameterDraw(
 	// パス描画
 	DrawShader(
 		param,
-		shader
+		shader,
+		pass
 	);
 
 	// 描画終了
@@ -492,7 +562,8 @@ void Obj::DrawSubSet(
 
 void Obj::DrawShader(
 	const ObjParameter &param,
-	ShaderBase*shader
+	ShaderBase*shader,
+	UINT pass
 ) {
 
 	// キーが登録されていないなら描画しない
@@ -531,14 +602,17 @@ void Obj::DrawShader(
 		}
 
 		// パス数
-		UINT now_pass = 0;
+		UINT select_pass = pass;
 
-		// 現在のパス数取得
-		now_pass = GetUsePass(m_pass_type);
+		// パス指定がなければ
+		if (pass == -1) {
+			// 現在のパス数取得
+			select_pass = GetUsePass(m_pass_type);
 
-		// テクスチャ用に変更
-		if (is_texture == true) {
-			now_pass++;
+			// テクスチャ用に変更
+			if (is_texture == true) {
+				select_pass++;
+			}
 		}
 
 		// シェーダーをパスごとに描画
@@ -546,7 +620,7 @@ void Obj::DrawShader(
 			shader,
 			p_data,
 			param,
-			now_pass,
+			select_pass,
 			i
 		);
 	}
@@ -590,15 +664,6 @@ void Obj::DrawBeginPassShader(
 		FVF_CUSTOM
 	);
 
-	UINT now_pass = 0;
-
-	// 現在のパス数取得
-	now_pass = GetUsePass(m_pass_type);
-
-	// テクスチャ用に変更
-	if (is_texture == true) {
-		now_pass++;
-	}
 
 	// 情報受け取り
 	UINT face_start = p_data->
@@ -608,7 +673,7 @@ void Obj::DrawBeginPassShader(
 		m_object_sub_set_list[sub_num].face_count;
 
 	// パスの開始
-	p_shader->BeginPass(now_pass);
+	p_shader->BeginPass(current_pass);
 
 	// インデックス描画
 	mp_graphics->GetDevice()->DrawIndexedPrimitive(

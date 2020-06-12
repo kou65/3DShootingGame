@@ -11,4 +11,6 @@ public:
 	* @brief 描画
 	*/
 	void Draw();
+
+
 };

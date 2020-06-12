@@ -66,6 +66,42 @@ private:
 
 
 	/**
+	* @brief ライトデバッグ描画
+	*/
+	void LightDebugDraw();
+
+
+	/**
+	* @brief ライトと影描画
+	*/
+	void DrawLightShadow2();
+
+
+	/**
+	* @brief シャドウ描画2
+	*/
+	void ObjShadowDraw();
+
+
+	/**
+	* @brief LightShadow描画
+	*/
+	void DrawLightShadow();
+
+
+	/**
+	* @brief ライト初期化
+	*/
+	void UpdateLight();
+
+
+	/**
+	* @brief 影初期化
+	*/
+	void UpdateShadow();
+
+
+	/**
 	* @brief 初期シェーダー
 	*/
 	void InitXFileShader();
@@ -98,18 +134,6 @@ private:
 		Vec2 scale = Vec2(1000.f,1000.f)
 	);
 
-
-	/**
-	* @brief ライトデバッグ描画
-	*/
-	void LightDebugDraw();
-
-
-	/**
-	* @brief シャドウ描画2
-	*/
-	void ObjShadowDraw();
-
 private:
 
 
@@ -131,12 +155,6 @@ private:
 	void CameraRotation();
 
 
-	/**
-	* @brief ファンの当たり判定
-	*/
-	void CollisionFan();
-
-
 private:
 
 	//! デバイス
@@ -153,9 +171,6 @@ private:
 
 	//! 総合マテリアル数
 	int m_total_material_num;
-
-	//! ライトデータ
-	LightData m_light_data;
 
 	//! 固定スプライト
 	ID3DXSprite* cpSprite;

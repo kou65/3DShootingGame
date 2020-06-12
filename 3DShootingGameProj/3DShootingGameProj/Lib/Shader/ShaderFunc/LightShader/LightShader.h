@@ -5,32 +5,31 @@
 
 
 /**
-* @brief 標準ライトシェーダー
+* @brief ライトシェーダー
 */
-class LightShader : public ColorShader {
+class Light : public ColorShader{
 public:
 
 
 	/**
 	* @brief コンストラクタ
 	*/
-	LightShader();
-
+	Light();
 
 	/**
 	* @brief 更新
 	*/
-	void Update()override;
-
-protected:
+	void UpdateLight();
 
 
 	/**
-	* @breif 初期化
+	* @brief ライトデータセット
 	*/
-	void Init(
-		const VertexDecl::Type&type
-	);
+	void SetLightData(const LightData&light_data);
+
+
+
+protected:
 
 
 	/**
@@ -74,21 +73,14 @@ protected:
 	* @brief 点光源ライトハンドル
 	*/
 	void InitPointLightHandle(
-		const std::string&mt_ambient,
+		const std::string&g_pos,
 		const std::string&mt_diffuse,
-		const std::string&mt_specular
-	);
-
-
-	/**
-	* @brief 減衰ハンドル
-	*/
-	void InitAttenuate(
+		const std::string&mt_specular,
 		const std::string&attenuate_name
 	);
 
 
-private:
+protected:
 
 	/* ライト変数データ */
 	LightData m_light_data;
@@ -113,7 +105,7 @@ private:
 	D3DXHANDLE m_h_light_color;
 
 	//! 点光源(point_light = pl)
-	D3DXHANDLE m_h_pl_ambient;
+	D3DXHANDLE m_h_pl_pos;
 	D3DXHANDLE m_h_pl_specular;
 	D3DXHANDLE m_h_pl_diffuse;
 

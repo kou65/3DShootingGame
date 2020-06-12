@@ -14,6 +14,8 @@ public:
 
 	StandardTSShader();
 
+	void UpdateTS();
+
 	void SetWorldMatrix(const D3DXMATRIX&world_mat);
 	void SetViewMatrix(const D3DXMATRIX&view_mat);
 	void SetProjMatrix(const D3DXMATRIX&proj_mat);
@@ -21,14 +23,11 @@ public:
 protected:
 
 	// 各ハンドル初期化
-	void InitTSShader(
+	void InitTSHandle(
 		const std::string& world_mat_name,
 		const std::string& view_mat_name,
 		const std::string& proj_mat_name
 	);
-
-	// 各パラメータを更新
-	void Update()override;
 
 	// 標準カメラ更新
 	void UpdateStandardCamera();

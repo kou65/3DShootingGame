@@ -34,6 +34,14 @@ public:
 	*/
 	void Draw();
 
+private:
+
+
+	/**
+	* @brief 影データの更新
+	*/
+	void UpdateShadowData();
+
 
 private:
 	// !zテクスチャの板描画

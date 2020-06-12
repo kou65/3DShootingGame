@@ -14,7 +14,7 @@ public:
 	);
 
 	// 初期化
-	void Init()override;
+	void Init();
 
 	// 更新
 	void Update()override;

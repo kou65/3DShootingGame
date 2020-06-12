@@ -24,6 +24,7 @@ enum class DrawStatus {
 	NORMAL,
 	LIGHT,
 	SHADOW,
+	LIGHT_SHADOW
 };
 
 

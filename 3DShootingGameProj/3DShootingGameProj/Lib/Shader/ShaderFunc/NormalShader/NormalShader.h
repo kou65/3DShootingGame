@@ -11,7 +11,7 @@ public:
 		D3DXMatrixIdentity(&m_world_mat);
 	}
 
-	void Init()override;
+	void Init();
 	void Update()override;
 
 	void InitHandle();

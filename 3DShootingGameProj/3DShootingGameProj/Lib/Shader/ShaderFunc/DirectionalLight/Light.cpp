@@ -13,13 +13,12 @@ void LightShader::Init() {
 		VertexDecl::OBJ
 	);
 
-	// パラメータ名
-	StandardTSShader::m_world_mat_name = "g_world";
-	StandardTSShader::m_view_mat_name = "g_view";
-	StandardTSShader::m_proj_mat_name = "g_proj";
-
 	// 変換のハンドル初期化
-	StandardTSShader::InitTransformHandle();
+	StandardTSShader::InitTSHandle(
+	"g_world",
+		"g_view",
+		"g_proj"
+	);
 
 	// 各シェーダーパラメータ名代入
 	m_dir_light_name = "g_dir_light";
@@ -62,7 +61,7 @@ void LightShader::Init() {
 
 	// 各パラメータ初期化
 	m_light_data.direction = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
-	m_light_data.point_light_pos = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
+	m_light_data.point_light.pos = D3DXVECTOR4(10.f, 10.f, 0.f, 0.f);
 
 	mp_tex = nullptr;
 }
@@ -137,7 +136,7 @@ void LightShader::UpdateLight() {
 
 	// 点光源ライト
 	mp_effect->SetVector(m_h_point_light_pos,
-		&m_light_data.point_light_pos);
+		&m_light_data.point_light.pos);
 
 	// 注視点座標
 	mp_effect->SetVector(m_h_eye_dir,
@@ -145,15 +144,7 @@ void LightShader::UpdateLight() {
 
 	// 環境光
 	mp_effect->SetVector(m_h_ambient,
-		&m_light_data.ambient_color);
-
-	// 鏡面光
-	mp_effect->SetFloat(m_h_specular,
-		m_light_data.specular);
-	
-	// 鏡面パワー
-	mp_effect->SetFloat(m_h_specular_power,
-		m_light_data.specular_power);
+		&m_light_data.material.ambient);
 
 	// ディフューズカラー
 	mp_effect->SetVector(m_h_color,

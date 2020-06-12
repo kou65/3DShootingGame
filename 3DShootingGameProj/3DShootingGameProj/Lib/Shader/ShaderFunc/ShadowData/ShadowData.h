@@ -5,15 +5,21 @@
 #include<d3dx9.h>
 
 
+/**
+* @brief シャドウデータ
+*/
 struct ShadowData {
 
-	// ライト用
-	D3DXMATRIX light_view;
-	D3DXMATRIX light_proj;
+	ShadowData() {
+	}
 
-	// カメラ用
-	D3DXMATRIX camera_view;
-	D3DXMATRIX camera_proj;
+	//! カメラ用
+	D3DXMATRIX camera_view_mat;
+	D3DXMATRIX camera_proj_mat;
+
+	//! ライト用
+	D3DXMATRIX light_view_mat;
+	D3DXMATRIX light_proj_mat;
 };
 
 #endif

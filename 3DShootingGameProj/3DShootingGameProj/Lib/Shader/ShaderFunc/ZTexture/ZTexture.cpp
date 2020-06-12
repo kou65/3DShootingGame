@@ -51,7 +51,7 @@ void ZTexture::Init() {
 
 void ZTexture::InitHandle() {
 
-	StandardTSShader::InitTransformHandle(
+	StandardTSShader::InitTSHandle(
 		"matWorld",
 		"matView",
 		"matProj"

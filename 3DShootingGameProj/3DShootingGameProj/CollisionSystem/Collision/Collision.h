@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include"../../Lib/Vec3/Vec3.h"
+#include"../../Lib/Vec2/Vec2.h"
 
 
 
@@ -55,9 +56,8 @@ struct Point {
 */
 namespace Collision {
 
-	/* 引数の説明
+	/* 引数の説明 */
 
-*/
 	/**
 	* @brief 球と球
 	* @param[in] 1,オブジェクト1の座標
@@ -70,6 +70,21 @@ namespace Collision {
 	bool IsHitSphereAndSphere(
 		Vec3 v1,
 		Vec3 v2,
+		float rad_1,
+		float rad_2
+	);
+
+
+	/**
+	* @brief 円と円
+	* @param[in] オブジェクト1の座標
+	* @param[in] オブジェクト2の座標
+	* @param[in] オブジェクト1の半径
+	* @param[in] オブジェクト2の半径
+	*/
+	bool IsHitCircleAndCircle(
+		Vec2 v1,
+		Vec2 v2,
 		float rad_1,
 		float rad_2
 	);

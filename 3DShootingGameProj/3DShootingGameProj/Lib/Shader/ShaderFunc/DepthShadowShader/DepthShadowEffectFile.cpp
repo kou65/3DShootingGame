@@ -17,7 +17,7 @@ const VertexDecl::Type&type
 	);
 
 	// ハンドル初期化
-	StandardTSShader::InitTransformHandle(
+	StandardTSShader::InitTSHandle(
 		"g_world",
 		"g_view",
 		"g_proj"
@@ -140,7 +140,7 @@ bool DepthShadowShader::SetParamToEffect() {
 
 	// ライトパラメータセット
 	mp_effect->SetVector(m_h_ambient,
-		&m_light_data.ambient_color
+		&m_light_data.material.ambient
 	);
 
 	mp_effect->SetVector(m_h_eye_dir,
@@ -149,16 +149,6 @@ bool DepthShadowShader::SetParamToEffect() {
 
 	mp_effect->SetVector(m_h_eye_pos,
 		&m_light_data.eye_pos
-	);
-
-	mp_effect->SetFloat(
-		m_h_specular,
-		m_light_data.specular
-	);
-
-	mp_effect->SetFloat(
-		m_h_specular_power,
-		m_light_data.specular_power
 	);
 
 	mp_effect->SetVector(

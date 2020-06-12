@@ -79,17 +79,17 @@ namespace Window {
 			// ウィンドウの表示位置X軸
 			0,                          
 			// ウィンドウの表示位置Y軸
-			0,                          
+			0,     
 			// ウィンドウの横幅
 			rect.right - rect.left,     
 			// ウィンドウの縦幅
-			rect.bottom - rect.top,     
+			rect.bottom - rect.top,
 			// 親のウィンドウハンドル(なければNULL)
 			NULL,                       
 			// メニューハンドル(なければNULL)
-			NULL,                       
+			NULL,   
 			// インスタンスハンドル
-			h_instance,               
+			h_instance,
 			// CREATESTRUCT構造体のポインタ(NULLでいい)
 			NULL);                    
 		

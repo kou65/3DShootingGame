@@ -12,6 +12,7 @@ struct TextureData{
 		width_size = 0.f;
 		height_size = 0.f;
 		uv.x = uv.y = 0.f;
+		p_texture_buffer = nullptr;
 	}
 
 

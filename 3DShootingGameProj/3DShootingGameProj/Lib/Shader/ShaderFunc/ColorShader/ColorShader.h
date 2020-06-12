@@ -17,9 +17,15 @@ public:
 
 
 	/**
+	* @brief 更新
+	*/
+	void UpdateColor();
+
+
+	/**
 	* @brief カラーシェーダー初期化
 	*/
-	void InitColorShader(
+	void InitColorHandle(
 		const std::string&color_handle_name,
 		const std::string&texture_handle_name
 	);
@@ -37,6 +43,13 @@ public:
 	void SetTexture(IDirect3DTexture9*p_tex);
 
 private:
+
+	/**
+	* @brief 更新
+	*/
+	void UpdateColorPrivate();
+
+protected:
 
 	//! 全体のカラー
 	D3DXVECTOR4 m_color;

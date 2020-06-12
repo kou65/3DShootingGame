@@ -11,7 +11,7 @@
 class FogShader : public StandardTSShader {
 public:
 
-	void Init()override;
+	void Init();
 	void Update()override;
 
 	void SetColor(const D3DXVECTOR4 &color);

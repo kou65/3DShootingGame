@@ -21,11 +21,33 @@ namespace Collision {
 		c = v1.z - v2.z;
 		d = sqrtf(a * a + b * b + c * c);
 
+		// * 
 		if (d <= sqrtf(rad_1 + rad_2)) {
 			return true;
 		}
 		return false;
+	}
 
+
+	bool IsHitCircleAndCircle(
+		Vec2 v1,
+		Vec2 v2,
+		float rad_1,
+		float rad_2
+	) {
+
+		float a;
+		float b;
+		float d;
+
+		a = v1.x - v2.x;
+		b = v1.y - v2.y;
+		d = sqrtf(a * a + b * b);
+
+		if (d <= sqrtf(rad_1 * rad_2)) {
+			return true;
+		}
+		return false;
 	}
 
 

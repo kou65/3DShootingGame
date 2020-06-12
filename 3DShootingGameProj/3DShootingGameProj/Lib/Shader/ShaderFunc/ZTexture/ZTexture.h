@@ -6,6 +6,9 @@
 // Z値を自分で計算するZテクスチャを作成するクラス
 
 
+/**
+* @brief zテクスチャ
+*/
 class ZTexture : public StandardTSShader{
 public:
 
@@ -15,7 +18,7 @@ public:
 	);
 
 	// 初期化
-	void Init()override;
+	void Init();
 
 	// 更新
 	void Update()override;

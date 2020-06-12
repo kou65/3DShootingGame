@@ -1,7 +1,8 @@
 ﻿#include"ZTexSpriteCreater.h"
 #include"../Lib/Shader/ShaderFunc/ZTexture/ZTextureManager/ZTextureManager.h"
 #include"../Lib/Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
-
+#include"../Lib/Shader/ShaderFunc/ShadowData/ShadowData.h"
+#include"../Lib/3D/OBJ/OBJFile.h"
 
 
 void ZTexSpriteCreater::Draw() {

@@ -8,7 +8,24 @@ ColorShader::ColorShader() : StandardTSShader(){
 }
 
 
-void ColorShader::InitColorShader(
+void ColorShader::UpdateColor() {
+
+	// 更新カラープライベート
+	UpdateColorPrivate();
+}
+
+
+void ColorShader::UpdateColorPrivate() {
+
+	// カラーの更新
+	mp_effect->SetVector(m_h_color, &m_color);
+
+	// テクスチャの更新
+	mp_effect->SetTexture(m_h_texture, mp_texture);
+}
+
+
+void ColorShader::InitColorHandle(
 	const std::string&color_handle_name,
 	const std::string&texture_handle_name
 ) {

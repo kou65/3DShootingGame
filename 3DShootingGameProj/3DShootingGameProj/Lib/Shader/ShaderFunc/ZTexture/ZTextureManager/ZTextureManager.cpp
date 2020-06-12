@@ -132,7 +132,7 @@ const Vec2 &tex_size
 
 	// テクスチャサイズセット
 	m_z_tex_list[register_name]->
-		SetTextureSize(tex_size.x,tex_size.y);
+		SetTextureSize((UINT)tex_size.x,(UINT)tex_size.y);
 
 	// 初期化
 	m_z_tex_list[register_name]->Init();

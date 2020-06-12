@@ -24,8 +24,10 @@ struct Material{
 */
 struct PointLight {
 
-	Material material;
+	D3DXVECTOR4 diffuse;
+	D3DXVECTOR4 specular;
 	D3DXVECTOR4 pos;
+	D3DXVECTOR4 attenuation;
 };
 
 
@@ -38,25 +40,24 @@ struct LightData {
 
 	}
 
-	// マテリアル
+	//! マテリアル
 	Material material;
 
-	// 点光源
+	//! 点光源
 	PointLight point_light;
 
-	// ライトの方向
+	//! ライトの方向
 	D3DXVECTOR4 direction;
 
-	// 点光源の明るさ減衰
-	D3DXVECTOR4 attenuation;
-
-	// 注視点座標
+	//! 注視点座標
 	D3DXVECTOR4 eye_direction;
 
-	// カメラ座標
+	//! カメラ座標
 	D3DXVECTOR4 eye_pos;
 
-	// ライトカラー値
+	//! ライトカラー値
 	D3DXVECTOR4 light_color;
 
+	//! 環境光
+	D3DXVECTOR4 ambient;
 };
