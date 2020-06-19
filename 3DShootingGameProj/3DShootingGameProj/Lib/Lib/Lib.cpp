@@ -1,4 +1,5 @@
 ﻿#include"Lib.h"
+#include"../Texture/TextureManager/TextureManager.h"
 
 
 
@@ -38,5 +39,6 @@ namespace Lib {
 		Sound::Release();
 		DirectInput::Release();
 		Graphics::GetInstance()->Release();
+		TextureManager::GetInstance()->AllRelease();
 	}
 }

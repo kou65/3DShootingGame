@@ -17,6 +17,21 @@
 */
 
 
+
+enum class ShaderType {
+	NORMAL,             // 通常
+	ZTEXTURE,
+	DEPTH_SHADOW,       // 深度影
+	NORMAL_TEXTURE,     // 通常 + テクスチャ
+	DIRECTIONAL,        // 平行光源
+	DIFFUSE_REFLECTION, // 拡散反射
+	SPECULAR_REFLECTION,// 鏡面反射
+	POINT_LIGHT,        // 点光源
+	PHONE_REFLECTION,   // フォン反射
+	PHONE_SHADER,       // フォンシェーダー
+};
+
+
 /**
 * @enum 描画状態まとめ列挙体
 */
@@ -24,7 +39,8 @@ enum class DrawStatus {
 	NORMAL,
 	LIGHT,
 	SHADOW,
-	LIGHT_SHADOW
+	LIGHT_SHADOW,
+	BLUR_FILTER
 };
 
 

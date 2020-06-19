@@ -240,3 +240,11 @@ void ZTextureManager::AddLookPos(const Vec3&pos) {
 ZTextureData ZTextureManager::GetZTexData() {
 	return m_unique_z_tex_data;
 }
+
+
+void ZTextureManager::Release() {
+
+	for (auto&itr : m_z_tex_list) {
+		delete itr.second;
+	}
+}

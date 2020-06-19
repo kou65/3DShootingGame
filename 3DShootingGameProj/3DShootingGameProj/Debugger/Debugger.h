@@ -16,6 +16,7 @@
 #include"../Lib/Shader/ShaderFunc/ZTexture/ZTexture.h"
 #include"../Lib/3D/FBX/FbxFile/Fbx.h"
 #include"../Lib/Shader/ShaderFunc/Declation/VertexDeclation.h"
+#include"../Lib/Shader/ShaderFunc/BlurFilter/BlurFilter.h"
 #include<string>
 
 
@@ -72,15 +73,15 @@ private:
 
 
 	/**
-	* @brief ライトと影描画
-	*/
-	void DrawLightShadow2();
-
-
-	/**
 	* @brief シャドウ描画2
 	*/
 	void ObjShadowDraw();
+
+
+	/**
+	* @brief ブラー描画
+	*/
+	void DrawBlur();
 
 
 	/**
@@ -162,6 +163,9 @@ private:
 
 	//! 標準ライト
 	DefaultLight *light;
+
+	//! ブラーフィルター
+	BlurFilter m_blur;
 
 	//! カメラ
 	Camera3D *mp_camera;

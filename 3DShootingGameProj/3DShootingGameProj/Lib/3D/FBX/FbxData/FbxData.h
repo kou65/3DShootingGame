@@ -8,6 +8,7 @@
 #include<map>
 
 #include"../../../Graphics/Graphics.h"
+#include"../../Model/Model.h"
 
 #pragma comment(lib,"libfbxsdk.lib")
 #pragma comment(lib,"libfbxsdk-md.lib")

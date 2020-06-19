@@ -506,3 +506,66 @@ D3DXMATRIX Graphics::GetTSMatrix(
 	return mat;
 }
 
+
+void Graphics::SetRenderSurface(
+	const int &render_index,
+IDirect3DSurface9*p_suf
+) {
+
+	// 使うバックバッファセット
+	mp_d3d_device9->SetRenderTarget(render_index,p_suf);
+}
+
+
+D3DXVECTOR2 Graphics::GetBackBufferSize()const {
+
+	D3DXVECTOR2 vec2;
+
+	vec2.x = m_d3d_pp.BackBufferWidth;
+	vec2.y = m_d3d_pp.BackBufferHeight;
+
+	return vec2;
+}
+
+
+void Graphics::CreateTexture(
+	LPDIRECT3DTEXTURE9*p_tex,
+	const int&width,
+	const int&height,
+	const D3DFORMAT&format
+) {
+
+	// テクスチャ作成
+	mp_d3d_device9->CreateTexture(
+		width,
+		height,
+		1,
+		D3DUSAGE_RENDERTARGET,
+		format,
+		D3DPOOL_DEFAULT,
+		&*p_tex,
+		NULL
+	);
+
+}
+
+void Graphics::GetTexSurfaceLevel(
+	LPDIRECT3DTEXTURE9&p_tex,
+	LPDIRECT3DSURFACE9&p_sur
+) {
+
+
+	p_tex->GetSurfaceLevel(0, &p_sur);
+}
+
+
+LPDIRECT3DSURFACE9 Graphics::GetRenderSurfacePtr(
+	const int &render_index
+) {
+
+	LPDIRECT3DSURFACE9 suf;
+	mp_d3d_device9->GetRenderTarget(render_index,&suf);
+
+	return suf;
+
+}

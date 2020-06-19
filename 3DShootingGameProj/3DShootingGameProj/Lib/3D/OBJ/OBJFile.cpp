@@ -17,7 +17,7 @@ Obj::Obj() : Model(){
 	m_pass_type = ShaderType::PHONE_REFLECTION;
 
 	// 各シェーダー初期化
-	m_ns.Init();
+	m_normal_shader.Init();
 
 	// ライト影シェーダー初期化
 	m_light_shadow.Init(VertexDecl::Type::OBJ);
@@ -39,6 +39,16 @@ Obj::Obj() : Model(){
 		)->GetZTexture()
 	);
 
+	// テクスチャバッファ生成
+	Graphics::GetInstance()->CreateTexture(
+		&m_tex,
+		1024, 256
+	);
+
+	// 生成
+	for (int i = 0; i < 2; i++) {
+		suf_list[i].CreateTextureSurface(m_tex);
+	}
 }
 
 
@@ -70,7 +80,7 @@ void Obj::Draw(
 		// 通常描画
 		DrawShader(
 			param,
-			&m_ns
+			&m_normal_shader
 		);
 
 		break;
@@ -99,6 +109,15 @@ void Obj::Draw(
 			m_light_data,
 			m_shadow_data
 		);
+		break;
+
+	case DrawStatus::BLUR_FILTER:
+
+		// ブラーフィルター
+		DrawBlur(
+			param
+		);
+		break;
 	}
 }
 
@@ -278,13 +297,13 @@ void Obj::DrawObjByNormalShader(
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
 	// ワールド行列セット
-	m_ns.SetWorldMatrix(&total_mat);
-	m_ns.SetColor(param.color);
+	m_normal_shader.SetWorldMatrix(&total_mat);
+	m_normal_shader.SetColor(param.color);
 
 	// 更新
-	m_ns.Update();
+	m_normal_shader.Update();
 
-	ShaderParameterDraw(param, &m_ns);
+	ShaderParameterDraw(param, &m_normal_shader);
 }
 
 
@@ -340,6 +359,93 @@ void Obj::DrawLightObj(
 }
 
 
+void Obj::DrawBlur(
+	const ObjParameter&param
+) {
+
+	// 通常レンダリング後の結果をぼかす
+	Draw(DrawStatus::NORMAL,param);
+
+	// パス
+	IDirect3DSurface9*p_dev_sur;
+
+	// バッファーインデックス
+	int buffer_index = 0;
+
+	mp_graphics->GetDevice()
+		->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+
+	// デバイスに現在取得しているデバイスサーフェイスを返す
+	mp_graphics->GetDevice()->
+		GetRenderTarget(buffer_index,&p_dev_sur);
+
+	// 新しいサーフェイスになったので画面初期化
+	// テクスチャサーフェイスのクリア
+	mp_graphics->GetDevice()->Clear(
+		0, NULL, D3DCLEAR_TARGET |
+		D3DCLEAR_ZBUFFER,
+		// 背景色も変更
+		D3DCOLOR_ARGB(0, 0, 0, 255),
+		1.0f,
+		0
+	);
+	
+	for (int i = 0; i < 2; i++) {
+	
+		// インデックス
+		int index = i;
+	
+		// 0番目でレンダーターゲットを入れ替える
+		mp_graphics->GetDevice()->SetRenderTarget(
+			buffer_index,
+			suf_list[index]
+		);
+	
+		// シェーダーパラメータ描画
+		ShaderParameterDraw(param,&m_blur,i);
+	}
+
+	// デバイスサーフェイスを戻す
+	mp_graphics->GetDevice()->
+		SetRenderTarget(buffer_index,p_dev_sur);
+
+	// Zバッファモードを戻す
+	mp_graphics->GetDevice()
+		->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+}
+
+
+void Obj::DrawRenderTarget(
+	const ObjParameter&param
+) {
+
+	// デバイス面
+	IDirect3DSurface9 * p_dev_sur;
+
+	// デバイスに現在取得しているデバイスサーフェイスを返す
+	mp_graphics->GetDevice()->
+		GetRenderTarget(0,&p_dev_sur);
+
+	// 通常描画
+	Draw(DrawStatus::NORMAL, param);
+
+	// 0番目でレンダーターゲットを入れ替える
+	mp_graphics->GetDevice()->SetRenderTarget(
+		0,
+		suf_list[0]
+	);
+
+	// 通常描画
+	Draw(DrawStatus::LIGHT_SHADOW, param);
+
+	// 0番目でレンダーターゲットを入れ替える
+	mp_graphics->GetDevice()->SetRenderTarget(
+		0,
+		p_dev_sur
+	);
+
+}
+
 
 void Obj::LightShadowDraw(
 	const ObjParameter&param,
@@ -373,7 +479,6 @@ void Obj::LightShadowDraw(
 		// シャドウ描画
 		ShaderParameterDraw(param, &m_light_shadow,0);
 	}
-
 }
 
 
@@ -513,7 +618,7 @@ void Obj::DrawSubSet(
 	switch (state) {
 
 	case DrawStatus::NORMAL:
-		p_shader = &m_ns;
+		p_shader = &m_normal_shader;
 		break;
 
 	case DrawStatus::LIGHT:
@@ -591,7 +696,7 @@ void Obj::DrawShader(
 			p_data->m_usemtl_name_list[i];
 
 		// マテリアル情報取得
-		MaterialInfo mtl =
+		MaterialInfo mtl = 
 			p_data->
 			m_material_data_list[usemtl_name];
 
@@ -689,6 +794,7 @@ void Obj::DrawBeginPassShader(
 		// 上のSTART_INDEX引数を先頭として描画するポリゴンの数を指定する(ポリゴンの数,頂点の数ではない)
 		face_count
 	);
+
 	p_shader->EndPass();
 
 }
@@ -731,7 +837,6 @@ UINT Obj::GetUsePass(const ShaderType&type) {
 
 	return 0;
 }
-
 
 
 void Obj::DrawNormal(
@@ -863,6 +968,9 @@ bool Obj::LoadTexture(
 
 		// シェーダーテクスチャセット
 		m_light_shader.SetTexture(texture_data);
+		m_normal_shader.SetTexture(texture_data);
+		m_shadow.SetTexture(texture_data);
+		m_blur.SetTexture(texture_data);
 
 		// テクスチャが存在する
 		is_texture = true;
@@ -881,8 +989,9 @@ bool Obj::LoadTexture(
 
 			// シェーダーテクスチャセット
 			m_light_shader.SetTexture(texture_data);
-			m_ns.SetTexture(texture_data);
+			m_normal_shader.SetTexture(texture_data);
 			m_shadow.SetTexture(texture_data);
+			m_blur.SetTexture(texture_data);
 
 			// テクスチャが存在する
 			is_texture = true;

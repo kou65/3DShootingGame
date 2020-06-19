@@ -8,6 +8,8 @@
 #include"../../../Shader/ShaderFunc/VertexBlendShader/VertexBlendEffectFile.h"
 #include"../../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
 #include"../FbxData/FbxData.h"
+#include"../FbxMotion/FbxSampleMotion/FbxSampleMotion.h"
+#include"../FbxMotion/FbxMotion/FbxMotion.h"
 
 
 
@@ -67,32 +69,6 @@ public:
 
 
 	/**
-	* @brief アニメーション更新
-	* @param[in] frame 回すフレーム数
-	*/
-	void Animate(
-		const float &frame = 20.f
-	);
-
-
-	/**
-	* @brief モーション情報をセットする
-	* @param[in] name モーション名
-	*/
-	void SetMotion(std::string name = "default");
-
-
-	/**
-	* @brief モーション読み込み
-	* @param[in] name モーション名
-	* @param[in] ファイル名
-	*/
-	void LoadFileMotion(
-		std::string name,
-		const char* pFilename);
-
-
-	/**
 	* @brief 解放
 	*/
 	void Release();
@@ -105,7 +81,16 @@ private:
 	* @param[in] mesh_index
 	* @return D3DXMATRIX 行列を返す
 	*/
-	D3DXMATRIX GetFbxWorldD3DMatrix(int mesh_index);
+	D3DXMATRIX GetFbxLocalD3DMatrix(int mesh_index);
+
+
+	/**
+	* @brief fbx行列をDirectXの行列に変換
+	*/
+	void FbxMatConvertD3DMat(
+		D3DXMATRIX*p_out_mat,
+		FbxMatrix&fbx_mat
+	);
 
 
 	/**
@@ -204,7 +189,6 @@ private:
 private:
 
 
-
 	/**
 	* @brief マテリアル読み込み
 	* @param[in] p_mesh_data_list fbxメッシュデータ
@@ -249,215 +233,62 @@ private:
 		MaterialInfo*p_material_info
 	);
 
-private:
-
-
-	/**
-	* @brief アニメーションを選択
-	* @param[in] select_anim_num
-	* @return bool アニメーションbool型を返す
-	*/
-	bool SelectAnimation(
-		int select_anim_num
-	);
-
-
-	/**
-	* @brief モーションの読み込み
-	* @param[in] name モーション名
-	* @param[in] select_morion_num モーション番号
-	*/
-	void LoadMotion(
-		const std::string& name,
-		const int &select_motion_num
-	);
-
-
-	/**
-	* @brief アニメーション行列読み込み
-	* @param[out] mesh メッシュポインタ
-	* @param[in] motion_name モーション名
-	* @param[in] bone_mat_list ボーン行列配列
-	* @param[in] bone_num ボーン数
-	* @param[in] start 最初の時間
-	* @param[in] stop 最後の時間
-	* @param[in] frame_count フレーム数
-	*/
-	void LoadKeyFrame(
-		FbxMesh* mesh,
-		const std::string& motion_name,
-		std::vector<FbxMatrix>& bone_mat_list,
-		const int& bone_num,
-		const FbxTime& start,
-		const FbxTime& stop,
-		const FbxTime& frame_count
-	);
-
-
-	/**
-	* @brief アニメーション関連をセットする
-	* @param[in] start 最初
-	* @param[in] stop 最後
-	* @param[in] frame_time フレーム時間
-	* @param[in] anim_num アニメーション数
-	*/
-	void SetAnimation(
-		FbxTime&start,
-		FbxTime&stop,
-		FbxTime&frame_time,
-		const int&anim_num
-	);
-
-
-	/**
-	* @brief モデル情報読み込み
-	* @param[in] p_mesh_data_list メッシュデータ
-	* @param[in] p_mesh メッシュ
-	*/
-	void LoadModelInfo(
-		std::vector<FbxMeshData>& p_mesh_data_list,
-		FbxMesh* p_mesh
-	);
-
-
-	/**
-	* @brief 現在のアニメーションを受け取る
-	* @param[in] mesh メッシュ
-	* @param[in] count fbx時間
-	* @param[in] deformer_num デフォーム数
-	* @param[in] cluster_num クラスター数
-	*/
-	FbxMatrix GetAnimationMatrix(
-		FbxMesh* mesh,
-		FbxTime&count,
-		int deformer_num,
-		int cluster_num
-	);
-
-
-	/**
-	* @brief CPUのスキニング
-	*/
-	void CPUSkinning();
-
-
-	/**
-	* @brief 重みのスキニングを行う 最新バージョン
-	*/
-	void WeightSkinning(
-		FbxMesh* mesh,
-		FbxMeshData& mesh_data,
-		SkinCustomVertex* vertices,
-		const int &mi
-	);
-
-
-	/**
-	* @brief キースキニング
-	*/
-	void KeySkinning();
-
-
-	/**
-	* @brief キーフレームアニメーション
-	* @param[in] mesh メッシュ
-	* @param[in] mesh_data メッシュデータ
-	* @param[in] vertices カスタムバーテックスポインタ
-	* @param[in] mi メッシュインデックス
-	*/
-	void KeyFrameSkinning(
-		FbxMesh* mesh,
-		FbxMeshData& mesh_data,
-		SkinCustomVertex* vertices,
-		const int &mi
-	);
-
-
-	/**
-	* @brief 重み頂点読み込み
-	* @param[in] p_mesh_data_list メッシュデータ配列
-	* @param[in] p_mesh メッシュ
-	*/
-	void LoadWeightVertexPoint(
-		std::vector<FbxMeshData>& p_mesh_data_list,
-		FbxMesh* p_mesh
-	);
-
 	
 private:
 
-	// 相対パス(CP932) → 絶対パス(UTF-8)
+
+	/**
+	* @brief 相対パス(CP932) → 絶対パス(UTF-8)
+	* @param[in] path UTF8パス
+	*/
 	std::string GetUTF8Path(const std::string& path);
 
-	// カレントパスの読み込み
+
+	/**
+	* @brief カレントパスの読み込み
+	*/
 	void LoadCurrentPath(const std::string &path_name);
 
-	// Fbx関数でポリゴンを3つに分割する
+
+	/**
+	* @brief fbx関数でポリゴンを3つに分割する
+	*/
 	void FbxPolygon3Convert();
 
-	// fbx行列をDirectXの行列に変換
-	void FbxMatConvertD3DMat(
-		D3DXMATRIX*p_out_mat,
-		FbxMatrix&fbx_mat
-	);
 
-	// 位置を修正する行列取得
-	FbxAMatrix GetGeometry(FbxNode* pNode);
-	
-	// 左手系変換
-	void FbxMatLConvert(
-		FbxMatrix&out_fbx_mat
-	);
-
-	// 左手系変換
-	void FbxMatLConvert(
-		FbxAMatrix&out_fbx_mat
-	);
+	/**
+	* @brief モーション読み込み
+	*/
+	void LoadFbxMotion();
 
 private:
 
-	// fbxsdk部品
+	//! fbxsdk部品
 	FbxModuleModel m_fbx_module;
 
-	// カスタムバーテックスの配列
+	//! カスタムバーテックスの配列
 	std::vector<FbxMeshData>m_mesh_data_list;
 
-	// ルートパス
+	//! メッシュローカル座標変換リスト
+	std::vector<D3DXMATRIX>m_local_pos_list;
+
+	//! ルートパス
 	std::string m_root_path;
 
-	// 変更用頂点配列
+	//! 変更用頂点配列
 	std::vector<SkinCustomVertex*>mp_vertics;
 
-	// シェーダー
+	//! シェーダー
 	VertexBlendEffectFile m_effect;
 	
 	/* アニメーション関連 */
-	
-	// モーション名
-	std::string m_current_motion_name;
 
-	// フレーム
-	double m_frame;
-
-	// 停止数
-	int m_stop_count;
-
-	// カウント
-	int m_count;
-
-	// モーション文字列
-	// モーション種類 > メッシュ 
-	std::map<std::string,std::vector<MotionData>> m_motion;
-
-	// シェーダーするかどうか
+	//! 切り替え用
 	bool m_is_shader;
-
-	// アニメーションするかどうか
 	bool m_is_skinning;
-
-	// 現在のアニメーションフレーム数
-	float m_key_frame;
-
+	
+	//! fbxモーション
+	FbxMotion*mp_fbx_motion;
 };
 
 #endif

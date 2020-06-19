@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -98,6 +98,9 @@
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -112,6 +115,9 @@
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -130,6 +136,9 @@
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -148,6 +157,9 @@
       <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionSystem\CollisionManager\CollisionManager.cpp" />
@@ -173,6 +185,18 @@
     <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
+    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\ColorShader\ColorShader.cpp">
       <SubType>
       </SubType>
@@ -185,11 +209,19 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Lib\Shader\ShaderFunc\SoftShadow\SoftShadow.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Surface\Surface.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -229,7 +261,6 @@
     <ClCompile Include="Lib\Shader\ShaderFunc\FogShader\FogShader.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.cpp" />
-    <ClCompile Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.cpp" />
@@ -317,8 +348,20 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h" />
     <ClInclude Include="Lib\3D\OBJ\ObjRenderer\ObjRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -335,6 +378,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ShadowData\ShadowData.h" />
+    <ClInclude Include="Lib\Shader\ShaderFunc\SoftShadow\SoftShadow.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\FuncZTexture\FuncZTexture.h">
       <SubType>
       </SubType>
@@ -344,6 +391,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Surface\Surface.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -397,7 +448,6 @@
     </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\NormalShader\NormalShader.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\ShaderBase\EffectFileBase.h" />
-    <ClInclude Include="Lib\Shader\ShaderFunc\ShaderManager\ShaderManager.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\StandardTransformShader\StandardTransformShader.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\VertexBlendShader\VertexBlendEffectFile.h" />
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.h" />
@@ -450,6 +500,12 @@
     <None Include="Resource\3DModel\Plate.x" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Lib\Shader\EffectFile\BlurFilter.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+    </FxCompile>
     <FxCompile Include="Lib\Shader\EffectFile\DepthShadow.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>

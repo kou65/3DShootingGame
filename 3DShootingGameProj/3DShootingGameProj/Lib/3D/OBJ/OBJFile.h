@@ -15,6 +15,7 @@
 #include"../../Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
 #include"ObjFileData/ObjFileData.h"
 #include"../../Shader/ShaderFunc/LightShadowShader/LightShadowShader.h"
+#include"../../Shader/ShaderFunc/BlurFilter/BlurFilter.h"
 #include<map>
 
 
@@ -190,6 +191,10 @@ public:
 
 private:
 
+	static constexpr int SURFACE_VALUE = 2;
+
+private:
+
 
 	/**
 	* @brief zテクスチャ書き込み
@@ -224,6 +229,22 @@ private:
 		const ObjParameter&param,
 		const LightData&light_data,
 		const ShadowData&shadow_data
+	);
+
+
+	/**
+	* @brief ブラーフィルター描画
+	*/
+	void DrawBlur(
+		const ObjParameter&param
+	);
+
+
+	/**
+	* @brief レンダーターゲット用練習
+	*/
+	void DrawRenderTarget(
+		const ObjParameter&param
 	);
 
 
@@ -488,7 +509,7 @@ private:
 	std::map<std::string,ObjParameter>m_shadow_param_list;
 
 	//! 通常シェーダー
-	NormalShader m_ns;
+	NormalShader m_normal_shader;
 
 	//! ライト
 	LightShader m_light_shader;
@@ -499,6 +520,9 @@ private:
 	//! ライトと影
 	LightShadowShader m_light_shadow;
 
+	//! ブラーフィルター
+	BlurFilter m_blur;
+
 	//! ライトパスタイプ
 	ShaderType m_pass_type;
 
@@ -507,6 +531,12 @@ private:
 
 	//! ライトデータ
 	LightData m_light_data;
+
+	//! サーフェイス
+	Surface suf_list[SURFACE_VALUE];
+
+	//! テクスチャ
+	LPDIRECT3DTEXTURE9 m_tex;
 
 };
 

@@ -177,3 +177,8 @@ void ShaderBase::End() {
 	}
 }
 
+
+void ShaderBase::Release() {
+
+	mp_effect->Release();
+}

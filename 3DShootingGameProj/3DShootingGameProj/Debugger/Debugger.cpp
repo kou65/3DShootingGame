@@ -241,7 +241,6 @@ void Debugger::Update() {
 	UpdateShadow();
 
 	// アニメーション更新
-	Fbx::GetInstance()->Animate(5.f);
 	Fbx::GetInstance()->Update();
 }
 
@@ -260,14 +259,21 @@ void Debugger::Draw() {
 
 	// Obj影
 	{
-		ObjShadowDraw();
+		//ObjShadowDraw();
+	}
+
+	// ブラー
+	{
+
+		// ブラー描画
+		//DrawBlur();
 	}
 
 	// OBJライト
 	//LightDebugDraw();
 
 	// fbx描画
-	//Fbx::GetInstance()->Draw();
+	Fbx::GetInstance()->Draw();
 
 
 	mp_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
@@ -772,6 +778,19 @@ void Debugger::DrawLightShadow() {
 	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, param);
 }
 
+
+void Debugger::DrawBlur() {
+
+	// パラメータ
+	ObjParameter param(DrawStatus::LIGHT);
+
+	param.register_obj_file_name = Const::Obj::SPEHER;
+	param.pos = D3DXVECTOR3(0.f, 0.f, 0.f);
+	param.texture_name = Const::Graph::TAILE;
+
+	// 描画
+	Obj::GetInstance()->Draw(DrawStatus::BLUR_FILTER, param);
+}
 
 
 void Debugger::UpdateShadow() {

@@ -32,6 +32,13 @@ ZTexture::ZTexture(const VertexDecl::Type &type) {
 }
 
 
+ZTexture::~ZTexture() {
+
+	// エフェクトファイルリリース
+	Release();
+}
+
+
 void ZTexture::Init() {
 
 	// ハンドルの初期化
@@ -84,6 +91,8 @@ bool ZTexture::CreateTexture(
 
 	// 深度バッファサーフェイスレベル取得
 	mp_tex->GetSurfaceLevel(0, &mp_tex_suf);
+
+	return true;
 }
 
 
@@ -176,7 +185,7 @@ void ZTexture::Begin(
 
 	// 深度バッファ用サーフェイスを取得
 	mp_device->
-		GetDepthStencilSurface(&mp_device_depth);
+		GetDepthStencilSurface(&mp_depth);
 	
 	// デバイスにzテクスチャをレンダーターゲットに設定する
 	mp_device->
@@ -185,7 +194,8 @@ void ZTexture::Begin(
 		SetDepthStencilSurface(mp_depth_buffer);
 
 	// テクスチャサーフェイスのクリア
-	mp_device->Clear(0, NULL, D3DCLEAR_TARGET | 
+	mp_device->Clear(
+		0, NULL, D3DCLEAR_TARGET | 
 		D3DCLEAR_ZBUFFER, 
 		// 背景色も変更
 		D3DCOLOR_ARGB(255, 255, 255, 255),
@@ -193,6 +203,7 @@ void ZTexture::Begin(
 		0
 	);
 
+	// テクニック
 	mp_effect->SetTechnique(m_h_technique);
 
 	HRESULT hr = mp_effect->Begin(
@@ -223,11 +234,11 @@ void ZTexture::End() {
 	// 深度バッファを元に戻す
 	// デバイスに元のサーフェイスを戻す
 	mp_device->SetRenderTarget(0, mp_device_buffer);
-	mp_device->SetDepthStencilSurface(mp_device_depth);
+	mp_device->SetDepthStencilSurface(mp_depth);
 
 	// 初期化
 	mp_device_buffer = NULL;
-	mp_device_depth = NULL;
+	mp_depth = NULL;
 	
 	// GetSurfaceLevelで内部カウンタが+1されているのでReleaseして内部カウンタを減らす
 	mp_device->SetVertexShader(NULL);

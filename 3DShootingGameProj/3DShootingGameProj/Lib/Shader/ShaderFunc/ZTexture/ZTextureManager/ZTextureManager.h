@@ -62,6 +62,12 @@ public:
 
 
 	/**
+	* @brief 解放処理
+	*/
+	void Release();
+
+
+	/**
 	* @brief Zテクスチャのポインタを返す 
 	*/
 	ZTexture *GetZTexturePtr(

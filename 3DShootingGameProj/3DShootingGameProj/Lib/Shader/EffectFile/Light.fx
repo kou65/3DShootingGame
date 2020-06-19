@@ -105,6 +105,7 @@ VS_OUT DirectionalLightVS(VS_IN In) {
 	Out.pos = mul(Out.pos, g_view);
 	Out.pos = mul(Out.pos, g_proj);
 
+	// ñ@ê¸
 	nor = mul(In.normal, g_world).xyzw;
 	// ê≥ãKâª
 	nor = normalize(nor);

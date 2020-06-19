@@ -5,11 +5,16 @@
 
 
 
+/**
+* @brief シェーダー基底クラス
+*/
 class ShaderBase {
 public:
 
 	// コンストラクタ
 	ShaderBase();
+
+	virtual ~ShaderBase() {}
 
 	// 更新
 	virtual void Update();
@@ -27,13 +32,16 @@ public:
 	virtual void End();
 
 	// パス開始
-	void BeginPass(const int &out_pass_num = 0);
+	virtual void BeginPass(const int &out_pass_num = 0);
 
 	// パス終了
 	void EndPass();
 
 	// バーテックスデクルのリセット
 	void ResetDecl();
+
+	// 解放処理
+	void Release();
 
 
 protected:

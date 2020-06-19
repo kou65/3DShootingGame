@@ -229,7 +229,7 @@ public:
 	);
 
 
-	/*
+	/**
 	* @brief バーテックスバッファの生成
 	* @param[out] バーテックスバッファ
 	* @param[in] バッファのサイズ(sizeofで割り出せばいい)
@@ -241,7 +241,7 @@ public:
 	);
 
 
-	/*
+	/**
 	* @brief バーテックスバッファのロック(書き込み可能)
 	* @param[out] バーテックスバッファ
 	* @param[in]  バッファのサイズ(sizeofで割り出せばいい)
@@ -256,19 +256,63 @@ public:
 	);
 
 
-	/*
-	* @brief バーテックスバッファのアンロック
+	/**
+	@brief バーテックスバッファのアンロック
 	(書き込み不可、描画可能状態に変更)
 	*/
 	void UnlockVertexBuffer(
 		LPDIRECT3DVERTEXBUFFER9*p_vertex_buffer
 	);
 
-	/*
+
+	/**
 	@brief 現在デバイスに設定されている変換行列を受け取る
 	@param[in] type x9が用意している変換行列定数 D3DTS_VIEWなど
 	*/
 	D3DXMATRIX GetTSMatrix(const D3DTRANSFORMSTATETYPE&type);
+
+
+	/**
+	* @brief バックバッファ設定
+	*/
+	void SetRenderSurface(
+		const int &render_index,
+		IDirect3DSurface9*p_suf
+	);
+
+	/**
+	* @brief バックバッファ解像度サイズを返す
+	* @return D3DXVECTOR2 縦サイズと横サイズ
+	*/
+	D3DXVECTOR2 GetBackBufferSize()const;
+
+
+	/**
+	* @brief サーフェイス用テクスチャ作成
+	*/
+	void CreateTexture(
+		LPDIRECT3DTEXTURE9*p_tex,
+		const int&width,
+		const int&height,
+		const D3DFORMAT&format = D3DFMT_A8R8G8B8
+	);
+
+
+	/**
+	* @brief テクスチャサイズのサーフェイスを返す
+	*/
+	void Graphics::GetTexSurfaceLevel(
+		LPDIRECT3DTEXTURE9&p_tex,
+		LPDIRECT3DSURFACE9&sur
+	);
+
+
+	/**
+	* @brief 現在設定してあるバックバッファ取得
+	*/
+	LPDIRECT3DSURFACE9 GetRenderSurfacePtr(
+	const int&render_index
+	);
 
 
 private:
@@ -291,7 +335,10 @@ private:
 		bool windowed
 	);
 
-	// 自動検出してゲッターを行う
+
+	/**
+	@brief 自動検出してゲッターを行う
+	*/
 	operator IDirect3DDevice9*() const {
 		return mp_d3d_device9;
 	}

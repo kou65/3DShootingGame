@@ -17,6 +17,8 @@ public:
 		const VertexDecl::Type &type = VertexDecl::Type::OBJ
 	);
 
+	~ZTexture();
+
 	// 初期化
 	void Init();
 
@@ -78,7 +80,7 @@ private:
 	IDirect3DSurface9* mp_device_buffer;
 
 	// デバイス深度バッファ
-	IDirect3DSurface9* mp_device_depth;
+	IDirect3DSurface9* mp_depth;
 
 	// スタートパス数
 	int m_start_pass_num;
