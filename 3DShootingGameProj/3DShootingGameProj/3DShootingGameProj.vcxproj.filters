@@ -285,10 +285,10 @@
     <ClCompile Include="Lib\Shader\ShaderFunc\SoftShadow\SoftShadow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.cpp">
+    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.cpp">
+    <ClCompile Include="Lib\3D\FBX\FbxFunction\FbxFunction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -635,9 +635,6 @@
     <ClInclude Include="Lib\Shader\ShaderFunc\LightShadowShader\LightShadowShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxData\FbxData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\3D\OBJ\ObjRenderer\ObjRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -650,10 +647,19 @@
     <ClInclude Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.h">
+    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxMotion.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.h">
+    <ClInclude Include="Lib\3D\FBX\FbxFunction\FbxFunction.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxSkeleton\FbxSkeleton.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxMotionData\FbxMotionData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxMeshData\FbxMeshData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -666,5 +672,6 @@
     <FxCompile Include="Lib\Shader\EffectFile\ZTexture.fx" />
     <FxCompile Include="Lib\Shader\EffectFile\Light.fx" />
     <FxCompile Include="Lib\Shader\EffectFile\BlurFilter.fx" />
+    <FxCompile Include="Lib\Shader\EffectFile\VertexBlend.hlsl" />
   </ItemGroup>
 </Project>

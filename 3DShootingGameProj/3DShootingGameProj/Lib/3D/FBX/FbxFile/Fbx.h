@@ -5,19 +5,32 @@
 #include"../../SkinCustomVertex/SkinCustomVertex.h"
 #include"../../../Texture/TextureData2D/TextureData2D.h"
 #include"../../Model/Model.h"
-#include"../../../Shader/ShaderFunc/VertexBlendShader/VertexBlendEffectFile.h"
 #include"../../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
-#include"../FbxData/FbxData.h"
-#include"../FbxMotion/FbxSampleMotion/FbxSampleMotion.h"
-#include"../FbxMotion/FbxMotion/FbxMotion.h"
+#include"../FbxMeshData/FbxMeshData.h"
+#include"../FbxMotion/FbxMotion.h"
+#include<map>
 
 
+
+// LP型作成
+typedef class FbxScene *LP_FBX_SCENE;
+typedef class FbxManager*LP_FBX_MANAGER;
+typedef class FbxImporter*LP_FBX_IMPORTER;
 
 
 /**
 * @brief fbxモデルを形成するクラス
 */
 class Fbx : public Model{
+public:
+
+	// エントリーで探すテクスチャエントリー
+	const std::string DEFFUSE_TEX_NAME = "Maya|DiffuseTexture";
+	const std::string NORMAL_TEX_NAME = "Maya|NormalTexture";
+	const std::string SEPCULAR_TEX_NAME = "Maya|SpecularTexture";
+	const std::string FALL_OFF_TEX_NAME = "Maya|SpecularTexture";
+	const std::string REFLECTION_MAP_TEX_NAME = "Maya|ReflectionMapTexture";
+
 public:
 
 
@@ -43,8 +56,6 @@ public:
 	*/
 	~Fbx() {
 
-		// マネージャの破壊
-		m_fbx_module.mp_manager->Destroy();
 	}
 	
 
@@ -53,19 +64,73 @@ public:
 	* @param[in] fbx_file_path fbxのファイルパス
 	* @return bool
 	*/
-	bool Load(const std::string &fbx_file_path);
+	bool Load(
+		const std::string &fbx_file_path,
+		const std::string&register_name
+	);
 
 
 	/**
 	* @brief 更新
 	*/
-	void Update();
+	void Update(
+		const std::string&mesh_name,
+		const std::string&motion_name
+	);
 
 
 	/**
 	* @brief 描画
 	*/
-	void Draw(TextureData*td = nullptr);
+	void Draw(
+		const std::string&mesh_name,
+		TextureData*td = nullptr,
+		bool is_local_mat_on = true
+	);
+
+
+	/**
+	* @brief モーション読み込み
+	* @param[in] file_path ファイルパス
+	* @param[in] mesh_name メッシュ名
+	* @param[in] new_motion_name モーション名
+	* @param[in] select_motion_num モーション読み込み番号
+	*/
+	void LoadMotion(
+		const std::string&file_path,
+		const std::string&mesh_name,
+		const std::string&new_motion_name,
+		const int&select_motion_num
+	);
+
+
+	/**
+	* @brief ファイルから読み込む
+	*/
+	void LoadFileMotion(
+		const std::string&file_path,
+		const std::string&mesh_name,
+		const std::string&new_motion_name,
+		const int&select_motion_num
+	);
+
+
+	/**
+	* @brief モーション
+	*/
+	void SetMotion(
+		const std::string&mesh_name,
+		const std::string&motion_name
+	);
+
+
+	/**
+	* @brief モーションをアニメーションして入れ替え
+	*/
+	void ChangeMotion(
+		const std::string&mesh_name,
+		const std::string&motion_name
+	);
 
 
 	/**
@@ -81,7 +146,10 @@ private:
 	* @param[in] mesh_index
 	* @return D3DXMATRIX 行列を返す
 	*/
-	D3DXMATRIX GetFbxLocalD3DMatrix(int mesh_index);
+	D3DXMATRIX GetFbxLocalD3DMatrix(
+		FbxScene*p_scene,
+		FbxMesh*p_mesh
+	);
 
 
 	/**
@@ -106,29 +174,18 @@ private:
 	);
 
 
-	/**
-	* @brief エフェクト描画
-	* @param[in] vertex_num 頂点数
-	* @param[in] polygon_num ポリゴン数
-	* @param[in] world_mat ワールド行列
-	* @param[in] bone_mat_list ボーン行列
-	* @param[in] max_bone_index 最大ボーンインデックス数
-	*/
-	void EffectDraw(
-		const int&vertex_num,
-		const int&polygon_num,
-		const D3DXMATRIX&world_mat,
-		D3DXMATRIX*bone_mat_list,
-		const int&max_bone_index
-	);
-
 private:
 
 
 	/**
 	* @brief メッシュ読み込み
 	*/
-	void LoadMesh();
+	bool LoadMesh(
+		FbxScene**p_scene,
+		FbxManager**p_manager,
+		FbxImporter**p_importer,
+		const std::string&mesh_name
+	);
 
 
 	/**
@@ -230,7 +287,8 @@ private:
 	*/
 	void LoadEntryTexture(
 		FbxMesh*p_mesh,
-		MaterialInfo*p_material_info
+		MaterialInfo*p_material_info,
+		int entry_tex_index = 0
 	);
 
 	
@@ -253,33 +311,20 @@ private:
 	/**
 	* @brief fbx関数でポリゴンを3つに分割する
 	*/
-	void FbxPolygon3Convert();
+	void FbxPolygon3Convert(
+		FbxManager*p_manager,
+		FbxScene*p_scene
+	);
 
-
-	/**
-	* @brief モーション読み込み
-	*/
-	void LoadFbxMotion();
 
 private:
 
-	//! fbxsdk部品
-	FbxModuleModel m_fbx_module;
-
 	//! カスタムバーテックスの配列
-	std::vector<FbxMeshData>m_mesh_data_list;
-
-	//! メッシュローカル座標変換リスト
-	std::vector<D3DXMATRIX>m_local_pos_list;
+	std::map<std::string,std::vector<FbxMeshData>>m_mesh_data_list;
 
 	//! ルートパス
 	std::string m_root_path;
 
-	//! 変更用頂点配列
-	std::vector<SkinCustomVertex*>mp_vertics;
-
-	//! シェーダー
-	VertexBlendEffectFile m_effect;
 	
 	/* アニメーション関連 */
 
@@ -288,7 +333,8 @@ private:
 	bool m_is_skinning;
 	
 	//! fbxモーション
-	FbxMotion*mp_fbx_motion;
+	FbxMotion m_fbx_motion;
+
 };
 
 #endif

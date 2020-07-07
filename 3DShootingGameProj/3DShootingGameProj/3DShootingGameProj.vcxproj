@@ -185,14 +185,11 @@
     <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
-    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.cpp">
+    <ClCompile Include="Lib\3D\FBX\FbxFunction\FbxFunction.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
+    <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion.cpp" />
     <ClCompile Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.cpp">
       <SubType>
       </SubType>
@@ -344,15 +341,20 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxData\FbxData.h">
+    <ClInclude Include="Lib\3D\FBX\FbxMeshData\FbxMeshData.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxMotion\FbxMotion.h">
+    <ClInclude Include="Lib\3D\FBX\FbxFunction\FbxFunction.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxSampleMotion\FbxSampleMotion.h">
+    <ClInclude Include="Lib\3D\FBX\FbxMotionData\FbxMotionData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\3D\FBX\FbxMotion\FbxMotion.h" />
+    <ClInclude Include="Lib\3D\FBX\FbxSkeleton\FbxSkeleton.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -525,6 +527,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Lib\Shader\EffectFile\VertexBlend.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
     <FxCompile Include="Lib\Shader\EffectFile\ZTexture.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>

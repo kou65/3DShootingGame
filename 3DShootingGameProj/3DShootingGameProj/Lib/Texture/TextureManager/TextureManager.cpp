@@ -27,7 +27,7 @@ void TextureManager::Load(
 	if (FAILED(D3DXGetImageInfoFromFile(file_name, &info))) {
 
 		// 読み込みエラー
-		MessageBoxA(0, "テクスチャのファイルサイズ読み込みに失敗しました", TEXT("MessageBox"), MB_OK);
+		MessageBoxA(0, "テクスチャのファイル読み込みに失敗しました", TEXT("MessageBox"), MB_OK);
 		return;
 	}
 

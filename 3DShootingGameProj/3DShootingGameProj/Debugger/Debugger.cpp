@@ -77,12 +77,54 @@ void Debugger::Init() {
 	CreateSprite();
 
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
-	Fbx::GetInstance()->Load("Resource/3DModel/taiki/taiki.fbx");
+	
+	Fbx::GetInstance()->Load(
+		"Resource/3DModel/UnityChan/NewUnityChan/unitychan.fbx",
+		"unity_chan"
+	);
+
+	Fbx::GetInstance()->LoadFileMotion(
+		"Resource/3DModel/UnityChan/Animations/unitychan_JUMP01.fbx",
+		"unity_chan",
+		"jump",
+		0
+	);
+
+	Fbx::GetInstance()->LoadFileMotion(
+		"Resource/3DModel/UnityChan/Animations/unitychan_DAMAGED00.fbx",
+		"unity_chan",
+		"damage",
+		0
+	);
+
+	//Fbx::GetInstance()->Load(
+	//	"Resource/3DModel/taiki/taiki.fbx","taiki"
+	//);
+	//
+	//Fbx::GetInstance()->LoadFileMotion(
+	//	"Resource/3DModel/taiki/taiki.fbx",
+	//	"taiki",
+	//	"taiki_motion",
+	//	0
+	//);
+
+	// モーションセット
+	Fbx::GetInstance()->SetMotion(
+		"unity_chan",
+		"jump"
+	);
+
+	//Fbx::GetInstance()->SetMotion(
+	//	"taiki",
+	//	"taiki_motion"
+	//);
+
+
 	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
 	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/UnityChann/unitychan.fbx");
+
 }
 
 
@@ -240,8 +282,32 @@ void Debugger::Update() {
 	// 影更新
 	UpdateShadow();
 
+	if (KeyBoard::IsKeyExit(DIK_V)) {
+		
+		Fbx::GetInstance()->ChangeMotion(
+			"unity_chan",
+			"damage"
+		);
+	}
+	else if (KeyBoard::IsKeyExit(DIK_B)) {
+
+		Fbx::GetInstance()->ChangeMotion(
+			"unity_chan",
+			"jump"
+		);
+	}
+	
+
 	// アニメーション更新
-	Fbx::GetInstance()->Update();
+	Fbx::GetInstance()->Update(
+		"unity_chan",
+		"jump"
+	);
+
+	//Fbx::GetInstance()->Update(
+	//	"taiki",
+	//	"taiki_motion"
+	//);
 }
 
 
@@ -273,7 +339,9 @@ void Debugger::Draw() {
 	//LightDebugDraw();
 
 	// fbx描画
-	Fbx::GetInstance()->Draw();
+	Fbx::GetInstance()->Draw("unity_chan",nullptr,false);
+
+	//Fbx::GetInstance()->Draw("taiki",nullptr,false);
 
 
 	mp_fps->DebugDraw(Vec2(256.f, 256.f), 3000);

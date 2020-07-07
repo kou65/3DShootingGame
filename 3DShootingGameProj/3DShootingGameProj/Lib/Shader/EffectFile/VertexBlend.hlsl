@@ -1,17 +1,29 @@
 
 
 // グローバル定数
+//// ビュー行列
+//float4x4 g_view_mat : register(c0);
+//
+//// 射影行列
+//float4x4 g_proj_mat : register(c4);
+//
+//// ワールド行列
+//float4x4 g_world_mat : register(c8);
+//
+//// ボーン姿勢マトリックス
+//float4x4 g_bone_mat[50] : register(c12);
+
 // ビュー行列
-float4x4 g_view_mat : register(c0);
+float4x4 g_view_mat;
 
 // 射影行列
-float4x4 g_proj_mat : register(c4);
+float4x4 g_proj_mat;
 
 // ワールド行列
-float4x4 g_world_mat : register(c8);
+float4x4 g_world_mat;
 
 // ボーン姿勢マトリックス
-float4x4 g_bone_mat[50] : register(c12);
+float4x4 g_bone_mat[64];
 
 // ブレンドする配列の数
 int g_max_blend_idx;
@@ -59,15 +71,15 @@ VS_OUT VS(
 
 	VS_OUT out2 = (VS_OUT)0.f;
 
-	// 応急措置
-	{
-		for (int i = 0; i < 4; i++) {
-
-			if (In.index[i] > 49) {
-				return out2;
-			}
-		}
-	}
+	//// 応急措置
+	//{
+	//	for (int i = 0; i < 4; i++) {
+	//
+	//		if (In.index[i] > 49) {
+	//			return out2;
+	//		}
+	//	}
+	//}
 
 		float4 proj_pos;
 
@@ -79,11 +91,28 @@ VS_OUT VS(
 				0.0f, 0.0f, 1.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f);
 
+			//for (int j = 0; j < 4; j++) {
+			//	if (In.index[j] > 50) {
+			//
+			//		int index =
+			//			IndexArray[j];
+			//
+			//		// 頂点ブレンド
+			//		skin_transform += g_bone_mat[index];
+			//	}
+			//}
+			
+			//skin_transform += g_bone_mat[In.index[0]];// * In.blend.x;
+			//skin_transform += g_bone_mat[In.index[1]];// * In.blend.y;
+			//skin_transform += g_bone_mat[In.index[2]];// * In.blend.z;
+			//skin_transform += g_bone_mat[In.index[3]];// * In.blend.w;
 
-			skin_transform += g_bone_mat[In.index[0]];// * In.blend.x;
-			skin_transform += g_bone_mat[In.index[1]];// * In.blend.y;
-			skin_transform += g_bone_mat[In.index[2]];// * In.blend.z;
-			skin_transform += g_bone_mat[In.index[3]];// * In.blend.w;
+
+			skin_transform += g_bone_mat[0];// * In.blend.x;
+			skin_transform += g_bone_mat[1];// * In.blend.y;
+			skin_transform += g_bone_mat[2];// * In.blend.z;
+			skin_transform += g_bone_mat[3];// * In.blend.w;
+
 
 			float4 trans_pos = mul(In.pos, skin_transform);
 			float4 world_pos = mul(trans_pos, g_world_mat);
@@ -157,6 +186,19 @@ technique tech1{
 
 	pass P0
 	{
+		// レンダリングステート設定
+		AlphaBlendEnable = TRUE;
+		SrcBlend = SRCALPHA;
+		DestBlend = INVSRCALPHA;
+		ColorOp[0] = SELECTARG1;
+		ColorArg1[0] = TEXTURE;
+		ColorArg2[0] = DIFFUSE;
+		AlphaOp[0] = SELECTARG1;
+		AlphaArg1[0] = TEXTURE;
+		AlphaArg2[0] = DIFFUSE;
+		ColorOp[1] = DISABLE;
+		AlphaOp[1] = DISABLE;
+
 		VertexShader = compile vs_2_0 VS();
 		PixelShader = compile ps_2_0 PS();
 	}

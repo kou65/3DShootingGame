@@ -14,7 +14,7 @@ void VertexBlendEffectFile::Init(){
 
 	// 通常のシェーダー初期化
 	CreateEffectFile(
-		"Lib/ShaderFile/VertexBlend.hlsl",
+		"Lib/Shader/EffectFile/VertexBlend.hlsl",
 		"tech1",
 		VertexDecl::FBX
 	);

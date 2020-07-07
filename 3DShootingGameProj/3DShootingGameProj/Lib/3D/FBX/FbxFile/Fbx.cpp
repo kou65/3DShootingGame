@@ -5,6 +5,7 @@
 #include"../../../Graphics/Graphics.h"
 #include"../../VertexBuffer/VertexBuffer.h"
 #include"../../../D3DFont/D3DFont.h"
+#include"../FbxFunction/FbxFunction.h"
 
 
 
@@ -19,63 +20,72 @@ Fbx::Fbx() : Model()
 	// グラフィックス受け取り
 	mp_graphics = Graphics::GetInstance();
 
-	// fbxマネージャオブジェクトの生成
-	m_fbx_module.mp_manager = FbxManager::Create();
-
-	// fbxシーンの作成
-	m_fbx_module.mp_fbx_scene = FbxScene::Create(m_fbx_module.mp_manager, "");
-
-	// nullチェック
-	{
-		if (m_fbx_module.mp_manager == NULL) {
-			Window::TextMessageBox("FBXManagerの生成に失敗しました");
-		}
-
-		if (m_fbx_module.mp_fbx_scene == NULL) {
-			Window::TextMessageBox("FBXSceneの作成に失敗しました");
-		}
-	}
-
-	// モーションクラス作成
-	mp_fbx_motion = new FbxMotion(&m_fbx_module);
-
 }
 
 
-void Fbx::Update() {
+void Fbx::SetMotion(
+	const std::string&mesh_name,
+	const std::string&motion_name
+	) {
+
+	m_fbx_motion.SetMotion(mesh_name,motion_name);
+}
 
 
+void Fbx::ChangeMotion(
+	const std::string&mesh_name,
+	const std::string&motion_name
+) {
+
+	// モーションの移行
+	m_fbx_motion.ChangeMotion(
+		mesh_name,
+		motion_name
+	);
+}
+
+
+void Fbx::Update(
+	const std::string&mesh_name,
+	const std::string&motion_name
+) {
+
+
+	// シェーダー
 	if (m_is_shader == false) {
 
 		if (m_is_skinning == true) {
 
-			//CPUSkinning();
-
-			mp_fbx_motion->Animate();
-
-			// モデルを動かす
-			mp_fbx_motion->CPUSkinning(
-				m_mesh_data_list,
-				mp_vertics
+			// アニメーション
+			m_fbx_motion.Animate(
+				mesh_name,
+				1.f
 			);
 
-			//m_key_frame += (0.1f / 60.f) * 60.f;
-			//m_key_frame = 1.1f;
-			
-			//if (m_key_frame >= 1.f) {
-			//	m_key_frame = 0;
-			//}
-			
-			//KeySkinning();
+			std::vector<FbxMeshData>data_list =
+			m_mesh_data_list[mesh_name];
+
+				// モデルを動かす
+			m_fbx_motion.CPUSkinning(
+				mesh_name,
+				data_list
+			);
 		}
 	}
 
-	m_is_shader = false;
 }
 
 
-void Fbx::Draw(TextureData* td) {
 
+void Fbx::Draw(
+	const std::string&mesh_name,
+	TextureData* td,
+	bool is_local_mat_on
+) {
+
+	if (m_mesh_data_list.count(mesh_name) == 0) {
+		return;
+	}
 
 	// ライトをオフにする
 	Graphics::GetInstance()->GetDevice()->
@@ -85,13 +95,16 @@ void Fbx::Draw(TextureData* td) {
 	IDirect3DDevice9* p_device =
 		Graphics::GetInstance()->GetDevice();
 
+	std::vector<FbxMeshData>mesh_data_list =
+	m_mesh_data_list[mesh_name];
 
 	// メッシュインデックスを回す
-	for (UINT mi = 0; mi < m_mesh_data_list.size(); mi++)
+	for (UINT mi = 0; mi < mesh_data_list.size(); mi++)
 	{
 
+		// マテリアル情報取り出し
 		MaterialInfo* mate_info =
-			&m_mesh_data_list[mi].material_info;
+			&m_mesh_data_list[mesh_name][mi].material_info;
 
 		// テクスチャ
 		{
@@ -117,17 +130,18 @@ void Fbx::Draw(TextureData* td) {
 				}
 				else {
 
-					m_effect.SetTexture(
-						TextureManager::GetInstance()->
-						GetTextureData(mate_info->texture_name)
+					// テクスチャセット
+					m_fbx_motion.SetTexture(
+						mate_info->texture_name
 					);
+
 				}
 			}
 		}
 
 		// メッシュデータ
 		FbxMeshData* p_mesh_data =
-			&m_mesh_data_list[mi];
+			&m_mesh_data_list[mesh_name][mi];
 
 		if (p_mesh_data->p_index_buffer == nullptr) {
 			return;
@@ -136,15 +150,17 @@ void Fbx::Draw(TextureData* td) {
 			return;
 		}
 
-		D3DXMATRIX world_mat;
-		if (m_local_pos_list.size() != 0) {
-			// ワールド座標変換
-			world_mat = m_local_pos_list[mi];
+		D3DXMATRIX local_mat;
+		
+		if (is_local_mat_on == true) {
+			// ローカル座標に変換する行列
+			local_mat = p_mesh_data->m_local_mat;
 		}
 		else {
-			D3DXMatrixIdentity(&world_mat);
+			// ローカル姿勢を変換しない
+			D3DXMatrixIdentity(&local_mat);
 		}
-		
+
 		// パラメータセット
 		Set3DParameter(
 			mp_graphics,
@@ -158,28 +174,105 @@ void Fbx::Draw(TextureData* td) {
 		// シェーダーの描画
 		if (m_is_shader == true) {
 
-			//EffectDraw(
-			//	p_mesh_data->vertex_num,
-			//	p_mesh_data->polygon_num,
-			//	world_mat,
-			//	// ボーン行列
-			//	m_motion
-			//	[m_current_motion_name][mi].
-			//	d3d_animation_mat[m_count].bone_list,
-			//	// ボーン数
-			//	m_motion
-			//	[m_current_motion_name][mi].animation_matrix[m_count].size()
-			//);
+			m_fbx_motion.ShaderMotionDraw(
+				mesh_name,
+				p_mesh_data->vertex_num,
+				p_mesh_data->polygon_num,
+				mi,
+				local_mat
+			);
+
 		}
 		else
 		{
 			NormalDraw(
 				p_mesh_data->vertex_num,
 				p_mesh_data->polygon_num,
-				world_mat
+				local_mat
 			);
 		}
 	}
+}
+
+
+void Fbx::LoadFileMotion(
+	const std::string&file_path,
+	const std::string&mesh_name,
+	const std::string&new_motion_name,
+	const int&select_motion_num
+) {
+
+
+	LP_FBX_MANAGER p_manager = nullptr;
+	LP_FBX_SCENE p_scene = nullptr;
+	LP_FBX_IMPORTER p_importer = nullptr;
+
+	// 諸々読み込み初期化
+	if (FbxFunction::CreateLoadFbxModule(
+		p_manager,
+		p_scene,
+		p_importer,
+		file_path,
+		false
+	) == false) {
+		return;
+	}
+
+	// ファイルモーション読み込み
+	m_fbx_motion.LoadSkeletonMotion(
+		p_scene,
+		p_importer,
+		mesh_name,
+		new_motion_name,
+		select_motion_num
+	);
+
+	// 削除
+	FbxFunction::Destory(
+		p_scene,
+		p_importer,
+		p_manager
+	);
+}
+
+
+void Fbx::LoadMotion(
+	const std::string&file_path,
+	const std::string&mesh_name,
+	const std::string&new_motion_name,
+	const int&select_motion_num
+) {
+
+	LP_FBX_MANAGER p_manager = nullptr;
+	LP_FBX_SCENE p_scene = nullptr;
+	LP_FBX_IMPORTER p_importer = nullptr;
+
+	// 諸々読み込み初期化
+	if (FbxFunction::CreateLoadFbxModule(
+		p_manager,
+		p_scene,
+		p_importer,
+		file_path,
+		false
+	) == false) {
+		return;
+	}
+
+	// ファイルモーション読み込み
+	m_fbx_motion.LoadMotion(
+		p_scene,
+		p_importer,
+		mesh_name,
+		new_motion_name,
+		select_motion_num
+	);
+
+	// 削除
+	FbxFunction::Destory(
+		p_scene,
+		p_importer,
+		p_manager
+	);
 }
 
 
@@ -196,99 +289,62 @@ void Fbx::NormalDraw(
 }
 
 
-void Fbx::EffectDraw(
-	const int&vertex_num,
-	const int&polygon_num,
-	const D3DXMATRIX&world_mat,
-	D3DXMATRIX*bone_mat_list,
-	const int&max_bone_index
-) {
-
-
-	// ボーン行列セット
-	m_effect.SetWorldMatrix(world_mat);
-
-	// ボーンセット
-	m_effect.SetBoneMatrix(
-		bone_mat_list
-	);
-
-	m_effect.SetBoneCount(max_bone_index);
-
-	m_effect.SetMaxIndex(
-		max_bone_index
-	);
-
-	// 更新
-	m_effect.Update();
-
-	UINT pass_num = 0;
-
-	m_effect.Begin(pass_num, 0);
-	m_effect.BeginPass(0);
-
-	DrawPrimitive(vertex_num, polygon_num);
-
-	m_effect.EndPass();
-	m_effect.End();
-}
-
-
-
 bool Fbx::Load(
-	const std::string&fbx_file_path
+	const std::string&fbx_file_path,
+	const std::string&register_name
 	) {
 
 
 	// パス指定
 	LoadCurrentPath(fbx_file_path);
 
-	// fbxインポータの作成
-	m_fbx_module.mp_importer = FbxImporter::Create
-	(m_fbx_module.mp_manager, "");
+	LP_FBX_MANAGER p_manager = nullptr;
+	LP_FBX_SCENE p_scene = nullptr;
+	LP_FBX_IMPORTER p_importer = nullptr;
 
-	// nullチェック
-	if (m_fbx_module.mp_importer == NULL) {
-		Window::TextMessageBox("FBXImporterの生成に失敗しました");
-	}
+	//p_manager = FbxManager::Create();
 
-	// インポータの初期化
-	if (!m_fbx_module.mp_importer->Initialize(fbx_file_path.c_str())) {
-
-		Window::TextMessageBox("FBXimporter初期化失敗");
+	// 諸々読み込み初期化
+	if (FbxFunction::CreateLoadFbxModule(
+		p_manager,
+		p_scene,
+		p_importer,
+		fbx_file_path,
+		false
+	) == false) {
 		return false;
 	}
 
-	// ファイルからシーンを読み込む
-	if (!m_fbx_module.mp_importer->Import(m_fbx_module.mp_fbx_scene)) {
-
-		Window::TextMessageBox("シーン読み込みに失敗");
-		return false;
-	}
-
-	// シェーダーの初期化
-	if (m_is_shader == true) {
-		
-		m_effect.Init();
-	}
 
 	/* ここに処理を書いていく */
-	LoadMesh();
+	LoadMesh(
+		&p_scene,
+		&p_manager,
+		&p_importer,
+		register_name
+	);
 
-	// 新しい読み込み
-	LoadFbxMotion();
-
-	// 最初のモーション読み込み
-	//LoadMotion("default", 0);
-
-	// モーションセット
-	//SetMotion("default");
+	// 生成した順に削除しないとエラー
+	FbxFunction::Destory(
+		p_scene,
+		p_importer,
+		p_manager
+	);
 
 	return true;
 }
 
 
-void Fbx::LoadMesh() {
+bool Fbx::LoadMesh(
+	FbxScene**p_scene,
+	FbxManager**p_manager,
+	FbxImporter**p_importer,
+const std::string&mesh_name
+) {
+
+	if (*p_scene == nullptr) {
+		return false;
+	}
 
 	// 頂点情報
 	std::vector<D3DXVECTOR3>vertex_list;
@@ -299,94 +355,157 @@ void Fbx::LoadMesh() {
 
 	// メッシュ分のバッファを確保
 	UINT mesh_num = (UINT)
-		m_fbx_module.mp_fbx_scene->GetSrcObjectCount<FbxMesh>();
+		(*p_scene)->GetSrcObjectCount<FbxMesh>();
 
 	// マテリアル分のバッファを確保
 	UINT materialNum = mesh_num;
 
 	// ポリゴン変換
-	FbxPolygon3Convert();
+	FbxPolygon3Convert(
+		*p_manager,
+		*p_scene
+	);
+
+	// メッシュデータリスト作成
+	std::vector<FbxMeshData>mesh_data_list;
 
 	// メッシュ数分回す
 	for (UINT i = 0; i < mesh_num;i++) {
 
+
+		/* この順番に読み込んでいく */
+
 		// メッシュを取得
 		FbxMesh * p_mesh = 
-			m_fbx_module.mp_fbx_scene->GetSrcObject<FbxMesh>(i);
+			(*p_scene)->GetSrcObject<FbxMesh>(i);
 
-		// 頂点データ生成
-		m_mesh_data_list.emplace_back();
+		// メッシュリスト追加
+		mesh_data_list.emplace_back();
+
+		// メッシュのノード名取得
+		mesh_data_list[i].mesh_node_name = 
+			p_mesh->GetNode()->GetName();
 
 		// インデックス読み込み
 		LoadIndeces(
-			m_mesh_data_list,
+			mesh_data_list,
 			p_mesh
 		);
 
 		// 頂点情報読み込み
 		LoadVertexInfo(
 			p_mesh,
-			m_mesh_data_list
+			mesh_data_list
 		);
 
 		// uv情報読み込み
 		LoadUvInfo(
-			m_mesh_data_list,
+			mesh_data_list,
 			p_mesh
 		);
 		
 		// 法線情報読み込み
 		LoadNormal(
-			m_mesh_data_list,
+			mesh_data_list,
 			p_mesh
 		);
 		
 		// カラー情報読み込み
 		LoadColor(
-			m_mesh_data_list,
+			mesh_data_list,
 			p_mesh
 		);
 		
 		// マテリアル情報
 		LoadMaterial(
-			m_mesh_data_list,
+			mesh_data_list,
 			p_mesh
 		);
 
-		// ローカル座標の読み込み
-		m_local_pos_list.emplace_back(
-			GetFbxLocalD3DMatrix(i)
+
+		// 重みの読み込み
+		m_fbx_motion.LoadWeight(
+			mesh_data_list,
+			p_mesh
 		);
 
+		std::vector<std::string>string_list;
+
+
+		// ボーンの読み込み
+		if (m_fbx_motion.LoadBone(
+			(*p_scene),
+			(*p_importer),
+			mesh_name,
+			p_mesh,
+			i,
+			string_list
+		) == true) {
+
+			// このメッシュにはボーンが存在する
+			mesh_data_list.back().is_bone = true;
+		}
+
+
+		// ローカル座標の読み込み
+		mesh_data_list.back().m_local_mat =
+			GetFbxLocalD3DMatrix(
+			(*p_scene),
+				p_mesh
+			);
 
 		SkinCustomVertex*p_vertics = nullptr;
 
 		// サイズ設定
 		UINT size =
-			(UINT)(m_mesh_data_list.back().vertex_num *
+			(UINT)(mesh_data_list[i].vertex_num *
 				sizeof(SkinCustomVertex));
 
 		// バッファをロックしてデータを書き込む
-		m_mesh_data_list[i].p_vertex_buffer->Lock(
+		mesh_data_list[i].p_vertex_buffer->Lock(
 		0,size,(void**)&p_vertics,0);
 
 		// 頂点追加
-		mp_vertics.emplace_back(new SkinCustomVertex[size]);
+		mesh_data_list[i].mp_vertics =
+			new SkinCustomVertex[size];
 
 		// メモリコピー
-		memcpy(mp_vertics[i], p_vertics, size);
+		memcpy(
+			mesh_data_list[i].mp_vertics,
+			p_vertics,
+			size);
 
 		if (p_vertics == nullptr) {
-			return;
+			return false;
 		}
 
-		m_mesh_data_list[i].p_vertex_buffer->Unlock();
+		mesh_data_list[i].p_vertex_buffer->Unlock();
 	}
 
+	// リストに保持
+	m_mesh_data_list[mesh_name] = mesh_data_list;
+
+
+	return true;
 }
 
 
-D3DXMATRIX Fbx::GetFbxLocalD3DMatrix(int mesh_index) {
+D3DXMATRIX Fbx::GetFbxLocalD3DMatrix(
+	FbxScene*p_scene,
+	FbxMesh*p_mesh
+) {
+
+	if (p_scene == nullptr) {
+		D3DXMATRIX mat;
+		D3DXMatrixIdentity(&mat);
+		return mat;
+	}
+
+	if (p_mesh == nullptr) {
+		D3DXMATRIX mat;
+		D3DXMatrixIdentity(&mat);
+		return mat;
+	}
 
 	// ワールド行列変換
 	{
@@ -396,12 +515,8 @@ D3DXMATRIX Fbx::GetFbxLocalD3DMatrix(int mesh_index) {
 
 		D3DXMatrixIdentity(&l_mat);
 
-		// メッシュを取得
-		FbxMesh* mesh =
-			m_fbx_module.mp_fbx_scene->GetSrcObject<FbxMesh>(mesh_index);
-
 		// メッシュノード
-		FbxNode* mesh_node = mesh->GetNode();
+		FbxNode* mesh_node = p_mesh->GetNode();
 
 		// <移動、回転、拡大のための行列を作成>
 		// ジョイントのローカル SRT 受け取り
@@ -473,40 +588,40 @@ void Fbx::LoadIndeces(
 	std::vector<int>tmp_indeces;
 
 	
-	for (int i = 0; i < polygon_count; i++) {
-
-		int index_size = p_mesh->GetPolygonSize(i);
-		int polygon_num = 1;
-
-		for (int j = 0; j < index_size; j++) {
-
-			int index = p_mesh->GetPolygonVertex(i, j);
-
-			tmp_indeces.push_back(index);
-		}
-
-		// 4ポリなら
-		if (index_size >= 4) {
-
-			// 修正インデックス数
-			fix_index_num++;
-
-			// ポリゴンを追加
-			polygon_num++;
-
-			// ポリゴン変換
-			tmp_indeces = Polygon4ToPolygon3Convert(tmp_indeces);
-		}
-
-		int index_num = 0;
-
-		for (int j = 0; j < polygon_num * 3; j++) {
-
-			indeces.push_back(tmp_indeces[j]);
-		}
-
-		tmp_indeces.clear();
-	}
+	//for (int i = 0; i < polygon_count; i++) {
+	//
+	//	int index_size = p_mesh->GetPolygonSize(i);
+	//	int polygon_num = 1;
+	//
+	//	for (int j = 0; j < index_size; j++) {
+	//
+	//		int index = p_mesh->GetPolygonVertex(i, j);
+	//
+	//		tmp_indeces.push_back(index);
+	//	}
+	//
+	//	// 4ポリなら
+	//	if (index_size >= 4) {
+	//
+	//		// 修正インデックス数
+	//		fix_index_num++;
+	//
+	//		// ポリゴンを追加
+	//		polygon_num++;
+	//
+	//		// ポリゴン変換
+	//		tmp_indeces = Polygon4ToPolygon3Convert(tmp_indeces);
+	//	}
+	//
+	//	int index_num = 0;
+	//
+	//	for (int j = 0; j < polygon_num * 3; j++) {
+	//
+	//		indeces.push_back(tmp_indeces[j]);
+	//	}
+	//
+	//	tmp_indeces.clear();
+	//}
 
 	p_mesh_data->polygon_num = (UINT)polygon_count;
 	//p_mesh_data->index_num = (UINT)(polygon_count * 3);
@@ -556,6 +671,7 @@ void Fbx::LoadIndeces(
 			p_indeces[i * 3 + j] = index;
 		}
 	}
+
 	p_mesh_data->p_index_buffer->Unlock();
 
 }
@@ -566,7 +682,6 @@ void Fbx::InitVertexInfo(
 	FbxMeshData*p_mesh_data,
 	const UINT &size
 ) {
-
 
 	SkinCustomVertex* p_vertices;
 
@@ -593,6 +708,8 @@ void Fbx::InitVertexInfo(
 		// 位置
 		p_vertices[v].vertex.x = (float)pos[v][0];
 		p_vertices[v].vertex.y = (float)pos[v][1];
+		// 左手系に変換
+		//p_vertices[v].vertex.z = (float)pos[v][2] * -1.f;
 		p_vertices[v].vertex.z = (float)pos[v][2];
 		p_vertices[v].vertex.w = 1.f;
 
@@ -629,7 +746,10 @@ void Fbx::LoadVertexInfo(
 	) {
 
 
+	// 現在こちら
 	//int vertex_num = p_mesh->GetPolygonVertexCount();
+
+	// 06_29こちらを使わなくした
 	int vertex_num = p_mesh->GetControlPointsCount();
 
 	// 全ての頂点サイズ(数)を出力
@@ -754,7 +874,8 @@ void Fbx::LoadNormal(
 		// それぞれxyz代入
 		p_vertices[index].normal.x = (float)normal[0];
 		p_vertices[index].normal.y = (float)normal[1];
-		p_vertices[index].normal.z = (float)normal[2];
+		// 左手系に変換
+		p_vertices[index].normal.z = ((float)normal[2] * -1.f);
 		//p_vertices[index].normal.w = (float)normal[3];
 	}
 
@@ -763,7 +884,7 @@ void Fbx::LoadNormal(
 
 
 void Fbx::LoadMaterial(
-	std::vector<FbxMeshData>&p_vertex_data_list,
+	std::vector<FbxMeshData>&p_mesh_data_list,
 	FbxMesh*p_mesh
 ) {
 
@@ -774,33 +895,46 @@ void Fbx::LoadMaterial(
 	// マテリアルの数
 	int material_num = p_node->GetMaterialCount();
 
-	// マテリアルがないならエントリにあるかも
-	if (material_num == 0) {
-
-		// エントリー用のテクスチャ読み込み
-		LoadEntryTexture(
-			p_mesh,
-			&p_vertex_data_list.back().material_info
-		);
-
-		return;
-	}
 
 	for (int i = 0; i < material_num; i++) {
 
 		// サーフェイス受け取り
 		FbxSurfaceMaterial*p_material = p_node->GetMaterial(i);
 
+		// マテリアル名取得
+		p_mesh_data_list.back().material_name = 
+		p_node->GetMaterial(i)->GetName();
+
 		if (p_material != 0) {
 
 			// テクスチャ読み込み
-			LoadTexture(
+			if (LoadTexture(
 				p_mesh,
-				&p_vertex_data_list.back().material_info);
+				&p_mesh_data_list.back().material_info) == true) {
+
+				// 読み込めた
+				can_get_texture = true;
+			}
 		}
 	}
-}
 
+	// テクスチャが取得出来ているなら
+	if (can_get_texture == true) {
+		return;
+	}
+
+	// テクスチャオブジェクトにないならエントリにあるかも
+	if (material_num != 0) {
+
+		// エントリー用のテクスチャ読み込み
+		LoadEntryTexture(
+			p_mesh,
+			&p_mesh_data_list.back().material_info
+		);
+
+		return;
+	}
+}
 
 
 bool Fbx::LoadTexture(
@@ -809,7 +943,7 @@ bool Fbx::LoadTexture(
 )
 {
 	// エレメント受け取り
-	FbxLayerElementMaterial * p_element_material =
+	FbxLayerElementMaterial * p_element_material = 
 		p_mesh->GetElementMaterial();
 
 	if (p_element_material == nullptr) {
@@ -884,8 +1018,9 @@ bool Fbx::LoadTexture(
 	// 現在のパス
 	char path[MAX_PATH];
 
+
 	// ファイルパスが絶対パスなら
-	if (strstr(p_file_name, "\\"))
+	if (Utility::Convert::IsStrInclude(p_file_name,"\\") == true)
 	{
 		strcpy_s(path, p_file_name);
 	}
@@ -907,7 +1042,7 @@ bool Fbx::LoadTexture(
 	
 	std::string str_path = path;
 
-	// Dルート
+	// Dドライブ
 	if (p_file_name[0] == 'D') {
 		// ファイルパス分割
 		std::vector<std::string>string_list;
@@ -933,7 +1068,8 @@ bool Fbx::LoadTexture(
 
 void Fbx::LoadEntryTexture(
 	FbxMesh*p_mesh,
-	MaterialInfo*p_material_info
+	MaterialInfo*p_material_info,
+	int entry_tex_index
 ) {
 
 	FbxNode*p_node = p_mesh->GetNode();
@@ -972,56 +1108,77 @@ void Fbx::LoadEntryTexture(
 
 	const FbxBindingTableEntry *entry = nullptr;
 
+	// 所属するエントリーを全て回す
 	for (int i = 0; i < entry_count; i++) {
 
-		entry = 
-			&p_root_table->GetEntry(i);
-	}
+		entry =
+			&p_root_table->GetEntry(i % entry_count);
 
-	const char*p_name 
-		= entry->GetSource();
+		// ここにMaya|DiffuseTexture
+		// Maya|FalloffTextureが入っている物にのみテクスチャが存在する
+		const char*p_name
+			= entry->GetSource();
 
-	FbxProperty property =
-		p_obj->RootProperty.FindHierarchical(p_name);
 
-	int file_texture_count = 
-		property.GetSrcObjectCount<FbxFileTexture>();
+		// エントリー名からプロパティを取得する
+		FbxProperty property =
+			p_obj->RootProperty.FindHierarchical(p_name);
 
-	std::string file_tex_file_name;
+		// ファイルテクスチャ数を取得する
+		int file_texture_count =
+			property.GetSrcObjectCount<FbxFileTexture>();
 
-	for (int i = 0; i < file_texture_count; i++) {
-		FbxFileTexture*p_file_tex =
-			property.GetSrcObject<FbxFileTexture>(i);
+		std::string file_tex_file_name;
+		std::string root_file_tex_file_name;
 
-		file_tex_file_name =
-			p_file_tex->GetFileName();
+		for (int i = 0; i < file_texture_count; i++) {
 
-		// ファイルパス分割
-		std::vector<std::string>string_list;
+			// ファイルテクスチャを取得する
+			FbxFileTexture*p_file_tex =
+				property.GetSrcObject<FbxFileTexture>(i);
 
-		// カレントの種類を調べそれぞれで文字列分割
-		if(strstr(file_tex_file_name.c_str(),"\\") !=NULL){
+			// ファイルテクスチャ名を取得する
+			file_tex_file_name =
+				p_file_tex->GetFileName();
 
-			string_list = 
-				Utility::Convert::SplitStr('\\', file_tex_file_name);
+			// 相対パス
+			root_file_tex_file_name =
+				p_file_tex->GetRelativeFileName();
+
+			// ファイルパス分割
+			std::vector<std::string>string_list;
+
+			// カレントの種類を調べそれぞれで文字列分割
+			if (strstr(file_tex_file_name.c_str(), "\\") != NULL) {
+
+				string_list =
+					Utility::Convert::SplitStr('\\', file_tex_file_name);
+			}
+			else if (strstr(file_tex_file_name.c_str(), "/") != NULL) {
+
+				string_list =
+					Utility::Convert::SplitStr('/', file_tex_file_name);
+			}
+
+
+			// テクスチャ登録名を保存
+			std::string str_path =
+				m_root_path + string_list.back();
+
+			// テクスチャ読み込み
+			TextureManager::GetInstance()->
+				Load(str_path.c_str(), string_list.back().c_str());
+
+			// テクスチャ登録名を保存
+			p_material_info->texture_name = string_list.back();
+
+
+			// 探しているディフーズが見つかった時点で終了
+			if (Utility::Convert::
+				IsStrCmp(p_name, DEFFUSE_TEX_NAME.c_str()) == true) {
+				return;
+			}
 		}
-		else if(strstr(file_tex_file_name.c_str(), "/") != NULL) {
-
-			string_list = 
-				Utility::Convert::SplitStr('/', file_tex_file_name);
-		}
-		
-
-		// テクスチャ登録名を保存
-		std::string str_path =
-			m_root_path + string_list.back();
-
-		// テクスチャ読み込み
-		TextureManager::GetInstance()->
-			Load(str_path.c_str(), string_list.back().c_str());
-
-		// テクスチャ登録名を保存
-		p_material_info->texture_name = string_list.back();
 	}
 }
 
@@ -1043,80 +1200,96 @@ bool Fbx::LoadColor(
 		return false;
 	}
 
-	// 頂点カラー受け取り
-	FbxGeometryElementVertexColor*p_color = 
-		p_mesh->GetElementVertexColor(0);
+	// カラーレイヤー数を返す
+	int color_layer_count =
+		p_mesh->GetElementVertexColorCount();
 
-	// マッピングモード
-	FbxLayerElement::EMappingMode map_mode = 
-		p_color->GetMappingMode();
+	//for (int c = 0; c < color_element_count; c++) {
+		// 頂点カラー受け取り
+		FbxGeometryElementVertexColor*p_color =
+			p_mesh->GetElementVertexColor(0);
 
-	// リファレンスモード
-	FbxLayerElement::EReferenceMode ref_mode =
-		p_color->GetReferenceMode();
-	
-	if (map_mode == FbxLayerElement::eByPolygonVertex) {
+		// 取得したセットのマッピングモード
+		FbxLayerElement::EMappingMode map_mode =
+			p_color->GetMappingMode();
 
-		if (ref_mode == FbxLayerElement::eIndexToDirect) {
+		// リファレンスモード
+		FbxLayerElement::EReferenceMode ref_mode =
+			p_color->GetReferenceMode();
 
-			// バーテックスバッファ受け取り
-			IDirect3DVertexBuffer9*p_vertex_buffer =
-				p_mesh_data->p_vertex_buffer;
+		if (map_mode == FbxLayerElement::eByPolygonVertex) {
 
-			SkinCustomVertex*p_vertices;
+			if (ref_mode == FbxLayerElement::eIndexToDirect) {
 
-			// バッファをロックして書き込む
-			p_vertex_buffer->Lock(
-				0,
-				p_mesh_data->vertex_num * sizeof(SkinCustomVertex),
-				(void**)&p_vertices,
-				0
-			);
+				// バーテックスバッファ受け取り
+				IDirect3DVertexBuffer9*p_vertex_buffer =
+					p_mesh_data->p_vertex_buffer;
 
-			FbxLayerElementArrayTemplate<FbxColor>&colors =
-				p_color->GetDirectArray();
+				SkinCustomVertex*p_vertices;
+				
+				// バッファをロックして書き込む
+				p_vertex_buffer->Lock(
+					0,
+					p_mesh_data->vertex_num * sizeof(SkinCustomVertex),
+					(void**)&p_vertices,
+					0
+				);
 
-			FbxLayerElementArrayTemplate<int>&indeces =
-				p_color->GetIndexArray();
+				FbxLayerElementArrayTemplate<FbxColor>&colors =
+					p_color->GetDirectArray();
 
-			for (int i = 0; i < indeces.GetCount(); i++) {
+				FbxLayerElementArrayTemplate<int>&indeces =
+					p_color->GetIndexArray();
 
-				// fbxカラー
-				FbxColor color = colors.GetAt(indeces.GetAt(i));
+				for (int i = 0; i < indeces.GetCount(); i++) {
 
-				// カラー情報受け取り
-				DWORD a = (DWORD)(color.mAlpha * 255.0);
-				DWORD r = (DWORD)(color.mRed   * 255.0);
-				DWORD g = (DWORD)(color.mGreen * 255.0);
-				DWORD b = (DWORD)(color.mBlue  * 255.0);
+					// fbxカラー
+					FbxColor color = colors.GetAt(indeces.GetAt(i));
 
-				//p_vertices[i].diffuse =
-				//	(a << 24) + (r << 16) + (g << 8) + (b);
+					// カラー情報受け取り
+					DWORD a = (DWORD)(color.mAlpha * 255.0);
+					DWORD r = (DWORD)(color.mRed   * 255.0);
+					DWORD g = (DWORD)(color.mGreen * 255.0);
+					DWORD b = (DWORD)(color.mBlue  * 255.0);
+
+					//p_vertices[i].diffuse = 
+					//	(a << 24) + (r << 16) + (g << 8) + (b);
+				}
+				p_vertex_buffer->Unlock();
 			}
-			p_vertex_buffer->Unlock();
 		}
-	}
+	//}
 
 	return true;
 }
 
-void Fbx::FbxPolygon3Convert() {
+void Fbx::FbxPolygon3Convert(
+FbxManager*p_manager,
+FbxScene*p_scene
+) {
 
-	fbxsdk::FbxGeometryConverter converter(m_fbx_module.mp_manager);
+	if (p_manager == nullptr) {
+		return;
+	}
+
+	fbxsdk::FbxGeometryConverter converter(p_manager);
 	// マテリアルと1メッシュ毎に分ける
-	converter.SplitMeshesPerMaterial(m_fbx_module.mp_fbx_scene, true);
+	converter.SplitMeshesPerMaterial(p_scene, true);
 	// 全てを三角形にする
-	converter.Triangulate(m_fbx_module.mp_fbx_scene, true);
+	converter.Triangulate(p_scene, true);
 
 	// 追加
 	converter.RemoveBadPolygonsFromMeshes(
-		m_fbx_module.mp_fbx_scene
+		p_scene
 	);
 
 }
 
 
 void Fbx::LoadCurrentPath(const std::string &path_name) {
+
+	// 読み込むのでルートパスを初期化
+	m_root_path.clear();
 
 	// ファイルパス分割
 	std::vector<std::string>string_list;
@@ -1129,14 +1302,9 @@ void Fbx::LoadCurrentPath(const std::string &path_name) {
 
 void Fbx::Release() {
 
-	m_fbx_module.mp_manager->Destroy();
-
-	m_fbx_module.mp_fbx_scene->Destroy();
-
 	// インポータはファイルを開いてシーンクラスとの橋渡し
 	// をしてくれるだけなので、ここで破棄してもいい
 	// インポータの明示的な破棄
-	m_fbx_module.mp_importer->Destroy();
 }
 
 
@@ -1158,44 +1326,6 @@ std::string Fbx::GetUTF8Path(const std::string& path)
 	FbxFree(path_utf8);
 
 	return coverted_path;
-}
-
-void Fbx::LoadFbxMotion() {
-
-
-	// 必ずメッシュの後に関数を書く
-
-	for (UINT i = 0; i < m_mesh_data_list.size(); i++) {
-
-		// メッシュを取得
-		FbxMesh * p_mesh =
-			m_fbx_module.mp_fbx_scene->GetSrcObject<FbxMesh>(i);
-
-		// ボーンの読み込み
-		mp_fbx_motion->LoadBone(
-			m_fbx_module,
-			&m_mesh_data_list,
-			p_mesh
-		);
-
-
-		mp_fbx_motion->LoadWeightVertexPoint(
-			m_mesh_data_list,
-			p_mesh
-		);
-
-	}
-
-	// モーション読み込み
-	mp_fbx_motion->LoadMotion(
-		"default",
-		0,
-		m_mesh_data_list,
-		m_fbx_module
-	);
-
-
-	mp_fbx_motion->SetMotion();
 }
 
 
