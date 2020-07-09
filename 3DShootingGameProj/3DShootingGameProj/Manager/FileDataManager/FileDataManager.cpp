@@ -140,7 +140,7 @@ void FileDataManager::LoadRandomPosNum(FILE*p_file) {
 
 void FileDataManager::CreateObject() {
 
-
+	// 共有用取得
 	std::shared_ptr<ObjectFactory>p_factory = mp_mng.lock();
 	std::shared_ptr<Camera3D>p_camera = mp_camera.lock();
 	std::shared_ptr<ObjectData>p_data = mp_object_data.lock();
@@ -148,11 +148,10 @@ void FileDataManager::CreateObject() {
 	// プレイヤー生成(プレイヤー参照値取得)
 	for (auto &player_pos : m_obj_pos_list[Const::FileObj::PLAYER]) {
 
-
-		p_factory->CreatePlayer(
+		p_factory->CreateSharedPlayer(
 			player_pos,
-			p_camera,
-			p_data
+			mp_camera,
+			p_data->p_player
 		);
 	}
 
@@ -164,9 +163,10 @@ void FileDataManager::CreateObject() {
 	// ゴールオブジェクト生成
 	for (auto &goal_obj : m_obj_pos_list[Const::FileObj::GOAL_OBJECT]) {
 
+		// ゴールオブジェクト生成
 		p_factory->CreateGoalObject(
 			goal_obj,
-			&p_data->p_goal_object
+			p_data->p_goal_object
 		);
 	}
 

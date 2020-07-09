@@ -30,14 +30,14 @@ void MapStructureManager::Update(){
 }
 
 
-void MapStructureManager::CreateAxis(CharacterBase*p_chara) {
+void MapStructureManager::CreateAxis(std::weak_ptr<CharacterBase>&p_chara) {
 	mp_chara = p_chara;
 }
 
 
 void MapStructureManager::Init() {
 
-	if (mp_chara == nullptr) {
+	if (mp_chara.lock() == nullptr) {
 		return;
 	}
 
@@ -86,7 +86,7 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 
 	// 現在タイル位置を割り出す
 	int back_taile = 
-		(int)((int)mp_chara->GetPos().z / (Taile::TAILE_SIZE_X * 2));
+		(int)((int)mp_chara.lock()->GetPos().z / (Taile::TAILE_SIZE_X * 2));
 
 	// 後方のタイル範囲
 	back_taile -= CREATE_RANGE_BACK;
@@ -144,7 +144,9 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 					// 床生成,参照受け取り
 					p_factory->CreateTaile(
 						data,
-						&mp_map_obj_list[i][j]);
+						Taile::Direction::FLOOR,
+						mp_map_obj_list[i][j]
+					);
 					break;
 
 
@@ -153,8 +155,8 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 					// 床生成,参照受け取り
 					p_factory->CreateTaile(
 						data,
-						&mp_map_obj_list[i][j],
-						Taile::Direction::LEFT
+						Taile::Direction::LEFT,
+						mp_map_obj_list[i][j]
 					);
 					break;
 
@@ -163,8 +165,8 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 					// 床生成,参照受け取り
 					p_factory->CreateTaile(
 						data,
-						&mp_map_obj_list[i][j],
-						Taile::Direction::RIGHT
+						Taile::Direction::RIGHT,
+						mp_map_obj_list[i][j]
 					);
 					break;
 				}
@@ -199,7 +201,7 @@ void MapStructureManager::SerchCreateDeleteTaile() {
 			if (m_is_create_list[fb][j] == true){
 
 				// オブジェクトリストから削除
-				mp_map_obj_list[fb][j]->NotActive();
+				mp_map_obj_list[fb][j].lock()->NotActive();
 
 				m_is_create_list[fb][j] = false;
 			}

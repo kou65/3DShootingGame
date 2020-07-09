@@ -39,15 +39,35 @@ public:
 
 
 	/**
-	* @brief エントリー
+	* @brief 一つだけのobjを描画
 	*/
-	void Entry(ObjectBase*object);
+	void DrawUniqueObj();
 
 
 	/**
-	* @brief 共有エントリー
+	* @brief 共有されているobjの描画
 	*/
-	void SharedEntry(std::shared_ptr<ObjectBase>obj);
+	void DrawSharedObj();
+
+
+	/**
+	* @brief zテクスチャ書き込み
+	*/
+	void DrawZTexture();
+
+
+	/**
+	* @brief 一つだけのオブジェクト追加
+	* @brief 同時にunique_ptrの所有権の移動も行う(つまりこちらのptrが本体になる)
+	*/
+	void EntryUniqueObj(std::unique_ptr<ObjectBase>object);
+
+
+	/**
+	* @brief 共有オブジェクト追加
+	* @brief 同時にshered_ptrの所有権の移動も行う(つまりこちらのptrが本体になる)
+	*/
+	void EntrySharedObj(std::shared_ptr<ObjectBase>obj);
 
 
 	/**
@@ -65,21 +85,32 @@ private:
 
 
 	/**
-	* @brief オブジェクトへ挿入
+	* @brief 活動停止していたら自動削除
 	*/
-	void EmplaceBack(ObjectBase*object);
-
+	void NotActiveAutoDelete();
 
 	/**
 	* @brief 活動停止していたら自動削除
 	*/
-	void NotActiveAutoDelete();
+	void UniqueObjAutoDelete();
 
 
 	/**
 	* @brief 共有自動削除
 	*/
-	void SharedAutoDelete();
+	void SharedObjAutoDelete();
+
+
+	/**
+	* @brief オブジェクト挿入
+	*/
+	void InsertUniqueObj();
+
+
+	/**
+	* @brief 共有オブジェクト挿入
+	*/
+	void InsertSharedObj();
 
 
 	/**
@@ -87,25 +118,18 @@ private:
 	*/
 	void InsertObject();
 
-
-	/**
-	* @brief 共有オブジェクト挿入
-	*/
-	void InsertSharedObject();
-
 private:
-
-	//! 共有代入用
-	std::vector<std::shared_ptr<ObjectBase>>mp_insert_obj_shared;
-
-	//! 共有用
-	std::vector<std::shared_ptr<ObjectBase>>mp_object_list_shared;
-
-	//! 代入用
-	std::vector<std::unique_ptr<ObjectBase>>mp_insert_obj;
 
 	//! オブジェクトリスト
 	std::vector<std::unique_ptr<ObjectBase>>mp_object_list;
+	//! 共有用
+	std::vector<std::shared_ptr<ObjectBase>>mp_object_list_shared;
+
+	//! unique代入用
+	std::vector<std::unique_ptr<ObjectBase>>mp_insert_obj;
+	//! 共有代入用
+	std::vector<std::shared_ptr<ObjectBase>>mp_insert_obj_shared;
+
 };
 
 

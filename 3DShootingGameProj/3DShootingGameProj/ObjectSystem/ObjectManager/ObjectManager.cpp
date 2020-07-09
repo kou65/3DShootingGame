@@ -6,33 +6,41 @@
 
 void ObjectManager::Update() {
 
-	// 活動していなかった削除する関数
+	// 削除
 	NotActiveAutoDelete();
-
+	
 	// オブジェクトを挿入
 	InsertObject();
 
 	// オブジェクトを回す
 	for (auto &object : mp_object_list) {
-
+	
 		// 更新
 		object.get()->Update();
 	}
 
-}
+	for (auto &object : mp_object_list_shared) {
 
+		object->Update();
+	}
+}
 
 
 void ObjectManager::Draw() {
 
-	UINT i;
+	// zテクスチャの描画を先に行う
+	DrawZTexture();
 
-	ZTextureManager::GetInstance()->GetZTexturePtr(
-		FuncZTexture::Const::Z_TEX_1024
-	)->Begin(i, 0);
+	DrawUniqueObj();
 
-	// オブジェクトをzテクスチャに書き込み
-	for (auto &object : mp_object_list) {
+	DrawSharedObj();
+}
+
+
+void ObjectManager::DrawSharedObj() {
+
+	// オブジェクトを描画
+	for (auto &object : mp_object_list_shared) {
 
 		// 活動していないなら
 		if (object.get()->IsActive() != true) {
@@ -45,13 +53,12 @@ void ObjectManager::Draw() {
 		}
 
 		// 描画
-		object.get()->DrawZTexture();
+		object.get()->Draw();
 	}
+}
 
-	ZTextureManager::GetInstance()->GetZTexturePtr(
-		FuncZTexture::Const::Z_TEX_1024
-	)->End();
 
+void ObjectManager::DrawUniqueObj() {
 
 	// オブジェクトを描画
 	for (auto &object : mp_object_list) {
@@ -72,7 +79,66 @@ void ObjectManager::Draw() {
 }
 
 
+void ObjectManager::DrawZTexture() {
+
+	UINT i;
+
+	// zテクスチャ書き込み開始
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->Begin(i, 0);
+
+	// 一つだけのobjを回す
+	for (auto &object : mp_object_list) {
+	
+		// 活動していないなら
+		if (object.get()->IsActive() != true) {
+			continue;
+		}
+	
+		// 描画できないなら
+		if (object.get()->CanDraw() != true) {
+			continue;
+		}
+	
+		// 描画
+		object.get()->DrawZTexture();
+	}
+
+	// 共有用を回す
+	for (auto&object : mp_object_list_shared) {
+
+		// 活動していないなら
+		if (object.get()->IsActive() != true) {
+			continue;
+		}
+
+		// 描画できないなら
+		if (object.get()->CanDraw() != true) {
+			continue;
+		}
+
+		// 描画
+		object.get()->DrawZTexture();
+	}
+
+	ZTextureManager::GetInstance()->GetZTexturePtr(
+		FuncZTexture::Const::Z_TEX_1024
+	)->End();
+
+}
+
+
 void ObjectManager::InsertObject() {
+
+	InsertUniqueObj();
+
+	InsertSharedObj();
+}
+
+
+
+void ObjectManager::InsertUniqueObj() {
 
 
 	// 配列に溜めていたオブジェクトを代入
@@ -87,11 +153,20 @@ void ObjectManager::InsertObject() {
 		mp_insert_obj.clear();
 	}
 
-	for (auto &obj : mp_insert_obj_shared) {
+}
 
-		mp_object_list_shared.emplace_back(std::move(obj));
+
+void ObjectManager::InsertSharedObj() {
+
+
+	// 配列に溜めていたオブジェクトを代入
+	for (auto &i_obj : mp_insert_obj_shared) {
+
+		// オブジェクトポインタを委譲
+		mp_object_list_shared.emplace_back(std::move(i_obj));
 	}
 
+	// オブジェクトが存在するなら
 	if (mp_insert_obj_shared.size() > 0) {
 		mp_insert_obj_shared.clear();
 	}
@@ -99,6 +174,16 @@ void ObjectManager::InsertObject() {
 
 
 void ObjectManager::NotActiveAutoDelete() {
+
+	// 活動していなかった削除する関数
+	UniqueObjAutoDelete();
+
+	// delete
+	SharedObjAutoDelete();
+}
+
+
+void ObjectManager::UniqueObjAutoDelete() {
 
 	for (auto itr = mp_object_list.begin();
 		itr != mp_object_list.end();) {
@@ -129,33 +214,10 @@ void ObjectManager::NotActiveAutoDelete() {
 }
 
 
-void ObjectManager::SharedEntry(std::shared_ptr<ObjectBase>obj) {
-
-	mp_insert_obj_shared.emplace_back(obj);
-}
+void ObjectManager::SharedObjAutoDelete() {
 
 
-void ObjectManager::InsertSharedObject() {
-
-
-	// 配列に溜めていたオブジェクトを代入
-	for (auto &i_obj : mp_insert_obj) {
-
-		// オブジェクトポインタを委譲
-		mp_object_list_shared.emplace_back(std::move(i_obj));
-	}
-
-	// オブジェクトが存在するなら
-	if (mp_insert_obj.size() > 0) {
-		mp_insert_obj.clear();
-	}
-}
-
-
-void ObjectManager::SharedAutoDelete() {
-
-
-	// 定期的に消す 
+	// 定期的に消す
 	for (auto itr = mp_object_list_shared.begin();
 		itr != mp_object_list_shared.end();) {
 
@@ -204,13 +266,15 @@ void ObjectManager::AllDelete() {
 }
 
 
-void ObjectManager::EmplaceBack(ObjectBase*object) {
+void ObjectManager::EntryUniqueObj(std::unique_ptr<ObjectBase>object) {
 
-	mp_object_list.emplace_back(object);
+	// 所有権を委譲しないとそのままでは上書きエラーになる
+	mp_insert_obj.emplace_back(std::move(object));
 }
 
 
-void ObjectManager::Entry(ObjectBase*object) {
-	mp_insert_obj.emplace_back(object);
-}
+void ObjectManager::EntrySharedObj(std::shared_ptr<ObjectBase>obj) {
 
+	// ポインタ所有権移動
+	mp_insert_obj_shared.emplace_back(std::move(obj));
+}

@@ -6,17 +6,17 @@
 
 HomingBulletEnemy::HomingBulletEnemy(
 	const Vec3&create_pos,
-	ObjectFactory*factory,
-	CharacterBase*player
+	ObjectFactory *p_factory,
+	std::weak_ptr<CharacterBase>p_chara
 ) {
 
 	// 生成位置
 	m_pos = create_pos;
 
 	// オブジェクト代入
-	mp_obj_factory = factory;
+	mp_obj_factory = p_factory;
 
-	mp_player = player;
+	mp_player = p_chara;
 
 	m_shot_timer = 0.f;
 
@@ -96,9 +96,18 @@ Vec3 HomingBulletEnemy::CalcDirection() {
 
 	Vec3 dir;
 
-	dir.x = m_pos.x - mp_player->GetPos().x;
-	dir.y = m_pos.y - mp_player->GetPos().y;
-	dir.z = m_pos.z - mp_player->GetPos().z;
+	// プレイヤーポインタを返す
+	std::shared_ptr<CharacterBase>p_player =
+		mp_player.lock();
+
+	if (p_player == nullptr) {
+		return dir;
+	}
+
+	// 方向算出
+	dir.x = m_pos.x - p_player->GetPos().x;
+	dir.y = m_pos.y - p_player->GetPos().y;
+	dir.z = m_pos.z - p_player->GetPos().z;
 
 	return dir;
 }
@@ -131,10 +140,12 @@ void HomingBulletEnemy::Shot(){
 	// 位置
 	param.pos = m_pos;
 
+	if (mp_obj_factory != nullptr) {
 
-	// 弾を生成
-	mp_obj_factory->CreateEnemyBullet(
-		param,
-		data
-	);
+		// 弾を生成
+		mp_obj_factory->CreateEnemyBullet(
+			param,
+			data
+		);
+	}
 }

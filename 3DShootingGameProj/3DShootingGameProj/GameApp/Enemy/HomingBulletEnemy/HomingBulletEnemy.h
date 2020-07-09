@@ -4,7 +4,6 @@
 #include"../../Player/Player.h"
 
 
-
 /**
 * @brief 自機方向に弾を撃つ敵クラス
 */
@@ -28,8 +27,8 @@ public:
 	*/
 	HomingBulletEnemy(
 		const Vec3&pos,
-		ObjectFactory*p_factory,
-		CharacterBase*p_chara
+		ObjectFactory *p_factory,
+		std::weak_ptr<CharacterBase>p_chara
 	);
 
 
@@ -88,10 +87,10 @@ private:
 private:
 
 	// !弾生成工場
-	ObjectFactory*mp_obj_factory;
+	ObjectFactory *mp_obj_factory;
 
 	// !プレイヤー
-	CharacterBase*mp_player;
+	std::weak_ptr<CharacterBase>mp_player;
 
 	// !打ち出す時間
 	float m_shot_timer;

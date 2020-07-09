@@ -30,25 +30,12 @@ class ObjectFactory {
 public:
 
 
-	
-	/**
-	* @brief 自機生成
-	* @param[in] pos 位置
-	* @param[in] p_camera カメラポインタ
-	* @param[out] p_out_object_data  
-	*/
-	void CreatePlayer(
-		const Vec3&pos,
-		std::shared_ptr<Camera3D>p_camera,
-		std::shared_ptr<ObjectData>p_out_object_data
-	);
-
 
 	// 自機共有用
 	void CreateSharedPlayer(
 		const Vec3&pos,
-		std::weak_ptr<Camera3D>mp_camera,
-		std::weak_ptr<ObjectData2>p_player_data
+		std::weak_ptr <Camera3D>&mp_camera,
+		std::weak_ptr<Player>&p_player
 	);
 
 
@@ -95,17 +82,6 @@ public:
 
 
 	/**
-	* @brief 敵生成
-	* @param[in] pos 位置
-	* @param[in] speed 速度
-	*/
-	void CreateEnemy(
-		const Vec3 &pos,
-		const float &speed
-	);
-
-
-	/**
 	* @brief その方向へ弾を撃つ敵生成
 	* @param[in] pos 位置
 	* @param[in] p_chara キャラクターポインタ
@@ -113,8 +89,8 @@ public:
 	*/
 	void CreateHEnemy(
 		const Vec3&pos,
-		CharacterBase*p_chara,
-		EnemyBase**p_enemy_base
+		std::weak_ptr<CharacterBase>p_chara,
+		std::weak_ptr<EnemyBase>&p_enemy_base
 	);
 
 
@@ -126,8 +102,8 @@ public:
 	*/
 	void CreateShotgunEnemy(
 		const Vec3&pos,
-		CharacterBase*p_chara,
-		EnemyBase**p_enemy_base
+		std::weak_ptr<CharacterBase>p_chara,
+		std::weak_ptr<EnemyBase>&p_enemy_base
 	);
 
 
@@ -136,9 +112,9 @@ public:
 	* @param[in] pos 位置
 	* @param[out] p_out_cube ブロックポインタ
 	*/
-	void CreateCube(
+	void CreateBlock(
 		const Vec3&pos,
-		Block**p_out_cube
+		std::weak_ptr<Block>&p_out_cube
 	);
 
 
@@ -149,7 +125,7 @@ public:
 	*/
 	void CreateGoalObject(
 		const Vec3&pos,
-		GoalObject**p_obj
+		std::weak_ptr<GoalObject>p_obj
 	);
 
 
@@ -168,9 +144,9 @@ public:
 	* @param[out] MapObjectBase**p_map_obj
 	*/
 	void CreateTaile(
-		const ObjParameter&obj_param,
-		MapObjectBase**p_map_obj,
-		const Taile::Direction &dir = Taile::Direction::FLOOR
+		const ObjParameter&data,
+		const Taile::Direction &dir,
+		std::weak_ptr<MapObjectBase>&p_map_obj
 	);
 
 	/**

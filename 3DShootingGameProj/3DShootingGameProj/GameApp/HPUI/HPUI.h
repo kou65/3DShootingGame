@@ -18,7 +18,7 @@ public:
 	* @brief コンストラクタ
 	* @param[in] p_player プレイヤーポインタ
 	*/
-	HPUI(Player*p_player);
+	HPUI(std::weak_ptr<Player>p_player);
 
 
 	/**
@@ -47,7 +47,7 @@ private:
 	Sprite2DParameter m_sprite_param;
 
 	//! プレイヤーポインタ
-	Player*mp_player;
+	std::weak_ptr<Player>mp_player;
 };
 
 #endif

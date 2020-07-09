@@ -60,7 +60,7 @@ public:
 	*/
 	void Draw(
 		const DrawStatus&state,
-		const ObjParameter&param
+		ObjParameter&param
 	);
 
 
@@ -197,6 +197,12 @@ private:
 
 
 	/**
+	* @brief ブラーフィルター初期化
+	*/
+	void InitBlurFileter();
+
+
+	/**
 	* @brief zテクスチャ書き込み
 	* @param[in] param objパラメータ構造体
 	* @param[in] ZTexture* zテクスチャポインタ
@@ -204,6 +210,14 @@ private:
 	void WriteZTexture(
 		const ObjParameter&param,
 		ZTexture*p_tex
+	);
+
+
+	/**
+	* @brief シェーダーにそれぞれテクスチャ
+	*/
+	void LoadTextureShader(
+		LPDIRECT3DTEXTURE9 p_tex
 	);
 
 
@@ -236,7 +250,7 @@ private:
 	* @brief ブラーフィルター描画
 	*/
 	void DrawBlur(
-		const ObjParameter&param
+		ObjParameter&param
 	);
 
 
@@ -244,7 +258,7 @@ private:
 	* @brief レンダーターゲット用練習
 	*/
 	void DrawRenderTarget(
-		const ObjParameter&param
+		ObjParameter&param
 	);
 
 
@@ -313,7 +327,7 @@ private:
 	* @brief 使うシェーダーパスを選択
 	* @param[in] type シェーダーの種類
 	*/
-	UINT GetUsePass(const ShaderType&type);
+	UINT GetUsePass(const PassType&type);
 
 private:
 
@@ -524,7 +538,7 @@ private:
 	BlurFilter m_blur;
 
 	//! ライトパスタイプ
-	ShaderType m_pass_type;
+	PassType m_pass_type;
 
 	//! 影データ
 	ShadowData m_shadow_data;
@@ -533,10 +547,10 @@ private:
 	LightData m_light_data;
 
 	//! サーフェイス
-	Surface suf_list[SURFACE_VALUE];
+	Surface m_suf_back_list[SURFACE_VALUE];
 
 	//! テクスチャ
-	LPDIRECT3DTEXTURE9 m_tex;
+	LPDIRECT3DTEXTURE9 m_bulr_tex;
 
 };
 

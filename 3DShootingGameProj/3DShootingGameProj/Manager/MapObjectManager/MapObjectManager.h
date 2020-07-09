@@ -333,13 +333,13 @@ private:
 
 	// 各配列(filedobject数と同じのサイズにする必要がある)
 	//! ホーミング敵リスト
-	std::vector<EnemyBase*>mp_h_enemy_list;
+	std::vector<std::weak_ptr<EnemyBase>>mp_h_enemy_list;
 
 	//! ショットガン敵リスト
-	std::vector<EnemyBase*>mp_shotgun_enemy;
+	std::vector<std::weak_ptr<EnemyBase>>mp_shotgun_enemy;
 
 	//! ブロックリスト
-	std::vector<Block*>mp_cube_list;
+	std::vector<std::weak_ptr<Block>>mp_cube_list;
 
 	//! オブジェクトデータ
 	std::weak_ptr<ObjectData>mp_chara;
@@ -355,7 +355,10 @@ private:
 	//! 奥縦横配列、この位置リストを基準に生成
 	std::vector<
 		std::vector<
-		std::vector<MapObjectBase*>>>m_map;
+		std::vector<std::shared_ptr<MapObjectBase>
+		>
+		>
+	>m_map;
 
 	//! ピースリスト
 	std::map<PieceTag, std::vector<int>>m_piece_list;

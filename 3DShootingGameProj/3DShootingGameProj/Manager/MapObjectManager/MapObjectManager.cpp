@@ -232,7 +232,8 @@ void MapObjectManager::CreateWorldObject() {
 		mp_chara.lock();
 
 	// キャラクターを代入
-	CharacterBase m_chara = *p_data->p_player;
+	std::shared_ptr<CharacterBase>m_chara = 
+		p_data->p_player.lock();
 
 	// 全てのタグを検索
 	for (auto&tag : m_world_pos_list) {
@@ -249,10 +250,10 @@ void MapObjectManager::CreateWorldObject() {
 				filed_obj.pos;
 
 			// 前方の生成位置を確定
-			float front_pos = m_chara.GetPos().z +
+			float front_pos = m_chara->GetPos().z +
 				obj.create_line;
 
-			float back_pos = m_chara.GetPos().z +
+			float back_pos = m_chara->GetPos().z +
 				obj.create_line - 10.f;
 
 			// 範囲に入ったら生成
@@ -283,11 +284,9 @@ void MapObjectManager::DestoryWorldObject(
 
 	int array_num = 0;
 
-	std::shared_ptr<ObjectData>p_data = 
-		mp_chara.lock();
-
 	// キャラクターを代入
-	CharacterBase m_chara = *p_data->p_player;
+	std::shared_ptr<CharacterBase>p_chara = 
+		mp_chara.lock()->p_player.lock();
 
 	// 全ての位置を回す
 	for (auto&tag : m_world_pos_list) {
@@ -301,11 +300,11 @@ void MapObjectManager::DestoryWorldObject(
 			Vec3 pos = filed_obj.pos;
 
 			// 前方の削除位置を確定
-			float front_pos = m_chara.GetPos().z +
+			float front_pos = p_chara->GetPos().z +
 				filed_obj.destory_line;
 
 			// 後方の削除位置を確定
-			float back_pos = m_chara.GetPos().z + 
+			float back_pos = p_chara->GetPos().z + 
 				filed_obj.destory_line - 20.f;
 	
 			// 削除
@@ -338,7 +337,7 @@ void MapObjectManager::FileObjCreate(
 	int& array_num
 ) {
 
-	std::shared_ptr<ObjectData>p_data = mp_chara.lock();
+	std::weak_ptr<CharacterBase>p_player = mp_chara.lock()->p_player;
 	std::shared_ptr<ObjectFactory>p_factory = mp_factory.lock();
 
 	// タグによって生成するものを入れ替える
@@ -349,8 +348,8 @@ void MapObjectManager::FileObjCreate(
 		// キャラクター情報を渡す
 		p_factory->CreateHEnemy(
 			pos,
-			p_data->p_player,
-			&mp_h_enemy_list[array_num]
+			p_player,
+			mp_h_enemy_list[array_num]
 		);
 
 		break;
@@ -358,9 +357,9 @@ void MapObjectManager::FileObjCreate(
 	case Object3DTag::BLOCK:
 
 		// キューブオブジェクト生成
-		p_factory->CreateCube(
+		p_factory->CreateBlock(
 			pos, 
-			&mp_cube_list[array_num]
+			mp_cube_list[array_num]
 		);
 
 		break;
@@ -370,8 +369,8 @@ void MapObjectManager::FileObjCreate(
 		// キャラクター情報を渡す
 		p_factory->CreateShotgunEnemy(
 			pos,
-			p_data->p_player,
-			&mp_shotgun_enemy[array_num]
+			p_player,
+			mp_shotgun_enemy[array_num]
 		);
 		break;
 	}
@@ -390,19 +389,19 @@ void MapObjectManager::FileObjDestory(
 	case Object3DTag::BULLET_ENEMY:
 
 		// 敵オブジェクト削除
-		mp_h_enemy_list[array_num]->Destory();
+		mp_h_enemy_list[array_num].lock()->Destory();
 		break;
 
 	case Object3DTag::BLOCK:
 
 		// キューブオブジェクト削除
-		mp_cube_list[array_num]->Destory();
+		mp_cube_list[array_num].lock()->Destory();
 
 		break;
 
 	case Object3DTag::SHOTGUN_ENEMY:
 
-		mp_shotgun_enemy[array_num]->Destory();
+		mp_shotgun_enemy[array_num].lock()->Destory();
 
 		break;
 	}
@@ -558,14 +557,16 @@ void MapObjectManager::CreateClearBlock(
 	MapTag tag
 ) {
 
-	ClearBlock*c_b = new ClearBlock(tag, data);
+	m_map[f_block][h_block][w_block];
 
 	if (m_map[f_block][h_block][w_block] != nullptr) {
-		delete m_map[f_block][h_block][w_block];
+		m_map[f_block][h_block][w_block].reset();
 		m_map[f_block][h_block][w_block] = nullptr;
 	}
 
-	m_map[f_block][h_block][w_block] = c_b;
+	// クリアブロック作成
+	m_map[f_block][h_block][w_block] =
+		std::make_shared<ClearBlock>(tag, data);
 }
 
 
@@ -594,13 +595,13 @@ void MapObjectManager::CalcCurrentBlock() {
 		mp_chara.lock();
 
 	// キャラクターを代入
-	CharacterBase m_chara = *p_data->p_player;
+	std::shared_ptr<CharacterBase> m_chara = p_data->p_player.lock();
 
 	float z_t = Taile::TAILE_SIZE_Z * 2;
 
 	// 現在のタイル数字を出す
 	m_current_block =
-		(int)((p_data->p_player->GetPos().z) / z_t);
+		(int)((m_chara->GetPos().z) / z_t);
 }
 
 
@@ -774,10 +775,9 @@ void MapObjectManager::DestoryMapObject(
 	m_map[f_block][h_block][w_block] = nullptr;
 
 	// 新しく空白オブジェクトを代入
-	m_map[f_block][h_block][w_block] = 
-		new ClearBlock(obj_num,data);
+	m_map[f_block][h_block][w_block] =
+		std::make_shared<ClearBlock>(obj_num, data);
 }
-
 
 
 void MapObjectManager::CreateBlock(
@@ -786,16 +786,20 @@ void MapObjectManager::CreateBlock(
 	int h_block,
 	int w_block
 ) {
+	std::weak_ptr<Block>p_block;
 
-	Block *b = new Block(pos);
-	ObjectManager::GetInstance()->Entry(b);
+	mp_factory.lock()->CreateBlock(
+		pos,
+		p_block
+	);
 
-	if (m_map[f_block][h_block][w_block] != nullptr) {
-		delete m_map[f_block][h_block][w_block];
+	// まだ存在しているなら削除する
+	if (m_map[f_block][h_block][w_block] != nullptr){
+		m_map[f_block][h_block][w_block].reset();
 		m_map[f_block][h_block][w_block] = nullptr;
 	}
 
-	m_map[f_block][h_block][w_block] = b;
+	m_map[f_block][h_block][w_block] = p_block.lock();
 }
 
 
@@ -806,30 +810,27 @@ void MapObjectManager::CreateHomingEnemy(
 	int w_block
 	) {
 
-	std::shared_ptr<ObjectData>d
-		= mp_chara.lock();
+	//std::shared_ptr<ObjectData>d
+	//	= mp_chara.lock();
 
 	std::shared_ptr<ObjectFactory>fac
 		= mp_factory.lock();
 
+	std::weak_ptr<EnemyBase>p_he;
 
-	HomingBulletEnemy *he =
-		new HomingBulletEnemy(
-			pos,
-			fac.get(),
-			d->p_player
-		);
-
-	// オブジェクトエントリー
-	ObjectManager::GetInstance()->Entry(he);
+	fac->CreateHEnemy(
+		pos,
+		mp_chara.lock()->p_player,
+		p_he
+	);
 
 	// マップに埋め込む
 	if (m_map[f_block][h_block][w_block] != nullptr) {
-		delete m_map[f_block][h_block][w_block];
+		m_map[f_block][h_block][w_block].reset();
 		m_map[f_block][h_block][w_block] = nullptr;
 	}
 
-	m_map[f_block][h_block][w_block] = he;
+	m_map[f_block][h_block][w_block] = p_he.lock();
 }
 
 
@@ -840,28 +841,25 @@ void MapObjectManager::CreateShotgunEnemy(
 	int w_block
 ) {
 
-	std::shared_ptr<ObjectData>d
-		= mp_chara.lock();
-
 	std::shared_ptr<ObjectFactory>fac
 		= mp_factory.lock();
 
-	ShotgunEnemy *he =
-		new ShotgunEnemy(
-			pos,
-			fac.get(),
-			d->p_player
-		);
+	std::weak_ptr<EnemyBase>p_se;
 
-	// オブジェクトエントリー
-	ObjectManager::GetInstance()->Entry(he);
-	
+	// 散弾敵生成
+	mp_factory.lock()->CreateShotgunEnemy(
+		pos,
+		mp_chara.lock()->p_player,
+		p_se
+	);
+
 	if (m_map[f_block][h_block][w_block] != nullptr) {
-		delete m_map[f_block][h_block][w_block];
+		m_map[f_block][h_block][w_block].reset();
 		m_map[f_block][h_block][w_block] = nullptr;
 	}
 
-	m_map[f_block][h_block][w_block] = he;
+	// マップに代入
+	m_map[f_block][h_block][w_block] = p_se.lock();
 }
 
 

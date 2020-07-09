@@ -118,7 +118,7 @@ public:
 	/**
 	* @brief モーション
 	*/
-	void SetMotion(
+	void InitMotion(
 		const std::string&mesh_name,
 		const std::string&motion_name
 	);

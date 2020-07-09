@@ -23,7 +23,7 @@ Fbx::Fbx() : Model()
 }
 
 
-void Fbx::SetMotion(
+void Fbx::InitMotion(
 	const std::string&mesh_name,
 	const std::string&motion_name
 	) {

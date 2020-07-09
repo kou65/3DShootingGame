@@ -29,6 +29,8 @@ Player::Player(
 		p_camera->GetPos().z
 	)
 	);
+
+	D3DXMatrixIdentity(&m_player_mat);
 	
 	// hp
 	m_hp = MAX_HP;
@@ -36,13 +38,21 @@ Player::Player(
 	// 撃つ間隔時間
 	m_shot_timer = SHOT_INTERVAL;
 
-	m_damege_timer = 0;
-
 	// エフェクトモード
 	m_is_effect_mode = false;
 
 	// デバッグモード
 	m_is_debug_mode = false;
+
+	// 無敵モード初期化
+	m_is_inv = false;
+
+	m_invincible_timer = 0;
+	m_damege_timer = 0;
+	m_move.Init();
+	m_vec_rot.Init();
+	m_nor_rot.Init();
+	m_color = D3DXVECTOR4(0.f, 0.f, 0.f, 0.f);
 
 	// カラー代入
 	m_color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);

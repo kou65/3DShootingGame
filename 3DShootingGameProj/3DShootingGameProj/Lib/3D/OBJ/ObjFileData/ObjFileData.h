@@ -18,9 +18,9 @@
 
 
 
-enum class ShaderType {
+enum class PassType {
 	NORMAL,             // 通常
-	ZTEXTURE,
+	ZTEXTURE,           // zテクスチャ
 	DEPTH_SHADOW,       // 深度影
 	NORMAL_TEXTURE,     // 通常 + テクスチャ
 	DIRECTIONAL,        // 平行光源
@@ -29,6 +29,7 @@ enum class ShaderType {
 	POINT_LIGHT,        // 点光源
 	PHONE_REFLECTION,   // フォン反射
 	PHONE_SHADER,       // フォンシェーダー
+	BULR_FILTER,        // ブラーフィルター
 };
 
 
@@ -59,6 +60,7 @@ struct ObjParameter {
 		const DrawStatus &state = DrawStatus::NORMAL
 	) {
 
+		// 変換
 		pos.x = pos.y = pos.z = 0.f;
 		rota = pos;
 		scale.x = scale.y = scale.z = 1.f;
@@ -70,6 +72,8 @@ struct ObjParameter {
 	
 		// カラー代入
 		color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
+
+		p_tex = nullptr;
 	}
 
 	//! 位置
@@ -92,6 +96,9 @@ struct ObjParameter {
 
 	//! テクスチャ名
 	std::string texture_name;
+
+	//! 生テクスチャポインタ
+	LPDIRECT3DTEXTURE9 p_tex;
 };
 
 

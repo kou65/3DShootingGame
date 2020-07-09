@@ -58,6 +58,7 @@ void BlurFilter::Init(
 	float u[ARRAY];
 	float v[ARRAY];
 
+	// 割合ごとに配列分入れていく
 	for (int i = 0; i < ARRAY; i++) {
 
 		u[i] = texel_u * (i + 1);

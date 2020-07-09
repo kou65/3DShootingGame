@@ -53,7 +53,7 @@ public:
 	* @brief 軸を中心に生成するための軸オブジェクト代入 
 	* @param[in] p_chara 基底キャラポインタ
 	*/
-	void CreateAxis(CharacterBase*p_chara);
+	void CreateAxis(std::weak_ptr<CharacterBase>&p_chara);
 
 private:
 
@@ -106,11 +106,10 @@ private:
 	std::weak_ptr<ObjectFactory>mp_factory;
 
 	//! キャラクターを中心に描画
-	CharacterBase*mp_chara;
+	std::weak_ptr<CharacterBase>mp_chara;
 
 	//! マップオブジェクトの参照()
-	//std::vector<std::vector<std::weak_ptr<MapObjectBase>>>mp_map_obj_list;
-	std::vector<std::vector<MapObjectBase*>>mp_map_obj_list;
+	std::vector<std::vector<std::weak_ptr<MapObjectBase>>>mp_map_obj_list;
 
 	//! 生成されたかどうかの状態
 	std::vector<std::vector<bool>>m_is_create_list;

@@ -6,8 +6,8 @@
 
 ShotgunEnemy::ShotgunEnemy(
 	const Vec3&create_pos,
-	ObjectFactory*factory,
-	CharacterBase*player
+	ObjectFactory *factory,
+	std::weak_ptr<CharacterBase>player
 ) {
 
 	// 生成位置
@@ -16,10 +16,11 @@ ShotgunEnemy::ShotgunEnemy(
 	// オブジェクト代入
 	mp_obj_factory = factory;
 
+	// プレイヤー
 	mp_player = player;
 
+	// ショットタイマー
 	m_shot_timer = 0.f;
-
 
 	// 衝突に追加
 	CollisionManager::GetInstance()->Entry(
@@ -102,6 +103,7 @@ void ShotgunEnemy::Shot() {
 	D3DXMATRIX rot_m_x, rot_m_y;
 	// 移動値
 	Vec3 dir;
+
 
 	for (int i = 0; i < 3; i++) {
 

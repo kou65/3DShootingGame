@@ -57,7 +57,7 @@ int WINAPI WinMain(
 	Obj::GetInstance()->InitGrapicData();
 
 	// デバッグモード
-	bool is_debug_mode = true;
+	bool is_debug_mode = false;
 
 	// zテクスチャ使用者
 	ZTextureUser user;

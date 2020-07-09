@@ -24,8 +24,8 @@ public:
 	*/
 	ShotgunEnemy(
 		const Vec3&create_pos,
-		ObjectFactory*p_factory,
-		CharacterBase*p_chara
+		ObjectFactory *p_factory,
+		std::weak_ptr<CharacterBase>p_chara
 	);
 
 
@@ -71,10 +71,10 @@ private:
 private:
 
 	// !弾生成工場
-	ObjectFactory*mp_obj_factory;
+	ObjectFactory *mp_obj_factory;
 
 	// !プレイヤー
-	CharacterBase*mp_player;
+	std::weak_ptr<CharacterBase>mp_player;
 
 	// !打ち出す時間
 	float m_shot_timer;

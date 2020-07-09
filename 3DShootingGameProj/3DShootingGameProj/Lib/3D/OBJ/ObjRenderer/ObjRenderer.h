@@ -2,6 +2,22 @@
 #include"../ObjFileData/ObjFileData.h"
 #include"../../../Shader/ShaderFunc/ShaderBase/EffectFileBase.h"
 
+#include<iostream>
+#include<vector>
+#include"../../Object3DCustomVertex/MeshCustomVertex.h"
+#include<unordered_map>
+#include"../../../../Lib/Utility/Utility.h"
+#include"../../Model/Model.h"
+#include"../../../Vec3/Vec3.h"
+#include"../../../Shader/ShaderFunc/NormalShader/NormalShader.h"
+#include"../../../Shader/ShaderFunc/DirectionalLight/Light.h"
+#include"../../../Shader/ShaderFunc/ZTexture/ZTexture.h"
+#include"../../../Shader/ShaderFunc/DepthShadowShader/DepthShadowEffectFile.h"
+#include"../../../Shader/ShaderFunc/ZTexture/FuncZTexture/FuncZTexture.h"
+#include"../ObjFileData/ObjFileData.h"
+#include"../../../Shader/ShaderFunc/LightShadowShader/LightShadowShader.h"
+#include"../../../Shader/ShaderFunc/BlurFilter/BlurFilter.h"
+
 
 
 /**
@@ -9,7 +25,6 @@
 */
 class ObjRenderer {
 public:
-
 
 
 	/**
@@ -142,4 +157,43 @@ public:
 		const std::string &register_name
 	);
 
+private:
+
+		static constexpr int SURFACE_VALUE = 2;
+
+private:
+
+
+	//! オブジェクトパラメータリストを登録(後で一気に描画する、毎回削除)
+	std::map<std::string, ObjParameter>m_shadow_param_list;
+
+	//! 通常シェーダー
+	NormalShader m_normal_shader;
+
+	//! ライト
+	LightShader m_light_shader;
+
+	//! 影
+	DepthShadowShader m_shadow;
+
+	//! ライトと影
+	LightShadowShader m_light_shadow;
+
+	//! ブラーフィルター
+	BlurFilter m_blur;
+
+	//! ライトパスタイプ
+	PassType m_pass_type;
+
+	//! 影データ
+	ShadowData m_shadow_data;
+
+	//! ライトデータ
+	LightData m_light_data;
+
+	//! サーフェイス
+	Surface suf_list[SURFACE_VALUE];
+
+	//! テクスチャ
+	LPDIRECT3DTEXTURE9 m_bulr_tex;
 };

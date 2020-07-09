@@ -78,24 +78,24 @@ void Debugger::Init() {
 
 	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
 	
-	Fbx::GetInstance()->Load(
-		"Resource/3DModel/UnityChan/NewUnityChan/unitychan.fbx",
-		"unity_chan"
-	);
-
-	Fbx::GetInstance()->LoadFileMotion(
-		"Resource/3DModel/UnityChan/Animations/unitychan_JUMP01.fbx",
-		"unity_chan",
-		"jump",
-		0
-	);
-
-	Fbx::GetInstance()->LoadFileMotion(
-		"Resource/3DModel/UnityChan/Animations/unitychan_DAMAGED00.fbx",
-		"unity_chan",
-		"damage",
-		0
-	);
+	//Fbx::GetInstance()->Load(
+	//	"Resource/3DModel/UnityChan/NewUnityChan/unitychan.fbx",
+	//	"unity_chan"
+	//);
+	//
+	//Fbx::GetInstance()->LoadFileMotion(
+	//	"Resource/3DModel/UnityChan/Animations/unitychan_JUMP01.fbx",
+	//	"unity_chan",
+	//	"jump",
+	//	0
+	//);
+	//
+	//Fbx::GetInstance()->LoadFileMotion(
+	//	"Resource/3DModel/UnityChan/Animations/unitychan_DAMAGED00.fbx",
+	//	"unity_chan",
+	//	"damage",
+	//	0
+	//);
 
 	//Fbx::GetInstance()->Load(
 	//	"Resource/3DModel/taiki/taiki.fbx","taiki"
@@ -109,12 +109,12 @@ void Debugger::Init() {
 	//);
 
 	// モーションセット
-	Fbx::GetInstance()->SetMotion(
+	Fbx::GetInstance()->InitMotion(
 		"unity_chan",
 		"jump"
 	);
 
-	//Fbx::GetInstance()->SetMotion(
+	//Fbx::GetInstance()->InitMotion(
 	//	"taiki",
 	//	"taiki_motion"
 	//);
@@ -165,7 +165,6 @@ void Debugger::InitXFileShader() {
 
 	// シャドウ初期化
 	mp_shadow->Init();
-
 }
 
 
@@ -332,14 +331,14 @@ void Debugger::Draw() {
 	{
 
 		// ブラー描画
-		//DrawBlur();
+		DrawBlur();
 	}
 
 	// OBJライト
 	//LightDebugDraw();
 
 	// fbx描画
-	Fbx::GetInstance()->Draw("unity_chan",nullptr,false);
+	//Fbx::GetInstance()->Draw("unity_chan",nullptr,false);
 
 	//Fbx::GetInstance()->Draw("taiki",nullptr,false);
 
@@ -852,7 +851,7 @@ void Debugger::DrawBlur() {
 	// パラメータ
 	ObjParameter param(DrawStatus::LIGHT);
 
-	param.register_obj_file_name = Const::Obj::SPEHER;
+	param.register_obj_file_name = Const::Obj::PLANE;
 	param.pos = D3DXVECTOR3(0.f, 0.f, 0.f);
 	param.texture_name = Const::Graph::TAILE;
 

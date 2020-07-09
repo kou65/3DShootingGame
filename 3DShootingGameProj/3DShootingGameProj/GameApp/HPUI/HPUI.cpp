@@ -4,7 +4,8 @@
 #include<math.h>
 
 
-HPUI::HPUI(Player*p) {
+
+HPUI::HPUI(std::weak_ptr<Player>p) {
 
 	mp_player = p;
 
@@ -27,7 +28,7 @@ void HPUI::Update() {
 	CharacterInterface chara_interface;
 
 	// 情報取得
-	mp_player->OutInterface(chara_interface);
+	mp_player.lock()->OutInterface(chara_interface);
 
 	// 現在のhp受け取り
 	float hp = chara_interface.GetHp();

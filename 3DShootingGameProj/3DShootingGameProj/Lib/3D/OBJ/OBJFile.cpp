@@ -14,7 +14,7 @@ Obj::Obj() : Model(){
 	mp_graphics = Graphics::GetInstance();
 
 	// 初期パスタイプ
-	m_pass_type = ShaderType::PHONE_REFLECTION;
+	m_pass_type = PassType::PHONE_REFLECTION;
 
 	// 各シェーダー初期化
 	m_normal_shader.Init();
@@ -39,16 +39,25 @@ Obj::Obj() : Model(){
 		)->GetZTexture()
 	);
 
+	InitBlurFileter();
+}
+
+
+void Obj::InitBlurFileter() {
+
+	// ブラーの
 	// テクスチャバッファ生成
 	Graphics::GetInstance()->CreateTexture(
-		&m_tex,
+		&m_bulr_tex,
 		1024, 256
 	);
 
 	// 生成
 	for (int i = 0; i < 2; i++) {
-		suf_list[i].CreateTextureSurface(m_tex);
+		//m_suf_back_list[i].CraeteDepthSurface(); // 深度値作成
+		m_suf_back_list[i].CreateTextureSurface(m_bulr_tex);
 	}
+
 }
 
 
@@ -57,6 +66,7 @@ void Obj::Update(
 	StandardTSShader*shader
 ) {
 
+	// 合成行列
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
 
 	// ワールド行列セット
@@ -69,7 +79,7 @@ void Obj::Update(
 
 void Obj::Draw(
 	const DrawStatus&state,
-	const ObjParameter&param
+	ObjParameter&param
 ) {
 
 	// 各書き込み
@@ -257,7 +267,7 @@ void Obj::DrawFhoneLight(
 	m_shadow.SetLightData(m_light_data);
 
 	// 影に変更
-	m_pass_type = ShaderType::DEPTH_SHADOW;
+	m_pass_type = PassType::DEPTH_SHADOW;
 
 	// 更新
 	Update(param, &m_shadow);
@@ -291,7 +301,7 @@ void Obj::DrawObjByNormalShader(
 	const ObjParameter &param
 	){
 
-	m_pass_type = ShaderType::NORMAL;
+	m_pass_type = PassType::NORMAL;
 
 	// 行列を返す
 	D3DXMATRIX total_mat = GetTransformMatrix(param);
@@ -323,7 +333,7 @@ void Obj::DrawShadowObj(
 	m_shadow.SetLightData(m_light_data);
 	
 	// 影に変更
-	m_pass_type = ShaderType::DEPTH_SHADOW;
+	m_pass_type = PassType::DEPTH_SHADOW;
 
 	// 更新
 	Update(param, &m_shadow);
@@ -340,7 +350,7 @@ void Obj::DrawLightObj(
 	const ObjParameter &param
 ) {
 
-	m_pass_type = ShaderType::PHONE_SHADER;
+	m_pass_type = PassType::PHONE_SHADER;
 
 	// カラー情報セット
 	m_light_shader.SetColor(param.color);
@@ -360,63 +370,75 @@ void Obj::DrawLightObj(
 
 
 void Obj::DrawBlur(
-	const ObjParameter&param
+	ObjParameter&param
 ) {
 
-	// 通常レンダリング後の結果をぼかす
-	Draw(DrawStatus::NORMAL,param);
-
-	// パス
 	IDirect3DSurface9*p_dev_sur;
 
-	// バッファーインデックス
-	int buffer_index = 0;
+	// 0番目でレンダーターゲットを入れ替える
+	mp_graphics->GetDevice()->GetRenderTarget(
+		0,
+		&p_dev_sur
+	);
 
-	mp_graphics->GetDevice()
-		->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	// レンダーターゲット
+	mp_graphics->GetDevice()->SetRenderTarget(
+		0,
+		m_suf_back_list[0]
+	);
 
-	// デバイスに現在取得しているデバイスサーフェイスを返す
-	mp_graphics->GetDevice()->
-		GetRenderTarget(buffer_index,&p_dev_sur);
-
-	// 新しいサーフェイスになったので画面初期化
-	// テクスチャサーフェイスのクリア
+	// クリア
 	mp_graphics->GetDevice()->Clear(
-		0, NULL, D3DCLEAR_TARGET |
+		0, NULL, D3DCLEAR_TARGET | 
 		D3DCLEAR_ZBUFFER,
 		// 背景色も変更
 		D3DCOLOR_ARGB(0, 0, 0, 255),
 		1.0f,
 		0
 	);
-	
+
+	// 通常レンダリング後の結果をぼかす
+	Draw(DrawStatus::NORMAL,param);
+
+	// ブラーフィルターモード
+	m_pass_type = PassType::BULR_FILTER;
+
+	//// zEnableOn
+	//mp_graphics->GetDevice()
+	//	->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+
+	// 描画がバグっている
+	// x軸y軸回す
 	for (int i = 0; i < 2; i++) {
-	
-		// インデックス
-		int index = i;
+
+		// バックテクスチャをセット
+		param.p_tex = &m_bulr_tex[i % 2];
 	
 		// 0番目でレンダーターゲットを入れ替える
 		mp_graphics->GetDevice()->SetRenderTarget(
-			buffer_index,
-			suf_list[index]
+			0,
+			m_suf_back_list[i % 2]
 		);
-	
+
 		// シェーダーパラメータ描画
 		ShaderParameterDraw(param,&m_blur,i);
+
 	}
 
-	// デバイスサーフェイスを戻す
-	mp_graphics->GetDevice()->
-		SetRenderTarget(buffer_index,p_dev_sur);
+	// デバイスを戻す
+	mp_graphics->GetDevice()->SetRenderTarget(
+		0,
+		p_dev_sur
+	);
 
-	// Zバッファモードを戻す
-	mp_graphics->GetDevice()
-		->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+	//// Zバッファモードを戻す
+	//mp_graphics->GetDevice()
+	//	->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 }
 
 
 void Obj::DrawRenderTarget(
-	const ObjParameter&param
+	ObjParameter&param
 ) {
 
 	// デバイス面
@@ -432,7 +454,7 @@ void Obj::DrawRenderTarget(
 	// 0番目でレンダーターゲットを入れ替える
 	mp_graphics->GetDevice()->SetRenderTarget(
 		0,
-		suf_list[0]
+		m_suf_back_list[0]
 	);
 
 	// 通常描画
@@ -443,7 +465,6 @@ void Obj::DrawRenderTarget(
 		0,
 		p_dev_sur
 	);
-
 }
 
 
@@ -468,7 +489,7 @@ void Obj::LightShadowDraw(
 		m_light_shadow.SetShadowData(shadow_data);
 
 		// 影に変更
-		m_pass_type = ShaderType::DEPTH_SHADOW;
+		m_pass_type = PassType::DEPTH_SHADOW;
 
 		// 更新
 		Update(param, &m_light_shadow);
@@ -513,7 +534,7 @@ void Obj::WriteZTexture(
 	p_tex->SetProjMatrix(data.mat_camera_proj);
 
 	// パス
-	m_pass_type = ShaderType::ZTEXTURE;
+	m_pass_type = PassType::ZTEXTURE;
 
 	// 更新
 	Update(param, p_tex);
@@ -692,7 +713,7 @@ void Obj::DrawShader(
 	for (UINT i = 0; i < p_data->material_num; i++) {
 
 		// 使用マテリアル名取得
-		std::string usemtl_name =
+		std::string usemtl_name = 
 			p_data->m_usemtl_name_list[i];
 
 		// マテリアル情報取得
@@ -711,11 +732,12 @@ void Obj::DrawShader(
 
 		// パス指定がなければ
 		if (pass == -1) {
+
 			// 現在のパス数取得
 			select_pass = GetUsePass(m_pass_type);
 
 			// テクスチャ用に変更
-			if (is_texture == true) {
+			if (is_texture == true){
 				select_pass++;
 			}
 		}
@@ -755,8 +777,18 @@ void Obj::DrawBeginPassShader(
 	// 代入用
 	std::string texture_name = param.texture_name;
 
-	// テクスチャの読み込み
-	is_texture = LoadTexture(mtl.texture_name, texture_name);
+	// ポインタがあるなら
+	if (param.p_tex != nullptr) {
+
+		// シェーダーに直接読み込ませる
+		LoadTextureShader(param.p_tex);
+	}
+	// ポインタがないなら
+	else {
+
+		// テクスチャの読み込み
+		is_texture = LoadTexture(mtl.texture_name, texture_name);
+	}
 
 	// 3D描画に必要なパラメータをセット
 	Model::Set3DParameter(
@@ -768,7 +800,6 @@ void Obj::DrawBeginPassShader(
 		mtl.material,
 		FVF_CUSTOM
 	);
-
 
 	// 情報受け取り
 	UINT face_start = p_data->
@@ -796,40 +827,53 @@ void Obj::DrawBeginPassShader(
 	);
 
 	p_shader->EndPass();
-
 }
 
 
-UINT Obj::GetUsePass(const ShaderType&type) {
+void Obj::LoadTextureShader(
+	LPDIRECT3DTEXTURE9 p_tex
+) {
+
+	m_light_shader.SetTexture(p_tex);
+	m_normal_shader.SetTexture(p_tex);
+	m_shadow.SetTexture(p_tex);
+	m_blur.SetTexture(p_tex);
+}
+
+
+UINT Obj::GetUsePass(const PassType&type) {
 
 	switch (type)
 	{
-	case ShaderType::NORMAL:
+	case PassType::NORMAL:
 		return 0;
 
-	case ShaderType::DEPTH_SHADOW:
+	case PassType::DEPTH_SHADOW:
 		return 0;
 
-	case ShaderType::DIRECTIONAL:
+	case PassType::DIRECTIONAL:
 		return 0;
 
-	case ShaderType::ZTEXTURE:
+	case PassType::ZTEXTURE:
 		return 0;
 
-	case ShaderType::DIFFUSE_REFLECTION:
+	case PassType::DIFFUSE_REFLECTION:
 		return 2;
 
-	case ShaderType::SPECULAR_REFLECTION:
+	case PassType::SPECULAR_REFLECTION:
 		return 4;
 
-	case ShaderType::POINT_LIGHT:
+	case PassType::POINT_LIGHT:
 		return 6;
 
-	case ShaderType::PHONE_REFLECTION:
+	case PassType::PHONE_REFLECTION:
 		return 8;
 
-	case ShaderType::PHONE_SHADER:
+	case PassType::PHONE_SHADER:
 		return 9;
+
+	case PassType::BULR_FILTER:
+		return 0;
 
 	default:
 		break;
@@ -967,10 +1011,7 @@ bool Obj::LoadTexture(
 			->GetTextureData(mtl_texture_name);
 
 		// シェーダーテクスチャセット
-		m_light_shader.SetTexture(texture_data);
-		m_normal_shader.SetTexture(texture_data);
-		m_shadow.SetTexture(texture_data);
-		m_blur.SetTexture(texture_data);
+		LoadTextureShader(texture_data);
 
 		// テクスチャが存在する
 		is_texture = true;
@@ -988,10 +1029,7 @@ bool Obj::LoadTexture(
 				);
 
 			// シェーダーテクスチャセット
-			m_light_shader.SetTexture(texture_data);
-			m_normal_shader.SetTexture(texture_data);
-			m_shadow.SetTexture(texture_data);
-			m_blur.SetTexture(texture_data);
+			LoadTextureShader(texture_data);
 
 			// テクスチャが存在する
 			is_texture = true;
