@@ -14,7 +14,7 @@ public:
 
 	StandardTSShader();
 
-	void UpdateTS();
+	void Update()override;
 
 	void SetWorldMatrix(const D3DXMATRIX&world_mat);
 	void SetViewMatrix(const D3DXMATRIX&view_mat);

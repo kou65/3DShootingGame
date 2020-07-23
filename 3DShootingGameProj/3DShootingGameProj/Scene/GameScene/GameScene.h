@@ -3,9 +3,9 @@
 #define GAME_SCENE_H
 
 #include"../SceneBase/SceneBase.h"
-#include"../../ObjectSystem/ObjectManager/ObjectManager.h"
+#include"../../Manager/ObjectManager/ObjectManager.h"
 #include"../../Lib\3D\Camera3D\Camera3D.h"
-#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../Factory/ObjectFactory/ObjectFactory.h"
 #include"../../Manager/FileDataManager/FileDataManager.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
 #include"../../Lib/FPS/FPS.h"
@@ -58,6 +58,18 @@ private:
 
 
 	/**
+	* @brief グラフィック初期化
+	*/
+	void UpdateLight();
+
+
+	/**
+	* @brief 各更新
+	*/
+	void UtilityUpdate(SceneType&scene_type);
+
+
+	/**
 	* @brief 操作者生成
 	*/
 	void CreateOperator();
@@ -86,7 +98,7 @@ private:
 	std::shared_ptr<ObjectFactory>mp_obj_factory;
 
 	//! フィールドobj管理者
-	std::unique_ptr<MapObjectManager>mp_filed_obj_mng;
+	std::unique_ptr<MapObjectManager>mp_map_obj_mng;
 
 	//! ゲーム終了判定管理者
 	std::unique_ptr<GameEndJugeManager>mp_game_end_juge_mng;
@@ -104,6 +116,12 @@ private:
 
 	//! fps計測クラス
 	FPS m_fps;
+
+	//! シーンスタートするかどうか
+	bool m_is_scene_start;
+
+	//! 点ライトz
+	float z;
 };
 
 

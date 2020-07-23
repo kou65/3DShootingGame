@@ -3,7 +3,7 @@
 #define FILE_OBJECT_DATA_MANAGER_H
 
 #include"../../ObjectSystem/Object3D/Object3D.h"
-#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../Factory/ObjectFactory/ObjectFactory.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
 #include"../ManagerBase/ManagerBase.h"
 #include<string>
@@ -87,7 +87,7 @@ private:
 	/**
 	* @brief 生成オブジェクト
 	*/
-	void CreateObject();
+	void CreateGameObject();
 
 
 	/**

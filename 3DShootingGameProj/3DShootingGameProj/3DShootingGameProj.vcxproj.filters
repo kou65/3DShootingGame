@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionSystem\Collision\Collision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSystem\CollisionManager\CollisionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionSystem\Shape\Cube\Cube.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -45,13 +39,7 @@
     <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp\Enemy\Enemy.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp">
@@ -126,9 +114,6 @@
     <ClCompile Include="Lib\Lib\Lib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\Math.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\Sound\Sound.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -177,12 +162,6 @@
     <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectSystem\ObjectManager\ObjectManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\EndScene\EndScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -208,9 +187,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameApp\Bullet\BreakBullet\BreakBullet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp\Bullet\PlayerBullet\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Manager\MapStructureManager\MapStructureManager.cpp">
@@ -258,9 +234,6 @@
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Utility\Utility.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Debugger\ZTexSpriteCreater.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -276,9 +249,6 @@
     <ClCompile Include="Lib\Shader\ShaderFunc\LightShadowShader\LightShadowShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Surface\Surface.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -291,14 +261,62 @@
     <ClCompile Include="Lib\3D\FBX\FbxFunction\FbxFunction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\TransitionScene\TransitionScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger\SoftShadowDebug\SoftShadowDebug.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger\RenderTargetDebug\RenderTargetDebug.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\RenderTarget\RenderTarget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\BackBuffer\BackBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\MultRenderTarget\MultRenderTarget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger\FbxDebug\FbxDebug.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory\ObjectFactory\ObjectFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Effect\PolygonEffect\PolygonEffect.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory\EffectFactory\EffectFactory.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\CollisionManager\CollisionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\ObjectManager\ObjectManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\Convert\Convert.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\File\File.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\Math\Math.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\Collision\Collision.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Enemy\SniperEnemy\SniperEnemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp\Bullet\PlayerBullet\PlayerBullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionSystem\Collision\Collision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="CollisionSystem\CollisionObject3DBase\CollisionObject3DBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -335,13 +353,7 @@
     <ClInclude Include="GameApp\Enemy\EnemyBase\EnemyBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp\Enemy\Enemy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\Filed\BackGround\BackGround.h">
@@ -434,9 +446,6 @@
     <ClInclude Include="Lib\Lib\Lib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\Math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\SingletonTemplate\SingletonTemplate.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -506,12 +515,6 @@
     <ClInclude Include="ObjectSystem\ObjectData\ObjectData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectSystem\ObjectManager\ObjectManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\EndScene\EndScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -543,9 +546,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameApp\Bullet\BreakBullet\BreakBullet.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp\Bullet\PlayerBullet\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Manager\MapStructureManager\MapStructureManager.h">
@@ -602,9 +602,6 @@
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTexture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Utility\Utility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ShadowData\ShadowData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -638,9 +635,6 @@
     <ClInclude Include="Lib\3D\OBJ\ObjRenderer\ObjRenderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Surface\Surface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\SoftShadow\SoftShadow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -662,6 +656,66 @@
     <ClInclude Include="Lib\3D\FBX\FbxMeshData\FbxMeshData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\TransitionScene\TransitionScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger\SoftShadowDebug\SoftShadowDebug.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger\RenderTargetDebug\RenderTargetDebug.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\RenderTarget\RenderTarget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\BackBuffer\BackBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\MultRenderTarget\MultRenderTarget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\RenderTargetData\RenderTargetData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger\FbxDebug\FbxDebug.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory\ObjectFactory\ObjectFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory\EffectFactory\EffectFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Effect\PolygonEffect\PolygonEffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\CollisionManager\CollisionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\ObjectManager\ObjectManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Convert\Convert.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\File\File.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Random\Random.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Math\Math.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Collision\Collision.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Enemy\SniperEnemy\SniperEnemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp\Bullet\PlayerBullet\PlayerBullet.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\3DModel\Cube2.x" />
@@ -671,7 +725,8 @@
     <FxCompile Include="Lib\Shader\EffectFile\DepthShadow.fx" />
     <FxCompile Include="Lib\Shader\EffectFile\ZTexture.fx" />
     <FxCompile Include="Lib\Shader\EffectFile\Light.fx" />
-    <FxCompile Include="Lib\Shader\EffectFile\BlurFilter.fx" />
     <FxCompile Include="Lib\Shader\EffectFile\VertexBlend.hlsl" />
+    <FxCompile Include="Lib\Shader\EffectFile\SoftShadow.hlsl" />
+    <FxCompile Include="Lib\Shader\EffectFile\ObjDraw.fx" />
   </ItemGroup>
 </Project>

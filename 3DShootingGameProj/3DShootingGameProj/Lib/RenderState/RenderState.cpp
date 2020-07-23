@@ -5,6 +5,8 @@
 
 namespace RenderState {
 
+	bool m_is_alpha_enable = false;
+
 	void AllOn() {
 		
 		// Zバッファ有効値
@@ -30,24 +32,38 @@ namespace RenderState {
 	void ZBufferMode(BOOL is_enable) {
 
 		// Zバッファ
-		Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_ZENABLE,is_enable);
-		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
+		Graphics::GetInstance()->GetDevice()->
+			SetRenderState(D3DRS_ZENABLE,is_enable);
+		//Graphics::GetInstance()->GetDevice()->
+		//SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		//Graphics::GetInstance()->GetDevice()->
+		//SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 	}
 
 
-	void AlphaEnable(BOOL is_enable) {
+	void AlphaEnable(bool is_enable,bool is_blend) {
 
 		// アルファチャンネル
-		Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE,is_enable);
+		Graphics::GetInstance()->GetDevice()
+			->SetRenderState(D3DRS_ALPHABLENDENABLE,is_enable);
+
+		// αの状態
+		m_is_alpha_enable = is_enable;
+
 		// // 通常透過処理
-		Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-		Graphics::GetInstance()->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-		//Graphics::GetInstance()->GetLpDirect3DDevice9()->SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
+		if (is_blend == true) {
+			Graphics::GetInstance()->
+				GetDevice()->
+				SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			Graphics::GetInstance()
+				->GetDevice()->
+				SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		}
 	}
 
 
 	void AlphaTest(BOOL is_enable,int value) {
+
 		// アルファテスト(3Dポリゴンの時使う)
 		Graphics::GetInstance()->GetDevice()->SetRenderState(
 			D3DRS_ALPHATESTENABLE,
@@ -60,19 +76,33 @@ namespace RenderState {
 		// 比較方法
 		Graphics::GetInstance()->GetDevice()->SetRenderState(
 			D3DRS_ALPHAFUNC,
-			D3DCMP_GREATER);
+			D3DCMP_GREATER
+		);
 	}
 
 
 	void AlphaBlendOn() {
 
+		//Graphics::GetInstance()->GetDevice()->
+		//	SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		//Graphics::GetInstance()->GetDevice()->
+		//	SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		//Graphics::GetInstance()->GetDevice()->
+		//	SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
 		// テクスチャαブレンド
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-		Graphics::GetInstance()->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+		Graphics::GetInstance()->GetDevice()->SetTextureStageState(
+			0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	}
 
 
@@ -112,5 +142,10 @@ namespace RenderState {
 				GetDevice()->
 				SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 		}
+	}
+
+
+	bool IsAlphaEnable() {
+		return m_is_alpha_enable;
 	}
 }

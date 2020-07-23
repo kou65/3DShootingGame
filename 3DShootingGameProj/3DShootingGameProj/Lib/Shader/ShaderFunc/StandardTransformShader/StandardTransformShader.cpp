@@ -31,7 +31,7 @@ const std::string& proj_mat_name
 }
 
 
-void StandardTSShader::UpdateTS(
+void StandardTSShader::Update(
 ) {
 
 	// マトリックスセット

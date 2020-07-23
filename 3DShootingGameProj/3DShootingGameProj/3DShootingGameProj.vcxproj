@@ -95,11 +95,12 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,11 +113,12 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,11 +135,12 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,21 +157,46 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winmm.lib;d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dxof.lib;dxguid.lib;d3dx9d.lib;d3d9.lib;libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2019.0\lib\vs2015\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionSystem\CollisionManager\CollisionManager.cpp" />
-    <ClCompile Include="CollisionSystem\Collision\Collision.cpp" />
+    <ClCompile Include="Lib\Utility\Convert\Convert.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Utility\File\File.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Manager\CollisionManager\CollisionManager.cpp" />
+    <ClCompile Include="Lib\Utility\Collision\Collision.cpp" />
     <ClCompile Include="CollisionSystem\Shape\Cube\Cube.cpp" />
     <ClCompile Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.cpp" />
     <ClCompile Include="CollisionSystem\Shape\Sphere\Sphere.cpp" />
     <ClCompile Include="Debugger\Debugger.cpp" />
+    <ClCompile Include="Debugger\FbxDebug\FbxDebug.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Debugger\RenderTargetDebug\RenderTargetDebug.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Debugger\SoftShadowDebug\SoftShadowDebug.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Debugger\ZTexSpriteCreater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Factory\EffectFactory\EffectFactory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -177,19 +205,34 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="GameApp\Bullet\PlayerBullet\Bullet.cpp" />
+    <ClCompile Include="GameApp\Bullet\PlayerBullet\PlayerBullet.cpp" />
     <ClCompile Include="GameApp\Bullet\BulletBase\BulletBase.cpp" />
     <ClCompile Include="GameApp\Bullet\EnemyBullet\EnemyBullet.cpp" />
     <ClCompile Include="GameApp\CharacterBase\CharacterBase.cpp" />
-    <ClCompile Include="GameApp\Enemy\Enemy.cpp" />
-    <ClCompile Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.cpp" />
+    <ClCompile Include="GameApp\Enemy\SniperEnemy\SniperEnemy.cpp" />
     <ClCompile Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.cpp" />
     <ClCompile Include="GameApp\Filed\BackGround\BackGround.cpp" />
+    <ClCompile Include="GameApp\Effect\PolygonEffect\PolygonEffect.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\3D\FBX\FbxFunction\FbxFunction.cpp">
       <SubType>
       </SubType>
     </ClCompile>
     <ClCompile Include="Lib\3D\FBX\FbxMotion\FbxMotion.cpp" />
+    <ClCompile Include="Lib\Shader\BackBuffer\BackBuffer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\MultRenderTarget\MultRenderTarget.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Lib\Shader\RenderTarget\RenderTarget.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\BlurFilter\BlurFilter.cpp">
       <SubType>
       </SubType>
@@ -215,10 +258,6 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="Lib\Surface\Surface.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -264,7 +303,7 @@
     <ClCompile Include="Lib\FPS\FPS.cpp" />
     <ClCompile Include="Lib\Graphics\Graphics.cpp" />
     <ClCompile Include="Lib\Lib\Lib.cpp" />
-    <ClCompile Include="Lib\Math\Math.cpp" />
+    <ClCompile Include="Lib\Utility\Math\Math.cpp" />
     <ClCompile Include="Lib\Sound\Sound.cpp" />
     <ClCompile Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.cpp" />
     <ClCompile Include="Lib\Sprite2D\Sprite2D\Sprite2DUser.cpp" />
@@ -283,31 +322,62 @@
     <ClCompile Include="ObjectSystem\Object3DInterface\Object3DInterface.cpp" />
     <ClCompile Include="ObjectSystem\Object3D\Object3D.cpp" />
     <ClCompile Include="ObjectSystem\ObjectBase\ObjectBase.cpp" />
-    <ClCompile Include="ObjectSystem\ObjectFactory\ObjectFactory.cpp" />
-    <ClCompile Include="ObjectSystem\ObjectManager\ObjectManager.cpp" />
+    <ClCompile Include="Factory\ObjectFactory\ObjectFactory.cpp" />
+    <ClCompile Include="Manager\ObjectManager\ObjectManager.cpp" />
     <ClCompile Include="Lib\RenderState\RenderState.cpp" />
     <ClCompile Include="Scene\EndScene\EndScene.cpp" />
     <ClCompile Include="Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Scene\SceneBase\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Scene\TitleScene\TitleScene.cpp" />
-    <ClCompile Include="Lib\Utility\Utility.cpp" />
+    <ClCompile Include="Scene\TransitionScene\TransitionScene.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="User\ZTextureUser\ZTextureUser.cpp">
       <SubType>
       </SubType>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionSystem\CollisionManager\CollisionManager.h" />
+    <ClInclude Include="Lib\Utility\Convert\Convert.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\File\File.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Utility\Random\Random.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Manager\CollisionManager\CollisionManager.h" />
     <ClInclude Include="CollisionSystem\CollisionObject3DBase\CollisionObject3DBase.h" />
     <ClInclude Include="CollisionSystem\CollisionObjectData\CollisionObjectData.h" />
-    <ClInclude Include="CollisionSystem\Collision\Collision.h" />
+    <ClInclude Include="Lib\Utility\Collision\Collision.h" />
     <ClInclude Include="CollisionSystem\Shape\Cube\Cube.h" />
     <ClInclude Include="CollisionSystem\Shape\Shape3DBase\ShapeBase.h" />
     <ClInclude Include="CollisionSystem\Shape\ShapeData\ShapeData.h" />
     <ClInclude Include="CollisionSystem\Shape\Sphere\Sphere.h" />
     <ClInclude Include="Debugger\Debugger.h" />
+    <ClInclude Include="Debugger\FbxDebug\FbxDebug.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Debugger\RenderTargetDebug\RenderTargetDebug.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Debugger\SoftShadowDebug\SoftShadowDebug.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Debugger\ZTexSpriteCreater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Factory\EffectFactory\EffectFactory.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -316,7 +386,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameApp\Bullet\PlayerBullet\Bullet.h" />
+    <ClInclude Include="GameApp\Bullet\PlayerBullet\PlayerBullet.h" />
     <ClInclude Include="GameApp\Bullet\BulletBase\BulletBase.h" />
     <ClInclude Include="GameApp\Bullet\BulletData\BulletData.h">
       <SubType>
@@ -328,9 +398,8 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameApp\Enemy\Enemy.h" />
     <ClInclude Include="GameApp\Enemy\EnemyBase\EnemyBase.h" />
-    <ClInclude Include="GameApp\Enemy\HomingBulletEnemy\HomingBulletEnemy.h" />
+    <ClInclude Include="GameApp\Enemy\SniperEnemy\SniperEnemy.h" />
     <ClInclude Include="GameApp\Enemy\ShotgunEnemy\ShotgunEnemy.h" />
     <ClInclude Include="GameApp\Filed\BackGround\BackGround.h" />
     <ClInclude Include="GameApp\Filed\ClearBlock\ClearBlock.h">
@@ -338,6 +407,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="GameApp\Filed\MapData\MapData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameApp\Effect\PolygonEffect\PolygonEffect.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -360,6 +433,22 @@
     </ClInclude>
     <ClInclude Include="Lib\3D\OBJ\ObjFileData\ObjFileData.h" />
     <ClInclude Include="Lib\3D\OBJ\ObjRenderer\ObjRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\BackBuffer\BackBuffer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\MultRenderTarget\MultRenderTarget.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\RenderTargetData\RenderTargetData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Lib\Shader\RenderTarget\RenderTarget.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -393,10 +482,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Lib\Shader\ShaderFunc\ZTexture\ZTextureManager\ZTextureManager.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Lib\Surface\Surface.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -456,7 +541,7 @@
     <ClInclude Include="Lib\FPS\FPS.h" />
     <ClInclude Include="Lib\Graphics\Graphics.h" />
     <ClInclude Include="Lib\Lib\Lib.h" />
-    <ClInclude Include="Lib\Math\Math.h" />
+    <ClInclude Include="Lib\Utility\Math\Math.h" />
     <ClInclude Include="Lib\SingletonTemplate\SingletonTemplate.h" />
     <ClInclude Include="Lib\Sound\Sound.h" />
     <ClInclude Include="Lib\Sprite2D\Sprite2DParameter\Sprite2DParameter.h" />
@@ -483,15 +568,18 @@
     <ClInclude Include="ObjectSystem\Object3D\Object3D.h" />
     <ClInclude Include="ObjectSystem\ObjectBase\ObjectBase.h" />
     <ClInclude Include="ObjectSystem\ObjectData\ObjectData.h" />
-    <ClInclude Include="ObjectSystem\ObjectFactory\ObjectFactory.h" />
-    <ClInclude Include="ObjectSystem\ObjectManager\ObjectManager.h" />
+    <ClInclude Include="Factory\ObjectFactory\ObjectFactory.h" />
+    <ClInclude Include="Manager\ObjectManager\ObjectManager.h" />
     <ClInclude Include="Lib\RenderState\RenderState.h" />
     <ClInclude Include="Scene\EndScene\EndScene.h" />
     <ClInclude Include="Scene\GameScene\GameScene.h" />
     <ClInclude Include="Scene\SceneBase\SceneBase.h" />
     <ClInclude Include="Scene\SceneManager\SceneManager.h" />
     <ClInclude Include="Scene\TitleScene\TitleScene.h" />
-    <ClInclude Include="Lib\Utility\Utility.h" />
+    <ClInclude Include="Scene\TransitionScene\TransitionScene.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="User\ZTextureUser\ZTextureUser.h">
       <SubType>
       </SubType>
@@ -502,12 +590,6 @@
     <None Include="Resource\3DModel\Plate.x" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Lib\Shader\EffectFile\BlurFilter.fx">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-    </FxCompile>
     <FxCompile Include="Lib\Shader\EffectFile\DepthShadow.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
@@ -527,6 +609,13 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Lib\Shader\EffectFile\ObjDraw.fx" />
+    <FxCompile Include="Lib\Shader\EffectFile\SoftShadow.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
     <FxCompile Include="Lib\Shader\EffectFile\VertexBlend.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>

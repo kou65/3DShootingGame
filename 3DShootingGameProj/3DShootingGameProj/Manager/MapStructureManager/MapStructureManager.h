@@ -4,7 +4,7 @@
 
 #include"../../Lib/3D/OBJ/OBJFile.h"
 #include"../../GameApp/Filed/Taile/Taile.h"
-#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../Factory/ObjectFactory/ObjectFactory.h"
 #include"../../GameApp/CharacterBase/CharacterBase.h"
 #include"../ManagerBase/ManagerBase.h"
 #include"../../ObjectSystem/ObjectData/ObjectData.h"
@@ -40,6 +40,12 @@ public:
 		std::shared_ptr<ObjectFactory>p_factory,
 		std::shared_ptr<ObjectData>p_data
 	);
+
+
+	/**
+	* @brief デストラクタ
+	*/
+	~MapStructureManager();
 
 
 	/**

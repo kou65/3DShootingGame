@@ -70,6 +70,12 @@ public:
 
 
 	/**
+	* @brief 描画クリア関数
+	*/
+	void Clear(const D3DCOLOR&color = -1);
+
+
+	/**
 	* brief ビューポートの設定
 	* @param[in] x 位置X
 	* @param[in] y 位置Y

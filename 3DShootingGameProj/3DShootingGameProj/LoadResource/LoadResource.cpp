@@ -29,19 +29,26 @@ namespace  LoadResources {
 void LoadTexture() {
 
 	// テクスチャ
-	TextureManager::GetInstance()->Load("Resource/Texture/UI/HPGauge.png", "hp_gauge");
-	TextureManager::GetInstance()->Load("Resource/Texture/Stage/Ground.jpg", "ground");
-	TextureManager::GetInstance()->Load("Resource/Texture/Enemy/total_enemy1.png", "enemy1");
-	TextureManager::GetInstance()->Load("Resource/3DModel/taiki/txtr1.png", "taiki_tex");
+	TextureManager::GetInstance()->
+		Load("Resource/Texture/UI/HPGauge.png", "hp_gauge");
+	TextureManager::GetInstance()
+		->Load("Resource/Texture/Stage/Ground.jpg", "ground");
+	TextureManager::GetInstance()
+		->Load("Resource/Texture/Enemy/total_enemy1.png", "enemy1");
+	TextureManager::GetInstance()
+		->Load("Resource/3DModel/taiki/txtr1.png", "taiki_tex");
+
+	// トランジション用
+	TextureManager::GetInstance()->Load(
+		"Resource/Texture/Transition/BlackTaile.png","black_taile");
 	
 	TextureManager::GetInstance()->
 		Load("Resource/Texture/Stage/Taile.jpg",
 			Const::Graph::TAILE.c_str());
 
 	TextureManager::GetInstance()->
-		Load("Resource/Texture/Stage/dev.jpg", 
+		Load("Resource/Texture/Stage/dev.jpg",
 			Const::Graph::BACK_GROUND.c_str());
-
 
 
 	// Xファイル読み込み

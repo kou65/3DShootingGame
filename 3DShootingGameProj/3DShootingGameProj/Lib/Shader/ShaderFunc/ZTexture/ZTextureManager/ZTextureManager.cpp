@@ -1,5 +1,4 @@
 ﻿#include"ZTextureManager.h"
-#include"../../../../Utility/Utility.h"
 #include"../../../../Sprite2D/Sprite2D/Sprite2DUser.h"
 
 

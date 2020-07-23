@@ -121,6 +121,15 @@ bool Graphics::Init(
 }
 
 
+
+void Graphics::Release() {
+
+	// 生成した時と逆の順番で解放
+	mp_d3d_device9->Release();
+	mp_direct3d9->Release();
+}
+
+
 void Graphics::PresentParametersConfig(
 	D3DPRESENT_PARAMETERS & d3d_pp,
 	HWND window_handle,
@@ -228,13 +237,35 @@ void Graphics::BackBufferReSize(const int&width_size, const int&height_size) {
 }
 
 
+void Graphics::Clear(
+	const D3DCOLOR&color
+) {
 
-void Graphics::Release() {
+	// カラー値代入
+	D3DCOLOR col = color;
 
-	// 生成した時と逆の順番で解放
-	mp_d3d_device9->Release();
-	mp_direct3d9->Release();
+	if (col == -1) {
+		col = background_color;
+	}
+
+
+	// シーンのクリア
+	mp_d3d_device9->Clear(
+		// D3DRECT*の矩形の数
+		0,
+		// ビューポート全体をクリア
+		NULL,
+		// Zバッファとステンシルをクリア       
+		D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
+		// クリアする色情報(背景色)
+		col,
+		// 深度バッファで使用(未使用なら0,f)
+		1.0f,
+		// ステンシルバッファで使用する値(未使用なら0)
+		0
+	);
 }
+
 
 /* GetViewPortやSetViewPortなどもある*/
 
@@ -521,8 +552,8 @@ D3DXVECTOR2 Graphics::GetBackBufferSize()const {
 
 	D3DXVECTOR2 vec2;
 
-	vec2.x = m_d3d_pp.BackBufferWidth;
-	vec2.y = m_d3d_pp.BackBufferHeight;
+	vec2.x = (float)m_d3d_pp.BackBufferWidth;
+	vec2.y = (float)m_d3d_pp.BackBufferHeight;
 
 	return vec2;
 }

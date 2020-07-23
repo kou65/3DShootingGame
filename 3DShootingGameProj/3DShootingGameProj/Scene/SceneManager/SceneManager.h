@@ -6,7 +6,8 @@
 #include"../TitleScene/TitleScene.h"
 #include"../GameScene/GameScene.h"
 #include"../EndScene/EndScene.h"
-
+#include"../TransitionScene/TransitionScene.h"
+#include<memory>
 
 
 /**
@@ -22,7 +23,7 @@ public:
 	* @param[in] scene_type 現在のシーン定数
 	*/
 	SceneManager(
-		SceneBase * select_scene,
+		std::unique_ptr<SceneBase>select_scene,
 		const SceneType &scene_type
 	);
 
@@ -48,21 +49,48 @@ private:
 
 
 	/**
+	* @brief 変化シーン更新
+	*/
+	void UpdateTransScene();
+
+
+	/**
 	* @brief シーン選択
 	* @param[in] scene_type 選択するシーン定数を入れる
 	*/
-	void SceneSelect(SceneType&scene_type);
+	void CreateTransScene(SceneType&scene_type);
+
+
+	/**
+	* @brief シーンを生成
+	*/
+	void CreateScene(
+		const SceneType&scene_type,
+		std::unique_ptr<SceneBase>&scene
+	);
 
 private:
 
-	//! シーン識別
-	SceneType m_scene_type;
-
-	//! 現在のシーンクラス
-	SceneBase *m_current_scene;
-
 	//! 終了したかどうか
 	bool m_is_end;
+
+	//! トランジション中かどうか
+	bool m_is_trans;
+
+	//! シーンを生成したかどうか
+	bool m_is_create_scene;
+
+	//! 現在のシーン識別
+	SceneType m_scene_type;
+
+	//! 前のシーン識別
+	SceneType m_next_scene_type;
+
+	//! 現在のシーンクラス
+	std::unique_ptr<SceneBase>mp_current_scene;
+
+	//! シーンからシーンへの移行するためのクラス
+	std::unique_ptr<TransitionScene>mp_trans_scene;
 };
 
 #endif

@@ -1,7 +1,7 @@
 #pragma once
 #include"../../../Graphics/Graphics.h"
 #include"../StandardTransformShader/StandardTransformShader.h"
-
+#include"../../MultRenderTarget/MultRenderTarget.h"
 
 // Z値を自分で計算するZテクスチャを作成するクラス
 
@@ -87,4 +87,5 @@ private:
 
 	// デバイス
 	IDirect3DDevice9 *mp_device;
+
 };

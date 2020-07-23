@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include"../../ShaderFunc/ColorShader/ColorShader.h"
 #include"../../ShaderFunc//StandardTransformShader/StandardTransformShader.h"
-#include"../../../Surface/Surface.h"
 
 
 
@@ -100,12 +99,6 @@ private:
 
 	//! テクスチャハンドル
 	D3DXHANDLE m_h_tex;
-
-	//! バックバッファサーフェイス(パスは2個使うので2つ)
-	Surface m_bf_surface_list[SURFACE_VALUE];
-
-	//! デバイスサーフェイス
-	Surface m_device_surface;
 
 	//! デバイス
 	IDirect3DDevice9*mp_device;

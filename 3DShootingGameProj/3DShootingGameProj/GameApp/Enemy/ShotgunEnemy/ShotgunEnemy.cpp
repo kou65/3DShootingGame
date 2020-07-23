@@ -1,31 +1,31 @@
 ﻿#include"ShotgunEnemy.h"
 #include"../../../Lib/3D/OBJ/OBJFile.h"
-#include"../../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../../Manager/CollisionManager/CollisionManager.h"
+#include"../../../Factory/EffectFactory/EffectFactory.h"
 
 
 
 ShotgunEnemy::ShotgunEnemy(
 	const Vec3&create_pos,
 	ObjectFactory *factory,
-	std::weak_ptr<CharacterBase>player
+	std::weak_ptr<CharacterBase>player,
+	EffectFactory*p_effect
 ) {
 
 	// 生成位置
 	m_pos = create_pos;
 
-	// オブジェクト代入
+	// メイン工場
 	mp_obj_factory = factory;
+
+	// エフェクト工場
+	mp_effect = p_effect;
 
 	// プレイヤー
 	mp_player = player;
 
 	// ショットタイマー
 	m_shot_timer = 0.f;
-
-	// 衝突に追加
-	CollisionManager::GetInstance()->Entry(
-		CollisionObjectType::ENEMY_BULLET, this
-	);
 
 	// タグをセット
 	SetTag(Object3DTag::BULLET_ENEMY);
@@ -51,7 +51,8 @@ void ShotgunEnemy::Draw() {
 	param.register_obj_file_name = Const::Obj::CUBE;
 
 	// 敵描画
-	Obj::GetInstance()->DrawObjByNormalShader(param);
+	//Obj::GetInstance()->DrawObjByNormalShader(param);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT, param, 8);
 }
 
 
@@ -60,6 +61,7 @@ void ShotgunEnemy::Draw() {
 void ShotgunEnemy::HitAction(const CollisionObjectType&type) {
 
 	Exit();
+	mp_effect->CreatePolygonEffect(m_pos);
 }
 
 
@@ -68,7 +70,9 @@ Sphere ShotgunEnemy::GetSphere() {
 	Sphere s;
 	s.radian = 10.f;
 	s.vec = m_pos;
-	s.vec /= 2;
+	s.vec.x += m_pos.x / 2;
+	s.vec.x += m_pos.y / 2;
+	s.vec.x += m_pos.z / 2;
 
 	return s;
 }
@@ -132,10 +136,18 @@ void ShotgunEnemy::Shot() {
 		// データに方向代入
 		data.rot_dir = dir;
 
+		std::weak_ptr<EnemyBullet>p_bullet;
+
 		// 弾を生成
 		mp_obj_factory->CreateEnemyBullet(
 			param,
-			data
+			data,
+			p_bullet
+		);
+
+		// 衝突に追加
+		CollisionManager::GetInstance()->Entry(
+			CollisionObjectType::ENEMY_BULLET,p_bullet
 		);
 	}
 }

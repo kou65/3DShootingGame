@@ -46,11 +46,10 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 	else if (data.p_tex != nullptr) {
 		
 		tex_data.p_texture_buffer = data.p_tex;
-		tex_data.width_size = 0.f;
-		tex_data.height_size = 0.f;
+		
 	}
 	
-	// uvの範囲を設定する数
+	// uvの範囲を設定する数(1.fをわざと超えさせたい場合に使う)
 	float u_range_num = 0.f;
 
 	const float x1 = -data.offset.x;
@@ -61,16 +60,24 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 	// uv値
 	UvRect rect;
 
-	// tex画像サイズ
-	Vec2 graph_size(
-		// テクスチャサイズと
-		// 調整用のテクスチャサイズと合わせる
-		tex_data.width_size + data.tex_size.x,
-		tex_data.height_size + data.tex_size.y
-	);
+	// 画像サイズ
+	Vec2 graph_size;
+
+	// 外部で画像サイズを変更した場合
+	if (data.tex_size.x > 0.f) {
+		graph_size.x = data.tex_size.x;
+		graph_size.y = data.tex_size.y;
+	}
+	else// 通常通り
+	{
+		graph_size.x = tex_data.width_size;
+		graph_size.y = tex_data.height_size;
+	}
+		
 
 	// テクスチャが存在するならuvを調整
 	if (tex_data.p_texture_buffer != nullptr) {
+
 		SetUv(
 			data,
 			tex_data,
@@ -80,30 +87,59 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 	}
 
 	// サンプラーステートの設定
-	if (SetSamplerStateSelect(data.type) == true) {
+	if (SetSamplerStateSelect(data.type) == true){
 		u_range_num = 1.f;
 	}
 
+	// カラー
+	int cx = (int)data.color.x;
+	int cy = (int)data.color.y;
+	int cz = (int)data.color.z;
+
+	// 頂点カラー
+	DWORD color =
+		D3DCOLOR_RGBA(cx, cy, cz, data.alpha_value);
+
+	float rhw = 1.f;
+
+	Vec2 top_left = Vec2(
+		rect.top_left_pos.x + u_range_num,
+		rect.top_left_pos.y
+	);
+
+	Vec2 top_right = Vec2(
+		rect.top_right_pos.x + data.uv.x + u_range_num,
+		rect.top_right_pos.y
+	);
+
+	Vec2 bottom_right = Vec2(
+		rect.bottom_right_pos.x + data.uv.x +
+		u_range_num, rect.bottom_right_pos.y + data.uv.y
+	);
+
+	Vec2 bottom_left = Vec2(
+		rect.bottom_left_pos.x +
+		u_range_num, rect.bottom_left_pos.y + data.uv.y
+	);
 
 	// VERTEX3Dの初期化,UV.hからUVをずらして受け取り
-	CustomVertex2D custom_vertex[] =
+	CustomVertex2D custom_vertex[] = 
 	{
+		// uvが逆に設定されているというバグが起こっているので、現在逆に設定している
+		// uv関係の所でバグ
 	// 左上
-	{ { x1,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.top_left_pos.x + u_range_num,rect.top_left_pos.y} },
+	{ { x1,y1,0.f},rhw,color,
+	{ top_right.x,top_right.y} },
 	// 右上
-	{ { x2,y1,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.top_right_pos.x + data.uv.x + u_range_num,
-	rect.top_right_pos.y } },
+	{ { x2,y1,0.f},rhw,color,
+	{ top_left.x,top_left.y} },
 	// 右下
-	{ { x2,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.bottom_right_pos.x + data.uv.x + 
-	u_range_num,rect.bottom_right_pos.y + data.uv.y } },
+	{ { x2,y2,0.f},rhw,color,
+	{ bottom_left.x,bottom_left.y } },
 	// 左下
-	{ { x1,y2,0.f},1.0f,D3DCOLOR_ARGB(255,255,255,255),
-	{ rect.bottom_left_pos.x + 
-	u_range_num,rect.bottom_left_pos.y + data.uv.y } },
-	};
+	{ { x1,y2,0.f},rhw,color,
+	{ bottom_right.x, bottom_right.y} },
+	}; 
 
 	// 行列計算
 	D3DXMATRIX mat_world = CalcMatrixTransform(
@@ -116,7 +152,6 @@ void Sprite2DUser::BoardDraw(Sprite2DParameter&data) {
 		// 回転値
 		data.angle
 	);
-
 
 	// 行列を頂点配列に変換
 	D3DXVec2TransformCoordArray(

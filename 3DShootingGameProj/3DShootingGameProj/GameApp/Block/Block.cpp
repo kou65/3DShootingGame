@@ -1,20 +1,20 @@
 ﻿#include"Block.h"
 #include"../../Lib/3D/OBJ/OBJFile.h"
-#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../Manager/CollisionManager/CollisionManager.h"
+#include"../../Lib/RenderState/RenderState.h"
 
 
 
-Block::Block(const Vec3&pos) {
+Block::Block(
+	EffectFactory*p_factory,
+	const Vec3&pos
+) {
 
+	mp_factory = p_factory;
 	m_pos = pos;
 
 	// タグを追加
 	m_object_tag = Object3DTag::BLOCK;
-
-	// 衝突に追加
-	CollisionManager::GetInstance()->Entry(
-		CollisionObjectType::BLOCK, this
-	);
 
 	// 形を登録
 	m_shape_type = ShapeType::SPHERE;
@@ -28,8 +28,7 @@ void Block::Update() {
 
 void Block::Draw() {
 
-
-	ObjParameter param(DrawStatus::SHADOW);
+	ObjParameter param;
 
 	param.register_obj_file_name = Const::Obj::CUBE;
 	param.pos = m_pos;
@@ -38,14 +37,21 @@ void Block::Draw() {
 	param.scale.y = OBJ_SIZE;
 	param.scale.z = OBJ_SIZE;
 
+	bool is = RenderState::IsAlphaEnable();
+	RenderState::AlphaEnable(FALSE);
+
 	// 一旦コメント
-	Obj::GetInstance()->DrawObjByNormalShader(param);
+	//Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW,param);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT, param,8);
+	//Obj::GetInstance()->DrawObjByNormalShader(param);
+
+	RenderState::AlphaEnable(is);
 }
 
 
 void Block::DrawZTexture() {
 
-	ObjParameter param(DrawStatus::SHADOW);
+	ObjParameter param(DrawStatus::LIGHT_SHADOW);
 
 	param.register_obj_file_name = Const::Obj::CUBE;
 	param.pos = m_pos;
@@ -55,11 +61,19 @@ void Block::DrawZTexture() {
 	param.scale.y = OBJ_SIZE;
 	param.scale.z = OBJ_SIZE;
 
+
+	bool is = RenderState::IsAlphaEnable();
+
+	RenderState::AlphaEnable(FALSE);
+
 	// zテクスチャ描画
 	Obj::GetInstance()->WriteZTexture(
 		param,
 		FuncZTexture::Const::Z_TEX_1024
 	);
+
+
+	RenderState::AlphaEnable(is);
 }
 
 
@@ -69,7 +83,9 @@ void Block::HitAction(const CollisionObjectType&type) {
 	switch (type) {
 		// 破壊弾だったら消す
 	case CollisionObjectType::BREAK_BULLET:
-		Exit();
+		//Exit();
+		m_is_active = false;
+		mp_factory->CreatePolygonEffect(m_pos);
 		break;
 	}
 }

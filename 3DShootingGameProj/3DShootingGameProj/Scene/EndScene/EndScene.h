@@ -22,13 +22,7 @@ public:
 	/**
 	* @brief 更新
 	*/
-	void Update(SceneType&scene_type)override {
-
-		// シーン終了
-		if (KeyBoard::IsKeyPush(DIK_RETURN) == true) {
-			scene_type = SceneType::SCENE_FINAL;
-		}
-	}
+	void Update(SceneType&scene_type);
 
 
 	/**

@@ -6,11 +6,12 @@
 * @enum SceneType シーン識別列挙体
 */
 enum class SceneType {
+	NONE,
 	TITLE,
 	GAME,
 	END,
 	// ゲームの終了
-	SCENE_FINAL
+	SCENE_END
 };
 
 

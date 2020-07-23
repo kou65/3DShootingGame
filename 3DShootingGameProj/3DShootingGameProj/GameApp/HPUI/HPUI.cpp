@@ -22,6 +22,10 @@ void HPUI::Update() {
 
 	// uv値計算
 
+	if (mp_player.lock() == nullptr) {
+		return;
+	}
+
 	// 最大hp受け取り
 	float max_hp = Player::MAX_HP;
 

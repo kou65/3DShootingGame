@@ -17,6 +17,8 @@
 #include"../Lib/3D/FBX/FbxFile/Fbx.h"
 #include"../Lib/Shader/ShaderFunc/Declation/VertexDeclation.h"
 #include"../Lib/Shader/ShaderFunc/BlurFilter/BlurFilter.h"
+#include"../Debugger/SoftShadowDebug/SoftShadowDebug.h"
+#include"../Debugger/FbxDebug/FbxDebug.h"
 #include<string>
 
 
@@ -76,12 +78,6 @@ private:
 	* @brief シャドウ描画2
 	*/
 	void ObjShadowDraw();
-
-
-	/**
-	* @brief ブラー描画
-	*/
-	void DrawBlur();
 
 
 	/**
@@ -166,6 +162,12 @@ private:
 
 	//! ブラーフィルター
 	BlurFilter m_blur;
+
+	//! ソフトシャドウのデバッグクラス
+	SoftShadowDebug m_ss_debug;
+
+	//! fbxのデバッグ
+	FbxDebug m_fbx_debug;
 
 	//! カメラ
 	Camera3D *mp_camera;

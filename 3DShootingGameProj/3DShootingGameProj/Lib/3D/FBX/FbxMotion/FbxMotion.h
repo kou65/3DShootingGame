@@ -84,6 +84,12 @@ public:
 
 
 	/**
+	* @brief 最終モーション
+	*/
+	bool IsMotionEnd();
+
+
+	/**
 	* @brief CPUのスキニング
 	*/
 	void CPUSkinning(

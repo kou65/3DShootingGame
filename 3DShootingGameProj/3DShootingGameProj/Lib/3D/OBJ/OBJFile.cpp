@@ -3,6 +3,7 @@
 #include<iostream>
 #include<vector>
 #include"../../Texture/TextureManager/TextureManager.h"
+#include"../../Utility/Convert/Convert.h"
 #include"OBJFile.h"
 
 
@@ -25,39 +26,28 @@ Obj::Obj() : Model(){
 	// シャドウの初期化
 	m_shadow.Init();
 
-	// シャドウマップを渡す
+	// ライトの初期化
+	m_light_shader.Init();
+
+	// ztexを渡す
 	m_shadow.SetShandowMap(
 		ZTextureManager::GetInstance()->GetZTexturePtr(
 			FuncZTexture::Const::Z_TEX_1024
 		)->GetZTexture()
 	);
 
-	// シャドウマップを渡す
+	// ztexを渡す
 	m_light_shadow.SetShadowMap(
 		ZTextureManager::GetInstance()->GetZTexturePtr(
 			FuncZTexture::Const::Z_TEX_1024
 		)->GetZTexture()
 	);
 
-	InitBlurFileter();
-}
+	RenderTargetData data;
+	data.width = 1024;
+	data.height = 1024;
 
-
-void Obj::InitBlurFileter() {
-
-	// ブラーの
-	// テクスチャバッファ生成
-	Graphics::GetInstance()->CreateTexture(
-		&m_bulr_tex,
-		1024, 256
-	);
-
-	// 生成
-	for (int i = 0; i < 2; i++) {
-		//m_suf_back_list[i].CraeteDepthSurface(); // 深度値作成
-		m_suf_back_list[i].CreateTextureSurface(m_bulr_tex);
-	}
-
+	m_rt.CreateSurface(data);
 }
 
 
@@ -79,7 +69,8 @@ void Obj::Update(
 
 void Obj::Draw(
 	const DrawStatus&state,
-	ObjParameter&param
+	ObjParameter&param,
+	const UINT &pass
 ) {
 
 	// 各書き込み
@@ -99,7 +90,8 @@ void Obj::Draw(
 
 		// ライト描画
 		DrawLightObj(
-			param
+			param,
+			pass
 		);
 		break;
 
@@ -107,7 +99,8 @@ void Obj::Draw(
 
 		// 影描画
 		DrawShadowObj(
-			param
+			param,
+			pass
 		);
 		break;
 
@@ -117,17 +110,11 @@ void Obj::Draw(
 		LightShadowDraw(
 			param,
 			m_light_data,
-			m_shadow_data
+			m_shadow_data,
+			pass
 		);
 		break;
 
-	case DrawStatus::BLUR_FILTER:
-
-		// ブラーフィルター
-		DrawBlur(
-			param
-		);
-		break;
 	}
 }
 
@@ -318,7 +305,8 @@ void Obj::DrawObjByNormalShader(
 
 
 void Obj::DrawShadowObj(
-	const ObjParameter &param
+	const ObjParameter &param,
+	UINT pass
 ) {
 
 	// ライトカメラセット
@@ -338,23 +326,84 @@ void Obj::DrawShadowObj(
 	// 更新
 	Update(param, &m_shadow);
 
-	// シャドウ更新
-	m_shadow.Update();
+	// 影描画
+	ShaderParameterDraw(param,&m_shadow,pass);
+}
+
+
+void Obj::DrawSoftShadow(
+	const ObjParameter&param,
+	const UINT &pass,
+	LPDIRECT3DTEXTURE9 shadow_map
+) {
+
+	// ライトカメラセット
+	m_soft_shadow.SetLightView(m_shadow_data.light_view_mat);
+	m_soft_shadow.SetLightProj(m_shadow_data.light_proj_mat);
+
+	// カメラ情報セット
+	m_soft_shadow.SetViewMatrix(m_shadow_data.camera_view_mat);
+	m_soft_shadow.SetProjMatrix(m_shadow_data.camera_proj_mat);
+
+	// ライトデータ挿入
+	m_soft_shadow.SetLightData(m_light_data);
+
+	// 影に変更
+	m_pass_type = PassType::NONE;
+
+	// マップサイズ
+	m_soft_shadow.SetMapSize(1024.f);
+
+	// 更新
+	Update(param, &m_soft_shadow);
+
+	MultRenderTarget mrt;
+
+	// レンダリング開始
+	mrt.SetBackBuffer();
+	mrt.SetRender(m_rt);
 
 	// 影描画
-	ShaderParameterDraw(param,&m_shadow);
+	ShaderParameterDraw(param,&m_soft_shadow,pass);
+	
+	LPDIRECT3DTEXTURE9 tex = 
+		m_rt.GetTexture();
+
+	// シャドウマップをセット
+	m_soft_shadow.SetShadowMap(tex);
+	
+	// 更新
+	m_soft_shadow.Update();
+	
+	// 描画
+	//m_soft_shadow.SetRenderIndex(1);
+
+	// 描画
+	mrt.SetRender(m_rt);
+	ShaderParameterDraw(param,&m_soft_shadow,1);
+
+	// 描画
+	//ShaderParameterDraw(param, &m_soft_shadow, 2);
+
+	//ShaderParameterDraw(param, &m_soft_shadow, 3);
+
+	// バックバッファを戻す
+	mrt.GetBackBuffer();
+
+	m_soft_shadow.DrawTex(m_rt.GetTexture());
 }
 
 
 void Obj::DrawLightObj(
-	const ObjParameter &param
+	const ObjParameter &param,
+	UINT pass
 ) {
 
+	// パス
 	m_pass_type = PassType::PHONE_SHADER;
 
 	// カラー情報セット
 	m_light_shader.SetColor(param.color);
-
 
 	// ライトセット
 	m_light_shader.SetLightData(
@@ -365,113 +414,16 @@ void Obj::DrawLightObj(
 	Update(param, &m_light_shader);
 
 	// シェーダーパラメータ描画
-	ShaderParameterDraw(param, &m_light_shader);
+	ShaderParameterDraw(param, &m_light_shader,pass);
 }
 
-
-void Obj::DrawBlur(
-	ObjParameter&param
-) {
-
-	IDirect3DSurface9*p_dev_sur;
-
-	// 0番目でレンダーターゲットを入れ替える
-	mp_graphics->GetDevice()->GetRenderTarget(
-		0,
-		&p_dev_sur
-	);
-
-	// レンダーターゲット
-	mp_graphics->GetDevice()->SetRenderTarget(
-		0,
-		m_suf_back_list[0]
-	);
-
-	// クリア
-	mp_graphics->GetDevice()->Clear(
-		0, NULL, D3DCLEAR_TARGET | 
-		D3DCLEAR_ZBUFFER,
-		// 背景色も変更
-		D3DCOLOR_ARGB(0, 0, 0, 255),
-		1.0f,
-		0
-	);
-
-	// 通常レンダリング後の結果をぼかす
-	Draw(DrawStatus::NORMAL,param);
-
-	// ブラーフィルターモード
-	m_pass_type = PassType::BULR_FILTER;
-
-	//// zEnableOn
-	//mp_graphics->GetDevice()
-	//	->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-
-	// 描画がバグっている
-	// x軸y軸回す
-	for (int i = 0; i < 2; i++) {
-
-		// バックテクスチャをセット
-		param.p_tex = &m_bulr_tex[i % 2];
-	
-		// 0番目でレンダーターゲットを入れ替える
-		mp_graphics->GetDevice()->SetRenderTarget(
-			0,
-			m_suf_back_list[i % 2]
-		);
-
-		// シェーダーパラメータ描画
-		ShaderParameterDraw(param,&m_blur,i);
-
-	}
-
-	// デバイスを戻す
-	mp_graphics->GetDevice()->SetRenderTarget(
-		0,
-		p_dev_sur
-	);
-
-	//// Zバッファモードを戻す
-	//mp_graphics->GetDevice()
-	//	->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
-}
-
-
-void Obj::DrawRenderTarget(
-	ObjParameter&param
-) {
-
-	// デバイス面
-	IDirect3DSurface9 * p_dev_sur;
-
-	// デバイスに現在取得しているデバイスサーフェイスを返す
-	mp_graphics->GetDevice()->
-		GetRenderTarget(0,&p_dev_sur);
-
-	// 通常描画
-	Draw(DrawStatus::NORMAL, param);
-
-	// 0番目でレンダーターゲットを入れ替える
-	mp_graphics->GetDevice()->SetRenderTarget(
-		0,
-		m_suf_back_list[0]
-	);
-
-	// 通常描画
-	Draw(DrawStatus::LIGHT_SHADOW, param);
-
-	// 0番目でレンダーターゲットを入れ替える
-	mp_graphics->GetDevice()->SetRenderTarget(
-		0,
-		p_dev_sur
-	);
-}
 
 
 void Obj::LightShadowDraw(
 	const ObjParameter&param,
 	const LightData&light_data,
-	const ShadowData&shadow_data
+	const ShadowData&shadow_data,
+	UINT pass
 ) {
 
 	// 影データ挿入
@@ -480,7 +432,6 @@ void Obj::LightShadowDraw(
 		// カメラ情報セット
 		m_light_shadow.SetViewMatrix(shadow_data.camera_view_mat);
 		m_light_shadow.SetProjMatrix(shadow_data.camera_proj_mat);
-
 
 		// ライトデータ挿入
 		m_light_shadow.SetLightData(light_data);
@@ -494,11 +445,8 @@ void Obj::LightShadowDraw(
 		// 更新
 		Update(param, &m_light_shadow);
 
-		// シャドウ更新
-		m_light_shadow.Update();
-
 		// シャドウ描画
-		ShaderParameterDraw(param, &m_light_shadow,0);
+		ShaderParameterDraw(param, &m_light_shadow,pass);
 	}
 }
 
@@ -510,7 +458,8 @@ void Obj::WriteZTexture(
 
 	// zテクスチャ
 	ZTexture*p_tex
-		= ZTextureManager::GetInstance()->GetZTexturePtr(register_name);
+		= ZTextureManager::GetInstance()->
+		GetZTexturePtr(register_name);
 
 	// zテクスチャを書き込む
 	WriteZTexture(
@@ -538,9 +487,6 @@ void Obj::WriteZTexture(
 
 	// 更新
 	Update(param, p_tex);
-
-	// 描画の直前に行う
-	p_tex->Update();
 
 	// zテクスチャ描画
 	DrawShader(param, p_tex);
@@ -837,7 +783,9 @@ void Obj::LoadTextureShader(
 	m_light_shader.SetTexture(p_tex);
 	m_normal_shader.SetTexture(p_tex);
 	m_shadow.SetTexture(p_tex);
+	m_light_shadow.SetTexture(p_tex);
 	m_blur.SetTexture(p_tex);
+	m_soft_shadow.SetModelTex(p_tex);
 }
 
 

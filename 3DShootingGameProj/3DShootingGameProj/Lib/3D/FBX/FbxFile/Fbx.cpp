@@ -1,7 +1,7 @@
 ﻿#include"FBX.h"
 #include"../../../Window/Window.h"
 #include"../../../Texture/TextureManager/TextureManager.h"
-#include"../../../../Lib/Utility/Utility.h"
+#include"../../../../Lib/Utility/Convert/Convert.h"
 #include"../../../Graphics/Graphics.h"
 #include"../../VertexBuffer/VertexBuffer.h"
 #include"../../../D3DFont/D3DFont.h"
@@ -50,7 +50,6 @@ void Fbx::Update(
 	const std::string&motion_name
 ) {
 
-
 	// シェーダー
 	if (m_is_shader == false) {
 
@@ -59,7 +58,7 @@ void Fbx::Update(
 			// アニメーション
 			m_fbx_motion.Animate(
 				mesh_name,
-				1.f
+				0.f
 			);
 
 			std::vector<FbxMeshData>data_list =
@@ -72,9 +71,7 @@ void Fbx::Update(
 			);
 		}
 	}
-
 }
-
 
 
 void Fbx::Draw(
@@ -286,6 +283,19 @@ void Fbx::NormalDraw(
 		->SetTransform(D3DTS_WORLD, &world_mat);
 
 	DrawPrimitive(vertex_num,polygon_num);
+}
+
+
+
+/**
+* @brief モーション終了を返す
+*/
+bool Fbx::GetEndMotion(
+	const std::string&mesh_name,
+	const std::string&motion_name
+) {
+
+	return m_fbx_motion.IsMotionEnd();
 }
 
 
@@ -1017,7 +1027,6 @@ bool Fbx::LoadTexture(
 
 	// 現在のパス
 	char path[MAX_PATH];
-
 
 	// ファイルパスが絶対パスなら
 	if (Utility::Convert::IsStrInclude(p_file_name,"\\") == true)

@@ -14,8 +14,7 @@ void TitleScene::Draw(){
 	Sprite2DParameter param;
 
 	param.texture_name = "ground";
-	param.scale.x = 2;
-	param.scale.y = 2;
+	param.tex_size = D3DXVECTOR2(1920.f, 1080.f);
 
 	Sprite2DUser::GetInstance()->BoardDraw(param);
 }

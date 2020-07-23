@@ -116,10 +116,11 @@ namespace D3DFont {
 			va_end(list);
 		}
 
+		// 現在のα状態を回収
+		bool is_alpha = RenderState::IsAlphaEnable();
 
 		// α値有効
 		RenderState::AlphaEnable(TRUE);
-		RenderState::AlphaTest(TRUE);
 
 		// スプライト描画開始
 		p_sprite->Begin(0);
@@ -146,9 +147,8 @@ namespace D3DFont {
 		// スプライト描画終了
 		p_sprite->End();
 
-		// α値無効
-		RenderState::AlphaEnable(FALSE);
-		RenderState::AlphaTest(FALSE);
+		// α値の状態を戻す
+		RenderState::AlphaEnable(is_alpha);
 
 		// 文字列メモリ解放
 		delete[] string;

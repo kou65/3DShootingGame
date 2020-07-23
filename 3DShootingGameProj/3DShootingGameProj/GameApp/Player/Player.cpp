@@ -2,8 +2,11 @@
 #include"../../Lib/3D/OBJ/OBJFile.h"
 #include"../../Lib/DirectInput/KeyBoard/KeyBoard.h"
 #include"../../Lib/D3DFont/D3DFont.h"
-#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
-#include"../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../Factory/ObjectFactory/ObjectFactory.h"
+#include"../../Manager/CollisionManager/CollisionManager.h"
+#include"../../Lib/RenderState/RenderState.h"
+#include"../Bullet/PlayerBullet/PlayerBullet.h"
+#include"../Bullet/BreakBullet/BreakBullet.h"
 #include<math.h>
 
 
@@ -57,17 +60,16 @@ Player::Player(
 	// カラー代入
 	m_color = D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
 
-	// 当たり判定にエントリー
-	CollisionManager::GetInstance()->Entry(
-		CollisionObjectType::PLAYER, this
-	);
-
 	// 球
 	m_shape_type = ShapeType::SPHERE;
 }
 
 
 void Player::Update() {
+
+	if (KeyBoard::IsKeyPushing(DIK_P)) {
+		AddDamage(1.f);
+	}
 
 	// 移動値加算
 	AddMoveToPos();
@@ -114,6 +116,7 @@ void Player::Update() {
 
 void Player::Draw() {
 
+
 	ObjParameter param(DrawStatus::NORMAL);
 
 	param.pos.z = 0.f;
@@ -125,9 +128,11 @@ void Player::Draw() {
 	param.color = m_color;
 
 	// 描画
-	Obj::GetInstance()->DrawObjByNormalShader(
-		param
-	);
+	//Obj::GetInstance()->DrawObjByNormalShader(
+	//	param
+	//);
+
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT, param, 8);
 
 	D3DFont::Draw(150.f, 100.f, 100,"p_pos_x=>%f",m_pos.x);
 	D3DFont::Draw(150.f, 110.f, 100,"p_pos_y=>%f", m_pos.y);
@@ -460,11 +465,19 @@ void Player::ShotBullet() {
 			param.scale = Vec3(0.5f, 0.5f, 0.5f);
 			param.pos = m_pos;
 
+
+			std::weak_ptr<PlayerBullet>p_bullet;
+
 			// 弾を作る
 			mp_obj_factory->CreateBullet(
 				param,
-				data
+				data,
+				p_bullet
 			);
+
+			// 弾を衝突物として登録
+			CollisionManager::GetInstance()
+				->Entry(CollisionObjectType::PLAYER_BULLET,p_bullet);
 
 			// 時間を0にする
 			m_shot_timer = 0;
@@ -510,12 +523,18 @@ void Player::ShotBreakBullet() {
 				param.register_obj_file_name 
 					= Const::Obj::CUBE;
 
+				std::weak_ptr<BreakBullet>p_bullet;
 
 				// 弾を作る
 				mp_obj_factory->CreateBreakBullet(
 					param,
-					data
+					data,
+					p_bullet
 				);
+
+				// 弾を衝突物として登録
+				CollisionManager::GetInstance()
+					->Entry(CollisionObjectType::BREAK_BULLET, p_bullet);
 
 				// 時間を0にする
 				m_shot_timer = 0;

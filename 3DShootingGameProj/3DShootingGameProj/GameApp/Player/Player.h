@@ -4,7 +4,7 @@
 
 #include"../CharacterBase/CharacterBase.h"
 #include"../../Lib/3D/Camera3D/Camera3D.h"
-#include"../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../Factory/ObjectFactory/ObjectFactory.h"
 #include"../CharacterInterface/CharacterInterface.h"
 
 

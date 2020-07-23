@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"../EnemyBase/EnemyBase.h"
-#include"../../../ObjectSystem/ObjectFactory/ObjectFactory.h"
+#include"../../../Factory/ObjectFactory/ObjectFactory.h"
+#include"../../../Factory/EffectFactory/EffectFactory.h"
 
 
 
@@ -25,7 +26,8 @@ public:
 	ShotgunEnemy(
 		const Vec3&create_pos,
 		ObjectFactory *p_factory,
-		std::weak_ptr<CharacterBase>p_chara
+		std::weak_ptr<CharacterBase>p_chara,
+		EffectFactory*p_effect
 	);
 
 
@@ -70,12 +72,15 @@ private:
 
 private:
 
-	// !弾生成工場
+	//! 弾生成工場
 	ObjectFactory *mp_obj_factory;
 
-	// !プレイヤー
+	//! エフェクト
+	EffectFactory *mp_effect;
+
+	//! プレイヤー
 	std::weak_ptr<CharacterBase>mp_player;
 
-	// !打ち出す時間
+	//! 打ち出す時間
 	float m_shot_timer;
 };

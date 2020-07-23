@@ -10,7 +10,7 @@
 #include"../Lib/Texture/TextureManager/TextureManager.h"
 #include"../GameApp/GameConstant/GameConstant.h"
 #include"../Lib/Shader/ShaderFunc/ZTexture/ZTextureManager/ZTextureManager.h"
-#include"../Lib/Math/Math.h"
+#include"../Lib/Utility/Math/Math.h"
 
 
 
@@ -32,6 +32,9 @@ void Debugger::Init() {
 
 	// データ
 	CameraData data;
+
+	// ソフトシャドウデバッグの初期化
+	m_ss_debug.UpdateSoftShadow();
 
 	// デバッグモードオン
 	data.is_debug = true;
@@ -76,55 +79,7 @@ void Debugger::Init() {
 	// スプライト生成
 	CreateSprite();
 
-	//Fbx::GetInstance()->Load("Resource/3DModel/Spiderfbx/Spider_2.fbx");
-	
-	//Fbx::GetInstance()->Load(
-	//	"Resource/3DModel/UnityChan/NewUnityChan/unitychan.fbx",
-	//	"unity_chan"
-	//);
-	//
-	//Fbx::GetInstance()->LoadFileMotion(
-	//	"Resource/3DModel/UnityChan/Animations/unitychan_JUMP01.fbx",
-	//	"unity_chan",
-	//	"jump",
-	//	0
-	//);
-	//
-	//Fbx::GetInstance()->LoadFileMotion(
-	//	"Resource/3DModel/UnityChan/Animations/unitychan_DAMAGED00.fbx",
-	//	"unity_chan",
-	//	"damage",
-	//	0
-	//);
-
-	//Fbx::GetInstance()->Load(
-	//	"Resource/3DModel/taiki/taiki.fbx","taiki"
-	//);
-	//
-	//Fbx::GetInstance()->LoadFileMotion(
-	//	"Resource/3DModel/taiki/taiki.fbx",
-	//	"taiki",
-	//	"taiki_motion",
-	//	0
-	//);
-
-	// モーションセット
-	Fbx::GetInstance()->InitMotion(
-		"unity_chan",
-		"jump"
-	);
-
-	//Fbx::GetInstance()->InitMotion(
-	//	"taiki",
-	//	"taiki_motion"
-	//);
-
-
-	//Fbx::GetInstance()->Load("Resource/3DModel/humanoid.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/Plane.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/HelicopterLight_v001.fbx");
-	//Fbx::GetInstance()->Load("Resource/3DModel/Lowpoly_Helicopter.fbx");
-
+	//m_fbx_debug.Init();
 }
 
 
@@ -135,11 +90,9 @@ void Debugger::InitXFileShader() {
 	シャドウの初期化はほとんど行っている
 	*/
 
-
 	// シャドウの初期化
 	mp_shadow =
 		new DepthShadowShader();
-
 
 	// ビュー・射影変換行列を初期化して固定情報として登録する
 	D3DXMATRIX CameraView, CameraProj;
@@ -167,6 +120,125 @@ void Debugger::InitXFileShader() {
 	mp_shadow->Init();
 }
 
+
+void Debugger::Update() {
+
+	// カメラ回転
+	CameraRotation();
+
+	// カメラ移動
+	CameraMove();
+
+	// 更新
+	mp_camera->Update();
+
+	// ライト更新
+	UpdateLight();
+
+	// 影更新
+	UpdateShadow();
+
+	m_ss_debug.Update();
+
+	// fbxデバッグの更新
+	//m_fbx_debug.Update();
+}
+
+
+
+
+void Debugger::Draw() {
+
+	// Xfile影
+	{
+		// objではない
+	//tex->ResetDecl();
+	//mp_shadow->ResetDecl();
+		//XFileZTextureWrite();
+		//XFileShadowDraw();
+
+	}
+
+
+
+	// Obj影
+	{
+		ObjShadowDraw();
+	}
+
+	// ブラー
+	{
+
+		// ブラー描画
+		//DrawBlur();
+	}
+
+	//m_ss_debug.Draw();
+
+	//m_fbx_debug.Draw();
+
+	// OBJライト
+	//LightDebugDraw();
+
+
+	mp_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
+	mp_camera->TransformDraw();
+
+
+	{
+		// Z値テクスチャ
+		ZTexture *p_tex = ZTextureManager::
+			GetInstance()->GetZTexturePtr(
+			FuncZTexture::Const::Z_TEX_1024
+		);
+
+		// お試し画像
+		TextureData p_tex_data = TextureManager::GetInstance()->
+			GetTextureData("ground");
+
+		// z値描画
+		//{
+		//	
+		//	ZTextureDraw(
+		//		p_tex->GetZTexture(),
+		//		Vec2(1000.f, 200.f)
+		//	);
+		//}
+
+
+		// スプライトを使った
+		{
+			// 比率
+			float Ratio = 1.f;
+			//////////////////////////////////
+			//■パス3 : Z値テクスチャを描画
+			D3DXMATRIX SpriteScaleMat;
+			D3DXMatrixScaling(&SpriteScaleMat, Ratio / 3, Ratio / 3, 1.0f);
+			cpSprite->SetTransform(&SpriteScaleMat);
+			cpSprite->Begin(0);
+			cpSprite->Draw(p_tex->GetZTexture(), NULL, NULL, NULL, 0xffffffff);
+			cpSprite->End();
+		}
+	}
+
+
+	// 地面
+	{
+		Sprite3DParameter td(0.f, 0.f, 0.f, "ground");
+		td.scale_width = 1000.f;
+		td.scale_height = 1000.f;
+		td.polygon_dir = FLOOR;
+		td.pos.y = -300.f;
+		td.ofset.x = 0.5f;
+		td.ofset.y = 0.5f;
+
+		Sprite3DUser sprite_3d;
+
+		sprite_3d.BoardDraw(
+			td
+		);
+	}
+}
 
 
 void Debugger::UpdateLight() {
@@ -212,7 +284,7 @@ void Debugger::UpdateLight() {
 
 	// 環境光
 	light_data.ambient
-		= D3DXVECTOR4(1.f, 1.f, 0.f, 0.f);
+		= D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
 
 	// カメラ位置
 	light_data.eye_pos = D3DXVECTOR4(
@@ -227,7 +299,7 @@ void Debugger::UpdateLight() {
 
 	// マテリアルの初期化
 	light_data.material.ambient
-		= D3DXVECTOR4(0.f, 0.5f, 0.f, 0.f);
+		= D3DXVECTOR4(1.f, 1.f, 1.f, 1.f);
 	light_data.material.diffuse
 		= D3DXVECTOR4(1.f, 1.f, 1.f, 0.f);
 	light_data.material.specular
@@ -264,145 +336,10 @@ bool Debugger::IsEnd() {
 }
 
 
-void Debugger::Update() {
-
-	// カメラ回転
-	CameraRotation();
-
-	// カメラ移動
-	CameraMove();
-
-	// 更新
-	mp_camera->Update();
-
-	// ライト更新
-	UpdateLight();
-
-	// 影更新
-	UpdateShadow();
-
-	if (KeyBoard::IsKeyExit(DIK_V)) {
-		
-		Fbx::GetInstance()->ChangeMotion(
-			"unity_chan",
-			"damage"
-		);
-	}
-	else if (KeyBoard::IsKeyExit(DIK_B)) {
-
-		Fbx::GetInstance()->ChangeMotion(
-			"unity_chan",
-			"jump"
-		);
-	}
-	
-
-	// アニメーション更新
-	Fbx::GetInstance()->Update(
-		"unity_chan",
-		"jump"
-	);
-
-	//Fbx::GetInstance()->Update(
-	//	"taiki",
-	//	"taiki_motion"
-	//);
-}
-
-
-void Debugger::Draw() {
-
-	// Xfile影
-	{
-		// objではない
-	//tex->ResetDecl();
-	//mp_shadow->ResetDecl();
-		//XFileZTextureWrite();
-		//XFileShadowDraw();
-		
-	}
-
-	// Obj影
-	{
-		//ObjShadowDraw();
-	}
-
-	// ブラー
-	{
-
-		// ブラー描画
-		DrawBlur();
-	}
-
-	// OBJライト
-	//LightDebugDraw();
-
-	// fbx描画
-	//Fbx::GetInstance()->Draw("unity_chan",nullptr,false);
-
-	//Fbx::GetInstance()->Draw("taiki",nullptr,false);
-
-
-	mp_fps->DebugDraw(Vec2(256.f, 256.f), 3000);
-	mp_camera->TransformDraw();
-
-	{
-		// Z値テクスチャ
-		ZTexture *p_tex = ZTextureManager::GetInstance()->GetZTexturePtr(
-			FuncZTexture::Const::Z_TEX_1024
-		);
-
-		// お試し画像
-		TextureData p_tex_data = TextureManager::GetInstance()->
-			GetTextureData("ground");
-
-		// z値描画
-		//{
-		//	
-		//	ZTextureDraw(
-		//		p_tex->GetZTexture(),
-		//		Vec2(1000.f, 200.f)
-		//	);
-		//}
-
-		// スプライトを使った
-		{
-			// 比率
-			float Ratio = 1.f;
-			//////////////////////////////////
-			//■パス3 : Z値テクスチャを描画
-			D3DXMATRIX SpriteScaleMat;
-			D3DXMatrixScaling(&SpriteScaleMat, Ratio / 3, Ratio / 3, 1.0f);
-			cpSprite->SetTransform(&SpriteScaleMat);
-			cpSprite->Begin(0);
-			cpSprite->Draw(p_tex->GetZTexture(), NULL, NULL, NULL, 0xffffffff);
-			cpSprite->End();
-		}
-	}
-
-	
-	// 地面
-	{
-		Sprite3DParameter td(0.f, 0.f, 0.f, "ground");
-		td.scale_width = 1000.f;
-		td.scale_height = 1000.f;
-		td.polygon_dir = FLOOR;
-		td.pos.y = -300.f;
-		td.ofset.x = 0.5f;
-		td.ofset.y = 0.5f;
-
-		Sprite3DUser sprite_3d;
-
-		sprite_3d.BoardDraw(
-			td
-		);
-	}
-}
-
-
 
 // 描画が上書きされてしまうのは多分ビギンをもう一回行っているから
 void Debugger::ObjShadowDraw() {
+
 
 	// 行列
 	D3DXMATRIX mat_camera_view;
@@ -422,9 +359,6 @@ void Debugger::ObjShadowDraw() {
 		cube_p.pos.y = 60.f;
 		cube_p.pos.x = 0.f;
 		cube_p.pos.z = 0.f;
-
-		cube_p.texture_name = Const::Graph::TAILE;
-
 	}
 
 	// 板
@@ -437,8 +371,6 @@ void Debugger::ObjShadowDraw() {
 		taile_p.scale.x = 30.f;
 		taile_p.scale.z = 30.f;
 
-		// テクスチャ代入
-		taile_p.texture_name = Const::Graph::BACK_GROUND;
 	}
 
 	// 視点
@@ -562,6 +494,17 @@ void Debugger::ObjShadowDraw() {
 
 	UINT i;
 
+	bool is = RenderState::IsAlphaEnable();
+
+	RenderState::AlphaEnable(FALSE);
+	RenderState::AlphaTest(FALSE);
+
+	// テクスチャ初期化
+	cube_p.texture_name = "";
+	light_obj.texture_name = "";
+	taile_p.texture_name = "";
+
+
 	// 描画開始
 	p_tex->Begin(i, 0);
 
@@ -576,10 +519,18 @@ void Debugger::ObjShadowDraw() {
 	// 描画終了
 	p_tex->End();
 
+	// テクスチャ名
+	cube_p.texture_name = Const::Graph::TAILE;
+	taile_p.texture_name = Const::Graph::BACK_GROUND;
+
 	// 影と光描画
 	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, cube_p);
-	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, light_obj);
 	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, taile_p);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, light_obj);
+
+
+	RenderState::AlphaEnable(is);
+	RenderState::AlphaTest(is);
 }
 
 
@@ -639,7 +590,7 @@ void Debugger::LightDebugDraw() {
 		D3DXVECTOR4(1.f, 0.f, 0.f, 0.f);
 
 	// 描画
-	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW,param);
+	Obj::GetInstance()->DrawLightObj(param,8);
 }
 
 
@@ -845,19 +796,6 @@ void Debugger::DrawLightShadow() {
 	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW, param);
 }
 
-
-void Debugger::DrawBlur() {
-
-	// パラメータ
-	ObjParameter param(DrawStatus::LIGHT);
-
-	param.register_obj_file_name = Const::Obj::PLANE;
-	param.pos = D3DXVECTOR3(0.f, 0.f, 0.f);
-	param.texture_name = Const::Graph::TAILE;
-
-	// 描画
-	Obj::GetInstance()->Draw(DrawStatus::BLUR_FILTER, param);
-}
 
 
 void Debugger::UpdateShadow() {

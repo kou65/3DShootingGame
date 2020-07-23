@@ -36,7 +36,7 @@ void GameEndJugeManager::Update(SceneType&scene_type) {
 		return;
 	}
 
-	// ゴールオブジェクトが活動を止めたなら終了
+	// プレイヤーがゴールオブジェクトに到達したら終了
 	if (p_player->GetPos().z >= p_goal_object->GetPos().z) {
 
 		p_goal_object->Destory();

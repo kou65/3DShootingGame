@@ -2,7 +2,6 @@
 
 
 
-
 ZTexture::ZTexture(const VertexDecl::Type &type) {
 
 	// デバイスの取得
@@ -29,6 +28,7 @@ ZTexture::ZTexture(const VertexDecl::Type &type) {
 		"ZValuePlotTec",
 		type
 	);
+
 }
 
 
@@ -124,7 +124,7 @@ bool ZTexture::InitZTexture() {
 		desc.MultiSampleType,
 		desc.MultiSampleQuality,
 		FALSE,
-		&mp_depth_buffer,// 深度バッファ
+		&mp_depth,// 深度バッファ
 		NULL
 	);
 
@@ -159,7 +159,6 @@ void ZTexture::SetTextureSize(
 }
 
 
-
 void ZTexture::Begin(
 	UINT &total_pass_num,
 	const DWORD &device_state_num) {
@@ -168,7 +167,7 @@ void ZTexture::Begin(
 		return;
 	}
 
-	if (mp_depth_buffer == nullptr) {
+	if (mp_depth == nullptr) {
 		return;
 	}
 
@@ -176,34 +175,28 @@ void ZTexture::Begin(
 		return;
 	}
 
-	// レンダーターゲットを切り替える
 
-	// 元のバックバッファをレンダリングターゲットを変更する前に取得
-	// 現在デバイスが持っているバッファを一時保存
-	mp_device->
-		GetRenderTarget(0, &mp_device_buffer);
+	// レンダリングする前に保存
+	mp_device->GetRenderTarget(0, &mp_device_buffer);
+	mp_device->GetDepthStencilSurface(&mp_depth_buffer);
 
-	// 深度バッファ用サーフェイスを取得
-	mp_device->
-		GetDepthStencilSurface(&mp_depth);
-	
-	// デバイスにzテクスチャをレンダーターゲットに設定する
+	// レンダーターゲットセット
 	mp_device->
 		SetRenderTarget(0, mp_tex_suf);
-	mp_device->
-		SetDepthStencilSurface(mp_depth_buffer);
+
+	mp_device->SetDepthStencilSurface(mp_depth);
+
 
 	// テクスチャサーフェイスのクリア
-	mp_device->Clear(
-		0, NULL, D3DCLEAR_TARGET | 
-		D3DCLEAR_ZBUFFER, 
+	Graphics::GetInstance()->GetDevice()->Clear(
+		0, NULL, D3DCLEAR_TARGET |
+		D3DCLEAR_ZBUFFER,
 		// 背景色も変更
 		D3DCOLOR_ARGB(255, 255, 255, 255),
 		1.0f,
 		0
 	);
 
-	// テクニック
 	mp_effect->SetTechnique(m_h_technique);
 
 	HRESULT hr = mp_effect->Begin(
@@ -225,30 +218,23 @@ void ZTexture::End() {
 
 	HRESULT hr = mp_effect->End();
 
-	// 追加(テクスチャサーフェイス受け取り)
-	//mp_device->
-	//	GetRenderTarget(0, &mp_tex_suf);
-	//mp_device->
-	//	GetDepthStencilSurface(&mp_depth_buffer);
 
-	// 深度バッファを元に戻す
-	// デバイスに元のサーフェイスを戻す
+	// レンダリングした後に保存したものを戻す
 	mp_device->SetRenderTarget(0, mp_device_buffer);
-	mp_device->SetDepthStencilSurface(mp_depth);
+	mp_device->SetDepthStencilSurface(mp_depth_buffer);
 
 	// 初期化
 	mp_device_buffer = NULL;
-	mp_depth = NULL;
-	
+	mp_depth_buffer = NULL;
+
 	// GetSurfaceLevelで内部カウンタが+1されているのでReleaseして内部カウンタを減らす
 	mp_device->SetVertexShader(NULL);
 	mp_device->SetPixelShader(NULL);
 
-
 	if (hr != S_OK) {
 		hr = S_OK;
 		return;
-	}
+	}	
 }
 
 

@@ -24,15 +24,17 @@ void GoalObject::Draw() {
 	//param.texture_name = Const::Graph::TAILE;
 	param.pos = m_pos;
 
-	// 縦向き
-	param.rota.y = 180.f;
-	param.rota.x = 90.f;
 
-	param.scale.x = 32.f;
-	param.scale.y = 32.f;
+	// 縦向き
+	param.rota.x = -90.f;
+
+	param.scale.x = 100.f;
+	param.scale.y = 1.f;
 
 	// 赤カラー
-	param.color.y = 1.f;
+	param.color.x = 1.f;
+	param.color.y = 0.f;
+	param.color.z = 0.f;
 
 	// obj描画
 	Obj::GetInstance()->DrawObjByNormalShader(param);

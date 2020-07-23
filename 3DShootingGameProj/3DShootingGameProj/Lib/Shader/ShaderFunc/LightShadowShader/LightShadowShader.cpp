@@ -15,14 +15,15 @@ void LightShadowShader::Init(const VertexDecl::Type&type) {
 
 	// ハンドルの初期化
 	InitHandle();
+
 }
 
 
 void LightShadowShader::Update() {
 
 	// シェーダーの更新
-	StandardTSShader::UpdateTS();
-	ColorShader::UpdateColor();
+	StandardTSShader::Update();
+	//ColorShader::UpdateColor();
 	Light::UpdateLight();
 
 	// 影データ送信

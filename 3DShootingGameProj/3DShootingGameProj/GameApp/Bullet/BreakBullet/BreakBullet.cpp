@@ -1,5 +1,5 @@
 ﻿#include"BreakBullet.h"
-#include"../../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../../Manager/CollisionManager/CollisionManager.h"
 
 
 
@@ -22,13 +22,6 @@ BreakBullet::BreakBullet(
 	// 加算
 	AddRotDir();
 
-	// 当たり判定に追加
-	CollisionManager::GetInstance()
-		->Entry(
-			CollisionObjectType::BREAK_BULLET,
-			this
-		);
-
 	// 形状
 	m_shape_type = ShapeType::SPHERE;
 }
@@ -50,7 +43,8 @@ void BreakBullet::Update() {
 void BreakBullet::Draw() {
 
 	// 敵描画
-	Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
+	//Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT, m_obj_param, 8);
 }
 
 

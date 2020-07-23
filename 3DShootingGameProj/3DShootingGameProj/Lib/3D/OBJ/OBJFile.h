@@ -5,7 +5,6 @@
 #include<vector>
 #include"../Object3DCustomVertex/MeshCustomVertex.h"
 #include<unordered_map>
-#include"../../../Lib/Utility/Utility.h"
 #include"../Model/Model.h"
 #include"../../Vec3/Vec3.h"
 #include"../../Shader/ShaderFunc/NormalShader/NormalShader.h"
@@ -16,6 +15,7 @@
 #include"ObjFileData/ObjFileData.h"
 #include"../../Shader/ShaderFunc/LightShadowShader/LightShadowShader.h"
 #include"../../Shader/ShaderFunc/BlurFilter/BlurFilter.h"
+#include"../../Shader/ShaderFunc/SoftShadow/SoftShadow.h"
 #include<map>
 
 
@@ -60,7 +60,8 @@ public:
 	*/
 	void Draw(
 		const DrawStatus&state,
-		ObjParameter&param
+		ObjParameter&param,
+		const UINT &pass = -1
 	);
 
 
@@ -106,7 +107,18 @@ public:
 	* @param[in] param objパラメータ構造体
 	*/
 	void DrawShadowObj(
-		const ObjParameter &param
+		const ObjParameter &param,
+		UINT pass = -1
+	);
+
+
+	/**
+	* @brief ソフトシャドウ描画
+	*/
+	void DrawSoftShadow(
+		const ObjParameter&param,
+		const UINT &pass = 0,
+		LPDIRECT3DTEXTURE9 shadow_map = nullptr
 	);
 
 
@@ -124,7 +136,8 @@ public:
 	* @param[in] param objパラメータ構造体
 	*/
 	void DrawLightObj(
-		const ObjParameter &param
+		const ObjParameter &param,
+		UINT pass = -1
 	);
 
 
@@ -197,12 +210,6 @@ private:
 
 
 	/**
-	* @brief ブラーフィルター初期化
-	*/
-	void InitBlurFileter();
-
-
-	/**
 	* @brief zテクスチャ書き込み
 	* @param[in] param objパラメータ構造体
 	* @param[in] ZTexture* zテクスチャポインタ
@@ -242,23 +249,8 @@ private:
 	void LightShadowDraw(
 		const ObjParameter&param,
 		const LightData&light_data,
-		const ShadowData&shadow_data
-	);
-
-
-	/**
-	* @brief ブラーフィルター描画
-	*/
-	void DrawBlur(
-		ObjParameter&param
-	);
-
-
-	/**
-	* @brief レンダーターゲット用練習
-	*/
-	void DrawRenderTarget(
-		ObjParameter&param
+		const ShadowData&shadow_data,
+		UINT pass = -1
 	);
 
 
@@ -531,6 +523,9 @@ private:
 	//! 影
 	DepthShadowShader m_shadow;
 
+	//! ソフトシャドウ
+	SoftShadow m_soft_shadow;
+
 	//! ライトと影
 	LightShadowShader m_light_shadow;
 
@@ -546,12 +541,8 @@ private:
 	//! ライトデータ
 	LightData m_light_data;
 
-	//! サーフェイス
-	Surface m_suf_back_list[SURFACE_VALUE];
-
-	//! テクスチャ
-	LPDIRECT3DTEXTURE9 m_bulr_tex;
-
+	//! レンダーターゲット
+	RenderTarget m_rt;
 };
 
 #endif

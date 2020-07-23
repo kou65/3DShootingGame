@@ -1,5 +1,6 @@
 ﻿#include"FbxMotion.h"
-#include"../../../Utility/Utility.h"
+#include"../../../Utility/Convert/Convert.h"
+#include"../../../Utility/Math/Math.h"
 #include"../FbxFunction/FbxFunction.h"
 #include"../../Model/Model.h"
 #include"../../../Texture/TextureManager/TextureManager.h"
@@ -27,6 +28,17 @@ const std::string&texture_name
 ) {
 	TextureManager::GetInstance()->
 		GetTextureData(texture_name);
+}
+
+
+bool FbxMotion::IsMotionEnd() {
+
+	// アニメーションが最大まできたら最初に戻す
+	if (m_anim_count > m_stop_count - 2) {
+		return true;
+	}
+
+	return false;
 }
 
 

@@ -6,8 +6,6 @@
 
 
 
-
-
 class LightShader : public StandardTSShader{
 public:
 

@@ -24,6 +24,20 @@ MapStructureManager::MapStructureManager(
 }
 
 
+MapStructureManager::~MapStructureManager() {
+
+	//! マップオブジェクトの参照解放
+	for (auto&itr : mp_map_obj_list) {
+
+		itr.clear();
+	}
+
+	for (auto&itr : m_is_create_list) {
+		itr.clear();
+	}
+}
+
+
 void MapStructureManager::Update(){
 
 	SerchCreateDeleteTaile();

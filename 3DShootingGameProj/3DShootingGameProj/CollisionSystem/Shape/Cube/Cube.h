@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../Shape3DBase/ShapeBase.h"
-#include"../../Collision/Collision.h"
+#include"../../../Lib/Utility/Collision/Collision.h"
 
 
 

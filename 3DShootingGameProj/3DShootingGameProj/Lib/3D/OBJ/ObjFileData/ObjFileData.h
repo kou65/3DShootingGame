@@ -19,6 +19,7 @@
 
 
 enum class PassType {
+	NONE,
 	NORMAL,             // 通常
 	ZTEXTURE,           // zテクスチャ
 	DEPTH_SHADOW,       // 深度影
@@ -41,7 +42,6 @@ enum class DrawStatus {
 	LIGHT,
 	SHADOW,
 	LIGHT_SHADOW,
-	BLUR_FILTER
 };
 
 

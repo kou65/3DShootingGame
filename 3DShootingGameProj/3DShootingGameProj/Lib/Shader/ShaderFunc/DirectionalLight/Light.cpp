@@ -71,11 +71,9 @@ void LightShader::Init() {
 void  LightShader::Update() {
 
 	// 更新
-	ShaderBase::UpdateDecl();
-
-	// 更新
 	StandardTSShader::UpdateStandardCamera();
 	StandardTSShader::Update();
+	ShaderBase::Update();
 
 	// ライトセット
 	UpdateLight();
@@ -88,11 +86,11 @@ void  LightShader::Update() {
 void LightShader::InitHandle() {
 
 	// ハンドル取得
-	m_h_dir_light =
+	m_h_dir_light = 
 		mp_effect->GetParameterByName(NULL,m_dir_light_name.c_str());
 	m_h_point_light_pos = 
 		mp_effect->GetParameterByName(NULL, m_point_light_pos_name.c_str());
-	m_h_light_color =
+	m_h_light_color = 
 		mp_effect->GetParameterByName(NULL, m_light_color_name.c_str());
 	m_h_eye_dir = 
 		mp_effect->GetParameterByName(NULL, m_eye_dir_name.c_str());
@@ -104,15 +102,6 @@ void LightShader::InitHandle() {
 		mp_effect->GetParameterByName(NULL, m_specular_power_name.c_str());
 	m_h_ambient =
 		mp_effect->GetParameterByName(NULL, m_ambient_name.c_str());
-
-
-	// ライトビュー
-	m_h_light_view = 
-		mp_effect->GetParameterByName(NULL, m_light_view_name.c_str());
-
-	// ライト射影
-	m_h_light_proj = 
-		mp_effect->GetParameterByName(NULL, m_light_proj_name.c_str());
 
 	// テクスチャとカラー
 	m_h_tex = 

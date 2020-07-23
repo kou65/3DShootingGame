@@ -1,5 +1,5 @@
 ﻿#include"ZTextureUser.h"
-#include"../../Lib/Math/Math.h"
+#include"../../Lib/Utility/Math/Math.h"
 #include"../../Lib/Shader/ShaderFunc/ShadowData/ShadowData.h"
 #include"../../Lib/3D/OBJ/OBJFile.h"
 

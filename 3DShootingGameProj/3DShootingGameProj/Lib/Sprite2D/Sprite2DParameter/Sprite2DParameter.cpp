@@ -14,7 +14,6 @@ Sprite2DParameter::Sprite2DParameter(
 	float ofset_y,
 	float tu,
 	float tv,
-	DWORD color,
 	Graphics::SamplerStateType state_type
 ) {
 
@@ -29,7 +28,6 @@ Sprite2DParameter::Sprite2DParameter(
 	this->offset.y = ofset_y;
 	this->uv.x = tu;
 	this->uv.y = tv;
-	this->color = color;
 	this->type = state_type;
 	this->p_tex = nullptr;
 	this->is_uv_slider = false;
@@ -37,6 +35,13 @@ Sprite2DParameter::Sprite2DParameter(
 	this->tex_size.y = 0.f;
 	this->max_uv_slider.Initialization();
 	this->min_uv_slider.Initialization();
+
+
+	// カラーは白
+	this->color = Vec3(255.f, 255.f, 255.f);
+	// 透過度0
+	this->alpha_value = 255;
+
 }
 
 

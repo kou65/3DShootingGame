@@ -134,6 +134,15 @@ public:
 
 
 	/**
+	* @brief モーション終了を返す
+	*/
+	bool GetEndMotion(
+		const std::string&mesh_name,
+		const std::string&motion_name
+	);
+
+
+	/**
 	* @brief 解放
 	*/
 	void Release();

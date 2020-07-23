@@ -48,5 +48,5 @@ void ColorShader::SetColor(const D3DXVECTOR4&color) {
 
 
 void ColorShader::SetTexture(IDirect3DTexture9*p_tex) {
-	mp_texture = p_tex;
+	mp_effect->SetTexture(m_h_texture, p_tex);
 }

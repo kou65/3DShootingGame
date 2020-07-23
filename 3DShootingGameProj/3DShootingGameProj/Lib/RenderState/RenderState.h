@@ -6,12 +6,17 @@
 
 namespace RenderState {
 
+
+	// α状態を返す
+	bool IsAlphaEnable();
+
 	// SetRenderStateの設定を行う
 	void AllOn();
 
 	// α値が有効か
 	void AlphaEnable(
-		BOOL is_enable
+		bool is_enable,
+		bool is_blend = true
 	);
 
 	// αテスト

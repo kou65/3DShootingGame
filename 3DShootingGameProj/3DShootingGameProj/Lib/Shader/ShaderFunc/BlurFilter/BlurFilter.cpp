@@ -70,10 +70,10 @@ void BlurFilter::Init(
 	mp_effect->SetFloatArray(m_h_tv, v, ARRAY);
 
 
-	// バックバッファサーフェイス作成
-	for (int i = 0; i < SURFACE_VALUE; i++) {
-		m_bf_surface_list[i].CraeteDepthSurface();
-	}
+	//// バックバッファサーフェイス作成
+	//for (int i = 0; i < SURFACE_VALUE; i++) {
+	//	m_bf_surface_list[i].CraeteDepthSurface();
+	//}
 
 }
 

@@ -58,6 +58,9 @@ float4 PS1(
 {
 	float4 out_put;
 
+// α値オフ
+color.a = 1.f;
+
 // テクスチャ座標 * カラー値
 out_put = color;
 
@@ -76,6 +79,9 @@ float4 PS2(
 {
 
 float4 out_put;
+
+// α値オフ
+color.a = 1.f;
 
 // テクスチャ座標 * カラー値
 out_put = tex2D(smp, uv);

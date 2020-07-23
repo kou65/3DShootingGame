@@ -51,7 +51,10 @@ int WINAPI WinMain(
 		GetDevice()->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
 
 	// シーン管理者(タイトルから)
-	SceneManager scene_manager(new TitleScene,SceneType::TITLE);
+	SceneManager scene_manager(
+		std::make_unique<TitleScene>(),
+		SceneType::TITLE
+	);
 
 	// グラフィックデータ初期化
 	Obj::GetInstance()->InitGrapicData();

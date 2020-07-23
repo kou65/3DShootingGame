@@ -1,6 +1,7 @@
 #pragma once
 #include"../BulletBase/BulletBase.h"
-#include"../../../ObjectSystem/ObjectData/ObjectData.h"
+#include"../../../Lib/3D/OBJ/OBJFile.h"
+#include"../BulletData/BulletData.h"
 
 
 

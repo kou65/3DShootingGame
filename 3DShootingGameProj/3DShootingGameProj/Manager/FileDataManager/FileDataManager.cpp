@@ -1,5 +1,7 @@
 ﻿#include"FileDataManager.h"
-#include"../../Lib/Utility/Utility.h"
+#include"../../Manager/CollisionManager/CollisionManager.h"
+#include"../../Lib/Utility/File/File.h"
+#include"../../Lib/Utility/Convert/Convert.h"
 #include <algorithm>
 
 
@@ -36,7 +38,7 @@ FileDataManager::FileDataManager(
 	Utility::File::Close(&p_file);
 
 	// ファイルの情報から自機と敵を生成する
-	CreateObject();
+	CreateGameObject();
 }
 
 
@@ -138,7 +140,7 @@ void FileDataManager::LoadRandomPosNum(FILE*p_file) {
 }
 
 
-void FileDataManager::CreateObject() {
+void FileDataManager::CreateGameObject() {
 
 	// 共有用取得
 	std::shared_ptr<ObjectFactory>p_factory = mp_mng.lock();
@@ -152,6 +154,11 @@ void FileDataManager::CreateObject() {
 			player_pos,
 			mp_camera,
 			p_data->p_player
+		);
+
+		// 当たり判定にエントリー
+		CollisionManager::GetInstance()->Entry(
+			CollisionObjectType::PLAYER,p_data->p_player
 		);
 	}
 

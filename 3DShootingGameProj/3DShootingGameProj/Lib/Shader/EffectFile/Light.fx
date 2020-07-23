@@ -35,12 +35,6 @@ float4 g_eye_dir;
 // カメラ座標
 float4 g_eye_pos;
 
-// ライトビュー
-float4x4 g_light_view;
-
-// ライト射影
-float4x4 g_light_proj;
-
 // 使用するテクスチャ
 texture g_tex;
 
@@ -84,13 +78,6 @@ struct VS_OUT_WORLD {
 	float4 posw : TEXCOORD2;
 };
 
-struct VS_OUT_SHADOW {
-	float4 pos : POSITION0;
-	float4 color : COLOR0;
-	float2 uv : TEXCOORD0;
-	float4 normal : TEXCOORD1;
-	float4 z_calc_tex : TEXCOORD2;
-};
 
 
 // 平行光源
@@ -357,7 +344,8 @@ float4 PhongReflectionPS(VS_OUT_WORLD In) : COLOR0 {
 	p_light_pixel_dir = normalize(p_light_pixel_dir);
 
 	// 鏡面反射
-	ref = 2.0 * normal * dot(normal, p_light_pixel_dir) - p_light_pixel_dir;
+	ref = 2.0 * normal * dot(normal, p_light_pixel_dir)
+		- p_light_pixel_dir;
 
 	float4 atten = g_attenuation;
 
@@ -408,7 +396,6 @@ float4 normal : NORMAL,
 float2 tex : TEXCOORD0
 )
 {
-
 	VS_OUT_L Out;
 
 	float4x4 mat;
@@ -443,7 +430,7 @@ float2 tex : TEXCOORD0
 float4 PhonePS2(VS_OUT_L In) : COLOR0
 {
 
-	float4 Out;
+float4 Out;
 
 // 法線ベクトルを正規化する
 float3 n = normalize(In.n);
@@ -456,7 +443,9 @@ float s = pow(max(0.0f,dot(n,h)),g_specular) * g_specular_power;
 
 // スペキュラーカラーを加算する
 //Out = In.col * tex2D(smp,In.tex) + s;
-Out = In.col + s;
+Out = In.col * s;
+
+//Out = float4(0.f, 0.f, 0.f, 0.f);
 
 return Out;
 }
@@ -528,7 +517,7 @@ technique tech1 {
 	}
 
 
-	// フォン反射
+	// フォン反射(8pass)
 	pass PhoneRef {
 
 		VertexShader = compile vs_2_0 PhongReflectionVS();

@@ -1,5 +1,5 @@
 ﻿#include"FbxFunction.h"
-#include"../../../Utility/Utility.h"
+#include"../../../Utility/Convert/Convert.h"
 
 
 
@@ -294,7 +294,7 @@ namespace FbxFunction {
 		) {
 
 			// メッシュ数分回す
-			for (UINT i = current_skeleton_count;
+			for (int i = current_skeleton_count;
 				i < skeleton_num_max;
 				i++) {
 

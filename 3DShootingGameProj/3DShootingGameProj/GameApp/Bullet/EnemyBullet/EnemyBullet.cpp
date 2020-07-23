@@ -1,5 +1,5 @@
 ﻿#include"EnemyBullet.h"
-#include"../../../CollisionSystem/CollisionManager/CollisionManager.h"
+#include"../../../Manager/CollisionManager/CollisionManager.h"
 
 
 
@@ -17,11 +17,6 @@ EnemyBullet::EnemyBullet(
 	m_dir = data.rot_dir;
 	m_limit_distance = data.distance_limit;
 
-
-	CollisionManager::GetInstance()->Entry(
-		CollisionObjectType::ENEMY_BULLET, this
-	);
-
 	m_shape_type = ShapeType::SPHERE;
 }
 
@@ -37,8 +32,8 @@ void EnemyBullet::Update() {
 
 
 void EnemyBullet::Draw() {
-
-	Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT, m_obj_param, 8);
+	//Obj::GetInstance()->DrawObjByNormalShader(m_obj_param);
 }
 
 

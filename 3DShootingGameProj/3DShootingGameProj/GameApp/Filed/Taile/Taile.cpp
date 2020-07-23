@@ -1,5 +1,5 @@
 ﻿#include"Taile.h"
-
+#include"../../../Lib/RenderState/RenderState.h"
 
 
 
@@ -20,9 +20,15 @@ void Taile::Update() {
 
 void Taile::Draw() {
 
+	bool is = RenderState::IsAlphaEnable();
+	RenderState::AlphaEnable(FALSE);
+
+	//Obj::GetInstance()->Draw(DrawStatus::SHADOW,m_data,1);
+	//Obj::GetInstance()->Draw(DrawStatus::LIGHT, m_data, 8);
 	// 描画
-	Obj::GetInstance()->Draw(DrawStatus::SHADOW, m_data);
-	//Obj::GetInstance()->DrawObjByNormalShader(m_data);
+	Obj::GetInstance()->Draw(DrawStatus::LIGHT_SHADOW,m_data,1);
+
+	RenderState::AlphaEnable(is);
 }
 
 

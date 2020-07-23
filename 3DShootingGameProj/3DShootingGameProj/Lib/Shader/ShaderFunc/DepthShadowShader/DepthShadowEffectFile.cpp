@@ -105,11 +105,17 @@ void DepthShadowShader::Begin(
 	UINT &total_pass_num,
 	const DWORD &device_state_num) {
 
-	//m_cpDev->Clear( 0, NULL, D3DCLEAR_TARGET 
-//	| D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255,255,255,255),
-//	1.0f, 0 );
-
 	mp_effect->SetTechnique(m_h_technique);
+
+	//// テクスチャサーフェイスのクリア
+	//Graphics::GetInstance()->GetDevice()->Clear(
+	//	0, NULL, D3DCLEAR_TARGET |
+	//	D3DCLEAR_ZBUFFER,
+	//	// 背景色も変更
+	//	D3DCOLOR_ARGB(255, 255, 255, 255),
+	//	1.0f,
+	//	0
+	//);
 
 	mp_effect->Begin(&total_pass_num, device_state_num);
 }

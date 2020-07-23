@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"../Filed/MapObjectBase/MapObjectBase.h"
-
+#include"../../Factory/EffectFactory/EffectFactory.h"
 
 
 // 障害物用キューブ
@@ -22,7 +22,11 @@ public:
 	* @brief コンストラクタ
 	* @param[in] pos 位置
 	*/
-	Block(const Vec3&pos);
+	Block(
+		EffectFactory*p_factory,
+		const Vec3&pos
+	);
+
 
 	/**
 	* @brief 更新 仮想関数
@@ -62,4 +66,7 @@ public:
 	*/
 	Cube GetCube()override;
 
+private:
+
+	EffectFactory *mp_factory;
 };

@@ -1,8 +1,9 @@
 ﻿#include"../MapObjectManager/MapObjectManager.h"
 #include"../../GameApp/Filed/ClearBlock/ClearBlock.h"
-#include"../../GameApp/Enemy/HomingBulletEnemy/HomingBulletEnemy.h"
+#include"../../GameApp/Enemy/SniperEnemy/SniperEnemy.h"
 #include"../../GameApp/Enemy/ShotgunEnemy/ShotgunEnemy.h"
-#include"../../Lib/Utility/Utility.h"
+#include"../../Manager/CollisionManager/CollisionManager.h"
+#include"../../Lib/Utility/Random/Random.h"
 
 
 
@@ -64,6 +65,29 @@ void MapObjectManager::InitMap() {
 }
 
 
+void MapObjectManager::Update() {
+
+	if (mp_chara.lock() == nullptr) {
+		return;
+	}
+	if (mp_chara.lock()->p_player.lock() == nullptr) {
+		return;
+	}
+
+	// ワールド生成と削除
+	CreateWorldObject();
+	DestoryWorldObject();
+
+	// 現在ブロック位置計算
+	CalcCurrentBlock();
+
+	// マップ生成と削除
+	MapCreate();
+	MapDestory();
+}
+
+
+
 void MapObjectManager::InsertPosFileData2(
 	std::shared_ptr<FileDataManager>p_manager
 ) {
@@ -84,7 +108,6 @@ void MapObjectManager::InsertPosFileData2(
 		Const::FileObj::BULLET_ENEMY,
 		Object3DTag::BULLET_ENEMY
 	);
-
 }
 
 
@@ -181,21 +204,6 @@ void MapObjectManager::InsertPieceFileData(
 		}
 	}
 	
-}
-
-
-void MapObjectManager::Update() {
-
-	// ワールド生成と削除
-	CreateWorldObject();
-	DestoryWorldObject();
-
-	// 現在ブロック位置計算
-	CalcCurrentBlock();
-
-	// マップ生成と削除
-	MapCreate();
-	MapDestory();
 }
 
 
@@ -352,6 +360,11 @@ void MapObjectManager::FileObjCreate(
 			mp_h_enemy_list[array_num]
 		);
 
+		// 衝突に追加
+		CollisionManager::GetInstance()->Entry(
+			CollisionObjectType::ENEMY, mp_h_enemy_list[array_num]
+		);
+
 		break;
 
 	case Object3DTag::BLOCK:
@@ -360,6 +373,11 @@ void MapObjectManager::FileObjCreate(
 		p_factory->CreateBlock(
 			pos, 
 			mp_cube_list[array_num]
+		);
+
+		// 衝突に追加
+		CollisionManager::GetInstance()->Entry(
+			CollisionObjectType::BLOCK,mp_cube_list[array_num]
 		);
 
 		break;
@@ -372,6 +390,12 @@ void MapObjectManager::FileObjCreate(
 			p_player,
 			mp_shotgun_enemy[array_num]
 		);
+
+		// 衝突に追加
+		CollisionManager::GetInstance()->Entry(
+			CollisionObjectType::ENEMY, mp_shotgun_enemy[array_num]
+		);
+
 		break;
 	}
 }
@@ -788,9 +812,15 @@ void MapObjectManager::CreateBlock(
 ) {
 	std::weak_ptr<Block>p_block;
 
+	// ブロック生成
 	mp_factory.lock()->CreateBlock(
 		pos,
 		p_block
+	);
+
+	// 衝突に追加
+	CollisionManager::GetInstance()->Entry(
+		CollisionObjectType::BLOCK,p_block
 	);
 
 	// まだ存在しているなら削除する
@@ -824,6 +854,12 @@ void MapObjectManager::CreateHomingEnemy(
 		p_he
 	);
 
+
+	// 衝突に追加
+	CollisionManager::GetInstance()->Entry(
+		CollisionObjectType::ENEMY,p_he
+	);
+
 	// マップに埋め込む
 	if (m_map[f_block][h_block][w_block] != nullptr) {
 		m_map[f_block][h_block][w_block].reset();
@@ -851,6 +887,11 @@ void MapObjectManager::CreateShotgunEnemy(
 		pos,
 		mp_chara.lock()->p_player,
 		p_se
+	);
+
+	// 衝突に追加
+	CollisionManager::GetInstance()->Entry(
+		CollisionObjectType::ENEMY, p_se
 	);
 
 	if (m_map[f_block][h_block][w_block] != nullptr) {
